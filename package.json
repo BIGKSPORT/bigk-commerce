@@ -1,0 +1,44 @@
+{
+  "name": "bigk-commerce",
+  "version": "0.2.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --hostname 0.0.0.0",
+    "build": "next build --webpack && node scripts/build-jobs.mjs",
+    "start": "next start --hostname 0.0.0.0",
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx tests/commerce.test.ts",
+    "admin:password": "node scripts/hash-password.mjs",
+    "inventory:expire": "node --import tsx scripts/expire-reservations.ts",
+    "email:deliver": "node --import tsx scripts/deliver-emails.ts",
+    "test:browser": "node tests/browser.mjs",
+    "test:http": "node tests/http.mjs",
+    "catalog:sync-images": "node --import tsx scripts/sync-product-images.ts",
+    "supabase:check": "node --use-env-proxy --env-file=.env.local scripts/check-supabase.mjs",
+    "test:postgres": "node tests/postgres.mjs"
+  },
+  "dependencies": {
+    "lucide-react": "1.64.0",
+    "next": "16.4.3",
+    "postgres": "3.4.9",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "stripe": "23.0.1",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.5.13",
+    "@electric-sql/pglite-socket": "0.2.16",
+    "@types/node": "24.19.2",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "esbuild": "0.28.2",
+    "playwright": "1.64.1",
+    "tsx": "4.23.15",
+    "typescript": "7.0.2"
+  },
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "type": "module"
+}

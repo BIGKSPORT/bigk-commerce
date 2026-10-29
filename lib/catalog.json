@@ -1,0 +1,1292 @@
+{
+  "logo": "/products/bigk-logo.png",
+  "products": [
+    {
+      "id": "P001",
+      "slug": "apline-fleece-p001",
+      "name": "Apline Fleece",
+      "description": "black FZ fleece",
+      "code": "Apline Fleece 25303101",
+      "category": "Other",
+      "priceCents": null,
+      "approved": false,
+      "active": false,
+      "featured": true,
+      "images": [],
+      "variants": [
+        {
+          "id": "P001-0",
+          "size": "S",
+          "stock": 0,
+          "reported": 35
+        },
+        {
+          "id": "P001-1",
+          "size": "M",
+          "stock": 0,
+          "reported": 95
+        },
+        {
+          "id": "P001-2",
+          "size": "L",
+          "stock": 0,
+          "reported": 106
+        },
+        {
+          "id": "P001-3",
+          "size": "XL",
+          "stock": 0,
+          "reported": 96
+        },
+        {
+          "id": "P001-4",
+          "size": "XXL",
+          "stock": 0,
+          "reported": 25
+        },
+        {
+          "id": "P001-5",
+          "size": "XXXL",
+          "stock": 0,
+          "reported": 9
+        }
+      ],
+      "tags": []
+    },
+    {
+      "id": "P002",
+      "slug": "alpine-fz-p002",
+      "name": "Alpine FZ",
+      "description": "dusty-blue FZ fleece",
+      "code": "Alpine FZ 25303102",
+      "category": "Jackets & Vests",
+      "priceCents": null,
+      "approved": false,
+      "active": false,
+      "featured": true,
+      "images": [],
+      "variants": [
+        {
+          "id": "P002-0",
+          "size": "S",
+          "stock": 0,
+          "reported": 44
+        },
+        {
+          "id": "P002-1",
+          "size": "M",
+          "stock": 0,
+          "reported": 79
+        },
+        {
+          "id": "P002-2",
+          "size": "L",
+          "stock": 0,
+          "reported": 76
+        },
+        {
+          "id": "P002-3",
+          "size": "XL",
+          "stock": 0,
+          "reported": 67
+        },
+        {
+          "id": "P002-4",
+          "size": "XXL",
+          "stock": 0,
+          "reported": 30
+        },
+        {
+          "id": "P002-5",
+          "size": "XXXL",
+          "stock": 0,
+          "reported": 10
+        }
+      ],
+      "tags": []
+    },
+    {
+      "id": "P003",
+      "slug": "core-2-p003",
+      "name": "Core.2",
+      "description": "black 1/4 zip",
+      "code": "Core.2 25301801",
+      "category": "Other",
+      "priceCents": null,
+      "approved": false,
+      "active": false,
+      "featured": true,
+      "images": [],
+      "variants": [
+        {
+          "id": "P003-0",
+          "size": "S",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P003-1",
+          "size": "M",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P003-2",
+          "size": "L",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P003-3",
+          "size": "XL",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P003-4",
+          "size": "XXL",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P003-5",
+          "size": "XXXL",
+          "stock": 0,
+          "reported": null
+        }
+      ],
+      "tags": []
+    },
+    {
+      "id": "P004",
+      "slug": "core-2-p004",
+      "name": "Core.2",
+      "description": "dusty-blue 1/4 zip",
+      "code": "Core.2 25301802",
+      "category": "Other",
+      "priceCents": null,
+      "approved": false,
+      "active": false,
+      "featured": true,
+      "images": [],
+      "variants": [
+        {
+          "id": "P004-0",
+          "size": "S",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P004-1",
+          "size": "M",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P004-2",
+          "size": "L",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P004-3",
+          "size": "XL",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P004-4",
+          "size": "XXL",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P004-5",
+          "size": "XXXL",
+          "stock": 0,
+          "reported": null
+        }
+      ],
+      "tags": []
+    },
+    {
+      "id": "P005",
+      "slug": "core-2-p005",
+      "name": "Core.2 ",
+      "description": "cream 1/4 zip",
+      "code": "Core.2  25301803",
+      "category": "Other",
+      "priceCents": null,
+      "approved": false,
+      "active": false,
+      "featured": true,
+      "images": [],
+      "variants": [
+        {
+          "id": "P005-0",
+          "size": "S",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P005-1",
+          "size": "M",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P005-2",
+          "size": "L",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P005-3",
+          "size": "XL",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P005-4",
+          "size": "XXL",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P005-5",
+          "size": "XXXL",
+          "stock": 0,
+          "reported": null
+        }
+      ],
+      "tags": []
+    },
+    {
+      "id": "P006",
+      "slug": "alpine-gillet-p006",
+      "name": "Alpine Gillet",
+      "description": "black gillet",
+      "code": "Alpine Gillet 25303201",
+      "category": "Jackets & Vests",
+      "priceCents": null,
+      "approved": false,
+      "active": false,
+      "featured": true,
+      "images": [],
+      "variants": [
+        {
+          "id": "P006-0",
+          "size": "S",
+          "stock": 0,
+          "reported": 45
+        },
+        {
+          "id": "P006-1",
+          "size": "M",
+          "stock": 0,
+          "reported": 127
+        },
+        {
+          "id": "P006-2",
+          "size": "L",
+          "stock": 0,
+          "reported": 110
+        },
+        {
+          "id": "P006-3",
+          "size": "XL",
+          "stock": 0,
+          "reported": 104
+        },
+        {
+          "id": "P006-4",
+          "size": "XXL",
+          "stock": 0,
+          "reported": 28
+        },
+        {
+          "id": "P006-5",
+          "size": "XXXL",
+          "stock": 0,
+          "reported": 9
+        }
+      ],
+      "tags": []
+    },
+    {
+      "id": "P007",
+      "slug": "alpine-gillet-p007",
+      "name": "Alpine Gillet",
+      "description": "cream-black Gillet",
+      "code": "Alpine Gillet 25303202",
+      "category": "Jackets & Vests",
+      "priceCents": null,
+      "approved": false,
+      "active": false,
+      "featured": false,
+      "images": [
+        "/products/drive/alpin-vest-pro-bigk-alpin-vest00001.jpg",
+        "/products/drive/alpin-vest-pro-bigk-alpin-vest00009.jpg",
+        "/products/drive/alpin-vest-pro-bigk-alpin-vest00048.jpg",
+        "/products/drive/alpin-vest-pro-bigk-alpin-vest00056.jpg"
+      ],
+      "variants": [
+        {
+          "id": "P007-0",
+          "size": "S",
+          "stock": 0,
+          "reported": 42
+        },
+        {
+          "id": "P007-1",
+          "size": "M",
+          "stock": 0,
+          "reported": 73
+        },
+        {
+          "id": "P007-2",
+          "size": "L",
+          "stock": 0,
+          "reported": 75
+        },
+        {
+          "id": "P007-3",
+          "size": "XL",
+          "stock": 0,
+          "reported": 66
+        },
+        {
+          "id": "P007-4",
+          "size": "XXL",
+          "stock": 0,
+          "reported": 29
+        },
+        {
+          "id": "P007-5",
+          "size": "XXXL",
+          "stock": 0,
+          "reported": 10
+        }
+      ],
+      "tags": []
+    },
+    {
+      "id": "P008",
+      "slug": "alpine-fz-hood-p008",
+      "name": "Alpine FZ hood",
+      "description": "black FZ hood",
+      "code": "Alpine FZ hood 25301601",
+      "category": "Jackets & Vests",
+      "priceCents": 11900,
+      "approved": false,
+      "active": false,
+      "featured": false,
+      "images": [],
+      "variants": [
+        {
+          "id": "P008-0",
+          "size": "S",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P008-1",
+          "size": "M",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P008-2",
+          "size": "L",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P008-3",
+          "size": "XL",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P008-4",
+          "size": "XXL",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P008-5",
+          "size": "XXXL",
+          "stock": 0,
+          "reported": null
+        }
+      ],
+      "tags": [
+        "Layering",
+        "Everyday"
+      ]
+    },
+    {
+      "id": "P009",
+      "slug": "alpine-fz-hood-p009",
+      "name": "Alpine FZ Hood",
+      "description": "cream FZ hood",
+      "code": "Alpine FZ Hood 25301603",
+      "category": "Jackets & Vests",
+      "priceCents": 11900,
+      "approved": false,
+      "active": false,
+      "featured": false,
+      "images": [
+        "/products/drive/alpin-hood-1u129615.jpg",
+        "/products/drive/alpin-hood-1u129598.jpg",
+        "/products/drive/alpin-hood-1u129627.jpg",
+        "/products/drive/alpin-hood-1u129632.jpg",
+        "/products/drive/alpin-hood-1u129638.jpg"
+      ],
+      "variants": [
+        {
+          "id": "P009-0",
+          "size": "S",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P009-1",
+          "size": "M",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P009-2",
+          "size": "L",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P009-3",
+          "size": "XL",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P009-4",
+          "size": "XXL",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P009-5",
+          "size": "XXXL",
+          "stock": 0,
+          "reported": null
+        }
+      ],
+      "tags": [
+        "Layering",
+        "Everyday"
+      ]
+    },
+    {
+      "id": "P010",
+      "slug": "core-pants-p010",
+      "name": "Core-pants",
+      "description": "black cuffed leg",
+      "code": "Core-pants 25302701",
+      "category": "Pants",
+      "priceCents": null,
+      "approved": false,
+      "active": false,
+      "featured": false,
+      "images": [
+        "/products/drive/core-pants-bigk-core-pants00014.jpg",
+        "/products/drive/core-pants-bigk-core-pants00001.jpg",
+        "/products/drive/core-pants-bigk-core-pants00006.jpg"
+      ],
+      "variants": [
+        {
+          "id": "P010-0",
+          "size": "S",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P010-1",
+          "size": "M",
+          "stock": 0,
+          "reported": 113
+        },
+        {
+          "id": "P010-2",
+          "size": "L",
+          "stock": 0,
+          "reported": 142
+        },
+        {
+          "id": "P010-3",
+          "size": "XL",
+          "stock": 0,
+          "reported": 156
+        },
+        {
+          "id": "P010-4",
+          "size": "XXL",
+          "stock": 0,
+          "reported": 96
+        },
+        {
+          "id": "P010-5",
+          "size": "XXXL",
+          "stock": 0,
+          "reported": 34
+        }
+      ],
+      "tags": [
+        "Movement",
+        "Everyday"
+      ]
+    },
+    {
+      "id": "P011",
+      "slug": "neofit-pants-p011",
+      "name": "Neofit pants",
+      "description": "black open leg",
+      "code": "Neofit pants 25300801",
+      "category": "Pants",
+      "priceCents": null,
+      "approved": false,
+      "active": false,
+      "featured": false,
+      "images": [
+        "/products/drive/neofit-pants-img-2334.jpg",
+        "/products/drive/neofit-pants-1u103020.jpg",
+        "/products/drive/neofit-pants-1u103134.jpg",
+        "/products/drive/neofit-pants-1u103016.jpg"
+      ],
+      "variants": [
+        {
+          "id": "P011-0",
+          "size": "S",
+          "stock": 0,
+          "reported": 156
+        },
+        {
+          "id": "P011-1",
+          "size": "M",
+          "stock": 0,
+          "reported": 208
+        },
+        {
+          "id": "P011-2",
+          "size": "L",
+          "stock": 0,
+          "reported": 210
+        },
+        {
+          "id": "P011-3",
+          "size": "XL",
+          "stock": 0,
+          "reported": 184
+        },
+        {
+          "id": "P011-4",
+          "size": "XXL",
+          "stock": 0,
+          "reported": 97
+        },
+        {
+          "id": "P011-5",
+          "size": "XXXL",
+          "stock": 0,
+          "reported": 34
+        }
+      ],
+      "tags": []
+    },
+    {
+      "id": "P012",
+      "slug": "alpine-gillet-hood-p012",
+      "name": "Alpine gillet hood",
+      "description": "black hood Gillet",
+      "code": "Alpine gillet hood 25301701",
+      "category": "Jackets & Vests",
+      "priceCents": null,
+      "approved": false,
+      "active": false,
+      "featured": false,
+      "images": [],
+      "variants": [
+        {
+          "id": "P012-0",
+          "size": "S",
+          "stock": 0,
+          "reported": null
+        }
+      ],
+      "tags": []
+    },
+    {
+      "id": "P013",
+      "slug": "alpine-gillet-hood-p013",
+      "name": "Alpine gillet hood",
+      "description": "black hood gillet",
+      "code": "Alpine gillet hood 25301701",
+      "category": "Jackets & Vests",
+      "priceCents": null,
+      "approved": false,
+      "active": false,
+      "featured": false,
+      "images": [],
+      "variants": [
+        {
+          "id": "P013-0",
+          "size": "M",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P013-1",
+          "size": "L",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P013-2",
+          "size": "Xl",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P013-3",
+          "size": "XXL",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P013-4",
+          "size": "XXXL",
+          "stock": 0,
+          "reported": null
+        }
+      ],
+      "tags": []
+    },
+    {
+      "id": "P014",
+      "slug": "alpine-hood-gillet-p014",
+      "name": "Alpine hood gillet",
+      "description": "cream hood gillet",
+      "code": "Alpine hood gillet 25301702",
+      "category": "Jackets & Vests",
+      "priceCents": 11900,
+      "approved": false,
+      "active": false,
+      "featured": false,
+      "images": [
+        "/products/drive/alpin-vest-alpin-vest-hood00033.jpg",
+        "/products/drive/alpin-vest-alpin-vest-hood00001.jpg"
+      ],
+      "variants": [
+        {
+          "id": "P014-0",
+          "size": "S",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P014-1",
+          "size": "M",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P014-2",
+          "size": "L",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P014-3",
+          "size": "Xl",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P014-4",
+          "size": "XXL",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P014-5",
+          "size": "XXXL",
+          "stock": 0,
+          "reported": null
+        }
+      ],
+      "tags": [
+        "Layering",
+        "Everyday"
+      ]
+    },
+    {
+      "id": "P015",
+      "slug": "coreloose-2-p015",
+      "name": "Coreloose.2",
+      "description": "emerald",
+      "code": "Coreloose.2 25301902",
+      "category": "Other",
+      "priceCents": null,
+      "approved": false,
+      "active": false,
+      "featured": false,
+      "images": [
+        "/products/drive/cooreloos-2-9-2626279.jpg",
+        "/products/drive/cooreloos-2-9-2626298.jpg",
+        "/products/drive/cooreloos-2-9-2626304.jpg"
+      ],
+      "variants": [
+        {
+          "id": "P015-0",
+          "size": "S",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P015-1",
+          "size": "M",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P015-2",
+          "size": "L",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P015-3",
+          "size": "XL",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P015-4",
+          "size": "XXL",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P015-5",
+          "size": "XXXL",
+          "stock": 0,
+          "reported": null
+        }
+      ],
+      "tags": []
+    },
+    {
+      "id": "P016",
+      "slug": "coreloose-2-p016",
+      "name": "Coreloose.2",
+      "description": "cream round neck",
+      "code": "Coreloose.2 25301903",
+      "category": "Other",
+      "priceCents": null,
+      "approved": false,
+      "active": false,
+      "featured": false,
+      "images": [],
+      "variants": [
+        {
+          "id": "P016-0",
+          "size": "S",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P016-1",
+          "size": "M",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P016-2",
+          "size": "L",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P016-3",
+          "size": "XL",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P016-4",
+          "size": "XXL",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P016-5",
+          "size": "XXXL",
+          "stock": 0,
+          "reported": null
+        }
+      ],
+      "tags": []
+    },
+    {
+      "id": "P017",
+      "slug": "velvet-wms-hood-p017",
+      "name": "Velvet  WMS hood",
+      "description": "black-cream FZ hood",
+      "code": "Velvet  WMS hood 25000701",
+      "category": "Jackets & Vests",
+      "priceCents": null,
+      "approved": false,
+      "active": false,
+      "featured": false,
+      "images": [],
+      "variants": [
+        {
+          "id": "P017-0",
+          "size": "S",
+          "stock": 0,
+          "reported": 34
+        },
+        {
+          "id": "P017-1",
+          "size": "M",
+          "stock": 0,
+          "reported": 52
+        },
+        {
+          "id": "P017-2",
+          "size": "L",
+          "stock": 0,
+          "reported": 58
+        },
+        {
+          "id": "P017-3",
+          "size": "XL",
+          "stock": 0,
+          "reported": 52
+        },
+        {
+          "id": "P017-4",
+          "size": "XXL",
+          "stock": 0,
+          "reported": 17
+        }
+      ],
+      "tags": []
+    },
+    {
+      "id": "P018",
+      "slug": "velvet-wms-hood-p018",
+      "name": "Velvet  WMS  hood",
+      "description": "emerald FZ hood",
+      "code": "Velvet  WMS  hood 25000702",
+      "category": "Jackets & Vests",
+      "priceCents": null,
+      "approved": false,
+      "active": false,
+      "featured": false,
+      "images": [],
+      "variants": [
+        {
+          "id": "P018-0",
+          "size": "S",
+          "stock": 0,
+          "reported": 102
+        },
+        {
+          "id": "P018-1",
+          "size": "M",
+          "stock": 0,
+          "reported": 121
+        },
+        {
+          "id": "P018-2",
+          "size": "L",
+          "stock": 0,
+          "reported": 145
+        },
+        {
+          "id": "P018-3",
+          "size": "XL",
+          "stock": 0,
+          "reported": 131
+        },
+        {
+          "id": "P018-4",
+          "size": "XXL",
+          "stock": 0,
+          "reported": 73
+        }
+      ],
+      "tags": []
+    },
+    {
+      "id": "P019",
+      "slug": "nandown-jkt-p019",
+      "name": "Nandown JKT",
+      "description": "black  FZ jkt",
+      "code": "Nandown JKT 25302901",
+      "category": "Jackets & Vests",
+      "priceCents": null,
+      "approved": false,
+      "active": false,
+      "featured": false,
+      "images": [
+        "/products/drive/nano-down-jacket-1u103263.jpg",
+        "/products/drive/nano-down-jacket-1u103276.jpg",
+        "/products/drive/nano-down-jacket-1u103296.jpg",
+        "/products/drive/nano-down-jacket-1u103302.jpg"
+      ],
+      "variants": [
+        {
+          "id": "P019-0",
+          "size": "S",
+          "stock": 0,
+          "reported": 28
+        }
+      ],
+      "tags": []
+    },
+    {
+      "id": "P020",
+      "slug": "nandown-jkt-p020",
+      "name": "Nandown JKT",
+      "description": "black FZ jkt",
+      "code": "Nandown JKT 25302901",
+      "category": "Jackets & Vests",
+      "priceCents": null,
+      "approved": false,
+      "active": false,
+      "featured": false,
+      "images": [
+        "/products/drive/nano-down-jacket-1u103263.jpg",
+        "/products/drive/nano-down-jacket-1u103276.jpg",
+        "/products/drive/nano-down-jacket-1u103296.jpg",
+        "/products/drive/nano-down-jacket-1u103302.jpg"
+      ],
+      "variants": [
+        {
+          "id": "P020-0",
+          "size": "M",
+          "stock": 0,
+          "reported": 48
+        },
+        {
+          "id": "P020-1",
+          "size": "L",
+          "stock": 0,
+          "reported": 53
+        },
+        {
+          "id": "P020-2",
+          "size": "XL",
+          "stock": 0,
+          "reported": 49
+        },
+        {
+          "id": "P020-3",
+          "size": "XXL",
+          "stock": 0,
+          "reported": 24
+        },
+        {
+          "id": "P020-4",
+          "size": "XXXL",
+          "stock": 0,
+          "reported": 7
+        }
+      ],
+      "tags": []
+    },
+    {
+      "id": "P021",
+      "slug": "nandown-fz-gillet-p021",
+      "name": "Nandown FZ Gillet",
+      "description": "black FZ gillet",
+      "code": "Nandown FZ Gillet 25303001",
+      "category": "Jackets & Vests",
+      "priceCents": null,
+      "approved": false,
+      "active": false,
+      "featured": false,
+      "images": [],
+      "variants": [
+        {
+          "id": "P021-0",
+          "size": "S",
+          "stock": 0,
+          "reported": 43
+        },
+        {
+          "id": "P021-1",
+          "size": "M",
+          "stock": 0,
+          "reported": 66
+        },
+        {
+          "id": "P021-2",
+          "size": "L",
+          "stock": 0,
+          "reported": 65
+        },
+        {
+          "id": "P021-3",
+          "size": "XL",
+          "stock": 0,
+          "reported": 58
+        },
+        {
+          "id": "P021-4",
+          "size": "XXL",
+          "stock": 0,
+          "reported": 28
+        },
+        {
+          "id": "P021-5",
+          "size": "XXXL",
+          "stock": 0,
+          "reported": 10
+        }
+      ],
+      "tags": []
+    },
+    {
+      "id": "P022",
+      "slug": "summit-p022",
+      "name": "Summit ",
+      "description": "black FZ hood jkt",
+      "code": "Summit  25302101",
+      "category": "Jackets & Vests",
+      "priceCents": null,
+      "approved": false,
+      "active": false,
+      "featured": false,
+      "images": [
+        "/products/drive/summit-resized-9-2626408.jpg",
+        "/products/drive/summit-resized-9-2626427.jpg",
+        "/products/drive/summit-resized-9-2626420.jpg",
+        "/products/drive/summit-resized-9-2626441.jpg"
+      ],
+      "variants": [
+        {
+          "id": "P022-0",
+          "size": "S",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P022-1",
+          "size": "M",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P022-2",
+          "size": "L",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P022-3",
+          "size": "XL",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P022-4",
+          "size": "XXL",
+          "stock": 0,
+          "reported": null
+        },
+        {
+          "id": "P022-5",
+          "size": "XXXL",
+          "stock": 0,
+          "reported": null
+        }
+      ],
+      "tags": []
+    },
+    {
+      "id": "P023",
+      "slug": "snake-scarf-p023",
+      "name": "Snake scarf",
+      "description": "black fleece scarf",
+      "code": "Snake scarf 25302401",
+      "category": "Accessories",
+      "priceCents": 1900,
+      "approved": false,
+      "active": false,
+      "featured": false,
+      "images": [
+        "/products/drive/snake-scarf-black.jpg"
+      ],
+      "variants": [
+        {
+          "id": "P023-0",
+          "size": "one size",
+          "stock": 0,
+          "reported": 298
+        }
+      ],
+      "tags": [
+        "Layering",
+        "Accessories"
+      ]
+    },
+    {
+      "id": "P024",
+      "slug": "snake-scarf-p024",
+      "name": "Snake scarf",
+      "description": "cream fleece scarf",
+      "code": "Snake scarf 25302402",
+      "category": "Accessories",
+      "priceCents": 1900,
+      "approved": false,
+      "active": false,
+      "featured": false,
+      "images": [
+        "/products/drive/snake-scarf-cream.jpg"
+      ],
+      "variants": [
+        {
+          "id": "P024-0",
+          "size": "one size",
+          "stock": 0,
+          "reported": 508
+        }
+      ],
+      "tags": [
+        "Layering",
+        "Accessories"
+      ]
+    },
+    {
+      "id": "P025",
+      "slug": "snake-scarf-p025",
+      "name": "Snake scarf",
+      "description": "emerald fleece scarf",
+      "code": "Snake scarf 25302403",
+      "category": "Accessories",
+      "priceCents": 1900,
+      "approved": false,
+      "active": false,
+      "featured": false,
+      "images": [
+        "/products/drive/snake-scarf-emerald.jpg"
+      ],
+      "variants": [
+        {
+          "id": "P025-0",
+          "size": "one size",
+          "stock": 0,
+          "reported": 511
+        }
+      ],
+      "tags": [
+        "Layering",
+        "Accessories"
+      ]
+    },
+    {
+      "id": "P026",
+      "slug": "velvet-wms-hood-p026",
+      "name": "Velvet WMS hood",
+      "description": "cream FZ hood",
+      "code": "Velvet WMS hood 25000704",
+      "category": "Jackets & Vests",
+      "priceCents": null,
+      "approved": false,
+      "active": false,
+      "featured": false,
+      "images": [],
+      "variants": [
+        {
+          "id": "P026-0",
+          "size": "S",
+          "stock": 0,
+          "reported": 56
+        },
+        {
+          "id": "P026-1",
+          "size": "M",
+          "stock": 0,
+          "reported": 68
+        },
+        {
+          "id": "P026-2",
+          "size": "L",
+          "stock": 0,
+          "reported": 47
+        },
+        {
+          "id": "P026-3",
+          "size": "XL",
+          "stock": 0,
+          "reported": 57
+        },
+        {
+          "id": "P026-4",
+          "size": "XXL",
+          "stock": 0,
+          "reported": 30
+        }
+      ],
+      "tags": []
+    },
+    {
+      "id": "P027",
+      "slug": "velvet-wms-hood-p027",
+      "name": "Velvet WMS hood",
+      "description": "black FZ hood",
+      "code": "Velvet WMS hood 25000703",
+      "category": "Jackets & Vests",
+      "priceCents": null,
+      "approved": false,
+      "active": false,
+      "featured": false,
+      "images": [],
+      "variants": [
+        {
+          "id": "P027-0",
+          "size": "S",
+          "stock": 0,
+          "reported": 95
+        },
+        {
+          "id": "P027-1",
+          "size": "M",
+          "stock": 0,
+          "reported": 110
+        },
+        {
+          "id": "P027-2",
+          "size": "L",
+          "stock": 0,
+          "reported": 121
+        },
+        {
+          "id": "P027-3",
+          "size": "XL",
+          "stock": 0,
+          "reported": 110
+        },
+        {
+          "id": "P027-4",
+          "size": "XXL",
+          "stock": 0,
+          "reported": 16
+        }
+      ],
+      "tags": []
+    }
+  ]
+}

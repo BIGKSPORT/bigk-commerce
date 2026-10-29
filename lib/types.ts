@@ -1,0 +1,5 @@
+export type Variant = {id:string;size:string;stock:number;reserved:number;reported:number|null};
+export type Product = {version:number;id:string;slug:string;name:string;description:string;code:string;category:string;priceCents:number|null;approved:boolean;active:boolean;featured:boolean;images:string[];variants:Variant[];tags:string[]};
+export type CartLine = {variantId:string;quantity:number};
+export type OrderStatus = 'demo'|'pending'|'paid'|'fulfilled'|'expired'|'cancelled'|'payment_review';
+export type Order = {id:string;status:OrderStatus;subtotal:number;shipping:number;total:number;currency:string;email:string;phone:string;createdAt:string;expiresAt:string;stripeSession:string|null;tracking:string|null;deliveryAddress:{name:string;address:string;postal:string;city:string;country:string};items:{name:string;size:string;quantity:number;unitPrice:number}[]};

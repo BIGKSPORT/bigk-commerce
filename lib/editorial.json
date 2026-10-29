@@ -1,0 +1,11 @@
+{
+  "hero": {
+    "productId": "P009",
+    "image": "/products/drive/alpin-hood-1u129615.jpg"
+  },
+  "categories": {
+    "jackets": "/products/drive/alpin-vest-pro-bigk-alpin-vest00001.jpg",
+    "pants": "/products/drive/core-pants-bigk-core-pants00014.jpg",
+    "accessories": "/products/drive/snake-scarf-black.jpg"
+  }
+}
