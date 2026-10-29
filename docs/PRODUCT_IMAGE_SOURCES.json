@@ -5,9 +5,11 @@
     "sourceName": "BigK Alpin Vest00001.jpg",
     "driveUrl": "https://drive.google.com/file/d/1itPLeY48S0BazcrLzMF1mqLVeGw0d5Fb/view?usp=drivesdk",
     "driveFileId": "1itPLeY48S0BazcrLzMF1mqLVeGw0d5Fb",
-    "localPath": "/products/drive/alpin-vest-pro-bigk-alpin-vest00001.jpg",
+    "localPath": "/products/web/alpin-vest-pro-bigk-alpin-vest00001.webp",
     "sha256": "fb9bcb4e29cd159bb71a35656044304204f85610306fc52d07336bd2f2932d87",
-    "matchBasis": "folder + visual product/colour review; final SKU approval required"
+    "matchBasis": "folder + visual product/colour review; final SKU approval required",
+    "originalLocalPath": "/products/drive/alpin-vest-pro-bigk-alpin-vest00001.jpg",
+    "webSHA256": "7fb643527caad4feb65922fd22909075e8087dc4477b9163a423a78acd8287a6"
   },
   {
     "productId": "P007",
@@ -15,9 +17,11 @@
     "sourceName": "BigK Alpin Vest00009.jpg",
     "driveUrl": "https://drive.google.com/file/d/1vM8bhBA2Je3kAKseUS6JqnkbwobWwhIs/view?usp=drivesdk",
     "driveFileId": "1vM8bhBA2Je3kAKseUS6JqnkbwobWwhIs",
-    "localPath": "/products/drive/alpin-vest-pro-bigk-alpin-vest00009.jpg",
+    "localPath": "/products/web/alpin-vest-pro-bigk-alpin-vest00009.webp",
     "sha256": "6396e60f2fa10230687ddb2ae0c6fd029313191473d7d3bb1e4fc389ab79b3da",
-    "matchBasis": "folder + visual product/colour review; final SKU approval required"
+    "matchBasis": "folder + visual product/colour review; final SKU approval required",
+    "originalLocalPath": "/products/drive/alpin-vest-pro-bigk-alpin-vest00009.jpg",
+    "webSHA256": "4758d232c494bc09119e0a40402731d9cd35f8882f97ec811b722d5101496798"
   },
   {
     "productId": "P007",
@@ -25,9 +29,11 @@
     "sourceName": "BigK Alpin Vest00048.jpg",
     "driveUrl": "https://drive.google.com/file/d/1iX-WR019OFdZ8rqmQlHTS5-vXT0aNDiP/view?usp=drivesdk",
     "driveFileId": "1iX-WR019OFdZ8rqmQlHTS5-vXT0aNDiP",
-    "localPath": "/products/drive/alpin-vest-pro-bigk-alpin-vest00048.jpg",
+    "localPath": "/products/web/alpin-vest-pro-bigk-alpin-vest00048.webp",
     "sha256": "3a812ff7cfd851bfc5db41d2851d29512a6a9edebf41cf128508b2ef2f7018ee",
-    "matchBasis": "folder + visual product/colour review; final SKU approval required"
+    "matchBasis": "folder + visual product/colour review; final SKU approval required",
+    "originalLocalPath": "/products/drive/alpin-vest-pro-bigk-alpin-vest00048.jpg",
+    "webSHA256": "c5100547852a793adcdfbb33cc00210cfc560813165ed202c94524f8883299e8"
   },
   {
     "productId": "P007",
@@ -35,9 +41,11 @@
     "sourceName": "BigK Alpin Vest00056.jpg",
     "driveUrl": "https://drive.google.com/file/d/1ogazTK4jY9qcFMDBPum2Pdiv9nU_ubm0/view?usp=drivesdk",
     "driveFileId": "1ogazTK4jY9qcFMDBPum2Pdiv9nU_ubm0",
-    "localPath": "/products/drive/alpin-vest-pro-bigk-alpin-vest00056.jpg",
+    "localPath": "/products/web/alpin-vest-pro-bigk-alpin-vest00056.webp",
     "sha256": "70db8695aaba663321a3acca481c704b2e770e06c00028e720d4bcddde3d8862",
-    "matchBasis": "folder + visual product/colour review; final SKU approval required"
+    "matchBasis": "folder + visual product/colour review; final SKU approval required",
+    "originalLocalPath": "/products/drive/alpin-vest-pro-bigk-alpin-vest00056.jpg",
+    "webSHA256": "3f77bdbda8c80053da4192e30c5b1c4f952743608e879c8df972f76d7a0354a1"
   },
   {
     "productId": "P009",
@@ -45,9 +53,11 @@
     "sourceName": "1U129615.jpg",
     "driveUrl": "https://drive.google.com/file/d/1AqtPaxS9Jz73qQsYBLvEqQhwnGpq345Y/view?usp=drivesdk",
     "driveFileId": "1AqtPaxS9Jz73qQsYBLvEqQhwnGpq345Y",
-    "localPath": "/products/drive/alpin-hood-1u129615.jpg",
+    "localPath": "/products/web/alpin-hood-1u129615.webp",
     "sha256": "4f6663f646a62b7c201a5a711391dcf3d20d451c869a04e243c70a4a9e66bc01",
-    "matchBasis": "folder + visual product/colour review; final SKU approval required"
+    "matchBasis": "folder + visual product/colour review; final SKU approval required",
+    "originalLocalPath": "/products/drive/alpin-hood-1u129615.jpg",
+    "webSHA256": "2e1dfd5a69f1e63a5955279b6cab469dc6c7b94db24f3bd21de030be6c26624f"
   },
   {
     "productId": "P009",
@@ -55,9 +65,11 @@
     "sourceName": "1U129598.jpg",
     "driveUrl": "https://drive.google.com/file/d/1quD0qi54xi0Evxq2Abxu9YmSivqExI4o/view?usp=drivesdk",
     "driveFileId": "1quD0qi54xi0Evxq2Abxu9YmSivqExI4o",
-    "localPath": "/products/drive/alpin-hood-1u129598.jpg",
+    "localPath": "/products/web/alpin-hood-1u129598.webp",
     "sha256": "4ce8ee28f4594d715c7eb87c6b688b4c314df15b509478961187ddf38d026386",
-    "matchBasis": "folder + visual product/colour review; final SKU approval required"
+    "matchBasis": "folder + visual product/colour review; final SKU approval required",
+    "originalLocalPath": "/products/drive/alpin-hood-1u129598.jpg",
+    "webSHA256": "8204f776ce1f48c55d120932441d8e55a0b83ef45d052c1be87b9876d4fa2fc4"
   },
   {
     "productId": "P009",
@@ -65,9 +77,11 @@
     "sourceName": "1U129627.jpg",
     "driveUrl": "https://drive.google.com/file/d/1hUa__YPmS52sPiK_VFt4MoQDxuv9To7o/view?usp=drivesdk",
     "driveFileId": "1hUa__YPmS52sPiK_VFt4MoQDxuv9To7o",
-    "localPath": "/products/drive/alpin-hood-1u129627.jpg",
+    "localPath": "/products/web/alpin-hood-1u129627.webp",
     "sha256": "6a12e01a88eb9d206a48c851ff1a3ddf775caa03753c0ff14812febe9a59d551",
-    "matchBasis": "folder + visual product/colour review; final SKU approval required"
+    "matchBasis": "folder + visual product/colour review; final SKU approval required",
+    "originalLocalPath": "/products/drive/alpin-hood-1u129627.jpg",
+    "webSHA256": "59aeaa3f99b3480d1787a9c64845ba9208201680bea0622790c2668ab72168c6"
   },
   {
     "productId": "P009",
@@ -75,9 +89,11 @@
     "sourceName": "1U129632.jpg",
     "driveUrl": "https://drive.google.com/file/d/1MEGIiCzcgSIJwCsh2QWWMaBCUP8ubnAw/view?usp=drivesdk",
     "driveFileId": "1MEGIiCzcgSIJwCsh2QWWMaBCUP8ubnAw",
-    "localPath": "/products/drive/alpin-hood-1u129632.jpg",
+    "localPath": "/products/web/alpin-hood-1u129632.webp",
     "sha256": "82ff6e0195356702c8f490b736bb5a9cb4b2bc0371eaa0470b36a6950cb12bb3",
-    "matchBasis": "folder + visual product/colour review; final SKU approval required"
+    "matchBasis": "folder + visual product/colour review; final SKU approval required",
+    "originalLocalPath": "/products/drive/alpin-hood-1u129632.jpg",
+    "webSHA256": "4e744237b4deb3b78f08df54400c4d0f8057835fd14fbafa3769ea291e91d80f"
   },
   {
     "productId": "P009",
@@ -85,9 +101,11 @@
     "sourceName": "1U129638.jpg",
     "driveUrl": "https://drive.google.com/file/d/1tvvkCrDpSgfTy3vGRI0i_C1NYispA_w7/view?usp=drivesdk",
     "driveFileId": "1tvvkCrDpSgfTy3vGRI0i_C1NYispA_w7",
-    "localPath": "/products/drive/alpin-hood-1u129638.jpg",
+    "localPath": "/products/web/alpin-hood-1u129638.webp",
     "sha256": "4a275adde3ebbdb4c3aa8745850e69e97dbdfbc9dc6026f89d3f70bb9aad912f",
-    "matchBasis": "folder + visual product/colour review; final SKU approval required"
+    "matchBasis": "folder + visual product/colour review; final SKU approval required",
+    "originalLocalPath": "/products/drive/alpin-hood-1u129638.jpg",
+    "webSHA256": "6dc48b664cb8e7cf240a8cf611347e281385bdfb9a68eaa5c0844c888cc2aea7"
   },
   {
     "productId": "P010",
@@ -95,9 +113,11 @@
     "sourceName": "BigK Core pants00014.jpg",
     "driveUrl": "https://drive.google.com/file/d/14UoEx04TWiXrQxdSnbTh6IdM4HVAfnNB/view?usp=drivesdk",
     "driveFileId": "14UoEx04TWiXrQxdSnbTh6IdM4HVAfnNB",
-    "localPath": "/products/drive/core-pants-bigk-core-pants00014.jpg",
+    "localPath": "/products/web/core-pants-bigk-core-pants00014.webp",
     "sha256": "889817be0cf4a0121d15c8240c127ed9cf1fc13d8e2d538ef547a7edefecffc3",
-    "matchBasis": "folder + visual product/colour review; final SKU approval required"
+    "matchBasis": "folder + visual product/colour review; final SKU approval required",
+    "originalLocalPath": "/products/drive/core-pants-bigk-core-pants00014.jpg",
+    "webSHA256": "a97a456ee2f7ef42e02f3ebc9e16239020f3d835bd25c66cca222d17f0bbd1ff"
   },
   {
     "productId": "P010",
@@ -105,9 +125,11 @@
     "sourceName": "BigK Core pants00001.jpg",
     "driveUrl": "https://drive.google.com/file/d/12oTsB-dj51zDH7FePQBsgbAo22FqmzoP/view?usp=drivesdk",
     "driveFileId": "12oTsB-dj51zDH7FePQBsgbAo22FqmzoP",
-    "localPath": "/products/drive/core-pants-bigk-core-pants00001.jpg",
+    "localPath": "/products/web/core-pants-bigk-core-pants00001.webp",
     "sha256": "aab1d36f34e36f78a182101f749f99ef20551fb3b2a4da018b95072a9b0d059d",
-    "matchBasis": "folder + visual product/colour review; final SKU approval required"
+    "matchBasis": "folder + visual product/colour review; final SKU approval required",
+    "originalLocalPath": "/products/drive/core-pants-bigk-core-pants00001.jpg",
+    "webSHA256": "2b391434bc6aec90e707e986dc6b9c7d27ac9dc7758a5c573726922fbb96418e"
   },
   {
     "productId": "P010",
@@ -115,9 +137,11 @@
     "sourceName": "BigK Core pants00006.jpg",
     "driveUrl": "https://drive.google.com/file/d/1nRp0EXARQGS4DKyx0IHQHPLolGWiZdnQ/view?usp=drivesdk",
     "driveFileId": "1nRp0EXARQGS4DKyx0IHQHPLolGWiZdnQ",
-    "localPath": "/products/drive/core-pants-bigk-core-pants00006.jpg",
+    "localPath": "/products/web/core-pants-bigk-core-pants00006.webp",
     "sha256": "7a90463a834d4cacecf5aa16a16c39977554946e84f3c9d11c49e54c30c88e12",
-    "matchBasis": "folder + visual product/colour review; final SKU approval required"
+    "matchBasis": "folder + visual product/colour review; final SKU approval required",
+    "originalLocalPath": "/products/drive/core-pants-bigk-core-pants00006.jpg",
+    "webSHA256": "6ca9e3cfb9cbf4648f7aa543ba78a63e06c97dd9d3c988a26af571d9767c8fdc"
   },
   {
     "productId": "P011",
@@ -125,9 +149,11 @@
     "sourceName": "IMG_2334.jpg",
     "driveUrl": "https://drive.google.com/file/d/1zAHNvKbYaijNwK12EG4rfVLrqxtwiPOb/view?usp=drivesdk",
     "driveFileId": "1zAHNvKbYaijNwK12EG4rfVLrqxtwiPOb",
-    "localPath": "/products/drive/neofit-pants-img-2334.jpg",
+    "localPath": "/products/web/neofit-pants-img-2334.webp",
     "sha256": "686d2179f7c3998fcc31f18fe03cb2fd5112d468640902ff816fd2c9fad6b267",
-    "matchBasis": "folder + visual product/colour review; final SKU approval required"
+    "matchBasis": "folder + visual product/colour review; final SKU approval required",
+    "originalLocalPath": "/products/drive/neofit-pants-img-2334.jpg",
+    "webSHA256": "b33209f6ac0b09f9edfd6fa894e01764ebe40fdb3e012ebcd39325859c2223d0"
   },
   {
     "productId": "P011",
@@ -135,9 +161,11 @@
     "sourceName": "1U103020.jpg",
     "driveUrl": "https://drive.google.com/file/d/1cjCpeAq2bm0T2BMUdMdWZ1Tg9b2qKzZq/view?usp=drivesdk",
     "driveFileId": "1cjCpeAq2bm0T2BMUdMdWZ1Tg9b2qKzZq",
-    "localPath": "/products/drive/neofit-pants-1u103020.jpg",
+    "localPath": "/products/web/neofit-pants-1u103020.webp",
     "sha256": "5be1df48489e4707eb93ce553633ba3cc8d429410bd2aadbd3e7c53584da97a5",
-    "matchBasis": "folder + visual product/colour review; final SKU approval required"
+    "matchBasis": "folder + visual product/colour review; final SKU approval required",
+    "originalLocalPath": "/products/drive/neofit-pants-1u103020.jpg",
+    "webSHA256": "1f4be72b0b880fa8d5a3c296b723a56d2b753ea70200d0e0c8b78c51a573710a"
   },
   {
     "productId": "P011",
@@ -145,9 +173,11 @@
     "sourceName": "1U103134.jpg",
     "driveUrl": "https://drive.google.com/file/d/1Pay7B4hzXHVk5TnciZe3LYDaU7a5BNL3/view?usp=drivesdk",
     "driveFileId": "1Pay7B4hzXHVk5TnciZe3LYDaU7a5BNL3",
-    "localPath": "/products/drive/neofit-pants-1u103134.jpg",
+    "localPath": "/products/web/neofit-pants-1u103134.webp",
     "sha256": "cc969bfc701e85e524bc99e1da1171ceda17bea59fa569e274a74388ec05f732",
-    "matchBasis": "folder + visual product/colour review; final SKU approval required"
+    "matchBasis": "folder + visual product/colour review; final SKU approval required",
+    "originalLocalPath": "/products/drive/neofit-pants-1u103134.jpg",
+    "webSHA256": "4f01531ac5fa77caa3b8a3eea2b42f1958218660ca27cbd47bcdd2e12e261661"
   },
   {
     "productId": "P011",
@@ -155,9 +185,11 @@
     "sourceName": "1U103016.jpg",
     "driveUrl": "https://drive.google.com/file/d/1wV_s2MqPRSF1U0Du7j-MRIoCs418dCi7/view?usp=drivesdk",
     "driveFileId": "1wV_s2MqPRSF1U0Du7j-MRIoCs418dCi7",
-    "localPath": "/products/drive/neofit-pants-1u103016.jpg",
+    "localPath": "/products/web/neofit-pants-1u103016.webp",
     "sha256": "502c625727e8a6c736a97f547ab6f80ea3e733a7ef84b12785b1e843d46311f2",
-    "matchBasis": "folder + visual product/colour review; final SKU approval required"
+    "matchBasis": "folder + visual product/colour review; final SKU approval required",
+    "originalLocalPath": "/products/drive/neofit-pants-1u103016.jpg",
+    "webSHA256": "46a06e00ab548ee9b589c3f3d15bac673d1a828c4b6b903527c415ede50c37f4"
   },
   {
     "productId": "P014",
@@ -165,9 +197,11 @@
     "sourceName": "Alpin vest hood00033.jpg",
     "driveUrl": "https://drive.google.com/file/d/1eFheW9-kiT73FRF51uenOoYXyZhjjKBF/view?usp=drivesdk",
     "driveFileId": "1eFheW9-kiT73FRF51uenOoYXyZhjjKBF",
-    "localPath": "/products/drive/alpin-vest-alpin-vest-hood00033.jpg",
+    "localPath": "/products/web/alpin-vest-alpin-vest-hood00033.webp",
     "sha256": "c3d89b9a0aa49b18f2b7c7c0a4f9be0e5c1aa74792e847bee1e7931e50ce31f1",
-    "matchBasis": "folder + visual product/colour review; final SKU approval required"
+    "matchBasis": "folder + visual product/colour review; final SKU approval required",
+    "originalLocalPath": "/products/drive/alpin-vest-alpin-vest-hood00033.jpg",
+    "webSHA256": "29afb564f069f2446bd371754745f23eb41dee021094c8253274ef23e3e69e15"
   },
   {
     "productId": "P014",
@@ -175,9 +209,11 @@
     "sourceName": "Alpin vest hood00001.jpg",
     "driveUrl": "https://drive.google.com/file/d/1CW8XTB0geNQsjMLmwsaz2keMPuFpAYLd/view?usp=drivesdk",
     "driveFileId": "1CW8XTB0geNQsjMLmwsaz2keMPuFpAYLd",
-    "localPath": "/products/drive/alpin-vest-alpin-vest-hood00001.jpg",
+    "localPath": "/products/web/alpin-vest-alpin-vest-hood00001.webp",
     "sha256": "5f08d9554faee415420f6d30bf632d5dd38004e1f378cf12a734d60ce820b152",
-    "matchBasis": "folder + visual product/colour review; final SKU approval required"
+    "matchBasis": "folder + visual product/colour review; final SKU approval required",
+    "originalLocalPath": "/products/drive/alpin-vest-alpin-vest-hood00001.jpg",
+    "webSHA256": "41189818a0f2fff398266fdf7b19028de67fed2471757feace24c702ef998212"
   },
   {
     "productId": "P015",
@@ -185,9 +221,11 @@
     "sourceName": "9-2626279.jpg",
     "driveUrl": "https://drive.google.com/file/d/1y1ji6IEttt2kjrzPvujicj4FjS2pYOaE/view?usp=drivesdk",
     "driveFileId": "1y1ji6IEttt2kjrzPvujicj4FjS2pYOaE",
-    "localPath": "/products/drive/cooreloos-2-9-2626279.jpg",
+    "localPath": "/products/web/cooreloos-2-9-2626279.webp",
     "sha256": "b01b4df673b80fa0962bc13453c60631f238f09c26021db2a185d2d6ff3ae980",
-    "matchBasis": "folder + visual product/colour review; final SKU approval required"
+    "matchBasis": "folder + visual product/colour review; final SKU approval required",
+    "originalLocalPath": "/products/drive/cooreloos-2-9-2626279.jpg",
+    "webSHA256": "a0d4a1804c50b6f8d87e2dda40fd1ad3d5cf16f4ed5059a181b90fa7eabd3653"
   },
   {
     "productId": "P015",
@@ -195,9 +233,11 @@
     "sourceName": "9-2626298.jpg",
     "driveUrl": "https://drive.google.com/file/d/1fWL9O3yDiry5YrYk1VHNThInpYPhFgQc/view?usp=drivesdk",
     "driveFileId": "1fWL9O3yDiry5YrYk1VHNThInpYPhFgQc",
-    "localPath": "/products/drive/cooreloos-2-9-2626298.jpg",
+    "localPath": "/products/web/cooreloos-2-9-2626298.webp",
     "sha256": "844b5ec13d9fbc13398e12e4ce02122121f3b3957dc758d3168e075ce330b600",
-    "matchBasis": "folder + visual product/colour review; final SKU approval required"
+    "matchBasis": "folder + visual product/colour review; final SKU approval required",
+    "originalLocalPath": "/products/drive/cooreloos-2-9-2626298.jpg",
+    "webSHA256": "749c6dac79ef9f31c477405bb7e7219b5fe85cea2db632d0862002a9693b404f"
   },
   {
     "productId": "P015",
@@ -205,9 +245,11 @@
     "sourceName": "9-2626304.jpg",
     "driveUrl": "https://drive.google.com/file/d/1RITTfwFGRGrLd4FGnTd0xA-UH74msxkU/view?usp=drivesdk",
     "driveFileId": "1RITTfwFGRGrLd4FGnTd0xA-UH74msxkU",
-    "localPath": "/products/drive/cooreloos-2-9-2626304.jpg",
+    "localPath": "/products/web/cooreloos-2-9-2626304.webp",
     "sha256": "68461ab7bdf0cc47147bc9931ccca1c37bdcd2b640a9dc2f73a82e47540b007f",
-    "matchBasis": "folder + visual product/colour review; final SKU approval required"
+    "matchBasis": "folder + visual product/colour review; final SKU approval required",
+    "originalLocalPath": "/products/drive/cooreloos-2-9-2626304.jpg",
+    "webSHA256": "9892be6f519a8883c92608a8de333a765d3e833c982a8179f9da4e879bf8d131"
   },
   {
     "productId": "P019",
@@ -215,9 +257,11 @@
     "sourceName": "1U103263.jpg",
     "driveUrl": "https://drive.google.com/file/d/1b_m6Z6MQtew_SPN8Fk3qA0-JsCV_B8hN/view?usp=drivesdk",
     "driveFileId": "1b_m6Z6MQtew_SPN8Fk3qA0-JsCV_B8hN",
-    "localPath": "/products/drive/nano-down-jacket-1u103263.jpg",
+    "localPath": "/products/web/nano-down-jacket-1u103263.webp",
     "sha256": "7a7647f9c1593498b6db73bcab32eb095f79b2b636f94da3223c5533dc091bbe",
-    "matchBasis": "folder + visual product/colour review; final SKU approval required"
+    "matchBasis": "folder + visual product/colour review; final SKU approval required",
+    "originalLocalPath": "/products/drive/nano-down-jacket-1u103263.jpg",
+    "webSHA256": "7010c3ada89aec632f006d4c683582eace6f23d27cb3e93656b736fabfb85f8d"
   },
   {
     "productId": "P019",
@@ -225,9 +269,11 @@
     "sourceName": "1U103276.jpg",
     "driveUrl": "https://drive.google.com/file/d/1bq2aik22irYfi0fveXphyTMAdrdKzqQK/view?usp=drivesdk",
     "driveFileId": "1bq2aik22irYfi0fveXphyTMAdrdKzqQK",
-    "localPath": "/products/drive/nano-down-jacket-1u103276.jpg",
+    "localPath": "/products/web/nano-down-jacket-1u103276.webp",
     "sha256": "3b7b56ba7d73b2f86065e6ff06249a6eae3276f972a9cf879e6d9315c484ac91",
-    "matchBasis": "folder + visual product/colour review; final SKU approval required"
+    "matchBasis": "folder + visual product/colour review; final SKU approval required",
+    "originalLocalPath": "/products/drive/nano-down-jacket-1u103276.jpg",
+    "webSHA256": "4acd63834c442ad6377df187f3f5de8bcea45daca81270a4d962a1d140771466"
   },
   {
     "productId": "P019",
@@ -235,9 +281,11 @@
     "sourceName": "1U103296.jpg",
     "driveUrl": "https://drive.google.com/file/d/1FUdKSCOa9O_MURfSsCy3DdC7sR9xkgo8/view?usp=drivesdk",
     "driveFileId": "1FUdKSCOa9O_MURfSsCy3DdC7sR9xkgo8",
-    "localPath": "/products/drive/nano-down-jacket-1u103296.jpg",
+    "localPath": "/products/web/nano-down-jacket-1u103296.webp",
     "sha256": "b6b92be4969f29037c5312416bc926589854d1ba803150e5d5e8ede9654d7408",
-    "matchBasis": "folder + visual product/colour review; final SKU approval required"
+    "matchBasis": "folder + visual product/colour review; final SKU approval required",
+    "originalLocalPath": "/products/drive/nano-down-jacket-1u103296.jpg",
+    "webSHA256": "aab7ef65f7ea074e623df2278403d07b77d578328fd2fb08207a05fa6fc6953f"
   },
   {
     "productId": "P019",
@@ -245,9 +293,11 @@
     "sourceName": "1U103302.jpg",
     "driveUrl": "https://drive.google.com/file/d/1uRbOzG7avCx4xn320081zIqH9Y8e1mjl/view?usp=drivesdk",
     "driveFileId": "1uRbOzG7avCx4xn320081zIqH9Y8e1mjl",
-    "localPath": "/products/drive/nano-down-jacket-1u103302.jpg",
+    "localPath": "/products/web/nano-down-jacket-1u103302.webp",
     "sha256": "9dc03ff903e6d2a54b9efb7347a344ff71f09c603d21c51c49f8189391872038",
-    "matchBasis": "folder + visual product/colour review; final SKU approval required"
+    "matchBasis": "folder + visual product/colour review; final SKU approval required",
+    "originalLocalPath": "/products/drive/nano-down-jacket-1u103302.jpg",
+    "webSHA256": "8892bba338c3d7a99fb047bd0b67d5fe2f3469aca35acb2e887a24fbbd1ae7ae"
   },
   {
     "productId": "P020",
@@ -255,9 +305,11 @@
     "sourceName": "1U103263.jpg",
     "driveUrl": "https://drive.google.com/file/d/1b_m6Z6MQtew_SPN8Fk3qA0-JsCV_B8hN/view?usp=drivesdk",
     "driveFileId": "1b_m6Z6MQtew_SPN8Fk3qA0-JsCV_B8hN",
-    "localPath": "/products/drive/nano-down-jacket-1u103263.jpg",
+    "localPath": "/products/web/nano-down-jacket-1u103263.webp",
     "sha256": "7a7647f9c1593498b6db73bcab32eb095f79b2b636f94da3223c5533dc091bbe",
-    "matchBasis": "folder + visual product/colour review; final SKU approval required"
+    "matchBasis": "folder + visual product/colour review; final SKU approval required",
+    "originalLocalPath": "/products/drive/nano-down-jacket-1u103263.jpg",
+    "webSHA256": "7010c3ada89aec632f006d4c683582eace6f23d27cb3e93656b736fabfb85f8d"
   },
   {
     "productId": "P020",
@@ -265,9 +317,11 @@
     "sourceName": "1U103276.jpg",
     "driveUrl": "https://drive.google.com/file/d/1bq2aik22irYfi0fveXphyTMAdrdKzqQK/view?usp=drivesdk",
     "driveFileId": "1bq2aik22irYfi0fveXphyTMAdrdKzqQK",
-    "localPath": "/products/drive/nano-down-jacket-1u103276.jpg",
+    "localPath": "/products/web/nano-down-jacket-1u103276.webp",
     "sha256": "3b7b56ba7d73b2f86065e6ff06249a6eae3276f972a9cf879e6d9315c484ac91",
-    "matchBasis": "folder + visual product/colour review; final SKU approval required"
+    "matchBasis": "folder + visual product/colour review; final SKU approval required",
+    "originalLocalPath": "/products/drive/nano-down-jacket-1u103276.jpg",
+    "webSHA256": "4acd63834c442ad6377df187f3f5de8bcea45daca81270a4d962a1d140771466"
   },
   {
     "productId": "P020",
@@ -275,9 +329,11 @@
     "sourceName": "1U103296.jpg",
     "driveUrl": "https://drive.google.com/file/d/1FUdKSCOa9O_MURfSsCy3DdC7sR9xkgo8/view?usp=drivesdk",
     "driveFileId": "1FUdKSCOa9O_MURfSsCy3DdC7sR9xkgo8",
-    "localPath": "/products/drive/nano-down-jacket-1u103296.jpg",
+    "localPath": "/products/web/nano-down-jacket-1u103296.webp",
     "sha256": "b6b92be4969f29037c5312416bc926589854d1ba803150e5d5e8ede9654d7408",
-    "matchBasis": "folder + visual product/colour review; final SKU approval required"
+    "matchBasis": "folder + visual product/colour review; final SKU approval required",
+    "originalLocalPath": "/products/drive/nano-down-jacket-1u103296.jpg",
+    "webSHA256": "aab7ef65f7ea074e623df2278403d07b77d578328fd2fb08207a05fa6fc6953f"
   },
   {
     "productId": "P020",
@@ -285,9 +341,11 @@
     "sourceName": "1U103302.jpg",
     "driveUrl": "https://drive.google.com/file/d/1uRbOzG7avCx4xn320081zIqH9Y8e1mjl/view?usp=drivesdk",
     "driveFileId": "1uRbOzG7avCx4xn320081zIqH9Y8e1mjl",
-    "localPath": "/products/drive/nano-down-jacket-1u103302.jpg",
+    "localPath": "/products/web/nano-down-jacket-1u103302.webp",
     "sha256": "9dc03ff903e6d2a54b9efb7347a344ff71f09c603d21c51c49f8189391872038",
-    "matchBasis": "folder + visual product/colour review; final SKU approval required"
+    "matchBasis": "folder + visual product/colour review; final SKU approval required",
+    "originalLocalPath": "/products/drive/nano-down-jacket-1u103302.jpg",
+    "webSHA256": "8892bba338c3d7a99fb047bd0b67d5fe2f3469aca35acb2e887a24fbbd1ae7ae"
   },
   {
     "productId": "P022",
@@ -295,9 +353,11 @@
     "sourceName": "9-2626408.jpg",
     "driveUrl": "https://drive.google.com/file/d/1pZy8S0BBxELQGvKdSLnfpFaWIcBN7Np_/view?usp=drivesdk",
     "driveFileId": "1pZy8S0BBxELQGvKdSLnfpFaWIcBN7Np_",
-    "localPath": "/products/drive/summit-resized-9-2626408.jpg",
+    "localPath": "/products/web/summit-resized-9-2626408.webp",
     "sha256": "f2a65d3d86cbdc8f858dbdc8a1e8c59923c595ddbdad567c6877e255d6f7a93b",
-    "matchBasis": "folder + visual product/colour review; final SKU approval required"
+    "matchBasis": "folder + visual product/colour review; final SKU approval required",
+    "originalLocalPath": "/products/drive/summit-resized-9-2626408.jpg",
+    "webSHA256": "83f5740ba97d12335bb30f58a2195d72f5d1f69871ca8c9bf0237bc3deaeb65c"
   },
   {
     "productId": "P022",
@@ -305,9 +365,11 @@
     "sourceName": "9-2626427.jpg",
     "driveUrl": "https://drive.google.com/file/d/1ln-02crEh3w8dJFu64M8e0I5eDQDxAdl/view?usp=drivesdk",
     "driveFileId": "1ln-02crEh3w8dJFu64M8e0I5eDQDxAdl",
-    "localPath": "/products/drive/summit-resized-9-2626427.jpg",
+    "localPath": "/products/web/summit-resized-9-2626427.webp",
     "sha256": "e214e335c12ba2b55f58d56288cd5a3978e340e6f11df9dbb83383b4c2ce374e",
-    "matchBasis": "folder + visual product/colour review; final SKU approval required"
+    "matchBasis": "folder + visual product/colour review; final SKU approval required",
+    "originalLocalPath": "/products/drive/summit-resized-9-2626427.jpg",
+    "webSHA256": "ed725dfa5b01219ad0e40800bb6485ef6eecb0aa0dc736512b12e51b24763ec2"
   },
   {
     "productId": "P022",
@@ -315,9 +377,11 @@
     "sourceName": "9-2626420.jpg",
     "driveUrl": "https://drive.google.com/file/d/1TfRXSfhqJu8Yk11H3P143EhDfWiscHsL/view?usp=drivesdk",
     "driveFileId": "1TfRXSfhqJu8Yk11H3P143EhDfWiscHsL",
-    "localPath": "/products/drive/summit-resized-9-2626420.jpg",
+    "localPath": "/products/web/summit-resized-9-2626420.webp",
     "sha256": "730a267a528767928d513540ae9e2f78017a67b1f9c79cb27cd8d6b94197e2e0",
-    "matchBasis": "folder + visual product/colour review; final SKU approval required"
+    "matchBasis": "folder + visual product/colour review; final SKU approval required",
+    "originalLocalPath": "/products/drive/summit-resized-9-2626420.jpg",
+    "webSHA256": "56a718e76388093a1e94acc75c6ae0a4b32ab7617bc9b0ba765e0ec62aa83c3b"
   },
   {
     "productId": "P022",
@@ -325,9 +389,11 @@
     "sourceName": "9-2626441.jpg",
     "driveUrl": "https://drive.google.com/file/d/18-9_qXZwTS8TlPnuEnlUQftUJHwPAIFv/view?usp=drivesdk",
     "driveFileId": "18-9_qXZwTS8TlPnuEnlUQftUJHwPAIFv",
-    "localPath": "/products/drive/summit-resized-9-2626441.jpg",
+    "localPath": "/products/web/summit-resized-9-2626441.webp",
     "sha256": "900f5d50f32ce145fa507c6a365fd0adfce73d8f491b6a5a5fd22adbf5623a68",
-    "matchBasis": "folder + visual product/colour review; final SKU approval required"
+    "matchBasis": "folder + visual product/colour review; final SKU approval required",
+    "originalLocalPath": "/products/drive/summit-resized-9-2626441.jpg",
+    "webSHA256": "5ee6fca04e99fd63f71649e0acbac09a13795a600d6ec6d47447daf1b49e0d0d"
   },
   {
     "productId": "P023",
@@ -335,9 +401,11 @@
     "sourceName": "黑.jpg",
     "driveUrl": "https://drive.google.com/file/d/15b-MRt-kbvIznu9CO3ljXmcwWsrk1WDk/view?usp=drivesdk",
     "driveFileId": "15b-MRt-kbvIznu9CO3ljXmcwWsrk1WDk",
-    "localPath": "/products/drive/snake-scarf-black.jpg",
+    "localPath": "/products/web/snake-scarf-black.webp",
     "sha256": "7078766c74ff29a4366e49685987e4c33946037c806a089129f1fe22834f6837",
-    "matchBasis": "folder + visual product/colour review; final SKU approval required"
+    "matchBasis": "folder + visual product/colour review; final SKU approval required",
+    "originalLocalPath": "/products/drive/snake-scarf-black.jpg",
+    "webSHA256": "9b69be3cb53f7f5d27f910a3b80ae1a5905949c63cd174d5976f15e4d88ba3d7"
   },
   {
     "productId": "P024",
@@ -345,9 +413,11 @@
     "sourceName": "卡其.jpg",
     "driveUrl": "https://drive.google.com/file/d/1S_gDfENoRppRPNVdXtKErcBFzpwkuKFJ/view?usp=drivesdk",
     "driveFileId": "1S_gDfENoRppRPNVdXtKErcBFzpwkuKFJ",
-    "localPath": "/products/drive/snake-scarf-cream.jpg",
+    "localPath": "/products/web/snake-scarf-cream.webp",
     "sha256": "242f48ef02f1a5a073ff7168ddd67713b9d478a6331ceb7a9940b41f827a7789",
-    "matchBasis": "folder + visual product/colour review; final SKU approval required"
+    "matchBasis": "folder + visual product/colour review; final SKU approval required",
+    "originalLocalPath": "/products/drive/snake-scarf-cream.jpg",
+    "webSHA256": "73537bc64a75436901e89a248714c8bd2b5e288f1426b7ab072e404c9a88529a"
   },
   {
     "productId": "P025",
@@ -355,8 +425,226 @@
     "sourceName": "雾青.jpg",
     "driveUrl": "https://drive.google.com/file/d/1z4lEoEKkpqbvXfdDabUasJgWq92RGqnz/view?usp=drivesdk",
     "driveFileId": "1z4lEoEKkpqbvXfdDabUasJgWq92RGqnz",
-    "localPath": "/products/drive/snake-scarf-emerald.jpg",
+    "localPath": "/products/web/snake-scarf-emerald.webp",
     "sha256": "e5da950968787e6ebf383d6f4d159b3eb2c446fbdf17de86b951ccecd5151568",
-    "matchBasis": "folder + visual product/colour review; final SKU approval required"
+    "matchBasis": "folder + visual product/colour review; final SKU approval required",
+    "originalLocalPath": "/products/drive/snake-scarf-emerald.jpg",
+    "webSHA256": "f2447b8563e63a500f56cc373c4536f90162d2ec852c6171d84c0d3ad8e68d89"
+  },
+  {
+    "productId": "P017",
+    "sourceFolder": "VELVET",
+    "sourceName": "Zwart-beige dameshoodie met rood embleem (2).png",
+    "driveUrl": "https://drive.google.com/file/d/1OTGrLN_-ho7iVv0MTuyBHMDTZeYknIcP/view?usp=drivesdk",
+    "driveFileId": "1OTGrLN_-ho7iVv0MTuyBHMDTZeYknIcP",
+    "localPath": "/products/web/velvet-black-cream-front.webp",
+    "sha256": "eaef73e4c1be3bc06df39fa840be3cea21e4fa401650e1bcce7f902e0c3212eb",
+    "matchBasis": "VELVET folder + visual garment construction and colour match to existing catalogue description; final SKU approval required",
+    "originalLocalPath": "/products/drive/velvet-black-cream-front.png",
+    "webSHA256": "ccb3d7d812eeef0ee42c1173f0cc4bd9acf02fe5e41107c002b56482706065b4"
+  },
+  {
+    "productId": "P018",
+    "sourceFolder": "VELVET",
+    "sourceName": "Teal-en-havermoutkleurige hoodie in studio.png",
+    "driveUrl": "https://drive.google.com/file/d/1fZ_63n53bKZguvLq-PV9vRgocZNqeF_U/view?usp=drivesdk",
+    "driveFileId": "1fZ_63n53bKZguvLq-PV9vRgocZNqeF_U",
+    "localPath": "/products/web/velvet-emerald-cream-front.webp",
+    "sha256": "a3fa66abb5748711d1672270494f7a84b914403884d6e0040373e7c1728090f1",
+    "matchBasis": "VELVET folder + visual garment construction and colour match to existing catalogue description; final SKU approval required",
+    "originalLocalPath": "/products/drive/velvet-emerald-cream-front.png",
+    "webSHA256": "85bd15160db395f126a7eb3bc1eb3d9c8a3ef69e34551ead3ce35440477ac32c"
+  },
+  {
+    "productId": "P026",
+    "sourceFolder": "VELVET",
+    "sourceName": "IMG_2319.jpg",
+    "driveUrl": "https://drive.google.com/file/d/1gbInmbvw2an86nhkiNe52bIb6Ae4Y5Sr/view?usp=drivesdk",
+    "driveFileId": "1gbInmbvw2an86nhkiNe52bIb6Ae4Y5Sr",
+    "localPath": "/products/web/velvet-cream-front.webp",
+    "sha256": "5006eb21d90e148f47b51ec47091a0845835ecdf50a8b46cb1b718a62e0f5eea",
+    "matchBasis": "VELVET folder + visual garment construction and colour match to existing catalogue description; final SKU approval required",
+    "originalLocalPath": "/products/drive/velvet-cream-front.jpg",
+    "webSHA256": "80e9a57a2d9850a6124865cefd57c07b2ba6a20593327d7ac671a60917da5d30"
+  },
+  {
+    "productId": "P026",
+    "sourceFolder": "VELVET",
+    "sourceName": "IMG_2320.jpg",
+    "driveUrl": "https://drive.google.com/file/d/1F4iitIfEsrxUwlzSqXwwFR4p0aLCpnbF/view?usp=drivesdk",
+    "driveFileId": "1F4iitIfEsrxUwlzSqXwwFR4p0aLCpnbF",
+    "localPath": "/products/web/velvet-cream-angle.webp",
+    "sha256": "c6c8ecf6d41a609a7b83fd863acae6a08f1ef79d6a18e876ff6221e01b95fd03",
+    "matchBasis": "VELVET folder + visual garment construction and colour match to existing catalogue description; final SKU approval required",
+    "originalLocalPath": "/products/drive/velvet-cream-angle.jpg",
+    "webSHA256": "44cec2a7d46b9282385e95fe6e6dd55816b9552613144fcb372fffbf62c81483"
+  },
+  {
+    "productId": "P026",
+    "sourceFolder": "VELVET",
+    "sourceName": "IMG_2318.jpg",
+    "driveUrl": "https://drive.google.com/file/d/10LndojLuBgYV1GgT__6iH6eY61IM1HNx/view?usp=drivesdk",
+    "driveFileId": "10LndojLuBgYV1GgT__6iH6eY61IM1HNx",
+    "localPath": "/products/web/velvet-cream-back.webp",
+    "sha256": "ad85b89772ef0b26bb26eb16412efb8381eb11810c12a024d700b6ee2f8942ca",
+    "matchBasis": "VELVET folder + visual garment construction and colour match to existing catalogue description; final SKU approval required",
+    "originalLocalPath": "/products/drive/velvet-cream-back.jpg",
+    "webSHA256": "1d2cde481b8156911eabf21966ae0c076d2fe91ee27912085d71b9b398538fef"
+  },
+  {
+    "productId": "P026",
+    "sourceFolder": "VELVET",
+    "sourceName": "Rood schouderbadge op beige hoodie.png",
+    "driveUrl": "https://drive.google.com/file/d/1uWqLq90KkYpyl9U1wdDA7igeb2WJdG4v/view?usp=drivesdk",
+    "driveFileId": "1uWqLq90KkYpyl9U1wdDA7igeb2WJdG4v",
+    "localPath": "/products/web/velvet-cream-detail.webp",
+    "sha256": "c9ea7c70d605076de272581bc11be57f57920e0c0c39f0cfc962060d9ff16b5c",
+    "matchBasis": "VELVET folder + visual garment construction and colour match to existing catalogue description; final SKU approval required",
+    "originalLocalPath": "/products/drive/velvet-cream-detail.png",
+    "webSHA256": "9f199d2fa8e97ddfdfd980ca2267b000e798709958111c36fb03d6aa2d8c5024"
+  },
+  {
+    "productId": "P027",
+    "sourceFolder": "VELVET",
+    "sourceName": "Donkergrijze hoodie met rode rits.png",
+    "driveUrl": "https://drive.google.com/file/d/1Uy-4EOeZTebIvpF69VfhMXm2FouWtEgd/view?usp=drivesdk",
+    "driveFileId": "1Uy-4EOeZTebIvpF69VfhMXm2FouWtEgd",
+    "localPath": "/products/web/velvet-black-front.webp",
+    "sha256": "fc0c03db11f3854bd6204d492645b60118d837e78ab6eeb33bd935961b7df02d",
+    "matchBasis": "VELVET folder + visual garment construction and colour match to existing catalogue description; final SKU approval required",
+    "originalLocalPath": "/products/drive/velvet-black-front.png",
+    "webSHA256": "be1d24328aad300cdcd7668a864beeea4f37ea2c3dde20f9dcd6f7d2f6c0f486"
+  },
+  {
+    "productId": "P027",
+    "sourceFolder": "VELVET",
+    "sourceName": "Donkergrijze hoodie met BIG K-logo.png",
+    "driveUrl": "https://drive.google.com/file/d/1VjENqvuX6nrtC2w7ro9BbFB87f7xj5lS/view?usp=drivesdk",
+    "driveFileId": "1VjENqvuX6nrtC2w7ro9BbFB87f7xj5lS",
+    "localPath": "/products/web/velvet-black-back-model.webp",
+    "sha256": "3ed6e7aea11a606101678f73603b616948257d0e75e4759f2f49045f9eb9a1e8",
+    "matchBasis": "VELVET folder + visual garment construction and colour match to existing catalogue description; final SKU approval required",
+    "originalLocalPath": "/products/drive/velvet-black-back-model.png",
+    "webSHA256": "c53365dc8dd55100e738b21cb3ba9779136e649842fb5cfbf840f5ab2cb714f9"
+  },
+  {
+    "productId": "P027",
+    "sourceFolder": "VELVET",
+    "sourceName": "IMG_2319_副本.jpg",
+    "driveUrl": "https://drive.google.com/file/d/1kfuZp-EH_8QBMqPHOViY5UlOmOFRvxhU/view?usp=drivesdk",
+    "driveFileId": "1kfuZp-EH_8QBMqPHOViY5UlOmOFRvxhU",
+    "localPath": "/products/web/velvet-black-front-flat.webp",
+    "sha256": "5cbf30c197dc2fcf2d31d3cb853cb0b09f44afd9f5c668b37131979fc9d3be62",
+    "matchBasis": "VELVET folder + visual garment construction and colour match to existing catalogue description; final SKU approval required",
+    "originalLocalPath": "/products/drive/velvet-black-front-flat.jpg",
+    "webSHA256": "142851c5477619909f74dc5baa7b79d172a4dd05a9ae4df15ffaa06a7e691327"
+  },
+  {
+    "productId": "P027",
+    "sourceFolder": "VELVET",
+    "sourceName": "IMG_2320_副本.jpg",
+    "driveUrl": "https://drive.google.com/file/d/1iIB9HoMyEFHnsE8fi0egiXrJZmi0rkLW/view?usp=drivesdk",
+    "driveFileId": "1iIB9HoMyEFHnsE8fi0egiXrJZmi0rkLW",
+    "localPath": "/products/web/velvet-black-angle.webp",
+    "sha256": "5a9613aa788032d68bab9084ade5400d455c01d59518034dcfb39f45f597ab5d",
+    "matchBasis": "VELVET folder + visual garment construction and colour match to existing catalogue description; final SKU approval required",
+    "originalLocalPath": "/products/drive/velvet-black-angle.jpg",
+    "webSHA256": "9d1d34558590ddac134088365ffb92a9b0650eb100199d95f5118cf086fa430f"
+  },
+  {
+    "productId": "P027",
+    "sourceFolder": "VELVET",
+    "sourceName": "IMG_2318_副本.jpg",
+    "driveUrl": "https://drive.google.com/file/d/1q8WRsgdi8_cIzH7OxgQJf2jVMcXFeNid/view?usp=drivesdk",
+    "driveFileId": "1q8WRsgdi8_cIzH7OxgQJf2jVMcXFeNid",
+    "localPath": "/products/web/velvet-black-back-flat.webp",
+    "sha256": "23503f449e6997de51a1fbe7359518c4e7636147b7780737c06f1f3af1b039ef",
+    "matchBasis": "VELVET folder + visual garment construction and colour match to existing catalogue description; final SKU approval required",
+    "originalLocalPath": "/products/drive/velvet-black-back-flat.jpg",
+    "webSHA256": "e8b6c3a690b87fc2f99e64c911657e4ffad18a76016f8865669b4b432ca2b6cc"
+  },
+  {
+    "productId": "P021",
+    "sourceFolder": "Nano Down Vest",
+    "sourceName": "1U103249.jpg",
+    "driveUrl": "https://drive.google.com/file/d/1EfPfRwx9xIEu-hihmlyLojlaj6M6moT_/view?usp=drivesdk",
+    "driveFileId": "1EfPfRwx9xIEu-hihmlyLojlaj6M6moT_",
+    "localPath": "/products/web/nano-down-vest-1u103249.webp",
+    "sha256": "5c47f9102a3246a3c4883adabf849d6ba73b7aaf2d63a133f29a51947668c344",
+    "matchBasis": "Nano Down Vest folder + visually confirmed sleeveless black puffer vest; catalogue SKU approval remains pending",
+    "originalLocalPath": "/products/drive/nano-down-vest-1u103249.jpg",
+    "webSHA256": "b6ef8a3546d0a1f3f1a2add6bec9dc9de8517d34595398c969dbe2e25d0d33c4"
+  },
+  {
+    "productId": "P021",
+    "sourceFolder": "Nano Down Vest",
+    "sourceName": "1U103238.jpg",
+    "driveUrl": "https://drive.google.com/file/d/1grPDU9PTER23mym4RAm-yeZX425Hi1lW/view?usp=drivesdk",
+    "driveFileId": "1grPDU9PTER23mym4RAm-yeZX425Hi1lW",
+    "localPath": "/products/web/nano-down-vest-1u103238.webp",
+    "sha256": "d5734dc5edf554613e6874bf9236d735793624f7ccbf2bebd5afed4164a9cd58",
+    "matchBasis": "Nano Down Vest folder + visually confirmed sleeveless black puffer vest; catalogue SKU approval remains pending",
+    "originalLocalPath": "/products/drive/nano-down-vest-1u103238.jpg",
+    "webSHA256": "b1f1ac63f29fe0774c5172a38d94cd1a796ef78d22d3f5852bc31bb035f503f4"
+  },
+  {
+    "productId": "P021",
+    "sourceFolder": "Nano Down Vest",
+    "sourceName": "1U103210.jpg",
+    "driveUrl": "https://drive.google.com/file/d/1dQFqjrurlv8duEqgEkVoeBIBAO90B-NI/view?usp=drivesdk",
+    "driveFileId": "1dQFqjrurlv8duEqgEkVoeBIBAO90B-NI",
+    "localPath": "/products/web/nano-down-vest-1u103210.webp",
+    "sha256": "ba22e2dd9acfae47d37823a39e38d99e52d28bb4168f1adaa9aab95bf0611500",
+    "matchBasis": "Nano Down Vest folder + visually confirmed sleeveless black puffer vest; catalogue SKU approval remains pending",
+    "originalLocalPath": "/products/drive/nano-down-vest-1u103210.jpg",
+    "webSHA256": "717a6da02283de2eaff145821b1bf90185da81429b5b027df55718d5bd8b4f5f"
+  },
+  {
+    "productId": "P021",
+    "sourceFolder": "Nano Down Vest",
+    "sourceName": "1U103248.jpg",
+    "driveUrl": "https://drive.google.com/file/d/1h2VukGwOtxqfqsG8R2v5cMeq4u10dhoZ/view?usp=drivesdk",
+    "driveFileId": "1h2VukGwOtxqfqsG8R2v5cMeq4u10dhoZ",
+    "localPath": "/products/web/nano-down-vest-1u103248.webp",
+    "sha256": "317c4bdb3611178cb3dfdf7470b8b53c15a1cbddd14b75a62430189aeb395596",
+    "matchBasis": "Nano Down Vest folder + visually confirmed sleeveless black puffer vest; catalogue SKU approval remains pending",
+    "originalLocalPath": "/products/drive/nano-down-vest-1u103248.jpg",
+    "webSHA256": "4d09cf885c9d676a0081bd6f54d86ef62bb81ab303f3355eb76bab6e61f08cd6"
+  },
+  {
+    "productId": "P021",
+    "sourceFolder": "Nano Down Vest",
+    "sourceName": "1U103254.jpg",
+    "driveUrl": "https://drive.google.com/file/d/1PVgPfqWhePDdeTPYLg4d0L0mD4UpUfEG/view?usp=drivesdk",
+    "driveFileId": "1PVgPfqWhePDdeTPYLg4d0L0mD4UpUfEG",
+    "localPath": "/products/web/nano-down-vest-1u103254.webp",
+    "sha256": "edb61b39b65d9e62b17603b03e81402b20acc112467a4dbf98d470c2731c4283",
+    "matchBasis": "Completed Nano Down Vest folder + visually confirmed sleeveless black puffer; model/flat back views now present",
+    "originalLocalPath": "/products/drive/nano-down-vest-1u103254.jpg",
+    "webSHA256": "701c593c5a1c50a9b80d653401806aea0e02e0f30723ca6a3ee096ab21d1af59"
+  },
+  {
+    "productId": "P021",
+    "sourceFolder": "Nano Down Vest",
+    "sourceName": "IMG_2330.jpg",
+    "driveUrl": "https://drive.google.com/file/d/1qNZNhyybB6XFiQX4ItV6s9-qLOUChOp2/view?usp=drivesdk",
+    "driveFileId": "1qNZNhyybB6XFiQX4ItV6s9-qLOUChOp2",
+    "localPath": "/products/web/nano-down-vest-img_2330.webp",
+    "sha256": "2f9d141b0ddcaf56d372f62ad32e5662c5742a0f420c839812c11f1ab166867b",
+    "matchBasis": "Completed Nano Down Vest folder + visually confirmed sleeveless black puffer; model/flat back views now present",
+    "originalLocalPath": "/products/drive/nano-down-vest-img_2330.jpg",
+    "webSHA256": "4b0d82956b85c93d9a985e77387f8fa4063e8e8e4a7043cbc85f2d93820a7f32"
+  },
+  {
+    "productId": "P021",
+    "sourceFolder": "Nano Down Vest",
+    "sourceName": "IMG_2329.jpg",
+    "driveUrl": "https://drive.google.com/file/d/1LY_tZTDkw51-drP4BFaurHFEJrPsZfCX/view?usp=drivesdk",
+    "driveFileId": "1LY_tZTDkw51-drP4BFaurHFEJrPsZfCX",
+    "localPath": "/products/web/nano-down-vest-img_2329.webp",
+    "sha256": "610748cb78fb80cdfa62c850c1b0f13587f26ac41383ecfa3d98a200176104b5",
+    "matchBasis": "Completed Nano Down Vest folder + visually confirmed sleeveless black puffer; model/flat back views now present",
+    "originalLocalPath": "/products/drive/nano-down-vest-img_2329.jpg",
+    "webSHA256": "dc940f055d8c1c2a8fc6c7022cab54a0a008adcbed1182bd618da39e0beb82b8"
   }
 ]

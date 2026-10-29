@@ -1,0 +1,2 @@
+import type { AnchorHTMLAttributes } from 'react';
+export default function PreviewLink({href='',onClick,...props}:AnchorHTMLAttributes<HTMLAnchorElement>){return <a {...props} href={href} onClick={e=>{onClick?.(e);if(!e.defaultPrevented&&!e.metaKey&&!e.ctrlKey&&!e.shiftKey&&e.button===0&&href.startsWith('/')){e.preventDefault();window.dispatchEvent(new CustomEvent('bigk-preview-navigate',{detail:href}))}}}/>}

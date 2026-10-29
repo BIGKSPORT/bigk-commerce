@@ -4,3 +4,7 @@ node_modules/
 !.env.example
 data/
 *.tsbuildinfo
+
+# Local Supabase CLI state
+supabase/.temp/
+supabase/.branches/

@@ -4,11 +4,11 @@ A custom full-stack commerce application rebuilt from the supplied BigK preview.
 
 ## Supabase preparation
 
-Supabase PostgreSQL support is implemented and tested locally. **The remote project has not been migrated and the website is not deployed.** Follow [the setup guide](docs/SUPABASE_SETUP.md). The publishable key cannot install the database; a server-only connection string is required when configuring hosting. Customer sign-in continues to use the existing Resend magic-link flow; Supabase Auth and Storage are not yet integrated.
+Supabase PostgreSQL support is implemented and tested locally. **The BigK remote database is initialized and verified; the website is not deployed or connected to it at runtime yet.** Follow [the setup guide](docs/SUPABASE_SETUP.md). The publishable key cannot install the database; a server-only connection string is required when configuring hosting. Customer sign-in continues to use the existing Resend magic-link flow; Supabase Auth and Storage are not yet integrated.
 
 ## Approved design
 
-The approved white-led preview is now implemented in the working application, including the original slogan SVG, diagonal red photo accent, compact categories and matching product/bag/checkout/account styling. Current screenshots are in `docs/previews/`. This remains a local review build; no live deployment has occurred.
+The approved white-led preview is now implemented in the working application, including the original slogan SVG, diagonal red photo accent, compact categories and matching product/bag/checkout/account styling. Current screenshots are in `docs/previews/`. A separate [private interactive demo](https://bigk-commerce-preview.grandbead9.chatgpt.site) is published for review. The production commerce application is not deployed; the demo has no live payments, accounts or database connection.
 
 ## Official branding
 
@@ -16,7 +16,7 @@ The application now follows the supplied BigK Corporate Identity Manual: officia
 
 ## Product photography from Drive
 
-32 original Drive photos are now mapped to 12 catalogue records, with responsive Next.js image optimisation. The other 15 records still need confident image/SKU matches. Read `docs/PRODUCT_IMAGE_REVIEW.md` for the review, source links, unresolved colours/styles and the existing-database image sync task. Source photographs are unchanged; no Drive sharing or file organization was altered.
+50 supplied Drive image files are now mapped to 17 catalogue records, as optimized WebP assets with responsive Next.js image delivery. Product assets are 88% smaller; originals stay in Drive. See `docs/IMAGE_OPTIMIZATION.md`. The other 10 records still need confident image/SKU matches. Read `docs/PRODUCT_IMAGE_REVIEW.md` for the review, source links, unresolved colours/styles and the existing-database image sync task. Source photographs are unchanged; no Drive sharing or file organization was altered.
 
 ## Start locally
 

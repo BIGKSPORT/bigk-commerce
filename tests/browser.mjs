@@ -8,7 +8,7 @@ const browser=await chromium.launch({...(process.env.CHROMIUM_PATH?{executablePa
 try{const page=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[];page.setDefaultTimeout(5000);page.on('pageerror',e=>{errors.push(e.message);console.error('Browser error:',e.message)});await page.setContent('<html><head></head><body><div id="fixture"></div></body></html>');await page.addStyleTag({content:readFileSync('app/globals.css','utf8')+'\n'+readFileSync('app/identity.css','utf8')});await page.evaluate(()=>{const data=new Map();Object.defineProperty(window,'localStorage',{value:{getItem:k=>data.get(k)||null,setItem:(k,v)=>data.set(k,v),removeItem:k=>data.delete(k)}})});await page.addScriptTag({content:result.outputFiles[0].text});await page.getByRole('heading',{name:/Looking good/}).waitFor();
  if(process.env.CAPTURE_PREVIEW==='true'){
   const sources=await page.locator('img').evaluateAll(imgs=>Array.from(new Set(imgs.map(i=>i.getAttribute('src')).filter(Boolean))));
-  const assets=Object.fromEntries(sources.filter(src=>src.startsWith('/')).map(src=>[src,'data:'+ (src.endsWith('.svg')?'image/svg+xml':'image/jpeg')+';base64,'+readFileSync('public'+(src.startsWith('/_next/image?')?new URL(src,'http://localhost').searchParams.get('url'):src)).toString('base64')]));
+  const assets=Object.fromEntries(sources.filter(src=>src.startsWith('/')).map(src=>[src,'data:'+ (src.endsWith('.svg')?'image/svg+xml':'image/webp')+';base64,'+readFileSync('public'+(src.startsWith('/_next/image?')?new URL(src,'http://localhost').searchParams.get('url'):src)).toString('base64')]));
   await page.evaluate(async assets=>{const images=Array.from(document.images);for(const img of images){const src=img.getAttribute('src');if(assets[src]){img.loading='eager';img.removeAttribute('srcset');img.src=assets[src]}}await Promise.all(images.map(img=>img.decode().catch(()=>{})))},assets);
   await page.screenshot({path:process.env.PREVIEW_DESKTOP||'/workspace/bigk-brand-desktop.png'});
   await page.setViewportSize({width:390,height:844});await page.screenshot({path:process.env.PREVIEW_MOBILE||'/workspace/bigk-brand-mobile.png'});
@@ -19,6 +19,16 @@ try{const page=await browser.newPage({viewport:{width:1440,height:1000}}),errors
   await page.evaluate(()=>window.scrollTo({top:0,behavior:'instant'}));
  }
 
+
+ if(process.env.PREVIEW_VELVET){
+  await page.getByRole('textbox',{name:'Search catalogue'}).fill('Velvet');
+  await page.waitForFunction(()=>document.querySelectorAll('.product-card').length===4);
+  const sources=await page.locator('img').evaluateAll(imgs=>Array.from(new Set(imgs.map(i=>i.getAttribute('src')).filter(Boolean))));
+  const assets=Object.fromEntries(sources.filter(src=>src.startsWith('/')).map(src=>{const path=src.startsWith('/_next/image?')?new URL(src,'http://localhost').searchParams.get('url'):src;return [src,'data:'+(path.endsWith('.svg')?'image/svg+xml':path.endsWith('.png')?'image/png':path.endsWith('.webp')?'image/webp':'image/jpeg')+';base64,'+readFileSync('public'+path).toString('base64')]}));
+  await page.evaluate(async assets=>{for(const img of document.images){const src=img.getAttribute('src');if(assets[src]){img.loading='eager';img.removeAttribute('srcset');img.src=assets[src]}}await Promise.all(Array.from(document.images).map(img=>img.decode().catch(()=>{})))},assets);
+  await page.locator('#catalog').screenshot({path:process.env.PREVIEW_VELVET});
+  await page.getByRole('textbox',{name:'Search catalogue'}).fill('');
+ }
  const search=page.getByRole('textbox',{name:'Search catalogue'});await search.fill('Alpine FZ hood');assert(await page.locator('.product-card').count()>0);await search.fill('not-a-product-zzzz');assert.equal(await page.locator('.product-card').count(),0);await page.getByRole('button',{name:'Reset filters'}).click();assert.equal(await page.locator('.product-card').count(),27);
  await search.fill('Alpine FZ hood');await page.locator('.save-button').first().click();assert.equal(await page.locator('.save-button').first().getAttribute('aria-pressed'),'true');await page.locator('.product-bottom button').first().click();await page.locator('.compare-bar').getByRole('button',{name:'Compare',exact:true}).click();await page.getByRole('heading',{name:'A closer look'}).waitFor();await page.getByRole('button',{name:'Close dialog'}).click();
  await page.locator('.quick-view').first().click();await page.getByRole('button',{name:'Add to demo bag'}).click();assert(await page.getByRole('status').textContent().then(s=>s.includes('Choose a size')));await page.locator('.size-options button').first().click();await page.getByRole('button',{name:'Add to demo bag'}).click();await page.getByRole('heading',{name:'Your bag (1)'}).waitFor();await page.locator('.quantity button').last().click();await page.getByRole('heading',{name:'Your bag (2)'}).waitFor();await page.locator('.quantity button').first().click();await page.locator('.quantity button').first().click();await page.getByText('Room for your next favourite.').waitFor();await page.getByRole('button',{name:'Close dialog'}).click();

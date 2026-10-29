@@ -1,15 +1,16 @@
 import { PGlite } from '@electric-sql/pglite';
 import { PGLiteSocketServer } from '@electric-sql/pglite-socket';
-import { readFile } from 'node:fs/promises';
+import { readFile, readdir } from 'node:fs/promises';
 import { spawn } from 'node:child_process';
 import assert from 'node:assert/strict';
 const db = await PGlite.create();
 let server;
 try {
   await db.exec('CREATE ROLE anon; CREATE ROLE authenticated;');
-  const migration = await readFile(new URL('../supabase/migrations/202610290001_bigk_private_commerce.sql', import.meta.url), 'utf8');
-  await db.exec(migration);
-  await db.exec(migration);
+  const directory = new URL('../supabase/migrations/', import.meta.url);
+  const files = (await readdir(directory)).filter(name=>name.endsWith('.sql')).sort();
+  for(let run=0;run<2;run++) for(const file of files) await db.exec(await readFile(new URL(file,directory),'utf8'));
+  assert.equal((await db.query("SELECT count(*)::int AS n FROM pg_indexes WHERE schemaname='bigk' AND indexname='order_lines_variant'")).rows[0].n,1);
   assert.equal((await db.query('SELECT count(*)::int AS n FROM bigk.products')).rows[0].n,27);
   assert.equal((await db.query("SELECT has_schema_privilege('anon','bigk','USAGE') AS allowed")).rows[0].allowed,false);
   assert.equal((await db.query("SELECT has_table_privilege('authenticated','bigk.orders','SELECT') AS allowed")).rows[0].allowed,false);

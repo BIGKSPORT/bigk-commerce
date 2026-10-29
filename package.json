@@ -15,7 +15,10 @@
     "test:http": "node tests/http.mjs",
     "catalog:sync-images": "node --import tsx scripts/sync-product-images.ts",
     "supabase:check": "node --use-env-proxy --env-file=.env.local scripts/check-supabase.mjs",
-    "test:postgres": "node tests/postgres.mjs"
+    "test:postgres": "node tests/postgres.mjs",
+    "images:optimize": "node scripts/optimize-product-images.mjs",
+    "preview:build": "node scripts/build-interactive-preview.mjs",
+    "test:preview": "node tests/interactive-preview.mjs"
   },
   "dependencies": {
     "lucide-react": "1.64.0",
@@ -35,7 +38,8 @@
     "esbuild": "0.28.2",
     "playwright": "1.64.1",
     "tsx": "4.23.15",
-    "typescript": "7.0.2"
+    "typescript": "7.0.2",
+    "sharp": "0.35.5"
   },
   "engines": {
     "node": ">=24.0.0"

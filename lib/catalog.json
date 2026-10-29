@@ -325,10 +325,10 @@
       "active": false,
       "featured": false,
       "images": [
-        "/products/drive/alpin-vest-pro-bigk-alpin-vest00001.jpg",
-        "/products/drive/alpin-vest-pro-bigk-alpin-vest00009.jpg",
-        "/products/drive/alpin-vest-pro-bigk-alpin-vest00048.jpg",
-        "/products/drive/alpin-vest-pro-bigk-alpin-vest00056.jpg"
+        "/products/web/alpin-vest-pro-bigk-alpin-vest00001.webp",
+        "/products/web/alpin-vest-pro-bigk-alpin-vest00009.webp",
+        "/products/web/alpin-vest-pro-bigk-alpin-vest00048.webp",
+        "/products/web/alpin-vest-pro-bigk-alpin-vest00056.webp"
       ],
       "variants": [
         {
@@ -437,11 +437,11 @@
       "active": false,
       "featured": false,
       "images": [
-        "/products/drive/alpin-hood-1u129615.jpg",
-        "/products/drive/alpin-hood-1u129598.jpg",
-        "/products/drive/alpin-hood-1u129627.jpg",
-        "/products/drive/alpin-hood-1u129632.jpg",
-        "/products/drive/alpin-hood-1u129638.jpg"
+        "/products/web/alpin-hood-1u129615.webp",
+        "/products/web/alpin-hood-1u129598.webp",
+        "/products/web/alpin-hood-1u129627.webp",
+        "/products/web/alpin-hood-1u129632.webp",
+        "/products/web/alpin-hood-1u129638.webp"
       ],
       "variants": [
         {
@@ -498,9 +498,9 @@
       "active": false,
       "featured": false,
       "images": [
-        "/products/drive/core-pants-bigk-core-pants00014.jpg",
-        "/products/drive/core-pants-bigk-core-pants00001.jpg",
-        "/products/drive/core-pants-bigk-core-pants00006.jpg"
+        "/products/web/core-pants-bigk-core-pants00014.webp",
+        "/products/web/core-pants-bigk-core-pants00001.webp",
+        "/products/web/core-pants-bigk-core-pants00006.webp"
       ],
       "variants": [
         {
@@ -557,10 +557,10 @@
       "active": false,
       "featured": false,
       "images": [
-        "/products/drive/neofit-pants-img-2334.jpg",
-        "/products/drive/neofit-pants-1u103020.jpg",
-        "/products/drive/neofit-pants-1u103134.jpg",
-        "/products/drive/neofit-pants-1u103016.jpg"
+        "/products/web/neofit-pants-img-2334.webp",
+        "/products/web/neofit-pants-1u103020.webp",
+        "/products/web/neofit-pants-1u103134.webp",
+        "/products/web/neofit-pants-1u103016.webp"
       ],
       "variants": [
         {
@@ -682,8 +682,8 @@
       "active": false,
       "featured": false,
       "images": [
-        "/products/drive/alpin-vest-alpin-vest-hood00033.jpg",
-        "/products/drive/alpin-vest-alpin-vest-hood00001.jpg"
+        "/products/web/alpin-vest-alpin-vest-hood00033.webp",
+        "/products/web/alpin-vest-alpin-vest-hood00001.webp"
       ],
       "variants": [
         {
@@ -740,9 +740,9 @@
       "active": false,
       "featured": false,
       "images": [
-        "/products/drive/cooreloos-2-9-2626279.jpg",
-        "/products/drive/cooreloos-2-9-2626298.jpg",
-        "/products/drive/cooreloos-2-9-2626304.jpg"
+        "/products/web/cooreloos-2-9-2626279.webp",
+        "/products/web/cooreloos-2-9-2626298.webp",
+        "/products/web/cooreloos-2-9-2626304.webp"
       ],
       "variants": [
         {
@@ -847,7 +847,9 @@
       "approved": false,
       "active": false,
       "featured": false,
-      "images": [],
+      "images": [
+        "/products/web/velvet-black-cream-front.webp"
+      ],
       "variants": [
         {
           "id": "P017-0",
@@ -893,7 +895,9 @@
       "approved": false,
       "active": false,
       "featured": false,
-      "images": [],
+      "images": [
+        "/products/web/velvet-emerald-cream-front.webp"
+      ],
       "variants": [
         {
           "id": "P018-0",
@@ -940,10 +944,10 @@
       "active": false,
       "featured": false,
       "images": [
-        "/products/drive/nano-down-jacket-1u103263.jpg",
-        "/products/drive/nano-down-jacket-1u103276.jpg",
-        "/products/drive/nano-down-jacket-1u103296.jpg",
-        "/products/drive/nano-down-jacket-1u103302.jpg"
+        "/products/web/nano-down-jacket-1u103263.webp",
+        "/products/web/nano-down-jacket-1u103276.webp",
+        "/products/web/nano-down-jacket-1u103296.webp",
+        "/products/web/nano-down-jacket-1u103302.webp"
       ],
       "variants": [
         {
@@ -967,10 +971,10 @@
       "active": false,
       "featured": false,
       "images": [
-        "/products/drive/nano-down-jacket-1u103263.jpg",
-        "/products/drive/nano-down-jacket-1u103276.jpg",
-        "/products/drive/nano-down-jacket-1u103296.jpg",
-        "/products/drive/nano-down-jacket-1u103302.jpg"
+        "/products/web/nano-down-jacket-1u103263.webp",
+        "/products/web/nano-down-jacket-1u103276.webp",
+        "/products/web/nano-down-jacket-1u103296.webp",
+        "/products/web/nano-down-jacket-1u103302.webp"
       ],
       "variants": [
         {
@@ -1017,7 +1021,15 @@
       "approved": false,
       "active": false,
       "featured": false,
-      "images": [],
+      "images": [
+        "/products/web/nano-down-vest-1u103249.webp",
+        "/products/web/nano-down-vest-1u103238.webp",
+        "/products/web/nano-down-vest-1u103210.webp",
+        "/products/web/nano-down-vest-1u103248.webp",
+        "/products/web/nano-down-vest-1u103254.webp",
+        "/products/web/nano-down-vest-img_2330.webp",
+        "/products/web/nano-down-vest-img_2329.webp"
+      ],
       "variants": [
         {
           "id": "P021-0",
@@ -1070,10 +1082,10 @@
       "active": false,
       "featured": false,
       "images": [
-        "/products/drive/summit-resized-9-2626408.jpg",
-        "/products/drive/summit-resized-9-2626427.jpg",
-        "/products/drive/summit-resized-9-2626420.jpg",
-        "/products/drive/summit-resized-9-2626441.jpg"
+        "/products/web/summit-resized-9-2626408.webp",
+        "/products/web/summit-resized-9-2626427.webp",
+        "/products/web/summit-resized-9-2626420.webp",
+        "/products/web/summit-resized-9-2626441.webp"
       ],
       "variants": [
         {
@@ -1127,7 +1139,7 @@
       "active": false,
       "featured": false,
       "images": [
-        "/products/drive/snake-scarf-black.jpg"
+        "/products/web/snake-scarf-black.webp"
       ],
       "variants": [
         {
@@ -1154,7 +1166,7 @@
       "active": false,
       "featured": false,
       "images": [
-        "/products/drive/snake-scarf-cream.jpg"
+        "/products/web/snake-scarf-cream.webp"
       ],
       "variants": [
         {
@@ -1181,7 +1193,7 @@
       "active": false,
       "featured": false,
       "images": [
-        "/products/drive/snake-scarf-emerald.jpg"
+        "/products/web/snake-scarf-emerald.webp"
       ],
       "variants": [
         {
@@ -1207,7 +1219,12 @@
       "approved": false,
       "active": false,
       "featured": false,
-      "images": [],
+      "images": [
+        "/products/web/velvet-cream-front.webp",
+        "/products/web/velvet-cream-angle.webp",
+        "/products/web/velvet-cream-back.webp",
+        "/products/web/velvet-cream-detail.webp"
+      ],
       "variants": [
         {
           "id": "P026-0",
@@ -1253,7 +1270,13 @@
       "approved": false,
       "active": false,
       "featured": false,
-      "images": [],
+      "images": [
+        "/products/web/velvet-black-front.webp",
+        "/products/web/velvet-black-back-model.webp",
+        "/products/web/velvet-black-front-flat.webp",
+        "/products/web/velvet-black-angle.webp",
+        "/products/web/velvet-black-back-flat.webp"
+      ],
       "variants": [
         {
           "id": "P027-0",

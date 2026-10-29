@@ -1,10 +1,10 @@
 # BigK Supabase Free setup
 
-Status: PostgreSQL code and SQL migration prepared. No tables have been installed in the remote project, no production data has been transferred, no hosting has been configured, and checkout stays in demo mode. The supplied public key was accepted by the Auth settings endpoint; that does not prove schema or database access.
+Status on 29 October 2026: the Supabase plugin installed and verified the application schema in project tvlfpxlfuatvtuiyrcam (EU Paris), whose organization was confirmed on the Free plan. The database has 27 products, 131 size variants, zero confirmed stock and zero orders. All 11 application tables have RLS enabled and deny SELECT to anon/authenticated roles. VELVET and Nano Down Vest galleries were added with guarded data migrations, then changed to optimized WebP paths. Remote readback confirms 17 products with images and 50 distinct image paths. No hosting has been configured, the application runtime is not yet connected to this remote database, and checkout stays in demo mode.
 
-## 1. Install the schema in your Supabase dashboard
+## 1. Database setup is already completed for BigK
 
-Open your BigK Supabase project → SQL Editor → New query. Copy the entire contents of `supabase/migrations/202610290001_bigk_private_commerce.sql`, paste it into the editor, and run it as the default postgres role. The script creates a private `bigk` schema, 11 tables, indexes, and 27 catalogue records and their variants. All imported stock is zero and all products are inactive/unapproved. It can be rerun without replacing existing catalogue values, stock or orders.
+You do not need to run setup SQL manually for the existing project. The repository migration filenames match the remote migration history. For a separate fresh project, apply all files in `supabase/migrations/` in timestamp order as the migration owner. The initial script creates a private `bigk` schema, 11 tables, indexes, and 27 catalogue records and their variants. All imported stock is zero and all products are inactive/unapproved. It can be rerun without replacing existing catalogue values, stock or orders.
 
 This initializes a fresh catalogue. It does not copy local demo orders, sessions, customers, or inventory edits into Supabase. If real operational records are ever added locally, export/reconcile them before switching databases.
 
@@ -20,7 +20,7 @@ Expected initially: 27 products, 0 confirmed stock, all 11 tables with rowsecuri
 
 ## 2. Configure the server connection privately
 
-In Supabase click Connect → Transaction pooler. Copy the PostgreSQL connection URI into the hosting platform's **secret environment variable** named `DATABASE_URL`. Replace the password placeholder in the platform, using URL encoding for password special characters. Do not paste this URI or the database password into chat, a README, or GitHub. Prepared statements are disabled in the driver to support transaction pooling. TLS certificate verification stays enabled; if your project needs its downloaded CA certificate, put the PEM in `DATABASE_CA_CERT`.
+Before production, provision a dedicated application database login with only required table/sequence privileges and appropriate server-role RLS policies; do not run the application with the postgres administrative login. This application login is not yet configured. In Supabase click Connect → Transaction pooler, using the dedicated application login. Copy the PostgreSQL connection URI into the hosting platform's **secret environment variable** named `DATABASE_URL`. Replace the password placeholder in the platform, using URL encoding for password special characters. Do not paste this URI or the database password into chat, a README, or GitHub. Prepared statements are disabled in the driver to support transaction pooling. TLS certificate verification stays enabled; if your project needs its downloaded CA certificate, put the PEM in `DATABASE_CA_CERT`.
 
 Required server settings:
 
@@ -61,3 +61,11 @@ Short write transactions use a database advisory lock shared across instances to
 Supabase supplies the database, not this Next.js frontend. GitHub stores the code. The current application is a Node.js 24 Next.js server; uploading it to Cloudflare Pages as static files will not provide checkout/account APIs. A Cloudflare Workers/OpenNext adaptation and deployment verification are still required for that free hosting route. Do not select Vercel Hobby for a commercial store. No paid plan is required or purchased by this source change.
 
 Before live sales: confirm catalogue prices, available stock, missing photos, legal details, Stripe and email configuration; test a real provider sandbox flow, backups and scheduled jobs. Payment collection remains blocked until explicitly configured and approved.
+
+## Remote advisor review
+
+The initial advisor check found a missing foreign-key index on order_lines.variant_id; a follow-up migration adds it. Informational [RLS enabled without policies](https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy) notices are intentional for the current private schema: browser roles have no grants and no policies. Future server-login access must use scoped grants/policies rather than disabling RLS. Fresh indexes may be reported as [unused](https://supabase.com/docs/guides/database/database-linter?lint=0005_unused_index) before the website sends traffic; retain them until real query statistics justify removal.
+
+## Private interactive preview
+
+The separately hosted [BigK interactive preview](https://bigk-commerce-preview.grandbead9.chatgpt.site) is owner-private and uses a fixed catalogue snapshot. It does not query Supabase or create real orders. Account sign-in, payments, live stock and admin services are disabled in that static demonstration. The production Next.js application still needs its server connection, hosting adaptation and staging checks. Do not treat the preview publication as a production commerce launch.
