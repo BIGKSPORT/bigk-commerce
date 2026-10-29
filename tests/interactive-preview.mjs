@@ -21,6 +21,22 @@ try{
  await search.hover();assert.equal(await media.getAttribute('data-active-photo'),'1');
  await black.locator('.card-photo-carousel>a').click();
  await page.locator('.pdp-detail h1').waitFor();assert.equal(await page.locator('.hero-section').count(),0);
+
+ // Measure real native scrolling: pinned image, covering sheet, reverse and release.
+ for(const viewport of [{width:1440,height:1000},{width:390,height:844},{width:844,height:390}]){
+  await page.setViewportSize(viewport);
+  await page.emulateMedia({reducedMotion:'reduce'});
+  const metrics=await page.evaluate(()=>{window.scrollTo({top:0,behavior:'instant'});const gallery=document.querySelector('.pdp-detail>.product-gallery'),panel=document.querySelector('.pdp-detail>.detail-info');return {start:gallery.getBoundingClientRect().top,top:parseFloat(getComputedStyle(gallery).top),height:gallery.getBoundingClientRect().height,panel:panel.getBoundingClientRect().top}});
+  const pinnedAt=Math.max(0,metrics.start-metrics.top)+30;
+  async function sample(y){await page.evaluate(y=>window.scrollTo({top:y,behavior:'instant'}),y);await page.evaluate(()=>new Promise(requestAnimationFrame));return page.evaluate(()=>{const g=document.querySelector('.pdp-detail>.product-gallery').getBoundingClientRect(),p=document.querySelector('.pdp-detail>.detail-info').getBoundingClientRect();return {gallery:g.top,panel:p.top,overflow:document.documentElement.scrollWidth>innerWidth,header:(document.querySelector(innerWidth<=760?'.pdp-mobile-header':'.pdp-desktop-header')).getBoundingClientRect().top}})}
+  const a=await sample(pinnedAt),b=await sample(pinnedAt+100);
+  assert(Math.abs(a.gallery-metrics.top)<2,'Gallery pins below the header');assert(Math.abs(b.gallery-a.gallery)<2,'Image remains pinned while sheet moves');assert(Math.abs(a.panel-b.panel-100)<2,'Panel tracks native scrolling');assert(!b.overflow);assert(Math.abs(b.header)<2,'Header stays visible');
+  const covered=await sample(metrics.panel-metrics.top+10);assert(covered.panel<=metrics.top,'Sheet covers the image');
+  assert(await page.evaluate(top=>{const hit=document.elementFromPoint(innerWidth/2,top+30);return !!hit?.closest('.detail-info')},metrics.top),'Information sheet paints above the image');
+  const reversed=await sample(pinnedAt);assert(Math.abs(reversed.panel-a.panel)<2,'Upward scroll reverses without jumps');
+  await page.locator('.pdp-more').scrollIntoViewIfNeeded();assert((await page.locator('.pdp-detail>.product-gallery').boundingBox()).y<metrics.top,'Gallery releases into remaining content');
+ }
+ await page.setViewportSize({width:1440,height:1000});await page.evaluate(()=>window.scrollTo({top:0,behavior:'instant'}));await page.emulateMedia({reducedMotion:'no-preference'});
  assert.equal(await page.locator('.product-colour-options a').count(),4);
  const gallery=page.getByRole('region',{name:'Product photos'});
  await page.getByRole('button',{name:'Next product photo',exact:true}).click();assert.equal(await gallery.getAttribute('data-active-photo'),'2');

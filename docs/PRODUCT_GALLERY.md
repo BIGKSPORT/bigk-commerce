@@ -16,3 +16,9 @@ The Zalando product page at https://www.zalando.be/nike-sportswear-club-hoodie-h
 - Reduced-motion settings disable gallery animations. Swiping preserves vertical scrolling, and thumbnail changes scroll only their own rail. Dialogs have accessible names.
 
 Validation: strict TypeScript, production build, production HTTP product-route checks, plus isolated browser tests for image hover, true product navigation, four colours, thumbnail hover, keyboard controls, full-screen zoom, native touch swiping, the product-help panel, mobile overflow and the existing demo checkout flow. The demo remains owner-private and cannot charge or create production orders.
+
+## Native scroll-over sheet
+
+Full product pages now use a stacked CSS sticky gallery below an opaque white information panel. The panel scrolls in normal document flow; upward scrolling reverses the effect. The gallery is bounded by the product section and releases before recommendations. Quick views retain their original layout. Stable viewport units bound the gallery height, with separate mobile and desktop header offsets. Existing pan-y/pinch-zoom, keyboard and reduced-motion behavior is retained. No scroll listeners, scroll locking or nested information scrolling are used.
+
+Browser geometry and hit-testing pass at 1440×1000, 390×844 and 844×390: image pinning, panel displacement/coverage, reverse scrolling, sticky release, header visibility and overflow. Existing gallery swipe, keyboard, fullscreen and demo commerce checks pass in the isolated preview fixture.

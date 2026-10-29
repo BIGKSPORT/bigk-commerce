@@ -284,3 +284,26 @@
  .product-help-modal{width:100vw;border:0}.product-help-modal .modal-heading{padding:13px 17px}.product-help{padding:13px 17px 14px}.help-message{font-size:14px}.help-input input{font-size:16px}.help-source-note{font-size:9px}
 }
 @media(max-width:760px){body:has(.pdp-bottom-nav) .toast,body:has(.pdp-bottom-nav) .compare-bar{bottom:calc(78px + env(safe-area-inset-bottom,0px))}}
+
+/* Native scroll-over PDP. Sticky containment ends with this product section;
+   the opaque information sheet paints over the gallery in normal flow. */
+.pdp-shell{--pdp-header:104px;--pdp-gallery-height:min(720px,70svh);padding-bottom:0}
+.pdp-detail{display:block;position:relative;isolation:isolate}
+.pdp-detail>.product-gallery,.pdp-detail>.gallery-pending{position:sticky;top:var(--pdp-header);height:var(--pdp-gallery-height);z-index:0}
+.pdp-detail>.product-gallery{grid-template-columns:65px minmax(0,1fr);background:#f4f3f1}
+.pdp-detail .gallery-window.detail-image{height:var(--pdp-gallery-height);max-height:none;aspect-ratio:auto}
+.pdp-detail .gallery-thumbnails{max-height:var(--pdp-gallery-height)!important}
+.pdp-detail .gallery-hint{display:none}
+.pdp-detail>.detail-info{position:relative;top:auto;z-index:1;background:#fff;margin-top:-28px;padding:42px max(6%,calc((100% - 720px)/2)) 60px;border-top:1px solid var(--line);border-radius:24px 24px 0 0;box-shadow:0 -10px 28px #2d29260a;min-height:calc(100svh - var(--pdp-header));overflow-wrap:anywhere}
+.pdp-detail>.detail-info::before{content:"";display:block;width:36px;height:3px;background:var(--line);border-radius:3px;margin:-25px auto 24px}
+.pdp-detail .size-options,.pdp-detail details,.pdp-detail .detail-actions{scroll-margin-top:calc(var(--pdp-header) + 24px)}
+.pdp-desktop-header{height:104px}
+@media(max-width:760px){
+ .pdp-shell{--pdp-header:54px;--pdp-gallery-height:min(680px,65svh)}
+ .pdp-detail>.product-gallery{display:block}
+ .pdp-detail>.detail-info{padding:30px 5% 40px;margin-top:-18px;border-radius:20px 20px 0 0}
+ .pdp-detail>.detail-info::before{margin:-17px auto 20px}
+ .pdp-detail .gallery-product-actions,.pdp-detail .gallery-help-button{bottom:36px}
+ .pdp-detail .gallery-meter{bottom:24px}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
