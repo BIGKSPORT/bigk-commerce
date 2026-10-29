@@ -5,5 +5,6 @@ export const dynamic = 'force-dynamic';
 export default async function Home({ searchParams }: {
     searchParams: Promise<{
         category?: string;
+        saved?: string;
     }>;
-}) { const { category } = await searchParams; return <Storefront products={(await products()).map(p => ({ ...p, variants: p.variants.map(v => ({ ...v, stock: Math.max(0, v.stock - v.reserved), reserved: 0, reported: null })) }))} mode={isLive() ? 'live' : 'demo'} ready={liveReady()} initialCategory={category}/>; }
+}) { const { category,saved } = await searchParams; return <Storefront products={(await products()).map(p => ({ ...p, variants: p.variants.map(v => ({ ...v, stock: Math.max(0, v.stock - v.reserved), reserved: 0, reported: null })) }))} mode={isLive() ? 'live' : 'demo'} ready={liveReady()} initialCategory={category} initialSavedOnly={saved==='1'}/>; }

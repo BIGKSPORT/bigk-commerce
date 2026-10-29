@@ -11,3 +11,5 @@ Payments, real shipments, server inventory holds, Supabase runtime access, accou
 Build with `PREVIEW_OUTPUT=/absolute/path/to/dist npm run preview:build`. Run `PREVIEW_OUTPUT=/absolute/path/to/dist npm run test:preview` with an installed Chromium executable (CHROMIUM_PATH may be set). The isolated browser test supplies storage, asset embedding, navigation and a randomUUID fallback for its about:blank test origin; the deployed HTTPS site uses native browser APIs. It does not constitute live-provider end-to-end testing.
 
 Publication source is the dedicated Sites repository. Production source and the preview build source remain reviewable in GitHub PR #1. Future catalogue changes require rebuilding and republishing this fixed demo snapshot. Original Drive changes do not automatically synchronize.
+
+The product page now follows the supplied mobile recording, including an edge-to-edge swipe gallery, progress strip, floating actions and catalogue product-help panel. Desktop adds thumbnail hover and pointer zoom. See PRODUCT_GALLERY.md for the reference, behavior and verification limits. Generative AI, photo recognition and reminders are not connected.

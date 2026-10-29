@@ -11,5 +11,5 @@ const html='<!doctype html><html lang="en"><head><meta charset="utf-8"><meta nam
 await writeFile(out+'/index.html',html);
 for(const path of ['checkout','order','account','admin','info/about','info/delivery','info/contact','info/privacy','info/terms']){await mkdir(out+'/'+path,{recursive:true});await writeFile(out+'/'+path+'/index.html',html)}
 const seed=JSON.parse(await readFile('lib/catalog.json','utf8'));for(const p of seed.products){await mkdir(out+'/products/'+p.slug,{recursive:true});await writeFile(out+'/products/'+p.slug+'/index.html',html)}
-await writeFile(out+'/_headers','/*\n  X-Robots-Tag: noindex, nofollow\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: same-origin\n  Content-Security-Policy: default-src \'self\'; script-src \'self\'; style-src \'self\' \'unsafe-inline\'; img-src \'self\' data:; connect-src \'self\'; frame-ancestors \'none\'; base-uri \'self\'; form-action \'self\'\n');
+await writeFile(out+'/_headers','/*\n  Cache-Control: no-cache\n  X-Robots-Tag: noindex, nofollow\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: same-origin\n  Content-Security-Policy: default-src \'self\'; script-src \'self\'; style-src \'self\' \'unsafe-inline\'; img-src \'self\' data:; connect-src \'self\'; frame-ancestors \'none\'; base-uri \'self\'; form-action \'self\'\n');
 console.log('Interactive preview built: '+out);

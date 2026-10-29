@@ -12,9 +12,44 @@ try{
  await page.addScriptTag({content:readFileSync(root+'/app.js','utf8')});
  await page.getByRole('heading',{name:/Looking good/}).waitFor();
  const search=page.getByRole('textbox',{name:'Search catalogue'});
+ // Catalogue hover changes the photograph; the primary link opens a real PDP.
+ await search.fill('Velvet');
+ const black=page.locator('.product-card').filter({hasText:'black FZ hood'});
+ await black.scrollIntoViewIfNeeded();const media=black.locator('.card-photo-carousel');const box=await media.boundingBox();
+ await page.mouse.move(box.x+box.width*.8,box.y+box.height*.4);
+ assert(Number(await media.getAttribute('data-active-photo'))>1,'Pointer position changes the catalogue photograph');
+ await search.hover();assert.equal(await media.getAttribute('data-active-photo'),'1');
+ await black.locator('.card-photo-carousel>a').click();
+ await page.locator('.pdp-detail h1').waitFor();assert.equal(await page.locator('.hero-section').count(),0);
+ assert.equal(await page.locator('.product-colour-options a').count(),4);
+ const gallery=page.getByRole('region',{name:'Product photos'});
+ await page.getByRole('button',{name:'Next product photo',exact:true}).click();assert.equal(await gallery.getAttribute('data-active-photo'),'2');
+ await page.getByRole('button',{name:'Show product photo 3',exact:true}).hover();assert.equal(await gallery.getAttribute('data-active-photo'),'3');
+ await gallery.focus();await gallery.press('ArrowRight');assert.equal(await gallery.getAttribute('data-active-photo'),'4');
+ await gallery.press('Home');assert.equal(await gallery.getAttribute('data-active-photo'),'1');
+ const stage=page.getByRole('button',{name:'Enlarge product image',exact:true});const area=await stage.boundingBox();await page.mouse.move(area.x+area.width*.4,area.y+area.height*.4);assert(await stage.evaluate(el=>el.classList.contains('is-zoomed')),'Hover zoom is active');
+ await page.getByRole('button',{name:'Open full-screen image viewer'}).click();await page.getByRole('dialog',{name:/image viewer/}).waitFor();
+ await page.getByRole('button',{name:'Zoom in image',exact:true}).click();assert(await page.locator('.lightbox-image').evaluate(el=>el.classList.contains('zoomed')));
+ await page.getByRole('button',{name:'Next enlarged photo'}).click();await page.keyboard.press('Escape');assert.equal(await page.getByRole('dialog',{name:/image viewer/}).isVisible(),false);
+ await page.getByRole('button',{name:'Open product help',exact:true}).click();await page.getByRole('dialog',{name:'Product help',exact:true}).waitFor();await page.getByRole('button',{name:'Other colours',exact:true}).click();assert.equal(await page.locator('.help-colours a').count(),4);await page.getByRole('textbox',{name:'Ask about this product'}).fill('Is it waterproof?');await page.getByRole('button',{name:'Send product question'}).click();await page.getByText('Materials, technical performance and care instructions have not been confirmed for this product yet. I cannot verify those details from the photos.').waitFor();await page.getByRole('button',{name:'Close dialog',exact:true}).click();
+ await page.locator('.pdp-detail h1').click();await gallery.evaluate(async el=>{await Promise.all(el.getAnimations({subtree:true}).map(a=>a.finished.catch(()=>{})))});await page.evaluate(()=>scrollTo({top:0,behavior:'instant'}));await page.screenshot({path:'/workspace/bigk-product-page-desktop.png'});
+ await page.getByRole('link',{name:'Choose cream',exact:true}).click();await page.locator('.pdp-detail h1').waitFor();assert.equal(await gallery.getAttribute('data-active-photo'),'1');assert.equal(await page.locator('.gallery-thumbnails button').count(),4);
+ await page.setViewportSize({width:390,height:844});
+ const cdp=await page.context().newCDPSession(page);await cdp.send('Emulation.setTouchEmulationEnabled',{enabled:true,maxTouchPoints:1});
+ const mobileStage=await page.getByRole('button',{name:'Enlarge product image',exact:true}).boundingBox();const y=Math.min(760,mobileStage.y+mobileStage.height*.4),from=mobileStage.x+mobileStage.width*.8,to=mobileStage.x+mobileStage.width*.2;
+ await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:from,y,id:1}]});
+ for(let i=1;i<=5;i++)await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:from+(to-from)*i/5,y,id:1}]});
+ await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+ assert.equal(await gallery.getAttribute('data-active-photo'),'2','Horizontal touch swipe advances the product image');
+ assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+ await gallery.evaluate(async el=>{await Promise.all(el.getAnimations({subtree:true}).map(a=>a.finished.catch(()=>{})))});assert(await page.locator('.pdp-mobile-header').isVisible());assert(await page.locator('.gallery-product-actions').isVisible());assert(await page.locator('.gallery-meter').isVisible());assert(await page.getByRole('navigation',{name:'Mobile shopping navigation'}).isVisible());await page.screenshot({path:'/workspace/bigk-product-page-mobile.png'});
+ await cdp.send('Emulation.setTouchEmulationEnabled',{enabled:false});await cdp.detach();await page.setViewportSize({width:1440,height:1000});
+ await page.getByRole('navigation',{name:'Breadcrumb'}).getByRole('link',{name:'Collection',exact:true}).click();
+ const currentSearch=page.getByRole('textbox',{name:'Search catalogue'});await currentSearch.waitFor();
+
  await search.fill('Velvet');assert.equal(await page.locator('.product-card').count(),4);await page.locator('.product-card').filter({hasText:'black FZ hood'}).locator('.quick-view').click();assert.equal(await page.locator('.thumbnails button').count(),5);await page.getByRole('button',{name:'Show product photo 5'}).click();await page.getByRole('button',{name:'Close dialog'}).click();
  await search.fill('Nandown FZ Gillet');assert.equal(await page.locator('.product-card').count(),1);await page.locator('.quick-view').click();assert.equal(await page.locator('.thumbnails button').count(),7);await page.getByRole('button',{name:'Show product photo 7'}).click();await page.getByRole('button',{name:'Close dialog'}).click();
  await search.fill('Alpine FZ hood');await page.locator('.product-card').filter({hasText:'illustrative'}).first().locator('.quick-view').click();await page.locator('.size-options button').first().click();await page.getByRole('button',{name:'Add to demo bag'}).click();await page.getByRole('link',{name:'Continue to demo checkout'}).click();await page.getByRole('heading',{name:'Your demo checkout.'}).waitFor();await page.locator('input[name="firstName"]').fill('Demo');await page.locator('input[name="lastName"]').fill('Customer');await page.locator('input[name="email"]').fill('demo@example.test');await page.locator('input[name="phone"]').fill('+32470123456');await page.locator('input[name="address"]').fill('Example Street 1');await page.locator('input[name="postal"]').fill('1000');await page.locator('input[name="city"]').fill('Brussels');await page.locator('input[name="consent"]').check();await page.getByRole('button',{name:'Create demo order'}).click();await page.getByRole('heading',{name:'Your demo journey is complete.'}).waitFor().catch(async e=>{console.error('Preview errors:',errors);console.error((await page.locator('body').innerText()).slice(-1800));throw e});assert((await page.evaluate(()=>sessionStorage.getItem('bigk-preview-order'))).includes('demo'));assert(!(await page.evaluate(()=>sessionStorage.getItem('bigk-preview-order'))).includes('demo@example.test'));await page.screenshot({path:'/workspace/bigk-demo-receipt-preview.png'});
  await page.getByRole('link',{name:'Back to the collection'}).click();await page.getByRole('textbox',{name:'Search catalogue'}).fill('Velvet');await page.locator('#catalog').screenshot({path:'/workspace/bigk-velvet-preview.png'});
- await page.setViewportSize({width:390,height:844});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);assert.deepEqual(errors,[]);console.log('PASS: isolated interactive preview — four Velvet colours, Nano vest 7-photo gallery, size/bag, demo checkout to receipt, discarded contact details, navigation, mobile overflow. No live services called.');
+ await page.setViewportSize({width:390,height:844});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);assert.deepEqual(errors,[]);console.log('PASS: isolated interactive preview — catalogue hover, full product page, hover zoom, arrows, thumbnail hover, keyboard gallery, full-screen zoom, recording-style overlay actions, catalogue product help, real touch swipe, four Velvet colours, Nano vest 7-photo gallery, size/bag, demo checkout to receipt, discarded contact details, navigation, mobile overflow. No live services called.');
 }finally{await browser.close()}
