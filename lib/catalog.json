@@ -1079,8 +1079,8 @@
     {
       "id": "P019",
       "slug": "nandown-jkt-p019",
-      "name": "Nano Down Jacket",
-      "description": "black  FZ jkt",
+      "name": "Nandown Jacket",
+      "description": "Black down jacket",
       "code": "Nandown JKT 25302901",
       "category": "Jackets & Vests",
       "priceCents": 18690,
@@ -1110,7 +1110,8 @@
           "id": "P020-1",
           "size": "L",
           "stock": 0,
-          "reported": 53
+          "reported": 53,
+          "barcode": "6957919564564"
         },
         {
           "id": "P020-2",
@@ -1142,8 +1143,8 @@
     {
       "id": "P020",
       "slug": "nandown-jkt-p020",
-      "name": "Nano Down Jacket",
-      "description": "black FZ jkt",
+      "name": "Nandown Jacket",
+      "description": "Black down jacket",
       "code": "Nandown JKT 25302901",
       "category": "Jackets & Vests",
       "priceCents": 18690,
