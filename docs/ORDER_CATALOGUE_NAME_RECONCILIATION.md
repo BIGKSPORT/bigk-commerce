@@ -90,3 +90,17 @@ Source: Stock.xlsx, first sheet (国外订单), **Quantity** column E (not stock
 - **Structure safeguard:** `lib/product-family.ts` treats each `250007xx` Velvet product separately as explicitly directed by owner; do not expose those as automatic swatch-colour variants based on numeric prefix.
 - **Remaining website QA:** confirm merchandise images match tag colours for P007 (`25303202`), P014 (`25301702`), check swatches & duplicate listing behavior, verify page rendering and preview-only environment before deployment. No deployment in this audit.
 - **Remaining catalogue QA:** confirm 16 unverified SKUs; check size-level barcodes, photographs, supplier descriptions, and disputed structure differences before approval.
+
+## Launch gate — 31 October 2026
+
+**Release decision: NOT READY for live orders until checked.** Read-only inspection on 30 Oct confirmed latest catalogue preview deployment READY at commit `64e9f0ab4ffe606e15cfb95097a050e80ab4ebab`, but production is still the initial `main` commit `35b1852dfd3d6c42a1deaeb4d38da35d581cc68a`. Production Vercel environment currently has **zero configured secrets/variables**. All six known demo variables belong only to preview branch `setup/supabase-commerce`, not production or the catalogue-fix branch.
+
+- [ ] **Secure production configuration:** configure persistent PostgreSQL database (including `DATABASE_PROVIDER=postgres`, `DATABASE_URL`, `DATABASE_SCHEMA=bigk`), production application URL `https://bigk.be`, admin password hash and signing secrets, Stripe live secret + webhook signing secret, and order email provider settings. Keep values in provider secret manager; never commit secrets.
+- [ ] **Commerce activation:** independently verify live Stripe account/key mode, webhook delivery, tax/shipping correctness, one real persisted order, inventory reservations/fulfilment and customer email. Owner reports successful Stripe checkout on **new** BIGKSPORT site, but account/environment mode and production persistence not independently verified. Explicit approval required before turning live mode on.
+- [ ] **Catalogue acceptance:** 25 unique SKUs; confirm sizes, approved stock, prices and product images; check physical label disputes (`25303202` and `25301702` Dusty Blue), Velvet structures, and two duplicate alias records. Do not assume all size barcodes known.
+- [ ] **Preview QA:** test PDP / colour option selections and images, cart, mobile, order flow without live payment, accessibility, links and policy pages on a protected preview with safe demo settings.
+- [ ] **Promotion:** deploy a reviewed commit to a staged production URL; validate before promotion to live custom domain.
+- [ ] **DNS cutover:** GoDaddy apex `@` currently has both old `185.158.133.1` and Vercel `216.198.79.1`. At cutover remove obsolete apex A record and retain Vercel A record; protect mail DNS (MX/SPF/DKIM/DMARC). Verify `www` handling and TLS.
+- [ ] **Rollback:** retain previous production deployment and record DNS rollback steps before cutover.
+
+**No live deployment, checkout activation or DNS change was performed by this audit.**
