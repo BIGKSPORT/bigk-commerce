@@ -1,0 +1,164 @@
+[
+  {
+    "id": "P001",
+    "code": "25303101",
+    "previousName": "Apline Fleece",
+    "name": "Alpin Fleece Pro"
+  },
+  {
+    "id": "P002",
+    "code": "25303102",
+    "previousName": "Alpine FZ",
+    "name": "Alpin Fleece Pro"
+  },
+  {
+    "id": "P003",
+    "code": "25301801",
+    "previousName": "Core.2",
+    "name": "Core.2"
+  },
+  {
+    "id": "P004",
+    "code": "25301802",
+    "previousName": "Core.2",
+    "name": "Core.2"
+  },
+  {
+    "id": "P005",
+    "code": "25301803",
+    "previousName": "Core.2 ",
+    "name": "Core.2"
+  },
+  {
+    "id": "P006",
+    "code": "25303201",
+    "previousName": "Alpine Gillet",
+    "name": "Alpin Vest Pro"
+  },
+  {
+    "id": "P007",
+    "code": "25303202",
+    "previousName": "Alpine Gillet",
+    "name": "Alpin Vest Pro"
+  },
+  {
+    "id": "P008",
+    "code": "25301601",
+    "previousName": "Alpine FZ hood",
+    "name": "Alpin"
+  },
+  {
+    "id": "P009",
+    "code": "25301603",
+    "previousName": "Alpine FZ Hood",
+    "name": "Alpin"
+  },
+  {
+    "id": "P010",
+    "code": "25302701",
+    "previousName": "Core-pants",
+    "name": "Core Pants"
+  },
+  {
+    "id": "P011",
+    "code": "25300801",
+    "previousName": "Neofit pants",
+    "name": "Neofit Pants"
+  },
+  {
+    "id": "P012",
+    "code": "25301701",
+    "previousName": "Alpine gillet hood",
+    "name": "Alpin Vest"
+  },
+  {
+    "id": "P013",
+    "code": "25301701",
+    "previousName": "Alpine gillet hood",
+    "name": "Alpin Vest"
+  },
+  {
+    "id": "P014",
+    "code": "25301702",
+    "previousName": "Alpine hood gillet",
+    "name": "Alpin Vest"
+  },
+  {
+    "id": "P015",
+    "code": "25301902",
+    "previousName": "Coreloose.2",
+    "name": "Corelosse.2"
+  },
+  {
+    "id": "P016",
+    "code": "25301903",
+    "previousName": "Coreloose.2",
+    "name": "Corelosse.2"
+  },
+  {
+    "id": "P017",
+    "code": "25000701",
+    "previousName": "Velvet  WMS hood",
+    "name": "Velvet WMS Hood"
+  },
+  {
+    "id": "P018",
+    "code": "25000702",
+    "previousName": "Velvet  WMS  hood",
+    "name": "Velvet WMS Hood"
+  },
+  {
+    "id": "P019",
+    "code": "25302901",
+    "previousName": "Nandown JKT",
+    "name": "Nano Down Jacket"
+  },
+  {
+    "id": "P020",
+    "code": "25302901",
+    "previousName": "Nandown JKT",
+    "name": "Nano Down Jacket"
+  },
+  {
+    "id": "P021",
+    "code": "25303001",
+    "previousName": "Nandown FZ Gillet",
+    "name": "Nano Down Vest"
+  },
+  {
+    "id": "P022",
+    "code": "25302101",
+    "previousName": "Summit ",
+    "name": "Summit"
+  },
+  {
+    "id": "P023",
+    "code": "25302401",
+    "previousName": "Snake scarf",
+    "name": "Snake Scarf"
+  },
+  {
+    "id": "P024",
+    "code": "25302402",
+    "previousName": "Snake scarf",
+    "name": "Snake Scarf"
+  },
+  {
+    "id": "P025",
+    "code": "25302403",
+    "previousName": "Snake scarf",
+    "name": "Snake Scarf"
+  },
+  {
+    "id": "P026",
+    "code": "25000704",
+    "previousName": "Velvet WMS hood",
+    "name": "Velvet WMS Hood"
+  },
+  {
+    "id": "P027",
+    "code": "25000703",
+    "previousName": "Velvet WMS hood",
+    "name": "Velvet WMS Hood"
+  }
+]

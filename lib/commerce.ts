@@ -1,9 +1,11 @@
+import {clubConfig,reserveClubOrder,clubPayment} from './club';
+import {productKind} from './club-rules';
 import { createHmac } from 'node:crypto';
 import { z } from 'zod';
 import { db, transaction, products, audit } from './db';
 import { hash, HttpError } from './security';
 import type { Order, OrderStatus } from './types';
-export const checkoutSchema = z.object({ items: z.array(z.object({ variantId: z.string().min(1).max(100), quantity: z.number().int().min(1).max(5) }).strict()).min(1).max(30), email: z.email().max(254), phone: z.string().regex(/^\+[1-9][0-9]{7,14}$/), firstName: z.string().trim().min(1).max(100), lastName: z.string().trim().min(1).max(100), country: z.enum(['BE', 'NL', 'FR', 'DE', 'LU']), address: z.string().trim().min(3).max(200), postal: z.string().trim().min(2).max(20), city: z.string().trim().min(1).max(100), consent: z.literal(true), requestKey: z.uuid() }).strict();
+export const checkoutSchema = z.object({ items: z.array(z.object({ variantId: z.string().min(1).max(100), quantity: z.number().int().min(1).max(5) }).strict()).min(1).max(30), email: z.email().max(254), phone: z.string().regex(/^\+[1-9][0-9]{7,14}$/), firstName: z.string().trim().min(1).max(100), lastName: z.string().trim().min(1).max(100), country: z.enum(['BE', 'NL', 'FR', 'DE', 'LU']), address: z.string().trim().min(3).max(200), postal: z.string().trim().min(2).max(20), city: z.string().trim().min(1).max(100), consent: z.literal(true), clubPoints:z.number().int().min(0).max(1000000).multipleOf(100).optional(), requestKey: z.uuid() }).strict();
 export type CheckoutInput = z.infer<typeof checkoutSchema>;
 export const isLive = () => process.env.COMMERCE_MODE === 'live';
 export function liveReady() { return process.env.COMMERCE_MODE === 'live' && process.env.LIVE_COMMERCE_APPROVED === 'true' && !!process.env.STRIPE_SECRET_KEY && !!process.env.STRIPE_WEBHOOK_SECRET && (process.env.RECEIPT_SECRET?.length || 0) >= 32 && !!process.env.APP_URL?.startsWith('https://'); }
@@ -15,18 +17,20 @@ export async function expireReservations() { (await transaction(async () => { co
 }[]; for (const o of stale) {
     (await release(o.id));
     (await sql.prepare("UPDATE orders SET status='expired' WHERE id=?").run(o.id));
+    await clubPayment(o.id,false);
 } })); }
 async function release(id: string) { const sql = db(); for (const line of (await sql.prepare('SELECT variant_id,quantity FROM order_lines WHERE order_id=?').all(id)) as {
     variant_id: string;
     quantity: number;
 }[])
     (await sql.prepare('UPDATE variants SET reserved=reserved-? WHERE id=?').run(line.quantity, line.variant_id)); }
-export async function createOrder(input: CheckoutInput) {
+export async function createOrder(input: CheckoutInput, verifiedEmail?:string) {
     if (isLive() && !liveReady())
         throw new HttpError(503, 'Live checkout is not configured and approved.');
     (await expireReservations());
     return (await transaction(async () => {
-        const sql = db(), requestHash = hash(JSON.stringify(input));
+        const sql = db(), requestHash = hash(JSON.stringify(input)+(verifiedEmail||''));
+        if(input.clubPoints&&(!verifiedEmail||verifiedEmail!==input.email.toLowerCase()))throw new HttpError(403,'Sign in with your checkout email to redeem points.');
         const previous = (await sql.prepare('SELECT id,request_hash,status FROM orders WHERE request_key=?').get(input.requestKey)) as {
             id: string;
             request_hash: string;
@@ -53,12 +57,13 @@ export async function createOrder(input: CheckoutInput) {
             if (isLive())
                 (await sql.prepare('UPDATE variants SET reserved=reserved+? WHERE id=?').run(line.quantity, line.v.id));
         }
+        if(clubConfig().enabled&&verifiedEmail&&verifiedEmail===input.email.toLowerCase()&&isLive()){const discount=await reserveClubOrder(id,verifiedEmail,lines.map(l=>({id:l.v.id,grossCents:l.p.priceCents!*l.quantity,kind:productKind(l.p.tags)})),input.clubPoints||0,expires.toISOString());if(discount)await sql.prepare('UPDATE orders SET total=total-? WHERE id=?').run(discount,id)}else if(input.clubPoints)throw new HttpError(409,'Point redemption requires an enabled Club and live checkout; demo purchases never spend real points.');
         (await audit('order.created', id));
         return { id, receiptToken, reused: false };
     }));
 }
 export async function getOrder(id: string): Promise<Order | undefined> { const row = (await db().prepare('SELECT * FROM orders WHERE id=?').get(id)) as Record<string, unknown> | undefined; if (!row)
-    return; const c = JSON.parse(String(row.customer)); return { deliveryAddress: { name: c.name || [c.firstName, c.lastName].filter(Boolean).join(' '), address: c.address || '', postal: c.postal || '', city: c.city || '', country: c.country || '' }, id: String(row.id), status: row.status as OrderStatus, subtotal: Number(row.subtotal), shipping: Number(row.shipping), total: Number(row.total), currency: String(row.currency), email: String(row.email), phone: String(row.phone), createdAt: String(row.created_at), expiresAt: String(row.expires_at), stripeSession: row.stripe_session ? String(row.stripe_session) : null, tracking: row.tracking ? String(row.tracking) : null, items: ((await db().prepare('SELECT name,size,quantity,unit_price AS unitPrice FROM order_lines WHERE order_id=?').all(id)) as unknown as Order['items']) }; }
+    return; const c = JSON.parse(String(row.customer)); return { deliveryAddress: { name: c.name || [c.firstName, c.lastName].filter(Boolean).join(' '), address: c.address || '', postal: c.postal || '', city: c.city || '', country: c.country || '' }, id: String(row.id), status: row.status as OrderStatus, pointsDiscount:Math.max(0,Number(row.subtotal)+Number(row.shipping)-Number(row.total)), subtotal: Number(row.subtotal), shipping: Number(row.shipping), total: Number(row.total), currency: String(row.currency), email: String(row.email), phone: String(row.phone), createdAt: String(row.created_at), expiresAt: String(row.expires_at), stripeSession: row.stripe_session ? String(row.stripe_session) : null, tracking: row.tracking ? String(row.tracking) : null, items: ((await db().prepare('SELECT name,size,quantity,unit_price AS unitPrice FROM order_lines WHERE order_id=?').all(id)) as unknown as Order['items']) }; }
 export async function verifyReceipt(id: string, value: string) { const row = (await db().prepare('SELECT receipt_hash FROM orders WHERE id=?').get(id)) as {
     receipt_hash: string;
 } | undefined; return !!value && row?.receipt_hash === hash(value); }
@@ -80,7 +85,7 @@ export async function settlePayment(eventId: string, orderId: string, sessionId:
             (await sql.prepare('INSERT INTO webhook_events VALUES(?,?)').run(eventId, new Date().toISOString()));
             return 'already-paid';
         }
-        const valid = order.status === 'pending' && amount === order.total && currency === 'eur';
+        const valid = order.status === 'pending' && order.expiresAt>new Date().toISOString() && amount === order.total && currency === 'eur';
         if (order.status === 'pending') {
             if (valid) {
                 for (const l of (await sql.prepare('SELECT variant_id,quantity FROM order_lines WHERE order_id=?').all(orderId)) as {
@@ -96,6 +101,7 @@ export async function settlePayment(eventId: string, orderId: string, sessionId:
         (await sql.prepare('INSERT INTO webhook_events VALUES(?,?)').run(eventId, new Date().toISOString()));
         if (valid && delivery)
             (await sql.prepare('UPDATE orders SET customer=? WHERE id=?').run(JSON.stringify(delivery), orderId));
+        await clubPayment(orderId,valid);
         if (valid)
             (await sql.prepare("INSERT OR IGNORE INTO email_outbox(order_id,kind,email) VALUES(?,'confirmation',?)").run(orderId, order.email));
         (await audit(valid ? 'payment.confirmed' : 'payment.review', orderId));
@@ -107,4 +113,5 @@ export async function cancelPayment(eventId: string, orderId: string, sessionId:
     throw new HttpError(409, 'Payment session does not match an order.'); if (order.status === 'pending') {
     (await release(orderId));
     (await sql.prepare("UPDATE orders SET status='cancelled' WHERE id=?").run(orderId));
+    await clubPayment(orderId,false);
 } (await sql.prepare('INSERT INTO webhook_events VALUES(?,?)').run(eventId, new Date().toISOString())); })); }

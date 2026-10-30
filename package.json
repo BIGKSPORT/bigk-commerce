@@ -18,7 +18,15 @@
     "test:postgres": "node tests/postgres.mjs",
     "images:optimize": "node scripts/optimize-product-images.mjs",
     "preview:build": "node scripts/build-interactive-preview.mjs",
-    "test:preview": "node tests/interactive-preview.mjs"
+    "test:preview": "node tests/interactive-preview.mjs",
+    "club:process": "node --import tsx scripts/process-club.ts",
+    "test:club": "node --import tsx tests/club.test.ts",
+    "test:backoffice": "node --import tsx tests/backoffice.test.ts",
+    "preview:backoffice": "node scripts/build-backoffice-review.mjs",
+    "test:backoffice-browser": "node tests/backoffice-browser.mjs",
+    "catalog:sync-content": "node --import tsx scripts/sync-product-content.ts",
+    "catalog:import-master-staging": "node --import tsx scripts/import-master-staging.ts",
+    "backoffice:staging": "node scripts/start-backoffice-staging.mjs"
   },
   "dependencies": {
     "lucide-react": "1.64.0",
@@ -27,7 +35,8 @@
     "react": "19.3.1",
     "react-dom": "19.3.1",
     "stripe": "23.0.1",
-    "zod": "4.6.7"
+    "zod": "4.6.7",
+    "sharp": "0.35.5"
   },
   "devDependencies": {
     "@electric-sql/pglite": "0.5.13",
@@ -38,8 +47,7 @@
     "esbuild": "0.28.2",
     "playwright": "1.64.1",
     "tsx": "4.23.15",
-    "typescript": "7.0.2",
-    "sharp": "0.35.5"
+    "typescript": "7.0.2"
   },
   "engines": {
     "node": ">=24.0.0"

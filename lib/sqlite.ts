@@ -2,6 +2,8 @@ import { DatabaseSync } from 'node:sqlite';
 import { mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import catalog from './catalog.json';
+import {backofficeSchema} from './backoffice-schema';
+import {clubSchema} from './club-schema';
 import type { Product } from './types';
 let instance: DatabaseSync | undefined;
 export function db(){
@@ -20,8 +22,10 @@ export function db(){
  CREATE TABLE IF NOT EXISTS customer_sessions(hash TEXT PRIMARY KEY,email TEXT NOT NULL,expires_at TEXT NOT NULL);
  CREATE TABLE IF NOT EXISTS email_outbox(id INTEGER PRIMARY KEY,order_id TEXT NOT NULL REFERENCES orders(id),kind TEXT NOT NULL,email TEXT NOT NULL,attempts INTEGER NOT NULL DEFAULT 0,next_attempt INTEGER NOT NULL DEFAULT 0,lease_until INTEGER NOT NULL DEFAULT 0,sent_at TEXT,UNIQUE(order_id,kind));
  PRAGMA user_version=1;`);
+ sql.exec(clubSchema);
+ sql.exec(backofficeSchema);
  instance=sql;
- if(!(sql.prepare('SELECT COUNT(*) AS n FROM products').get() as {n:number}).n){transaction(()=>{for(const p of catalog.products){sql.prepare('INSERT INTO products(id,slug,name,description,code,category,price_cents,approved,active,featured,images,tags) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)').run(p.id,p.slug,p.name,p.description,p.code,p.category,p.priceCents,0,0,p.featured?1:0,JSON.stringify(p.images),JSON.stringify(p.tags));for(const v of p.variants)sql.prepare('INSERT INTO variants(id,product_id,size,stock,reported) VALUES(?,?,?,?,?)').run(v.id,p.id,v.size,0,v.reported)}})}
+ if(!(sql.prepare('SELECT COUNT(*) AS n FROM products').get() as {n:number}).n){transaction(()=>{for(const p of catalog.products){sql.prepare('INSERT INTO products(id,slug,name,description,code,category,price_cents,approved,active,featured,images,tags) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)').run(p.id,p.slug,p.name,p.description,p.code,p.category,p.priceCents,0,0,p.featured?1:0,JSON.stringify(p.images),JSON.stringify(p.tags));if(p.content)sql.prepare('INSERT INTO product_content(product_id,content) VALUES(?,?)').run(p.id,JSON.stringify(p.content));for(const v of p.variants)sql.prepare('INSERT INTO variants(id,product_id,size,stock,reported) VALUES(?,?,?,?,?)').run(v.id,p.id,v.size,0,v.reported)}})}
  return sql;
 }
 export function transaction<T>(fn:()=>T):T{const sql=db();sql.exec('BEGIN IMMEDIATE');try{const value=fn();sql.exec('COMMIT');return value}catch(e){sql.exec('ROLLBACK');throw e}}

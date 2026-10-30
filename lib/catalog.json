@@ -4,11 +4,11 @@
     {
       "id": "P001",
       "slug": "apline-fleece-p001",
-      "name": "Apline Fleece",
+      "name": "Alpin Fleece Pro",
       "description": "black FZ fleece",
       "code": "Apline Fleece 25303101",
       "category": "Other",
-      "priceCents": null,
+      "priceCents": 14690,
       "approved": false,
       "active": false,
       "featured": true,
@@ -51,16 +51,22 @@
           "reported": 9
         }
       ],
-      "tags": []
+      "tags": [],
+      "content": {
+        "composition": "100% polyester",
+        "care": "Wash at 30°C on a gentle cycle.",
+        "fit": "",
+        "details": "Teddy fleece combined with grid fleece, made from 100% polyester."
+      }
     },
     {
       "id": "P002",
       "slug": "alpine-fz-p002",
-      "name": "Alpine FZ",
+      "name": "Alpin Fleece Pro",
       "description": "dusty-blue FZ fleece",
       "code": "Alpine FZ 25303102",
       "category": "Jackets & Vests",
-      "priceCents": null,
+      "priceCents": 14690,
       "approved": false,
       "active": false,
       "featured": true,
@@ -103,7 +109,13 @@
           "reported": 10
         }
       ],
-      "tags": []
+      "tags": [],
+      "content": {
+        "composition": "100% polyester",
+        "care": "Wash at 30°C on a gentle cycle.",
+        "fit": "",
+        "details": "Teddy fleece combined with grid fleece, made from 100% polyester."
+      }
     },
     {
       "id": "P003",
@@ -112,7 +124,7 @@
       "description": "black 1/4 zip",
       "code": "Core.2 25301801",
       "category": "Other",
-      "priceCents": null,
+      "priceCents": 6690,
       "approved": false,
       "active": false,
       "featured": true,
@@ -155,7 +167,13 @@
           "reported": null
         }
       ],
-      "tags": []
+      "tags": [],
+      "content": {
+        "composition": "92% polyamide, 8% elastane",
+        "care": "Wash at 30°C on a gentle cycle.",
+        "fit": "",
+        "details": "Quarter-zip layer in volcanic-ash fabric, made from 92% polyamide and 8% elastane."
+      }
     },
     {
       "id": "P004",
@@ -164,11 +182,18 @@
       "description": "dusty-blue 1/4 zip",
       "code": "Core.2 25301802",
       "category": "Other",
-      "priceCents": null,
+      "priceCents": 6690,
       "approved": false,
       "active": false,
       "featured": true,
-      "images": [],
+      "images": [
+        "/products/web/core2-1u129555.webp",
+        "/products/web/core2-1u129550.webp",
+        "/products/web/core2-1u129560.webp",
+        "/products/web/core2-1u129565.webp",
+        "/products/web/core2-1u129590.webp",
+        "/products/web/core2-1u129595.webp"
+      ],
       "variants": [
         {
           "id": "P004-0",
@@ -207,16 +232,22 @@
           "reported": null
         }
       ],
-      "tags": []
+      "tags": [],
+      "content": {
+        "composition": "92% polyamide, 8% elastane",
+        "care": "Wash at 30°C on a gentle cycle.",
+        "fit": "",
+        "details": "Quarter-zip layer in volcanic-ash fabric, made from 92% polyamide and 8% elastane."
+      }
     },
     {
       "id": "P005",
       "slug": "core-2-p005",
-      "name": "Core.2 ",
+      "name": "Core.2",
       "description": "cream 1/4 zip",
       "code": "Core.2  25301803",
       "category": "Other",
-      "priceCents": null,
+      "priceCents": 6690,
       "approved": false,
       "active": false,
       "featured": true,
@@ -259,16 +290,22 @@
           "reported": null
         }
       ],
-      "tags": []
+      "tags": [],
+      "content": {
+        "composition": "92% polyamide, 8% elastane",
+        "care": "Wash at 30°C on a gentle cycle.",
+        "fit": "",
+        "details": "Quarter-zip layer in volcanic-ash fabric, made from 92% polyamide and 8% elastane."
+      }
     },
     {
       "id": "P006",
       "slug": "alpine-gillet-p006",
-      "name": "Alpine Gillet",
+      "name": "Alpin Vest Pro",
       "description": "black gillet",
       "code": "Alpine Gillet 25303201",
       "category": "Jackets & Vests",
-      "priceCents": null,
+      "priceCents": 13390,
       "approved": false,
       "active": false,
       "featured": true,
@@ -311,16 +348,22 @@
           "reported": 9
         }
       ],
-      "tags": []
+      "tags": [],
+      "content": {
+        "composition": "100% polyester",
+        "care": "Wash at 30°C on a gentle cycle. Do not bleach or tumble dry. Check the sewn-in care label.",
+        "fit": "",
+        "details": "A sleeveless men’s fleece vest with a full-length zip, stand-up collar, two zipped side pockets and a zipped chest pocket. Made from 100% polyester, for everyday use and walking."
+      }
     },
     {
       "id": "P007",
       "slug": "alpine-gillet-p007",
-      "name": "Alpine Gillet",
+      "name": "Alpin Vest Pro",
       "description": "cream-black Gillet",
       "code": "Alpine Gillet 25303202",
       "category": "Jackets & Vests",
-      "priceCents": null,
+      "priceCents": 13390,
       "approved": false,
       "active": false,
       "featured": false,
@@ -368,16 +411,22 @@
           "reported": 10
         }
       ],
-      "tags": []
+      "tags": [],
+      "content": {
+        "composition": "100% polyester",
+        "care": "Wash at 30°C on a gentle cycle. Do not bleach or tumble dry. Check the sewn-in care label.",
+        "fit": "",
+        "details": "A sleeveless men’s fleece vest with a full-length zip, stand-up collar, two zipped side pockets and a zipped chest pocket. Made from 100% polyester, for everyday use and walking."
+      }
     },
     {
       "id": "P008",
       "slug": "alpine-fz-hood-p008",
-      "name": "Alpine FZ hood",
+      "name": "Alpin",
       "description": "black FZ hood",
       "code": "Alpine FZ hood 25301601",
       "category": "Jackets & Vests",
-      "priceCents": 11900,
+      "priceCents": 9390,
       "approved": false,
       "active": false,
       "featured": false,
@@ -423,16 +472,22 @@
       "tags": [
         "Layering",
         "Everyday"
-      ]
+      ],
+      "content": {
+        "composition": "100% polyester",
+        "care": "Wash at 30°C on a gentle cycle.",
+        "fit": "",
+        "details": "Teddy fleece combined with grid fleece, made from 100% polyester."
+      }
     },
     {
       "id": "P009",
       "slug": "alpine-fz-hood-p009",
-      "name": "Alpine FZ Hood",
+      "name": "Alpin",
       "description": "cream FZ hood",
       "code": "Alpine FZ Hood 25301603",
       "category": "Jackets & Vests",
-      "priceCents": 11900,
+      "priceCents": 9390,
       "approved": false,
       "active": false,
       "featured": false,
@@ -484,16 +539,22 @@
       "tags": [
         "Layering",
         "Everyday"
-      ]
+      ],
+      "content": {
+        "composition": "100% polyester",
+        "care": "Wash at 30°C on a gentle cycle.",
+        "fit": "",
+        "details": "Teddy fleece combined with grid fleece, made from 100% polyester."
+      }
     },
     {
       "id": "P010",
       "slug": "core-pants-p010",
-      "name": "Core-pants",
+      "name": "Core Pants",
       "description": "black cuffed leg",
       "code": "Core-pants 25302701",
       "category": "Pants",
-      "priceCents": null,
+      "priceCents": 9390,
       "approved": false,
       "active": false,
       "featured": false,
@@ -543,16 +604,22 @@
       "tags": [
         "Movement",
         "Everyday"
-      ]
+      ],
+      "content": {
+        "composition": "100% polyester",
+        "care": "Wash at 30°C on a gentle cycle.",
+        "fit": "",
+        "details": "30D double-sided fabric combined with grid fleece. Made from 100% polyester. Fabric weight: 320 g/m²."
+      }
     },
     {
       "id": "P011",
       "slug": "neofit-pants-p011",
-      "name": "Neofit pants",
+      "name": "Neofit Pants",
       "description": "black open leg",
       "code": "Neofit pants 25300801",
       "category": "Pants",
-      "priceCents": null,
+      "priceCents": 11990,
       "approved": false,
       "active": false,
       "featured": false,
@@ -600,16 +667,22 @@
           "reported": 34
         }
       ],
-      "tags": []
+      "tags": [],
+      "content": {
+        "composition": "",
+        "care": "Wash at 30°C on a gentle cycle.",
+        "fit": "",
+        "details": ""
+      }
     },
     {
       "id": "P012",
       "slug": "alpine-gillet-hood-p012",
-      "name": "Alpine gillet hood",
+      "name": "Alpin Vest",
       "description": "black hood Gillet",
       "code": "Alpine gillet hood 25301701",
       "category": "Jackets & Vests",
-      "priceCents": null,
+      "priceCents": 6690,
       "approved": false,
       "active": false,
       "featured": false,
@@ -622,16 +695,22 @@
           "reported": null
         }
       ],
-      "tags": []
+      "tags": [],
+      "content": {
+        "composition": "100% polyester",
+        "care": "Wash at 30°C on a gentle cycle.",
+        "fit": "",
+        "details": "Teddy fleece combined with grid fleece, made from 100% polyester."
+      }
     },
     {
       "id": "P013",
       "slug": "alpine-gillet-hood-p013",
-      "name": "Alpine gillet hood",
+      "name": "Alpin Vest",
       "description": "black hood gillet",
       "code": "Alpine gillet hood 25301701",
       "category": "Jackets & Vests",
-      "priceCents": null,
+      "priceCents": 6690,
       "approved": false,
       "active": false,
       "featured": false,
@@ -668,16 +747,22 @@
           "reported": null
         }
       ],
-      "tags": []
+      "tags": [],
+      "content": {
+        "composition": "100% polyester",
+        "care": "Wash at 30°C on a gentle cycle.",
+        "fit": "",
+        "details": "Teddy fleece combined with grid fleece, made from 100% polyester."
+      }
     },
     {
       "id": "P014",
       "slug": "alpine-hood-gillet-p014",
-      "name": "Alpine hood gillet",
+      "name": "Alpin Vest",
       "description": "cream hood gillet",
       "code": "Alpine hood gillet 25301702",
       "category": "Jackets & Vests",
-      "priceCents": 11900,
+      "priceCents": 6690,
       "approved": false,
       "active": false,
       "featured": false,
@@ -726,16 +811,22 @@
       "tags": [
         "Layering",
         "Everyday"
-      ]
+      ],
+      "content": {
+        "composition": "100% polyester",
+        "care": "Wash at 30°C on a gentle cycle.",
+        "fit": "",
+        "details": "Teddy fleece combined with grid fleece, made from 100% polyester."
+      }
     },
     {
       "id": "P015",
       "slug": "coreloose-2-p015",
-      "name": "Coreloose.2",
+      "name": "Corelosse.2",
       "description": "emerald",
       "code": "Coreloose.2 25301902",
       "category": "Other",
-      "priceCents": null,
+      "priceCents": 5390,
       "approved": false,
       "active": false,
       "featured": false,
@@ -782,20 +873,31 @@
           "reported": null
         }
       ],
-      "tags": []
+      "tags": [],
+      "content": {
+        "composition": "90% polyester, 10% elastane",
+        "care": "Wash at 30°C on a gentle cycle.",
+        "fit": "",
+        "details": "Single-sided grid fleece, made from 90% polyester and 10% elastane."
+      }
     },
     {
       "id": "P016",
       "slug": "coreloose-2-p016",
-      "name": "Coreloose.2",
+      "name": "Corelosse.2",
       "description": "cream round neck",
       "code": "Coreloose.2 25301903",
       "category": "Other",
-      "priceCents": null,
+      "priceCents": 5390,
       "approved": false,
       "active": false,
       "featured": false,
-      "images": [],
+      "images": [
+        "/products/web/corelosse-brown-9-2626282-2.webp",
+        "/products/web/corelosse-brown-9-2626280-2.webp",
+        "/products/web/corelosse-brown-9-2626283-2.webp",
+        "/products/web/corelosse-brown-9-2626286-2.webp"
+      ],
       "variants": [
         {
           "id": "P016-0",
@@ -834,16 +936,22 @@
           "reported": null
         }
       ],
-      "tags": []
+      "tags": [],
+      "content": {
+        "composition": "90% polyester, 10% elastane",
+        "care": "Wash at 30°C on a gentle cycle.",
+        "fit": "",
+        "details": "Single-sided grid fleece, made from 90% polyester and 10% elastane."
+      }
     },
     {
       "id": "P017",
       "slug": "velvet-wms-hood-p017",
-      "name": "Velvet  WMS hood",
+      "name": "Velvet WMS Hood",
       "description": "black-cream FZ hood",
       "code": "Velvet  WMS hood 25000701",
       "category": "Jackets & Vests",
-      "priceCents": null,
+      "priceCents": 7990,
       "approved": false,
       "active": false,
       "featured": false,
@@ -882,16 +990,22 @@
           "reported": 17
         }
       ],
-      "tags": []
+      "tags": [],
+      "content": {
+        "composition": "30% viscose, 70% polyester",
+        "care": "Wash at 30°C on a gentle cycle.",
+        "fit": "",
+        "details": "Women’s hoodie in coarse-knit, cationic-dyed brushed fabric. Made from 30% viscose and 70% polyester. Fabric weight: 320 g/m²."
+      }
     },
     {
       "id": "P018",
       "slug": "velvet-wms-hood-p018",
-      "name": "Velvet  WMS  hood",
+      "name": "Velvet WMS Hood",
       "description": "emerald FZ hood",
       "code": "Velvet  WMS  hood 25000702",
       "category": "Jackets & Vests",
-      "priceCents": null,
+      "priceCents": 7990,
       "approved": false,
       "active": false,
       "featured": false,
@@ -930,16 +1044,22 @@
           "reported": 73
         }
       ],
-      "tags": []
+      "tags": [],
+      "content": {
+        "composition": "30% viscose, 70% polyester",
+        "care": "Wash at 30°C on a gentle cycle.",
+        "fit": "",
+        "details": "Women’s hoodie in coarse-knit, cationic-dyed brushed fabric. Made from 30% viscose and 70% polyester. Fabric weight: 320 g/m²."
+      }
     },
     {
       "id": "P019",
       "slug": "nandown-jkt-p019",
-      "name": "Nandown JKT",
+      "name": "Nano Down Jacket",
       "description": "black  FZ jkt",
       "code": "Nandown JKT 25302901",
       "category": "Jackets & Vests",
-      "priceCents": null,
+      "priceCents": 18690,
       "approved": false,
       "active": false,
       "featured": false,
@@ -957,16 +1077,22 @@
           "reported": 28
         }
       ],
-      "tags": []
+      "tags": [],
+      "content": {
+        "composition": "Outer fabric: 98% polyamide (nylon), 2% polyester. Filling: approximately 90% white goose down, according to the supplier; the remaining filling composition is not specified.",
+        "care": "Wash at 30°C on a gentle cycle. Supplier’s detailed care note: wash inside out and separately; do not bleach, tumble dry or dry clean. Check the sewn-in care label.",
+        "fit": "Regular fit is listed for S–2XL. Down filling weight by size: S 80 g, M 85 g, L 90 g, XL 95 g, 2XL 100 g, 3XL 105 g. These are filling weights, not the total weight of the jacket.",
+        "details": "A lightweight padded men’s winter jacket with a black outer fabric, zip fastening and concealed zipped pockets. According to the supplier, the filling contains approximately 90% white goose down. The wind-resistant, water-repellent outer fabric helps protect against cold wind and light rain. Designed for everyday use and walking. Autumn/Winter 2026 collection. Water-repellent does not mean waterproof."
+      }
     },
     {
       "id": "P020",
       "slug": "nandown-jkt-p020",
-      "name": "Nandown JKT",
+      "name": "Nano Down Jacket",
       "description": "black FZ jkt",
       "code": "Nandown JKT 25302901",
       "category": "Jackets & Vests",
-      "priceCents": null,
+      "priceCents": 18690,
       "approved": false,
       "active": false,
       "featured": false,
@@ -1008,16 +1134,22 @@
           "reported": 7
         }
       ],
-      "tags": []
+      "tags": [],
+      "content": {
+        "composition": "Outer fabric: 98% polyamide (nylon), 2% polyester. Filling: approximately 90% white goose down, according to the supplier; the remaining filling composition is not specified.",
+        "care": "Wash at 30°C on a gentle cycle. Supplier’s detailed care note: wash inside out and separately; do not bleach, tumble dry or dry clean. Check the sewn-in care label.",
+        "fit": "Regular fit is listed for S–2XL. Down filling weight by size: S 80 g, M 85 g, L 90 g, XL 95 g, 2XL 100 g, 3XL 105 g. These are filling weights, not the total weight of the jacket.",
+        "details": "A lightweight padded men’s winter jacket with a black outer fabric, zip fastening and concealed zipped pockets. According to the supplier, the filling contains approximately 90% white goose down. The wind-resistant, water-repellent outer fabric helps protect against cold wind and light rain. Designed for everyday use and walking. Autumn/Winter 2026 collection. Water-repellent does not mean waterproof."
+      }
     },
     {
       "id": "P021",
       "slug": "nandown-fz-gillet-p021",
-      "name": "Nandown FZ Gillet",
+      "name": "Nano Down Vest",
       "description": "black FZ gillet",
       "code": "Nandown FZ Gillet 25303001",
       "category": "Jackets & Vests",
-      "priceCents": null,
+      "priceCents": 14690,
       "approved": false,
       "active": false,
       "featured": false,
@@ -1068,16 +1200,22 @@
           "reported": 10
         }
       ],
-      "tags": []
+      "tags": [],
+      "content": {
+        "composition": "98% polyamide, 2% polyester",
+        "care": "Wash at 30°C on a gentle cycle.",
+        "fit": "",
+        "details": "Sleeveless vest in fabric made from 98% polyamide and 2% polyester. The supplier identifies the fabric as graphene fabric; no thermal or waterproof performance rating is supplied."
+      }
     },
     {
       "id": "P022",
       "slug": "summit-p022",
-      "name": "Summit ",
+      "name": "Summit",
       "description": "black FZ hood jkt",
       "code": "Summit  25302101",
       "category": "Jackets & Vests",
-      "priceCents": null,
+      "priceCents": 11990,
       "approved": false,
       "active": false,
       "featured": false,
@@ -1125,16 +1263,22 @@
           "reported": null
         }
       ],
-      "tags": []
+      "tags": [],
+      "content": {
+        "composition": "100% polyester",
+        "care": "Wash at 30°C on a gentle cycle.",
+        "fit": "",
+        "details": "Four-way stretch, TPV and fleece with ultrasonic perforations. Made from 100% polyester. Fabric weight: 340 g/m²."
+      }
     },
     {
       "id": "P023",
       "slug": "snake-scarf-p023",
-      "name": "Snake scarf",
+      "name": "Snake Scarf",
       "description": "black fleece scarf",
       "code": "Snake scarf 25302401",
       "category": "Accessories",
-      "priceCents": 1900,
+      "priceCents": 2690,
       "approved": false,
       "active": false,
       "featured": false,
@@ -1152,16 +1296,22 @@
       "tags": [
         "Layering",
         "Accessories"
-      ]
+      ],
+      "content": {
+        "composition": "100% polyester",
+        "care": "Wash at 30°C on a gentle cycle.",
+        "fit": "One size.",
+        "details": "One-size scarf in 100% polyester. Soft teddy fleece combined with grid fleece. Fabric weight: 480 g/m²."
+      }
     },
     {
       "id": "P024",
       "slug": "snake-scarf-p024",
-      "name": "Snake scarf",
+      "name": "Snake Scarf",
       "description": "cream fleece scarf",
       "code": "Snake scarf 25302402",
       "category": "Accessories",
-      "priceCents": 1900,
+      "priceCents": 2690,
       "approved": false,
       "active": false,
       "featured": false,
@@ -1179,16 +1329,22 @@
       "tags": [
         "Layering",
         "Accessories"
-      ]
+      ],
+      "content": {
+        "composition": "100% polyester",
+        "care": "Wash at 30°C on a gentle cycle.",
+        "fit": "One size.",
+        "details": "One-size scarf in 100% polyester. Soft teddy fleece combined with grid fleece. Fabric weight: 480 g/m²."
+      }
     },
     {
       "id": "P025",
       "slug": "snake-scarf-p025",
-      "name": "Snake scarf",
+      "name": "Snake Scarf",
       "description": "emerald fleece scarf",
       "code": "Snake scarf 25302403",
       "category": "Accessories",
-      "priceCents": 1900,
+      "priceCents": 2690,
       "approved": false,
       "active": false,
       "featured": false,
@@ -1206,16 +1362,22 @@
       "tags": [
         "Layering",
         "Accessories"
-      ]
+      ],
+      "content": {
+        "composition": "100% polyester",
+        "care": "Wash at 30°C on a gentle cycle.",
+        "fit": "One size.",
+        "details": "One-size scarf in 100% polyester. Soft teddy fleece combined with grid fleece. Fabric weight: 480 g/m²."
+      }
     },
     {
       "id": "P026",
       "slug": "velvet-wms-hood-p026",
-      "name": "Velvet WMS hood",
+      "name": "Velvet WMS Hood",
       "description": "cream FZ hood",
       "code": "Velvet WMS hood 25000704",
       "category": "Jackets & Vests",
-      "priceCents": null,
+      "priceCents": 7990,
       "approved": false,
       "active": false,
       "featured": false,
@@ -1257,16 +1419,22 @@
           "reported": 30
         }
       ],
-      "tags": []
+      "tags": [],
+      "content": {
+        "composition": "30% viscose, 70% polyester",
+        "care": "Wash at 30°C on a gentle cycle.",
+        "fit": "",
+        "details": "Women’s hoodie in coarse-knit, cationic-dyed brushed fabric. Made from 30% viscose and 70% polyester. Fabric weight: 320 g/m²."
+      }
     },
     {
       "id": "P027",
       "slug": "velvet-wms-hood-p027",
-      "name": "Velvet WMS hood",
+      "name": "Velvet WMS Hood",
       "description": "black FZ hood",
       "code": "Velvet WMS hood 25000703",
       "category": "Jackets & Vests",
-      "priceCents": null,
+      "priceCents": 7990,
       "approved": false,
       "active": false,
       "featured": false,
@@ -1309,7 +1477,13 @@
           "reported": 16
         }
       ],
-      "tags": []
+      "tags": [],
+      "content": {
+        "composition": "30% viscose, 70% polyester",
+        "care": "Wash at 30°C on a gentle cycle.",
+        "fit": "",
+        "details": "Women’s hoodie in coarse-knit, cationic-dyed brushed fabric. Made from 30% viscose and 70% polyester. Fabric weight: 320 g/m²."
+      }
     }
   ]
 }

@@ -1,0 +1,12 @@
+'use client';
+import {useEffect,useState,type FormEvent} from 'react';
+import Link from 'next/link';
+import {SimpleHeader} from '@/components/simple-header';
+import {Footer} from '@/components/brand';
+import {ClubDashboard,type ClubView} from '@/components/club-dashboard';
+import type {ClubEventCard} from '@/lib/club-events';
+export default function Club(){const [data,setData]=useState<{club:ClubView;events:ClubEventCard[]}|null>(null),[error,setError]=useState(''),[busy,setBusy]=useState(false),[status,setStatus]=useState(0);
+ async function load(){const r=await fetch('/api/club'),d=await r.json();setStatus(r.status);if(!r.ok)throw Error(d.error);setData(d)}
+ useEffect(()=>{load().catch(e=>setError(e.message))},[]);
+ async function join(e:FormEvent<HTMLFormElement>){e.preventDefault();setBusy(true);setError('');const f=new FormData(e.currentTarget);try{const r=await fetch('/api/club',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:f.get('name'),consent:f.get('consent')==='on'})}),d=await r.json();if(!r.ok)throw Error(d.error);await load()}catch(e){setError(e instanceof Error?e.message:'Please try again.')}finally{setBusy(false)}}
+ return <><SimpleHeader/>{data?.club.member?<ClubDashboard club={data.club} events={data.events} onBook={async(id,quantity,action)=>{const r=await fetch('/api/club/events',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,quantity,action})}),d=await r.json();if(!r.ok)throw Error(d.error);await load()}}/>:<main id="main" className="page-container policy-page"><span className="eyebrow">YOUR BIGK</span><h1>BigK Club.</h1>{data?<div className="panel"><h2>Your next move starts here.</h2><p>Free membership. Earn points on eligible purchases and turn 100 points into €3 off.</p><form onSubmit={join}><label className="field">Your name<input name="name" required maxLength={100} autoComplete="given-name"/></label><label className="check-field"><input name="consent" type="checkbox" required/><span>I accept the <Link href="/info/club">BigK Club rules</Link>.</span></label><button className="button dark" disabled={busy}>{busy?'Joining…':'Join BigK Club — free'}</button></form></div>:!status?<p role="status">Loading your Club…</p>:status===401?<><p>Sign in with your customer account to join BigK Club or see your points.</p><Link href="/account" className="button dark">Sign in</Link></>:<p>BigK Club is being prepared and is not available yet.</p>}{error&&status!==401&&<p role="alert">{error}</p>}</main>}<Footer/></>}

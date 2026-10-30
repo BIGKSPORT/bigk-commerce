@@ -18,7 +18,7 @@ try {
   await assert.rejects(() => db.query('SELECT * FROM bigk.orders'), /permission denied/);
   await db.exec('RESET ROLE;');
   const tables = (await db.query("SELECT relname,relrowsecurity FROM pg_class JOIN pg_namespace n ON n.oid=relnamespace WHERE n.nspname='bigk' AND relkind='r'")).rows;
-  assert.equal(tables.length,11); assert(tables.every(t=>t.relrowsecurity));
+  assert.equal(tables.length,18); assert(tables.every(t=>t.relrowsecurity));
   console.log('PASS: migration runs twice; 27 records; all private tables use RLS; anonymous/customer roles cannot read orders.');
   server = new PGLiteSocketServer({db,host:'127.0.0.1',port:0});
   await server.start();
@@ -29,4 +29,8 @@ try {
     child.once('error',reject); child.once('exit',resolve);
   });
   assert.equal(result,0,'PostgreSQL commerce suite failed.');
+  const clubResult=await new Promise((resolve,reject)=>{const child=spawn(process.execPath,['--import','tsx','tests/club.test.ts'],{stdio:'inherit',env:{...process.env,NODE_ENV:'test',BIGK_TEST_DATABASE_URL:`postgresql://postgres@127.0.0.1:${port}/postgres`}});child.once('error',reject);child.once('exit',resolve)});
+  assert.equal(clubResult,0,'PostgreSQL Club suite failed.');
+  const adminResult=await new Promise((resolve,reject)=>{const child=spawn(process.execPath,['--import','tsx','tests/backoffice.test.ts'],{stdio:'inherit',env:{...process.env,NODE_ENV:'test',BIGK_TEST_DATABASE_URL:`postgresql://postgres@127.0.0.1:${port}/postgres`}});child.once('error',reject);child.once('exit',resolve)});
+  assert.equal(adminResult,0,'PostgreSQL backoffice suite failed.');
 } finally { if(server) await server.stop(); await db.close(); }

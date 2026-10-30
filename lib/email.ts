@@ -1,3 +1,4 @@
+import {clubReminder} from './club';
 import { db, transaction } from './db';
 import { getOrder } from './commerce';
 import { money } from './format';
@@ -18,8 +19,10 @@ export async function deliverEmails() { if (!process.env.RESEND_API_KEY || !proc
     try {
         if (!order)
             throw Error('Order missing');
-        const subject = job.kind === 'shipment' ? 'Your BigK order is on its way' : 'Your BigK order is confirmed';
-        const text = [subject, '', 'Order ' + order.id.slice(0, 8).toUpperCase(), ...order.items.map(l => `${l.name} / ${l.size} × ${l.quantity} — ${money(l.unitPrice * l.quantity)}`), '', 'Total: ' + money(order.total), ...(job.kind === 'shipment' && order.tracking ? ['Tracking reference: ' + order.tracking] : []), '', 'View your order history: ' + new URL('/account', process.env.APP_URL).toString()].join('\n');
+        const reminder=job.kind.startsWith('club-expiry:')?await clubReminder(job.email,job.kind.slice('club-expiry:'.length)):null;
+        if(job.kind.startsWith('club-expiry:')&&!reminder){await db().prepare('UPDATE email_outbox SET sent_at=?,lease_until=0 WHERE id=?').run(new Date().toISOString(),job.id);continue}
+        const subject = reminder?'Your BigK Club points expire soon': job.kind === 'shipment' ? 'Your BigK order is on its way' : 'Your BigK order is confirmed';
+        const text = reminder?['You have '+reminder.points+' BigK Club points expiring on '+new Date(reminder.expiresAt).toLocaleDateString('en-GB',{timeZone:'Europe/Brussels'})+'.','Check your current balance and rules: '+new URL('/account/club',process.env.APP_URL).toString(),'100 points = €3, subject to the 10% product-subtotal limit.'].join('\n'):[subject, '', 'Order ' + order.id.slice(0, 8).toUpperCase(), ...order.items.map(l => `${l.name} / ${l.size} × ${l.quantity} — ${money(l.unitPrice * l.quantity)}`), '', ...(order.pointsDiscount?['BigK Club discount: -'+money(order.pointsDiscount)]:[]), 'Total: ' + money(order.total), ...(job.kind === 'shipment' && order.tracking ? ['Tracking reference: ' + order.tracking] : []), '', 'View your order history: ' + new URL('/account', process.env.APP_URL).toString()].join('\n');
         const response = await fetch('https://api.resend.com/emails', { method: 'POST', headers: { Authorization: 'Bearer ' + process.env.RESEND_API_KEY, 'Content-Type': 'application/json', 'Idempotency-Key': 'bigk-outbox-' + job.id }, body: JSON.stringify({ from: process.env.EMAIL_FROM, to: job.email, subject, text }), signal: AbortSignal.timeout(10000) });
         if (!response.ok)
             throw Error('Provider rejected delivery');
