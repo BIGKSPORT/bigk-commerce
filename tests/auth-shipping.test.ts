@@ -67,6 +67,7 @@ await test('durable authentication and safe DPD test workflow',async t=>{
   globalThis.fetch=async(url,init)=>{if(init?.method==='POST'){posts++;assert.deepEqual(JSON.parse(String(init.body)),testShipmentPayload());return response({data:{ids:[{id:456}]}})}return String(url).includes('shipment_labels')?response({data:{pdfs:{url:'https://api.sendmyparcel.be/pdfs/fixture'}}}):response(noShipments)};
   const results=await Promise.all([1,2].map(()=>shipping(req('/api/admin/shipping/myparcel/test-label',{confirmTestShipment:'CREATE_UNUSED_TEST_LABEL'}))));
   assert.equal(posts,1);const bodies=await Promise.all(results.map(r=>r.json()));assert(bodies.some(p=>p.shipmentId==='456'&&p.labelAvailable===true));
+  const persisted=await (await status(req('/api/admin/shipping/myparcel/test-label'))).json();assert.equal(persisted.labelAvailable,true);assert.equal(persisted.labelHttpStatus,200);
   const reused=await (await shipping(req('/api/admin/shipping/myparcel/test-label',{confirmTestShipment:'CREATE_UNUSED_TEST_LABEL'}))).json();assert.equal(reused.shipmentId,'456');assert.equal(posts,1);
  });
  await t.test('timeout after POST is uncertain and blocks retries, including a fresh DB connection',async()=>{

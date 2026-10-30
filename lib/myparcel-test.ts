@@ -101,11 +101,13 @@ export async function runTestShipment(){
    if(!id)throw Error('Invalid shipment ID');
   }
   await save('created',id);
-  return {created:true,state:'created',shipmentId:id,reused:!submitted,...await labelStatus(id),notice:'Niet afgeven of scannen. Geen klantmail, ophaling of orderwijziging.',orderUpdated:false,customerNotified:false,pickupBooked:false};
+  const label=await labelStatus(id);
+  await save('created',id,label);
+  return {created:true,state:'created',shipmentId:id,reused:!submitted,...label,notice:'Niet afgeven of scannen. Geen klantmail, ophaling of orderwijziging.',orderUpdated:false,customerNotified:false,pickupBooked:false};
  }catch(error){
   await save('uncertain',null).catch(()=>{});
   if(error instanceof HttpError)throw error;
   throw new HttpError(502,submitted?'MyParcel-resultaat is onzeker. Nieuwe creatie geblokkeerd; controleer de bestaande referentie.':'Voorafgaande MyParcel-controle mislukt. Er is geen creatieverzoek verstuurd.');
  }
 }
-async function save(state:string,id:string|null,diagnostic?:Diagnostic){await db().prepare('UPDATE shipping_test_attempts SET state=?,shipment_id=?,diagnostic=?,updated_at=? WHERE reference=?').run(state,id,diagnostic?JSON.stringify(diagnostic):null,new Date().toISOString(),TEST_REFERENCE);}
+async function save(state:string,id:string|null,diagnostic?:Diagnostic|{labelAvailable:boolean;labelHttpStatus:number|null}){await db().prepare('UPDATE shipping_test_attempts SET state=?,shipment_id=?,diagnostic=?,updated_at=? WHERE reference=?').run(state,id,diagnostic?JSON.stringify(diagnostic):null,new Date().toISOString(),TEST_REFERENCE);}

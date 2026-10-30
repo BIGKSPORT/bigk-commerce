@@ -14,6 +14,17 @@ The branch now uses the existing isolated `bigk_staging` PostgreSQL schema, thro
 an independent `bigk_preview_web` LOGIN with membership in `bigk_staging_server`.
 Production schema access is denied. The database URL is a branch-only Vercel secret.
 Do not rotate this credential or the admin password on routine deployment.
+`DATABASE_CA_CERT` contains Supabase's official Root 2021 CA. TLS verification
+stays enabled; the root's SHA-256 fingerprint is
+`807025AD50D4ED219D2C9C7D299C004F824EB00CF7F65AFEF607D07B72E6CAFA`.
+Certificate source is the same URL used by Supabase Studio's
+`ssl:certificate_url` setting:
+https://github.com/supabase/supabase/blob/master/apps/studio/hooks/custom-content/custom-content.json
+
+Hosted testing exposed a missing CA trust configuration, now corrected without
+disabling verification. The staging storefront responds HTTP 200 through the
+preview role. GitHub CI passed at commit `2a86eac`:
+https://github.com/BIGKSPORT/bigk-commerce/actions/runs/41134894853
 Serverless SQLite and preview connections targeting production schema fail closed.
 
 Admin page requests redirect to the configured stable origin. CSRF origins come
