@@ -2,6 +2,7 @@ import { DatabaseSync } from 'node:sqlite';
 import { mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import catalog from './catalog.json';
+import {shippingTestSchema} from './shipping-test-schema';
 import {withdrawalSchema} from './withdrawal-schema';
 import {warehouseReceiptSchema} from './warehouse-receipt-schema';
 import {mediaSchema} from './media-schema';
@@ -25,6 +26,7 @@ export function db(){
  CREATE TABLE IF NOT EXISTS customer_sessions(hash TEXT PRIMARY KEY,email TEXT NOT NULL,expires_at TEXT NOT NULL);
  CREATE TABLE IF NOT EXISTS email_outbox(id INTEGER PRIMARY KEY,order_id TEXT NOT NULL REFERENCES orders(id),kind TEXT NOT NULL,email TEXT NOT NULL,attempts INTEGER NOT NULL DEFAULT 0,next_attempt INTEGER NOT NULL DEFAULT 0,lease_until INTEGER NOT NULL DEFAULT 0,sent_at TEXT,UNIQUE(order_id,kind));
  PRAGMA user_version=1;`);
+ sql.exec(shippingTestSchema);
  sql.exec(clubSchema);
  sql.exec(backofficeSchema);
  sql.exec(mediaSchema);

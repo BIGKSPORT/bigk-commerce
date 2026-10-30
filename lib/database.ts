@@ -9,8 +9,9 @@ let sqliteQueue: Promise<unknown> = Promise.resolve();
 export function databaseSchema(){const schema=process.env.DATABASE_SCHEMA||'bigk';if(!['bigk','bigk_staging'].includes(schema))throw new Error('DATABASE_SCHEMA must be bigk or bigk_staging.');return schema}
 export function isPostgres() {
   const provider = process.env.DATABASE_PROVIDER || 'sqlite';
-  if(process.env.NETLIFY==='true'&&provider!=='postgres')throw new Error('Netlify requires DATABASE_PROVIDER=postgres; local SQLite is not durable on this host.');
+  if((process.env.NETLIFY==='true'||process.env.VERCEL==='1')&&provider!=='postgres')throw new Error('Serverless deployments require DATABASE_PROVIDER=postgres; temporary SQLite cannot store admin sessions.');
   if (!['sqlite', 'postgres'].includes(provider)) throw new Error('DATABASE_PROVIDER must be sqlite or postgres.');
+  if(process.env.VERCEL_ENV==='preview'&&provider==='postgres'&&databaseSchema()!=='bigk_staging')throw new Error('Preview deployments require DATABASE_SCHEMA=bigk_staging.');
   return provider === 'postgres';
 }
 function postgresClient() {
@@ -28,7 +29,7 @@ export function postgresQuery(text: string) {
   let index = 0;
   let result = text.replace(/\?/g, () => '$' + (++index));
   result = result.replace(/\browid\b/g, 'position');
-  result = result.replace(/\b(FROM|INTO|UPDATE|JOIN)\s+(products|variants|orders|order_lines|webhook_events|sessions|rate_limits|audit|login_tokens|customer_sessions|email_outbox|club_members|club_orders|club_ledger|club_events|club_bookings|product_content|admin_returns|media_assets|withdrawal_requests|warehouse_return_receipts)\b/g, '$1 '+databaseSchema()+'.$2');
+  result = result.replace(/\b(FROM|INTO|UPDATE|JOIN)\s+(products|variants|orders|order_lines|webhook_events|sessions|rate_limits|audit|login_tokens|customer_sessions|email_outbox|club_members|club_orders|club_ledger|club_events|club_bookings|product_content|admin_returns|media_assets|withdrawal_requests|warehouse_return_receipts|shipping_test_attempts)\b/g, '$1 '+databaseSchema()+'.$2');
   result = result.replace(/AS unitPrice\b/g, 'AS "unitPrice"').replace(/AS variantId\b/g, 'AS "variantId"');
   result = result.replace(/SET hits=hits\+1/g, 'SET hits=rate_limits.hits+1');
   if (/INSERT OR IGNORE INTO/.test(result)) result = result.replace('INSERT OR IGNORE INTO', 'INSERT INTO') + ' ON CONFLICT DO NOTHING';

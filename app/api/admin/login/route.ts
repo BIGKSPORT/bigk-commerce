@@ -11,7 +11,7 @@ export async function POST(req: Request) { try {
         throw new HttpError(401, 'Incorrect password.');
     const value = token();
     (await db().prepare('DELETE FROM sessions WHERE expires_at<?').run(new Date().toISOString()));
-    (await db().prepare('INSERT INTO sessions VALUES(?,?)').run(hash(value), new Date(Date.now() + 8 * 60 * 60000).toISOString()));
+    (await db().prepare('INSERT INTO sessions(hash,expires_at) VALUES(?,?)').run(hash(value), new Date(Date.now() + 8 * 60 * 60000).toISOString()));
     (await audit('admin.login', 'admin'));
     return Response.json({ ok: true }, { headers: { 'Set-Cookie': sessionCookie('bigk_admin', value, 8 * 3600), 'Cache-Control': 'no-store' } });
 }

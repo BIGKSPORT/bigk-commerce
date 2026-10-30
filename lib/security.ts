@@ -1,5 +1,5 @@
 import { createHash, randomBytes, scryptSync, timingSafeEqual } from 'node:crypto';
-import { db } from './db';
+import { db, transaction } from './db';
 export const hash = (value: string) => createHash('sha256').update(value).digest('hex');
 export const token = () => randomBytes(32).toString('base64url');
 export class HttpError extends Error {
@@ -13,17 +13,29 @@ export function checkOrigin(req: Request) {
             .filter((value): value is string => !!value)
             .map(host => 'https://' + host)
         : [process.env.APP_URL].filter((value): value is string => !!value);
+    if(process.env.VERCEL_ENV==='preview' && process.env.ADMIN_CANONICAL_ORIGIN) trusted.push(process.env.ADMIN_CANONICAL_ORIGIN);
     if (!trusted.length) throw new HttpError(503, 'APP_URL must be configured.');
     const origin = req.headers.get('origin');
     if (!origin || !trusted.some(candidate => new URL(candidate).origin === origin))
         throw new HttpError(403, 'Request origin rejected.');
 }
-export async function rateLimit(key: string, limit = 20, seconds = 60) { const now = Date.now(); const sql = db(); (await sql.prepare('DELETE FROM rate_limits WHERE expires<?').run(now)); (await sql.prepare('INSERT INTO rate_limits(key,hits,expires) VALUES(?,1,?) ON CONFLICT(key) DO UPDATE SET hits=hits+1').run(key, now + seconds * 1000)); const row = (await sql.prepare('SELECT hits FROM rate_limits WHERE key=?').get(key)) as {
-    hits: number;
-}; if (row.hits > limit)
-    throw new HttpError(429, 'Too many requests. Please try again later.'); }
-export function passwordMatches(password: string) { const encoded = process.env.ADMIN_PASSWORD_HASH || ''; const [salt, key] = encoded.split(':'); if (!salt || !key || !/^[a-f0-9]{128}$/.test(key))
-    return false; const actual = scryptSync(password, salt, 64); const expected = Buffer.from(key, 'hex'); return timingSafeEqual(actual, expected); }
+export async function rateLimit(key: string, limit = 20, seconds = 60) {
+    await transaction(async()=>{
+        const now=Date.now(),sql=db();
+        await sql.prepare('DELETE FROM rate_limits WHERE expires<?').run(now);
+        await sql.prepare('INSERT INTO rate_limits(key,hits,expires) VALUES(?,1,?) ON CONFLICT(key) DO UPDATE SET hits=hits+1').run(key,now+seconds*1000);
+        const row=await sql.prepare('SELECT hits FROM rate_limits WHERE key=?').get(key);
+        if(Number(row?.hits)>limit)throw new HttpError(429,'Too many requests. Please try again later.');
+    });
+}
+export function passwordMatches(password: string) {
+    const encoded = (process.env.ADMIN_PASSWORD_HASH || '').trim();
+    // A malformed deployment secret is a configuration error, not a bad password.
+    const match = /^([a-zA-Z0-9_-]{16,128}):([a-f0-9]{128})$/.exec(encoded);
+    if (!match) throw new HttpError(503, 'Admin authentication configuration is invalid.');
+    if (typeof password !== 'string' || password.length > 256) return false;
+    return timingSafeEqual(scryptSync(password, match[1], 64), Buffer.from(match[2], 'hex'));
+}
 export function cookieValue(req: Request, name: string) { return (req.headers.get('cookie') || '').split(';').map(v => v.trim()).find(v => v.startsWith(name + '='))?.slice(name.length + 1) || ''; }
 export async function requireAdmin(req: Request) { const value = cookieValue(req, 'bigk_admin'); const session = (await db().prepare('SELECT hash FROM sessions WHERE hash=? AND expires_at>?').get(hash(value), new Date().toISOString())); if (!value || !session)
     throw new HttpError(401, 'Sign in to the admin area.'); }

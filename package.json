@@ -35,7 +35,9 @@
     "test:myparcel": "node --import tsx --test tests/myparcel-costs.test.ts",
     "test:support-policy": "node --import tsx --test tests/customer-service-policy.test.ts",
     "test:support-order": "node --import tsx --test tests/customer-service-order-review.test.ts",
-    "test:warehouse": "node --import tsx --test tests/warehouse-inspection.test.ts"
+    "test:warehouse": "node --import tsx --test tests/warehouse-inspection.test.ts",
+    "test:auth-shipping": "node tests/auth-shipping.mjs",
+    "test:auth-browser": "node tests/auth-browser.mjs"
   },
   "dependencies": {
     "lucide-react": "1.64.0",

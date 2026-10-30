@@ -1,0 +1,34 @@
+name: Admin authentication and shipping staging checks
+on:
+  push:
+    branches: [fix/catalogue-colour-options]
+  pull_request:
+    paths:
+      - 'lib/security.ts'
+      - 'lib/myparcel-test.ts'
+      - 'app/api/admin/**'
+      - 'tests/auth-*'
+permissions:
+  contents: read
+jobs:
+  auth-shipping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run test:backoffice
+      - run: npm run test:myparcel
+      - run: npm run test:auth-shipping
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - name: Browser authentication and navigation
+        run: |
+          export CHROMIUM_PATH="$(node -e 'console.log(require("playwright").chromium.executablePath())')"
+          npm run test:auth-browser
