@@ -57,3 +57,7 @@ Source: Stock.xlsx, first sheet (国外订单), **Quantity** column E (not stock
 - **25301702**: STYLE **ALPINE GILLET HOOD**, NAME **ALPIN VEST**, COLOR **DUSTY BLUE**, RRP **€66.90**, SIZE **XXL**, EAN **6957919562812**.
 - Previous supplier-order and catalogue descriptions said cream. The physical label confirms Dusty Blue; draft catalogue corrected. Original supplier order remains unchanged.
 - Hooded garment is a distinct family from Alpine Gillet (25303201/25303202). Existing P014 photos require colour verification before approval.
+
+## Alpine FZ Hood Cream — physical label verified
+- STYLE **ALPINE FZ HOOD**, NAME **ALPIN**, COLOR **CREAM**, CODE **25301603**, RRP **€93.90**, SIZE **XL**, EAN **6957919562669**.
+- Draft catalogue display family updated to Alpine FZ Hood; supplier name ALPIN retained here as label evidence. Original order and quantities unchanged.
