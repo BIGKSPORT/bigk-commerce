@@ -26,7 +26,7 @@ export async function POST(req:Request){
    Authorization:'bearer '+Buffer.from(key,'utf8').toString('base64'),
    'User-Agent':'CustomApiCall/2',
   };
-  const destination={cc:'BE',postal_code:seller.postal,city:seller.city,street:seller.address.replace(/\s+\d+$/, ''),number:seller.address.match(/\d+$/)?.[0]||'',person:seller.name};
+  const destination={cc:'BE',postal_code:seller.postal,city:seller.city,street:seller.address.replace(/\s+\d+$/, ''),number:seller.address.match(/\d+$/)?.[0]||'',box_number:'',person:seller.name};
   if(destination.postal_code!=='2990'||destination.city!=='Wuustwezel'||destination.street!=='Theo Verellenlaan'||destination.number!=='27')throw new HttpError(503,'Magazijnadres is gewijzigd; testlabel geblokkeerd.');
   const shipment={data:{shipments:[{
    carrier:4,
@@ -39,10 +39,35 @@ export async function POST(req:Request){
   try{
    const response=await fetch('https://api.sendmyparcel.be/shipments',{
     method:'POST',cache:'no-store',signal:control.signal,
-    headers:{...headers,'Content-Type':'application/vnd.shipment+json;version=1.1;charset=utf-8'},
+    headers:{...headers,'Content-Type':'application/vnd.shipment+json;charset=utf-8'},
     body:JSON.stringify(shipment),
    });
-   if(!response.ok)throw new HttpError(502,'MyParcel shipment aanmaak geweigerd (HTTP '+response.status+').');
+   if(!response.ok){
+    // Only safe, bounded provider error codes and field paths; never echo external
+    // text or responses, which may contain customer data or credentials.
+    const raw=await response.text();
+    let providerCodes:string[]=[];
+    try{
+      const parsed=JSON.parse(raw) as {errors?:unknown;error?:unknown};
+      const errors=Array.isArray(parsed.errors)?parsed.errors:[parsed.error];
+      providerCodes=errors.flatMap((entry):string[]=>{
+        if(!entry||typeof entry!=='object')return [];
+        const e=entry as Record<string,unknown>;
+        return [e.code,e.field,e.property,e.parameter].filter(
+          (v):v is string=>typeof v==='string'&&/^[a-zA-Z0-9_.-]{1,72}$/.test(v)
+        );
+      }).slice(0,10);
+    }catch{/* Unknown remote error format */}
+    return Response.json({
+      created:false,
+      httpStatus:response.status,
+      providerCodes,
+      diagnostic:response.status===422
+       ?'MyParcel keurt één of meer zendingsvelden af. Er is geen verzend-ID ontvangen.'
+       :'MyParcel-aanvraag geweigerd; controleer API-toegang en zendingsvoorwaarden.',
+      retrySafely:response.status===422,
+    },{status:502,headers:{'Cache-Control':'no-store'}});
+   }
    const json=await response.json() as {data?:{ids?:Array<{id?:number}>}};
    const id=json.data?.ids?.[0]?.id;
    if(!Number.isSafeInteger(id)||!id||id<1)
