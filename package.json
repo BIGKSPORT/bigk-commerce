@@ -33,7 +33,8 @@
     "launch:check": "node scripts/check-launch.mjs",
     "test:dpd": "node --import tsx --test tests/dpd-preflight.test.ts",
     "test:myparcel": "node --import tsx --test tests/myparcel-costs.test.ts",
-    "test:support-policy": "node --import tsx --test tests/customer-service-policy.test.ts"
+    "test:support-policy": "node --import tsx --test tests/customer-service-policy.test.ts",
+    "test:support-order": "node --import tsx --test tests/customer-service-order-review.test.ts"
   },
   "dependencies": {
     "lucide-react": "1.64.0",
