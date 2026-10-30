@@ -972,8 +972,8 @@
       "id": "P017",
       "slug": "velvet-wms-hood-p017",
       "name": "Velvet WMS Hood",
-      "description": "black-cream FZ hood",
-      "code": "Velvet  WMS hood 25000701",
+      "description": "Cream/Black FZ hood",
+      "code": "Velvet WMS Hood 25000701",
       "category": "Jackets & Vests",
       "priceCents": 7990,
       "approved": false,
@@ -999,7 +999,8 @@
           "id": "P017-2",
           "size": "L",
           "stock": 0,
-          "reported": 58
+          "reported": 58,
+          "barcode": "6957919563673"
         },
         {
           "id": "P017-3",
@@ -1016,7 +1017,7 @@
       ],
       "tags": [],
       "content": {
-        "composition": "30% viscose, 70% polyester",
+        "composition": "30% rayon (viscose), 70% polyester — verified from hangtag",
         "care": "Wash at 30°C on a gentle cycle.",
         "fit": "",
         "details": "Women’s hoodie in coarse-knit, cationic-dyed brushed fabric. Made from 30% viscose and 70% polyester. Fabric weight: 320 g/m²."
