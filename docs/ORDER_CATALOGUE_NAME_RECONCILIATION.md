@@ -66,3 +66,8 @@ Source: Stock.xlsx, first sheet (国外订单), **Quantity** column E (not stock
 - STYLE **NANDOWN JKT**, NAME **NAND DOWN**, COLOR **BLACK**, CODE **25302901**, RRP **€186.90**, SIZE **L**, EAN **6957919564564**.
 - Draft catalogue display name changed from Nano Down Jacket to Nandown Jacket for both P019 and alias P020. Size L EAN added only to variant-bearing P019. Duplicate alias P020 remains pending safe deduplication.
 - Supplier order, stock quantities and other size barcodes unchanged.
+
+## Velvet WMS — owner-confirmed distinct structures
+- Owner confirms Velvet garments are **different products with different structures**, not interchangeable colour variants. Do **not** group SKUs 25000701/02/03/04 into a single selectable-colour product merely because their first six SKU digits match.
+- **25000702 physical label:** STYLE VELVET WMS HOOD, NAME VELVET, COLOR EMERALD, CODE 25000702, RRP €79.90, SIZE XXL, EAN 6957919563758.
+- Keep each Velvet SKU a separate draft product until its construction and naming are individually verified. Shared supplier style text is insufficient to infer same structure.
