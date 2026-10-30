@@ -104,3 +104,11 @@ Source: Stock.xlsx, first sheet (国外订单), **Quantity** column E (not stock
 - [ ] **Rollback:** retain previous production deployment and record DNS rollback steps before cutover.
 
 **No live deployment, checkout activation or DNS change was performed by this audit.**
+
+## Production Supabase schema preparation — 30 October 2026
+
+- **Completed, verified in remote Supabase project `tvlfpxlfuatvtuiyrcam`:** production schema `bigk` was missing table `product_content`, which `lib/db.ts` queries on every catalogue load. Applied additive migration `add_private_production_product_content_from_staging`: create table with product FK, enable RLS, insert 27 matching content rows from existing `bigk_staging.product_content`, `ON CONFLICT DO NOTHING`. No existing product, stock, order, or customer rows were altered.
+- **Readback:** `bigk.product_content` = **27 rows, all 27 matching production products**, RLS enabled, `anon` SELECT **false**, `authenticated` SELECT **false**. The new table is intentionally private.
+- **Still blocked:** no production `DATABASE_URL` secret or dedicated production database login / scoped RLS access has been configured in Vercel. Never put a database password into GitHub/chat. Connect using Supabase transaction pooler and a least-privilege login; confirm actual runtime catalogue/API access before sales.
+- **Outstanding security finding, NOT changed:** Supabase reported seven internal `bigk` agent/settings tables with RLS disabled (`agents`, `tasks`, `approvals`, `runs`, `artifacts`, `settings`, `preview_checks`). Audit exposure and permissions; do not blindly toggle RLS, which can break agent access. This must be resolved prior to a public launch.
+- **Checkout guard stays active:** Vercel production `COMMERCE_MODE=demo`, `LIVE_COMMERCE_APPROVED=false`; no production deployment, domain DNS changes or Stripe activation performed.
