@@ -52,7 +52,7 @@ export function createWarehouseSession(id:string){
  return payload+'.'+signature(payload);
 }
 export function warehouseCookie(value:string,maxAge:number){
- return `bigk_warehouse=${value}; HttpOnly; SameSite=Strict; Path=/warehouse; Max-Age=${maxAge}${process.env.NODE_ENV==='production'?'; Secure':''}`;
+ return `bigk_warehouse=${value}; HttpOnly; SameSite=Strict; Path=/; Max-Age=${maxAge}${process.env.NODE_ENV==='production'?'; Secure':''}`;
 }
 export async function requireWarehouse(req:Request,roles?:WarehouseRole[]){
  const value=cookieValue(req,'bigk_warehouse');
