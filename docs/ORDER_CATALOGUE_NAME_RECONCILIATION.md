@@ -37,3 +37,8 @@ Source: Stock.xlsx, first sheet (国外订单), **Quantity** column E (not stock
 - P002 uses **Dusty Blue**; supplier SKU **25303102**, price **€146.90**, size L EAN **6957919564847** physically verified.
 - P001 black name aligned to family for display only; its physical label is not yet verified.
 - All other size barcodes remain unverified from physical labels. No order quantities, stock, prices or live approvals were changed.
+
+## Second physical label verified — Alpine Fleece Black
+- STYLE **ALPINE FLEECE**, NAME **FLEECE**, COLOR **BLACK**, CODE **25303101**, RRP **€146.90**, SIZE **3XL**, EAN **6957919564809**.
+- Website variant size is stored as XXXL, equivalent to label 3XL; no size quantity changed.
+- Both Alpine Fleece colours (25303101 Black, 25303102 Dusty Blue) now have physical label confirmation, but only one size-specific EAN per colour is verified.
