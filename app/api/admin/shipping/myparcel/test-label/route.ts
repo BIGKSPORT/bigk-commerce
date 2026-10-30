@@ -45,25 +45,41 @@ export async function POST(req:Request){
    if(!response.ok){
     // Only safe, bounded provider error codes and field paths; never echo external
     // text or responses, which may contain customer data or credentials.
-    const raw=await response.text();
+    const raw=(await response.text()).slice(0,12000);
     let providerCodes:string[]=[];
+    let providerMessages:string[]=[];
+    const safeText=(v:unknown):string|null=>{
+      if(typeof v!=='string'&&typeof v!=='number')return null;
+      const text=String(v).replace(/[\r\n\t<>]/g,' ').trim();
+      if(!text||text.length>240||/https?:\/\/|@|bearer |basic |api[_-]?key|authorization|token|secret/i.test(text))return null;
+      return text;
+    };
     try{
-      const parsed=JSON.parse(raw) as {errors?:unknown;error?:unknown};
-      const errors=Array.isArray(parsed.errors)?parsed.errors:[parsed.error];
-      providerCodes=errors.flatMap((entry):string[]=>{
-        if(!entry||typeof entry!=='object')return [];
+      const parsed=JSON.parse(raw) as Record<string,unknown>;
+      const errors=Array.isArray(parsed.errors)?parsed.errors:
+        parsed.error?[parsed.error]:parsed.exception?[parsed.exception]:[parsed];
+      for(const entry of errors.slice(0,5)){
+        if(!entry||typeof entry!=='object')continue;
         const e=entry as Record<string,unknown>;
-        return [e.code,e.field,e.property,e.parameter].flatMap(v=>{
-          if(typeof v==='number'&&Number.isSafeInteger(v))return [String(v)];
-          if(typeof v==='string'&&/^[a-zA-Z0-9_.-]{1,72}$/.test(v))return [v];
-          return [];
-        });
-      }).slice(0,10);
-    }catch{/* Unknown remote error format */}
+        for(const value of [e.code,e.label,e.field,e.property,e.parameter]){
+          const s=safeText(value);
+          if(s&&/^[a-zA-Z0-9_.-]{1,72}$/.test(s))providerCodes.push(s);
+        }
+        for(const value of [e.message,e.human,e.title,e.detail,e.description]){
+          const s=safeText(value);
+          if(s)providerMessages.push(s);
+        }
+      }
+      providerCodes=[...new Set(providerCodes)].slice(0,10);
+      providerMessages=[...new Set(providerMessages)].slice(0,4);
+    }catch{
+      // Provider error format is unknown; never expose unstructured response body.
+    }
     return Response.json({
       created:false,
       httpStatus:response.status,
       providerCodes,
+      providerMessages,
       diagnostic:response.status===422
        ?'MyParcel keurt één of meer zendingsvelden af. Er is geen verzend-ID ontvangen.'
        :'MyParcel-aanvraag geweigerd; controleer API-toegang en zendingsvoorwaarden.',
