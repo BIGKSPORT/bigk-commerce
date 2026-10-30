@@ -4,9 +4,9 @@
     {
       "id": "P001",
       "slug": "apline-fleece-p001",
-      "name": "Alpin Fleece Pro",
-      "description": "Black FZ stand-collar fleece",
-      "code": "Apline Fleece 25303101",
+      "name": "Alpine Fleece",
+      "description": "Black FZ fleece",
+      "code": "Alpine Fleece 25303101",
       "category": "Fleece",
       "priceCents": 14690,
       "approved": false,
@@ -61,7 +61,7 @@
       "tags": [],
       "content": {
         "composition": "100% polyester",
-        "care": "Wash at 30\u00b0C on a gentle cycle.",
+        "care": "Wash at 30°C on a gentle cycle.",
         "fit": "",
         "details": "Teddy fleece combined with grid fleece, made from 100% polyester."
       }
@@ -69,9 +69,9 @@
     {
       "id": "P002",
       "slug": "alpine-fz-p002",
-      "name": "Alpin Fleece Pro",
-      "description": "Emerald Green FZ stand-collar fleece",
-      "code": "Alpine FZ 25303102",
+      "name": "Alpine Fleece",
+      "description": "Dusty Blue FZ fleece",
+      "code": "Alpine Fleece 25303102",
       "category": "Fleece",
       "priceCents": 14690,
       "approved": false,
@@ -106,7 +106,8 @@
           "id": "P002-2",
           "size": "L",
           "stock": 0,
-          "reported": 76
+          "reported": 76,
+          "barcode": "6957919564847"
         },
         {
           "id": "P002-3",
@@ -130,7 +131,7 @@
       "tags": [],
       "content": {
         "composition": "100% polyester",
-        "care": "Wash at 30\u00b0C on a gentle cycle.",
+        "care": "Wash at 30°C on a gentle cycle.",
         "fit": "",
         "details": "Teddy fleece combined with grid fleece, made from 100% polyester."
       }
@@ -188,7 +189,7 @@
       "tags": [],
       "content": {
         "composition": "92% polyamide, 8% elastane",
-        "care": "Wash at 30\u00b0C on a gentle cycle.",
+        "care": "Wash at 30°C on a gentle cycle.",
         "fit": "",
         "details": "Quarter-zip layer in volcanic-ash fabric, made from 92% polyamide and 8% elastane."
       }
@@ -253,7 +254,7 @@
       "tags": [],
       "content": {
         "composition": "92% polyamide, 8% elastane",
-        "care": "Wash at 30\u00b0C on a gentle cycle.",
+        "care": "Wash at 30°C on a gentle cycle.",
         "fit": "",
         "details": "Quarter-zip layer in volcanic-ash fabric, made from 92% polyamide and 8% elastane."
       }
@@ -311,7 +312,7 @@
       "tags": [],
       "content": {
         "composition": "92% polyamide, 8% elastane",
-        "care": "Wash at 30\u00b0C on a gentle cycle.",
+        "care": "Wash at 30°C on a gentle cycle.",
         "fit": "",
         "details": "Quarter-zip layer in volcanic-ash fabric, made from 92% polyamide and 8% elastane."
       }
@@ -369,9 +370,9 @@
       "tags": [],
       "content": {
         "composition": "100% polyester",
-        "care": "Wash at 30\u00b0C on a gentle cycle. Do not bleach or tumble dry. Check the sewn-in care label.",
+        "care": "Wash at 30°C on a gentle cycle. Do not bleach or tumble dry. Check the sewn-in care label.",
         "fit": "",
-        "details": "A sleeveless men\u2019s fleece vest with a full-length zip, stand-up collar, two zipped side pockets and a zipped chest pocket. Made from 100% polyester, for everyday use and walking."
+        "details": "A sleeveless men’s fleece vest with a full-length zip, stand-up collar, two zipped side pockets and a zipped chest pocket. Made from 100% polyester, for everyday use and walking."
       }
     },
     {
@@ -432,9 +433,9 @@
       "tags": [],
       "content": {
         "composition": "100% polyester",
-        "care": "Wash at 30\u00b0C on a gentle cycle. Do not bleach or tumble dry. Check the sewn-in care label.",
+        "care": "Wash at 30°C on a gentle cycle. Do not bleach or tumble dry. Check the sewn-in care label.",
         "fit": "",
-        "details": "A sleeveless men\u2019s fleece vest with a full-length zip, stand-up collar, two zipped side pockets and a zipped chest pocket. Made from 100% polyester, for everyday use and walking."
+        "details": "A sleeveless men’s fleece vest with a full-length zip, stand-up collar, two zipped side pockets and a zipped chest pocket. Made from 100% polyester, for everyday use and walking."
       }
     },
     {
@@ -493,7 +494,7 @@
       ],
       "content": {
         "composition": "100% polyester",
-        "care": "Wash at 30\u00b0C on a gentle cycle.",
+        "care": "Wash at 30°C on a gentle cycle.",
         "fit": "",
         "details": "Teddy fleece combined with grid fleece, made from 100% polyester."
       }
@@ -560,7 +561,7 @@
       ],
       "content": {
         "composition": "100% polyester",
-        "care": "Wash at 30\u00b0C on a gentle cycle.",
+        "care": "Wash at 30°C on a gentle cycle.",
         "fit": "",
         "details": "Teddy fleece combined with grid fleece, made from 100% polyester."
       }
@@ -625,9 +626,9 @@
       ],
       "content": {
         "composition": "100% polyester",
-        "care": "Wash at 30\u00b0C on a gentle cycle.",
+        "care": "Wash at 30°C on a gentle cycle.",
         "fit": "",
-        "details": "30D double-sided fabric combined with grid fleece. Made from 100% polyester. Fabric weight: 320 g/m\u00b2."
+        "details": "30D double-sided fabric combined with grid fleece. Made from 100% polyester. Fabric weight: 320 g/m²."
       }
     },
     {
@@ -688,7 +689,7 @@
       "tags": [],
       "content": {
         "composition": "",
-        "care": "Wash at 30\u00b0C on a gentle cycle.",
+        "care": "Wash at 30°C on a gentle cycle.",
         "fit": "",
         "details": ""
       }
@@ -746,7 +747,7 @@
       "tags": [],
       "content": {
         "composition": "100% polyester",
-        "care": "Wash at 30\u00b0C on a gentle cycle.",
+        "care": "Wash at 30°C on a gentle cycle.",
         "fit": "",
         "details": "Teddy fleece combined with grid fleece, made from 100% polyester."
       }
@@ -769,7 +770,7 @@
       ],
       "content": {
         "composition": "100% polyester",
-        "care": "Wash at 30\u00b0C on a gentle cycle.",
+        "care": "Wash at 30°C on a gentle cycle.",
         "fit": "",
         "details": "Teddy fleece combined with grid fleece, made from 100% polyester."
       }
@@ -833,7 +834,7 @@
       ],
       "content": {
         "composition": "100% polyester",
-        "care": "Wash at 30\u00b0C on a gentle cycle.",
+        "care": "Wash at 30°C on a gentle cycle.",
         "fit": "",
         "details": "Teddy fleece combined with grid fleece, made from 100% polyester."
       }
@@ -895,7 +896,7 @@
       "tags": [],
       "content": {
         "composition": "90% polyester, 10% elastane",
-        "care": "Wash at 30\u00b0C on a gentle cycle.",
+        "care": "Wash at 30°C on a gentle cycle.",
         "fit": "",
         "details": "Single-sided grid fleece, made from 90% polyester and 10% elastane."
       }
@@ -958,7 +959,7 @@
       "tags": [],
       "content": {
         "composition": "90% polyester, 10% elastane",
-        "care": "Wash at 30\u00b0C on a gentle cycle.",
+        "care": "Wash at 30°C on a gentle cycle.",
         "fit": "",
         "details": "Single-sided grid fleece, made from 90% polyester and 10% elastane."
       }
@@ -1012,9 +1013,9 @@
       "tags": [],
       "content": {
         "composition": "30% viscose, 70% polyester",
-        "care": "Wash at 30\u00b0C on a gentle cycle.",
+        "care": "Wash at 30°C on a gentle cycle.",
         "fit": "",
-        "details": "Women\u2019s hoodie in coarse-knit, cationic-dyed brushed fabric. Made from 30% viscose and 70% polyester. Fabric weight: 320 g/m\u00b2."
+        "details": "Women’s hoodie in coarse-knit, cationic-dyed brushed fabric. Made from 30% viscose and 70% polyester. Fabric weight: 320 g/m²."
       }
     },
     {
@@ -1066,9 +1067,9 @@
       "tags": [],
       "content": {
         "composition": "30% viscose, 70% polyester",
-        "care": "Wash at 30\u00b0C on a gentle cycle.",
+        "care": "Wash at 30°C on a gentle cycle.",
         "fit": "",
-        "details": "Women\u2019s hoodie in coarse-knit, cationic-dyed brushed fabric. Made from 30% viscose and 70% polyester. Fabric weight: 320 g/m\u00b2."
+        "details": "Women’s hoodie in coarse-knit, cationic-dyed brushed fabric. Made from 30% viscose and 70% polyester. Fabric weight: 320 g/m²."
       }
     },
     {
@@ -1129,9 +1130,9 @@
       "tags": [],
       "content": {
         "composition": "Outer fabric: 98% polyamide (nylon), 2% polyester. Filling: approximately 90% white goose down, according to the supplier; the remaining filling composition is not specified.",
-        "care": "Wash at 30\u00b0C on a gentle cycle. Supplier\u2019s detailed care note: wash inside out and separately; do not bleach, tumble dry or dry clean. Check the sewn-in care label.",
-        "fit": "Regular fit is listed for S\u20132XL. Down filling weight by size: S 80 g, M 85 g, L 90 g, XL 95 g, 2XL 100 g, 3XL 105 g. These are filling weights, not the total weight of the jacket.",
-        "details": "A lightweight padded men\u2019s winter jacket with a black outer fabric, zip fastening and concealed zipped pockets. According to the supplier, the filling contains approximately 90% white goose down. The wind-resistant, water-repellent outer fabric helps protect against cold wind and light rain. Designed for everyday use and walking. Autumn/Winter 2026 collection. Water-repellent does not mean waterproof."
+        "care": "Wash at 30°C on a gentle cycle. Supplier’s detailed care note: wash inside out and separately; do not bleach, tumble dry or dry clean. Check the sewn-in care label.",
+        "fit": "Regular fit is listed for S–2XL. Down filling weight by size: S 80 g, M 85 g, L 90 g, XL 95 g, 2XL 100 g, 3XL 105 g. These are filling weights, not the total weight of the jacket.",
+        "details": "A lightweight padded men’s winter jacket with a black outer fabric, zip fastening and concealed zipped pockets. According to the supplier, the filling contains approximately 90% white goose down. The wind-resistant, water-repellent outer fabric helps protect against cold wind and light rain. Designed for everyday use and walking. Autumn/Winter 2026 collection. Water-repellent does not mean waterproof."
       }
     },
     {
@@ -1157,9 +1158,9 @@
       ],
       "content": {
         "composition": "Outer fabric: 98% polyamide (nylon), 2% polyester. Filling: approximately 90% white goose down, according to the supplier; the remaining filling composition is not specified.",
-        "care": "Wash at 30\u00b0C on a gentle cycle. Supplier\u2019s detailed care note: wash inside out and separately; do not bleach, tumble dry or dry clean. Check the sewn-in care label.",
-        "fit": "Regular fit is listed for S\u20132XL. Down filling weight by size: S 80 g, M 85 g, L 90 g, XL 95 g, 2XL 100 g, 3XL 105 g. These are filling weights, not the total weight of the jacket.",
-        "details": "A lightweight padded men\u2019s winter jacket with a black outer fabric, zip fastening and concealed zipped pockets. According to the supplier, the filling contains approximately 90% white goose down. The wind-resistant, water-repellent outer fabric helps protect against cold wind and light rain. Designed for everyday use and walking. Autumn/Winter 2026 collection. Water-repellent does not mean waterproof."
+        "care": "Wash at 30°C on a gentle cycle. Supplier’s detailed care note: wash inside out and separately; do not bleach, tumble dry or dry clean. Check the sewn-in care label.",
+        "fit": "Regular fit is listed for S–2XL. Down filling weight by size: S 80 g, M 85 g, L 90 g, XL 95 g, 2XL 100 g, 3XL 105 g. These are filling weights, not the total weight of the jacket.",
+        "details": "A lightweight padded men’s winter jacket with a black outer fabric, zip fastening and concealed zipped pockets. According to the supplier, the filling contains approximately 90% white goose down. The wind-resistant, water-repellent outer fabric helps protect against cold wind and light rain. Designed for everyday use and walking. Autumn/Winter 2026 collection. Water-repellent does not mean waterproof."
       }
     },
     {
@@ -1223,7 +1224,7 @@
       "tags": [],
       "content": {
         "composition": "98% polyamide, 2% polyester",
-        "care": "Wash at 30\u00b0C on a gentle cycle.",
+        "care": "Wash at 30°C on a gentle cycle.",
         "fit": "",
         "details": "Sleeveless vest in fabric made from 98% polyamide and 2% polyester. The supplier identifies the fabric as graphene fabric; no thermal or waterproof performance rating is supplied."
       }
@@ -1286,9 +1287,9 @@
       "tags": [],
       "content": {
         "composition": "100% polyester",
-        "care": "Wash at 30\u00b0C on a gentle cycle.",
+        "care": "Wash at 30°C on a gentle cycle.",
         "fit": "",
-        "details": "Four-way stretch, TPV and fleece with ultrasonic perforations. Made from 100% polyester. Fabric weight: 340 g/m\u00b2."
+        "details": "Four-way stretch, TPV and fleece with ultrasonic perforations. Made from 100% polyester. Fabric weight: 340 g/m²."
       }
     },
     {
@@ -1319,9 +1320,9 @@
       ],
       "content": {
         "composition": "100% polyester",
-        "care": "Wash at 30\u00b0C on a gentle cycle.",
+        "care": "Wash at 30°C on a gentle cycle.",
         "fit": "One size.",
-        "details": "One-size scarf in 100% polyester. Soft teddy fleece combined with grid fleece. Fabric weight: 480 g/m\u00b2."
+        "details": "One-size scarf in 100% polyester. Soft teddy fleece combined with grid fleece. Fabric weight: 480 g/m²."
       }
     },
     {
@@ -1352,9 +1353,9 @@
       ],
       "content": {
         "composition": "100% polyester",
-        "care": "Wash at 30\u00b0C on a gentle cycle.",
+        "care": "Wash at 30°C on a gentle cycle.",
         "fit": "One size.",
-        "details": "One-size scarf in 100% polyester. Soft teddy fleece combined with grid fleece. Fabric weight: 480 g/m\u00b2."
+        "details": "One-size scarf in 100% polyester. Soft teddy fleece combined with grid fleece. Fabric weight: 480 g/m²."
       }
     },
     {
@@ -1385,9 +1386,9 @@
       ],
       "content": {
         "composition": "100% polyester",
-        "care": "Wash at 30\u00b0C on a gentle cycle.",
+        "care": "Wash at 30°C on a gentle cycle.",
         "fit": "One size.",
-        "details": "One-size scarf in 100% polyester. Soft teddy fleece combined with grid fleece. Fabric weight: 480 g/m\u00b2."
+        "details": "One-size scarf in 100% polyester. Soft teddy fleece combined with grid fleece. Fabric weight: 480 g/m²."
       }
     },
     {
@@ -1442,9 +1443,9 @@
       "tags": [],
       "content": {
         "composition": "30% viscose, 70% polyester",
-        "care": "Wash at 30\u00b0C on a gentle cycle.",
+        "care": "Wash at 30°C on a gentle cycle.",
         "fit": "",
-        "details": "Women\u2019s hoodie in coarse-knit, cationic-dyed brushed fabric. Made from 30% viscose and 70% polyester. Fabric weight: 320 g/m\u00b2."
+        "details": "Women’s hoodie in coarse-knit, cationic-dyed brushed fabric. Made from 30% viscose and 70% polyester. Fabric weight: 320 g/m²."
       }
     },
     {
@@ -1500,9 +1501,9 @@
       "tags": [],
       "content": {
         "composition": "30% viscose, 70% polyester",
-        "care": "Wash at 30\u00b0C on a gentle cycle.",
+        "care": "Wash at 30°C on a gentle cycle.",
         "fit": "",
-        "details": "Women\u2019s hoodie in coarse-knit, cationic-dyed brushed fabric. Made from 30% viscose and 70% polyester. Fabric weight: 320 g/m\u00b2."
+        "details": "Women’s hoodie in coarse-knit, cationic-dyed brushed fabric. Made from 30% viscose and 70% polyester. Fabric weight: 320 g/m²."
       }
     }
   ]
