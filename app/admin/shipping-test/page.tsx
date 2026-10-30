@@ -23,6 +23,7 @@ export default function ShippingTestPage(){
   <p><strong>Alleen op de Vercel-preview, met adminlogin.</strong> Deze pagina maakt uitsluitend na bevestiging één DPD-testzending aan. Geen klantorder, e-mail of ophaling.</p>
   <p>Bestemming: <strong>BIGK BV, Theo Verellenlaan 27, 2990 Wuustwezel, België.</strong></p>
   <p>Referentie op label: BIGK-TEST-NIET-VERZENDEN.</p>
+  <p>Zie je ‘Sign in to the admin area’? <a href="/admin">Meld je eerst aan via de backoffice</a> en open vervolgens deze pagina opnieuw.</p>
   <label style={{display:'block',margin:'20px 0'}}>
    <input type="checkbox" checked={checked} onChange={e=>setChecked(e.target.checked)}/>
    Ik bevestig dat het testlabel niet wordt afgegeven of gescand door een vervoerder.
