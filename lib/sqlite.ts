@@ -3,6 +3,7 @@ import { mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import catalog from './catalog.json';
 import {withdrawalSchema} from './withdrawal-schema';
+import {warehouseReceiptSchema} from './warehouse-receipt-schema';
 import {mediaSchema} from './media-schema';
 import {backofficeSchema} from './backoffice-schema';
 import {clubSchema} from './club-schema';
@@ -28,6 +29,7 @@ export function db(){
  sql.exec(backofficeSchema);
  sql.exec(mediaSchema);
  sql.exec(withdrawalSchema);
+ sql.exec(warehouseReceiptSchema);
  instance=sql;
  if(!(sql.prepare('SELECT COUNT(*) AS n FROM products').get() as {n:number}).n){transaction(()=>{for(const p of catalog.products){sql.prepare('INSERT INTO products(id,slug,name,description,code,category,price_cents,approved,active,featured,images,tags) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)').run(p.id,p.slug,p.name,p.description,p.code,p.category,p.priceCents,0,0,p.featured?1:0,JSON.stringify(p.images),JSON.stringify(p.tags));if(p.content)sql.prepare('INSERT INTO product_content(product_id,content) VALUES(?,?)').run(p.id,JSON.stringify(p.content));for(const v of p.variants)sql.prepare('INSERT INTO variants(id,product_id,size,stock,reported) VALUES(?,?,?,?,?)').run(v.id,p.id,v.size,0,v.reported)}})}
  return sql;
