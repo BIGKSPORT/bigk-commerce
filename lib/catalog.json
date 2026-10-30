@@ -443,7 +443,7 @@
     {
       "id": "P008",
       "slug": "alpine-fz-hood-p008",
-      "name": "Alpin",
+      "name": "Alpine FZ Hood",
       "description": "black FZ hood",
       "code": "Alpine FZ hood 25301601",
       "category": "Jackets & Vests",
@@ -700,7 +700,7 @@
     {
       "id": "P012",
       "slug": "alpine-gillet-hood-p012",
-      "name": "Alpin Vest",
+      "name": "Alpine Gillet Hood",
       "description": "black hood Gillet",
       "code": "Alpine gillet hood 25301701",
       "category": "Jackets & Vests",
@@ -758,7 +758,7 @@
     {
       "id": "P013",
       "slug": "alpine-gillet-hood-p013",
-      "name": "Alpin Vest",
+      "name": "Alpine Gillet Hood",
       "description": "black hood gillet",
       "code": "Alpine gillet hood 25301701",
       "category": "Jackets & Vests",
@@ -846,7 +846,7 @@
     {
       "id": "P015",
       "slug": "coreloose-2-p015",
-      "name": "Corelosse.2",
+      "name": "Coreloose.2",
       "description": "emerald",
       "code": "Coreloose.2 25301902",
       "category": "Other",
@@ -908,7 +908,7 @@
     {
       "id": "P016",
       "slug": "coreloose-2-p016",
-      "name": "Corelosse.2",
+      "name": "Coreloose.2",
       "description": "cream round neck",
       "code": "Coreloose.2 25301903",
       "category": "Other",
@@ -1173,7 +1173,7 @@
     {
       "id": "P021",
       "slug": "nandown-fz-gillet-p021",
-      "name": "Nano Down Vest",
+      "name": "Nandown FZ Gillet",
       "description": "black FZ gillet",
       "code": "Nandown FZ Gillet 25303001",
       "category": "Jackets & Vests",
