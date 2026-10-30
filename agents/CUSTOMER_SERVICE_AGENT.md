@@ -42,3 +42,12 @@ Verberg persoonsgegevens in logs, nooit API keys of klantgegevens in GitHub opne
 - Een aparte ChatGPT-agent/Work-configuratie of gecontroleerde klantenserviceworkflow moet daadwerkelijk worden aangemaakt; deze Markdown is slechts de uitvoerbare instructiebasis.
 - Order-read connector testen, rechtmatige toegangscontrole voor klantinformatie, voorraad/reserverings-API, retourstatus, labelprovider en e-mailworkflows.
 - Pilot met mockgevallen in NL/FR/DE/EN en na toestemming audit trail + rolrechten.
+
+
+## Implementatie-update: echte order/voorraad raadplegen (30 oktober 2026)
+- `lib/customer-service-order-review.ts`: leest vertrouwde `Order` en product/varianten, controleert dat oorspronkelijk variant-ID in de bestelling zat, dat vervangende maat bij hetzelfde product hoort, en toont beschikbare voorraad als `stock-reserved` (niet lager dan nul).
+- `app/api/admin/support/order-exchange-review/route.ts`: alleen voor ingelogde backofficebeheerders; `POST` met `orderId`, `originalVariantId` en `requestedVariantId`. Leest order en catalogus vanaf serverdatabase, niet uit door de klant aangeleverde status of voorraad.
+- `tests/customer-service-order-review.test.ts`: zes tests; start via `npm run test:support-order`.
+- **Alle resultaten blijven concept / menselijke review** totdat leverdatum, correcte eilandzone, eerdere gratis ruil en werkelijke magazijnbeschikbaarheid betrouwbaar verifieerbaar zijn. Dit mag niet gebruikt worden om labels, refunds of definitieve reserveringen aan te maken.
+- De connector raadpleegt alleen de nieuwe BIG K ® webwinkelorders in de gekozen database. Oude Shopify-bestellingen zitten hier niet automatisch in.
+- Geen actieve aparte ChatGPT-agent gemaakt; de backoffice endpoint is een bouwblok, nog niet getest in een echte ingelogde sessie.
