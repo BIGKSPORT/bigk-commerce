@@ -22,10 +22,37 @@ Verified: admin authentication; client price injection rejection; server-side li
 
 Existing commerce, Club and withdrawal suites pass. Next.js build and TypeScript checks pass. CI runs both new journey suites on this branch.
 
-## Real Stripe sandbox: not yet end-to-end verified
+## Hosted Stripe test-mode journey: verified
 
-The connector now has access to `BIGK® BV sandbox` (`acct_1TAFBLI4tul0HJHg`, livemode false). Its confirmed BIGK business address has been set in sandbox Tax Settings, whose status is active. Its tax registration list was empty; no registration has been created or expired by this work. Sandbox defaults/product tax classification have not been guessed or overwritten.
+A genuine Stripe test-mode Checkout payment succeeded through the hosted preview,
+not through the fixture transport. The merchant explicitly selected the existing
+BIGK test mode (`acct_1TAFB8IxNZ1o82uS`, livemode false). Live mode was not used.
 
-The connected plugin does not supply a server API key to Vercel. The branch still needs its private restricted sandbox key in `STRIPE_SECRET_KEY`, webhook credentials, and a reachable signature-verified webhook endpoint. Vercel Authentication protects this preview and must be accounted for before claiming Stripe deliveries succeed. Do not disable admin authentication or switch to a live Stripe key.
+- Staging order: `de17bec9-7db8-4f3c-a66f-16a130fe4a05` (backoffice short reference `DE17BEC9`).
+- Product: Alpin Fleece Pro, size S, one unit, EUR 146.90.
+- French test shipping address: 20% inclusive VAT, EUR 24.48. Test calculation reason `standard_rated`.
+- The previously confirmed Belgian Union OSS configuration was mirrored only in test mode. No live tax registration was changed by this test.
+- Stripe returned Checkout status `complete`, payment status `paid`, currency `eur`, livemode false.
+- Stripe payment intent: `pi_3UWPZaIxNZ1o82uS1AMVr0Um`.
+- The signed webhook changed the real staging database order to `paid`; the browser returned to its private receipt showing “You’re all set”.
+- Stripe event `evt_1UWPZcIxNZ1o82uSnZ4w7h2M` had no pending webhook deliveries.
+- Stock changed from 20 / reserved 0 to 19 / reserved 0 after payment.
+- A controlled signed replay of the same event returned HTTP 200. Stock remained 19, with exactly one payment confirmation audit record and one confirmation email job.
+- No email was sent or attempted. Staging email delivery remains disabled.
+- The temporary approval/activation of P001 was reverted to draft. The one simulated stock deduction was restored, with an idempotent `qa.test_stock_restored` audit entry. The paid test order remains available for owner review.
+- Production order count remained zero and the production inventory fingerprint stayed unchanged.
 
-Do not claim a genuine hosted Stripe payment, automatic tax collection or actual email delivery has been verified from the fixture tests. Complete the hosted sandbox round-trip once its runtime credentials, registrations and webhook reachability are ready. Leave public checkout in demo mode until then.
+The Stripe test webhook is configured at `/api/webhooks/stripe` using API version
+`2026-09-30.endive` and the four Checkout Session completion/failure/expiry events.
+Vercel’s documented automation authentication permits third-party webhook delivery;
+Stripe signature verification and application admin authentication remain required.
+The transport credential and signing secret are private configuration and are not
+included in this document, logs, source or browser responses.
+
+Hosted testing also exposed automatic currency conversion in Stripe Checkout.
+New sessions explicitly disable Adaptive Pricing so EUR order totals remain EUR.
+The SDK request is covered by the isolated payment-journey regression suite.
+
+This verifies the hosted test payment, webhook, inventory and receipt path. It does
+not authorise live checkout, prove production tax coverage, deliver an actual email,
+create a shipment, resolve MyParcel 422 or approve the product catalogue for sale.
