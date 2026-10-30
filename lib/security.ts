@@ -5,9 +5,17 @@ export const token = () => randomBytes(32).toString('base64url');
 export class HttpError extends Error {
     constructor(public status: number, message: string) { super(message); }
 }
-export function checkOrigin(req: Request) { const expected = process.env.APP_URL; if (!expected)
-    throw new HttpError(503, 'APP_URL must be configured.'); if (req.headers.get('origin') !== new URL(expected).origin)
-    throw new HttpError(403, 'Request origin rejected.'); }
+export function checkOrigin(req: Request) {
+    // Preview deployments each receive their own canonical VERCEL_URL.
+    // Never trust Host/X-Forwarded-Host or the request URL as an origin authority.
+    const canonical = process.env.VERCEL_ENV === 'preview' && process.env.VERCEL_URL
+        ? 'https://' + process.env.VERCEL_URL
+        : process.env.APP_URL;
+    if (!canonical) throw new HttpError(503, 'APP_URL must be configured.');
+    const expected = new URL(canonical).origin;
+    if (req.headers.get('origin') !== expected)
+        throw new HttpError(403, 'Request origin rejected.');
+}
 export async function rateLimit(key: string, limit = 20, seconds = 60) { const now = Date.now(); const sql = db(); (await sql.prepare('DELETE FROM rate_limits WHERE expires<?').run(now)); (await sql.prepare('INSERT INTO rate_limits(key,hits,expires) VALUES(?,1,?) ON CONFLICT(key) DO UPDATE SET hits=hits+1').run(key, now + seconds * 1000)); const row = (await sql.prepare('SELECT hits FROM rate_limits WHERE key=?').get(key)) as {
     hits: number;
 }; if (row.hits > limit)
