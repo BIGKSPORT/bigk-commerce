@@ -1,4 +1,4 @@
-# BIGKSPORT — SEO launch audit (draft)
+# BIG K ® — SEO launch audit (draft)
 
 Date: 30 October 2026. Branch: `fix/catalogue-colour-options`. No public launch.
 
@@ -16,7 +16,7 @@ Date: 30 October 2026. Branch: `fix/catalogue-colour-options`. No public launch.
 - Before indexing, confirm full storefront crawls successfully, aliases redirect to canonical products, SEO titles are nonduplicated, robots and sitemap return intended results, and any Product structured data does not imply inventory/offer availability inaccurately.
 - Check that origin is always `https://bigk.be` at release time; also configure `www` redirect / canonical host, Google Search Console ownership, submitted sitemap and Merchant Center after launch.
 - **Market scope: Europe-wide, not Belgium-only.** Begin with a strong English-language storefront for European visitors, then add validated translations based on actual demand (e.g., Dutch, French, German, Spanish, Italian). Every hreflang entry must refer to a real translated URL with reciprocal links; do not fabricate hreflang for untranslated content.
-- Build country/language-specific Search Console analysis and Merchant Center feeds only for markets BIGKSPORT actually serves, with accurate currency, shipping, returns and tax information.
+- Build country/language-specific Search Console analysis and Merchant Center feeds only for markets BIG K ® actually serves, with accurate currency, shipping, returns and tax information.
 - **Commercial blocker:** the current checkout backend and Stripe shipping form both restrict delivery countries to **BE, NL, FR, DE, LU**, not all Europe. Do not advertise Europe-wide delivery or change the allowed list until logistics, shipping fees, VAT/tax handling, returns, and checkout UX have been checked. Broader European SEO audience does not mean checkout already supports Europe-wide fulfillment.
 - Monitor Search Console indexing, performance and Merchant Center disapprovals after release.
 
