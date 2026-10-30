@@ -75,3 +75,7 @@ Source: Stock.xlsx, first sheet (国外订单), **Quantity** column E (not stock
 ## Velvet Emerald garment tag (second independent label)
 - **25000702**, STYLE VELVET WMS HOOD, NAME VELVET, EMERALD, SIZE 2XL/XXL, composition **30% RAYON / 70% POLYESTER**, MSRP €79.90, EAN **6957919563758**.
 - Same SKU and EAN as packaging label, not an additional product. Composition and XXL EAN recorded in draft catalogue. Velvet styles remain separate products.
+
+## Velvet WMS Hood Cream/Black — garment hangtag verified
+- STYLE **VELVET WMS HOOD**, NAME **VELVET**, COLOR **CREAM/BLACK**, CODE **25000701**, SIZE **L**, COMPOSITION **30% RAYON / 70% POLYESTER**, MSRP **€79.90**, EAN **6957919563673**.
+- Supplier order uses black-cream, whereas physical hangtag uses cream/black. Use hangtag spelling in draft display. SKU-specific product remains distinct from other Velvet garments/structures; no automatic colourway merging.
