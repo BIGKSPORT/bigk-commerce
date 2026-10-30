@@ -42,3 +42,8 @@ Source: Stock.xlsx, first sheet (国外订单), **Quantity** column E (not stock
 - STYLE **ALPINE FLEECE**, NAME **FLEECE**, COLOR **BLACK**, CODE **25303101**, RRP **€146.90**, SIZE **3XL**, EAN **6957919564809**.
 - Website variant size is stored as XXXL, equivalent to label 3XL; no size quantity changed.
 - Both Alpine Fleece colours (25303101 Black, 25303102 Dusty Blue) now have physical label confirmation, but only one size-specific EAN per colour is verified.
+
+## Third physical colour label — Alpine Gillet Dusty Blue
+- **25303202** physical packaging: STYLE ALPINE GILLET, NAME GILLET, COLOR DUSTY BLUE, RRP €133.90, SIZE L, EAN **6957919564984**.
+- Supplier order and previous catalogue incorrectly said **cream-black** for this SKU. Draft catalogue colour, display name and size-L barcode corrected. Supplier order retained unchanged as evidence.
+- **Photo review required**: existing P007 image files were previously mapped as cream/black; do not assume they show the verified Dusty Blue garment. No images changed or approved.
