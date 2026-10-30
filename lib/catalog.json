@@ -504,8 +504,8 @@
     {
       "id": "P009",
       "slug": "alpine-fz-hood-p009",
-      "name": "Alpin",
-      "description": "cream FZ hood",
+      "name": "Alpine FZ Hood",
+      "description": "Cream FZ hood",
       "code": "Alpine FZ Hood 25301603",
       "category": "Jackets & Vests",
       "priceCents": 9390,
@@ -542,7 +542,8 @@
           "id": "P009-3",
           "size": "XL",
           "stock": 0,
-          "reported": null
+          "reported": null,
+          "barcode": "6957919562669"
         },
         {
           "id": "P009-4",
