@@ -71,3 +71,7 @@ Source: Stock.xlsx, first sheet (国外订单), **Quantity** column E (not stock
 - Owner confirms Velvet garments are **different products with different structures**, not interchangeable colour variants. Do **not** group SKUs 25000701/02/03/04 into a single selectable-colour product merely because their first six SKU digits match.
 - **25000702 physical label:** STYLE VELVET WMS HOOD, NAME VELVET, COLOR EMERALD, CODE 25000702, RRP €79.90, SIZE XXL, EAN 6957919563758.
 - Keep each Velvet SKU a separate draft product until its construction and naming are individually verified. Shared supplier style text is insufficient to infer same structure.
+
+## Velvet Emerald garment tag (second independent label)
+- **25000702**, STYLE VELVET WMS HOOD, NAME VELVET, EMERALD, SIZE 2XL/XXL, composition **30% RAYON / 70% POLYESTER**, MSRP €79.90, EAN **6957919563758**.
+- Same SKU and EAN as packaging label, not an additional product. Composition and XXL EAN recorded in draft catalogue. Velvet styles remain separate products.
