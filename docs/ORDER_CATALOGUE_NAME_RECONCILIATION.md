@@ -52,3 +52,8 @@ Source: Stock.xlsx, first sheet (国外订单), **Quantity** column E (not stock
 - STYLE **ALPINE GILLET**, NAME **GILLET**, COLOR **BLACK**, RRP **€133.90**, SIZE **L**. Printed code is partly covered, consistent with order SKU **25303201**; last digits not independently legible.
 - EAN barcode is partly obscured; **do not invent or mark as physically verified**. Black draft display name aligned to Alpine Gillet; product image still missing.
 - Both Alpine Gillet colours now identified, Dusty Blue 25303202 and Black 25303201; barcode for Black L remains pending.
+
+## Alpine Gillet Hood Dusty Blue physical label
+- **25301702**: STYLE **ALPINE GILLET HOOD**, NAME **ALPIN VEST**, COLOR **DUSTY BLUE**, RRP **€66.90**, SIZE **XXL**, EAN **6957919562812**.
+- Previous supplier-order and catalogue descriptions said cream. The physical label confirms Dusty Blue; draft catalogue corrected. Original supplier order remains unchanged.
+- Hooded garment is a distinct family from Alpine Gillet (25303201/25303202). Existing P014 photos require colour verification before approval.
