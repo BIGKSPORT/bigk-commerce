@@ -77,3 +77,12 @@ Draft includes dynamic robots and sitemap, product canonical and Open Graph meta
 6. Only with explicit owner release approval: staged production promotion, domain DNS cutover, indexing activation and monitoring.
 
 Decision: **Not ready for paid launch**. No configuration/production change made by this audit.
+
+## DPD evidence update — 30 October 2026
+
+Internal source: [DPD shipping research, 2026 quoted rate matrices](./DPD_SHIPPING_RESEARCH_2026-10-30.md).
+- DPD onboarding, signed offer, 32 B2C destination quotes and B2B quotes found in connected Gmail.
+- Carrier account status must be reverified: correspondence from August–October includes service suspension/collection notices; latest tariff message is **not** proof that collection/label services are currently active.
+- July customer shipment evidence documents non-EU HS classification and label failures; block non-EU shipping until customs and carrier workflows are tested.
+- DPD onboarding credentials were present in historical mail; rotate rather than reuse.
+- Do not use the emailed rate grid for customer checkout until signed contractual prices, VAT/surcharges, package weights and active destination eligibility are confirmed.
