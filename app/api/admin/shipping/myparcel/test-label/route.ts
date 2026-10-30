@@ -26,12 +26,12 @@ export async function POST(req:Request){
    Authorization:'bearer '+Buffer.from(key,'utf8').toString('base64'),
    'User-Agent':'CustomApiCall/2',
   };
-  const destination={cc:'BE',postal_code:seller.postal,city:seller.city,street:seller.address.replace(/\s+\d+$/, ''),number:seller.address.match(/\d+$/)?.[0]||'',box_number:'',person:seller.name};
+  const destination={cc:'BE',postal_code:seller.postal,city:seller.city,street:seller.address.replace(/\s+\d+$/, ''),number:seller.address.match(/\d+$/)?.[0]||'',person:seller.name};
   if(destination.postal_code!=='2990'||destination.city!=='Wuustwezel'||destination.street!=='Theo Verellenlaan'||destination.number!=='27')throw new HttpError(503,'Magazijnadres is gewijzigd; testlabel geblokkeerd.');
   const shipment={data:{shipments:[{
    carrier:4,
    recipient:destination,
-   options:{package_type:1},
+   options:{package_type:1,delivery_type:2},
    reference_identifier:'BIGK-TEST-NIET-VERZENDEN',
   }]}};
   const control=new AbortController();
@@ -53,9 +53,11 @@ export async function POST(req:Request){
       providerCodes=errors.flatMap((entry):string[]=>{
         if(!entry||typeof entry!=='object')return [];
         const e=entry as Record<string,unknown>;
-        return [e.code,e.field,e.property,e.parameter].filter(
-          (v):v is string=>typeof v==='string'&&/^[a-zA-Z0-9_.-]{1,72}$/.test(v)
-        );
+        return [e.code,e.field,e.property,e.parameter].flatMap(v=>{
+          if(typeof v==='number'&&Number.isSafeInteger(v))return [String(v)];
+          if(typeof v==='string'&&/^[a-zA-Z0-9_.-]{1,72}$/.test(v))return [v];
+          return [];
+        });
       }).slice(0,10);
     }catch{/* Unknown remote error format */}
     return Response.json({
