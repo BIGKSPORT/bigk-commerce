@@ -37,7 +37,9 @@
     "test:support-order": "node --import tsx --test tests/customer-service-order-review.test.ts",
     "test:warehouse": "node --import tsx --test tests/warehouse-inspection.test.ts",
     "test:auth-shipping": "node tests/auth-shipping.mjs",
-    "test:auth-browser": "node tests/auth-browser.mjs"
+    "test:auth-browser": "node tests/auth-browser.mjs",
+    "test:payment-journey": "node tests/payment-journey.mjs",
+    "test:checkout-browser": "node tests/checkout-browser.mjs"
   },
   "dependencies": {
     "lucide-react": "1.64.0",

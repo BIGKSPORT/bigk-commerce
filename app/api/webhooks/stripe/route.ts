@@ -1,4 +1,5 @@
-import Stripe from 'stripe';
+import type Stripe from 'stripe';
+import {stripeClient} from '@/lib/stripe-client';
 import {stripeKeyMode} from '@/lib/stripe-config';
 import { cancelPayment, settlePayment } from '@/lib/commerce';
 import { boundedText, failure, HttpError } from '@/lib/security';
@@ -10,7 +11,7 @@ export async function POST(req: Request) {
         const signature = req.headers.get('stripe-signature');
         if (!signature)
             throw new HttpError(400, 'Missing signature.');
-        const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+        const stripe = stripeClient();
         let event: Stripe.Event;
         try {
             event = stripe.webhooks.constructEvent(await boundedText(req, 1048576), signature, process.env.STRIPE_WEBHOOK_SECRET);

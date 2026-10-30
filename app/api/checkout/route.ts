@@ -1,4 +1,4 @@
-import Stripe from 'stripe';
+import {stripeClient} from '@/lib/stripe-client';
 import {customerEmail,clubPaymentItems} from '@/lib/club';
 import { checkoutSchema, createOrder, getOrder, isLive } from '@/lib/commerce';
 import { body, checkOrigin, failure, rateLimit, HttpError, hash } from '@/lib/security';
@@ -16,7 +16,7 @@ export async function POST(req: Request) {
         const result = (await createOrder(parsed.data,email)), order = (await getOrder(result.id))!;
         if (!isLive())
             return Response.json({ ...result, mode: 'demo' }, { headers: { 'Cache-Control': 'no-store' } });
-        const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+        const stripe = stripeClient();
         const base = new URL(process.env.APP_URL!).origin;
         if (order.stripeSession) {
             const session = await stripe.checkout.sessions.retrieve(order.stripeSession);

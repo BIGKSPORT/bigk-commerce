@@ -1,3 +1,4 @@
+import {emailDeliveryAllowed} from '@/lib/email-policy';
 import { z } from 'zod';
 import { db } from '@/lib/db';
 import { body, checkOrigin, failure, hash, HttpError, rateLimit, token } from '@/lib/security';
@@ -10,6 +11,7 @@ export async function POST(req: Request) { try {
     if (!parsed.success)
         throw new HttpError(400, 'Enter a valid email.');
     const email = parsed.data.email.toLowerCase();
+    if(!emailDeliveryAllowed(email))throw new HttpError(503,'Email delivery is disabled for this environment.');
     (await rateLimit('magic:' + hash(email), 3, 900));
     const value = token(), url = new URL('/api/account/verify', process.env.APP_URL!);
     url.searchParams.set('token', value);
