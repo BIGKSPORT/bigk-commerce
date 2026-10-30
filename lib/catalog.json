@@ -4,15 +4,22 @@
     {
       "id": "P001",
       "slug": "apline-fleece-p001",
-      "name": "Apline Fleece",
-      "description": "black FZ fleece",
+      "name": "Alpin Fleece Pro",
+      "description": "Black FZ stand-collar fleece",
       "code": "Apline Fleece 25303101",
-      "category": "Other",
-      "priceCents": null,
+      "category": "Fleece",
+      "priceCents": 14690,
       "approved": false,
       "active": false,
       "featured": true,
-      "images": [],
+      "images": [
+        "/products/web/alpin-fleece-pro-25303101-1.webp",
+        "/products/web/alpin-fleece-pro-25303101-2.webp",
+        "/products/web/alpin-fleece-pro-25303101-3.webp",
+        "/products/web/alpin-fleece-pro-25303101-4.webp",
+        "/products/web/alpin-fleece-pro-25303101-5.webp",
+        "/products/web/alpin-fleece-pro-25303101-6.webp"
+      ],
       "variants": [
         {
           "id": "P001-0",
@@ -56,15 +63,26 @@
     {
       "id": "P002",
       "slug": "alpine-fz-p002",
-      "name": "Alpine FZ",
-      "description": "dusty-blue FZ fleece",
+      "name": "Alpin Fleece Pro",
+      "description": "Emerald Green FZ stand-collar fleece",
       "code": "Alpine FZ 25303102",
-      "category": "Jackets & Vests",
-      "priceCents": null,
+      "category": "Fleece",
+      "priceCents": 14690,
       "approved": false,
       "active": false,
       "featured": true,
-      "images": [],
+      "images": [
+        "/products/web/alpin-fleece-pro-25303102-1.webp",
+        "/products/web/alpin-fleece-pro-25303102-2.webp",
+        "/products/web/alpin-fleece-pro-25303102-3.webp",
+        "/products/web/alpin-fleece-pro-25303102-4.webp",
+        "/products/web/alpin-fleece-pro-25303102-5.webp",
+        "/products/web/alpin-fleece-pro-25303102-6.webp",
+        "/products/web/alpin-fleece-pro-25303102-7.webp",
+        "/products/web/alpin-fleece-pro-25303102-8.webp",
+        "/products/web/alpin-fleece-pro-25303102-9.webp",
+        "/products/web/alpin-fleece-pro-25303102-10.webp"
+      ],
       "variants": [
         {
           "id": "P002-0",
