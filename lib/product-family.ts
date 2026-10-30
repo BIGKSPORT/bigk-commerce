@@ -5,6 +5,8 @@ export function supplierSku(product:Pick<Product,'code'>){return product.code.ma
 export function productFamily(products:Product[],product:Product){
  const sku=supplierSku(product);
  if(!sku)return [product];
+ // Velvet WMS garments have distinct structures: do not group by the shared SKU prefix.
+ if(sku.startsWith('250007'))return [product];
  return products.filter(p=>{const candidate=supplierSku(p);return candidate!==null&&candidate.slice(0,6)===sku.slice(0,6)})
   .filter((p,i,all)=>all.findIndex(other=>supplierSku(other)===supplierSku(p))===i);
 }
