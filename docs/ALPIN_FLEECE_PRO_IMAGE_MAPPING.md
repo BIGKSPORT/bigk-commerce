@@ -31,3 +31,21 @@ Black-edited files (Drive IDs):
 6. Prepare a reviewable implementation on this isolated QA branch. No customer-facing changes or live inventory updates without explicit approval.
 
 Owner confirmed colour-edit accuracy and instructed to start the internal run.
+
+
+## Owner-confirmed BLACK image gallery (2026-10-30)
+
+The owner explicitly identified these **six images as Black (SKU 25303101)**. This supersedes any previous filename-based uncertainty:
+
+| File | Drive file ID |
+|---|---|
+| 10-2441167-2.jpg | 1bbY2l2yJ5WyCT2-8PfEq_CqyZjimv0Vk |
+| 10-2441174-2.jpg | 1uqRyQhPHwcZwtvHP1edkhbn1bL4AqK8u |
+| Zwarte fleecejas met rode ritsdetails.png | 1G3ShLl9XjXScTbWeoAyzITWkctX6hr0P |
+| Zwarte sherpa jas met BIG K-patch.png | 1Z2x1EGaqCrwesHLxTeg5PItbUiQec-42 |
+| Zwarte teddyfleecejas van achteren.png | 12nHrqovhppsQ7OMmm8N_Np_nrnbLmQ4b |
+| 10-2441164-2.jpg | 1Qd7JYkmB4oP-fANE_xKUDOL8HR6sMqBv |
+
+These six are approved for the **black colour assignment**. Do not automatically assign the remaining files to green; visually review them. The other black PNG, `Zwarte teddyjas van achteren.png`, is present in Drive but was **not included in the owner's explicit six-file list**, so keep it pending confirmation.
+
+This documentation update is internal only; no deployment or live catalogue change.
