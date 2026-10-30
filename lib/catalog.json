@@ -379,8 +379,8 @@
     {
       "id": "P007",
       "slug": "alpine-gillet-p007",
-      "name": "Alpin Vest Pro",
-      "description": "cream-black Gillet",
+      "name": "Alpine Gillet",
+      "description": "Dusty Blue gillet",
       "code": "Alpine Gillet 25303202",
       "category": "Jackets & Vests",
       "priceCents": 13390,
@@ -410,7 +410,8 @@
           "id": "P007-2",
           "size": "L",
           "stock": 0,
-          "reported": 75
+          "reported": 75,
+          "barcode": "6957919564984"
         },
         {
           "id": "P007-3",
