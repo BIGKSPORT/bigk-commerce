@@ -6,14 +6,16 @@ export class HttpError extends Error {
     constructor(public status: number, message: string) { super(message); }
 }
 export function checkOrigin(req: Request) {
-    // Preview deployments each receive their own canonical VERCEL_URL.
-    // Never trust Host/X-Forwarded-Host or the request URL as an origin authority.
-    const canonical = process.env.VERCEL_ENV === 'preview' && process.env.VERCEL_URL
-        ? 'https://' + process.env.VERCEL_URL
-        : process.env.APP_URL;
-    if (!canonical) throw new HttpError(503, 'APP_URL must be configured.');
-    const expected = new URL(canonical).origin;
-    if (req.headers.get('origin') !== expected)
+    // Do not derive trusted origins from request Host/X-Forwarded-Host.
+    // A stable branch alias is required so a preview admin cookie survives deploys.
+    const trusted = process.env.VERCEL_ENV === 'preview'
+        ? [process.env.VERCEL_URL, process.env.VERCEL_BRANCH_URL]
+            .filter((value): value is string => !!value)
+            .map(host => 'https://' + host)
+        : [process.env.APP_URL].filter((value): value is string => !!value);
+    if (!trusted.length) throw new HttpError(503, 'APP_URL must be configured.');
+    const origin = req.headers.get('origin');
+    if (!origin || !trusted.some(candidate => new URL(candidate).origin === origin))
         throw new HttpError(403, 'Request origin rejected.');
 }
 export async function rateLimit(key: string, limit = 20, seconds = 60) { const now = Date.now(); const sql = db(); (await sql.prepare('DELETE FROM rate_limits WHERE expires<?').run(now)); (await sql.prepare('INSERT INTO rate_limits(key,hits,expires) VALUES(?,1,?) ON CONFLICT(key) DO UPDATE SET hits=hits+1').run(key, now + seconds * 1000)); const row = (await sql.prepare('SELECT hits FROM rate_limits WHERE key=?').get(key)) as {
