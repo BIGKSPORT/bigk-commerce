@@ -51,6 +51,14 @@ await test('durable authentication and safe DPD test workflow',async t=>{
   const d=providerDiagnostic(422,{errors:[{code:3210,fields:[{field:'data.shipments.0.options.delivery_type',human:'Invalid value "PRIVATE NAME" test@example.com SECRET',code:'INVALID'}]}]});
   assert(d.providerFields.includes('data.shipments.0.options.delivery_type'));assert(d.providerMessages.includes('Veldwaarde is ongeldig.'));assert(!JSON.stringify(d).includes('SECRET'));assert(!JSON.stringify(d).includes('PRIVATE'));
  });
+ await t.test('field-keyed maps, string arrays and encoded messages retain safe validation details',()=>{
+  for(const raw of [
+   {errors:{'recipient.number':['The field is required: PRIVATE NAME']}},
+   {message:JSON.stringify({errors:[{propertyPath:'options.delivery_type',message:'Unsupported value PRIVATE'}]})},
+   {errors:['recipient.postal_code is invalid: PRIVATE']},
+  ]){const d=providerDiagnostic(422,raw);assert(d.providerFields.length>0);assert(d.providerMessages.length>0);assert(!JSON.stringify(d).includes('PRIVATE'));}
+  const unknown=providerDiagnostic(422,{response:'PRIVATE'});assert.equal(unknown.providerMessages.length,1);assert(unknown.providerMessages[0].includes('niet vastgesteld'));
+ });
  await t.test('422 is sanitized and durable; repeated POST never creates another shipment',async()=>{
   await clear();let posts=0;
   globalThis.fetch=async(_url,init)=>{if(init?.method==='POST'){posts++;return response({errors:[{code:3210,fields:[{field:'recipient.number',human:'Invalid value PRIVATE NAME'}]}]},422)}return response(noShipments)};

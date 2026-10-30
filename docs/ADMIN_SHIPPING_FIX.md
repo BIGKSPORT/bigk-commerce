@@ -90,3 +90,18 @@ It uses an isolated local fixture; it does not assert the owner's deployed passw
 The Vercel admin password hash and MyParcel key are non-readable Secrets. Never
 replace the owner's password or add an alternate test-login bypass. Hosted positive
 login and the single authorized external shipment require a genuine admin session.
+
+## Observed provider rejection
+
+The authorized staging attempt returned HTTP 422 and no shipment ID. Its stored
+codes/messages/fields were empty, so the original provider validation reason cannot
+be reconstructed from that record. No raw provider response was retained. Do not
+claim a particular shipment field caused this error, and do not reset the attempt
+or submit another shipment merely to obtain a fuller error message.
+
+The parser now handles field-keyed error maps, string arrays and JSON-encoded
+messages, with bounded traversal and a closed field/rule vocabulary. Unknown formats
+produce an explicit diagnostic rather than empty output. This is a diagnostics fix,
+not proof that the underlying provider rejection has been resolved. Further progress
+requires the original validation details from MyParcel or an independently verified
+payload/account correction before another controlled creation attempt.

@@ -21,17 +21,36 @@ export function providerDiagnostic(status:number,raw:unknown):Diagnostic{
  const codes=new Set<string>(),fields=new Set<string>(),messages=new Set<string>();
  // Never return arbitrary provider prose: it can quote addresses, API keys or PII.
  // Read only code/field keys and translate a closed set of validation rules.
- const rules:[RegExp,string][]=[[/required|mandatory|verplicht/i,'Verplicht veld ontbreekt.'],[/not supported|unsupported|not allowed|niet ondersteund/i,'Veld of optie wordt niet ondersteund.'],[/invalid|not valid|ongeldig/i,'Veldwaarde is ongeldig.'],[/not found|unknown|not exist/i,'Instelling of optie is niet gevonden.'],[/maximum|too long|max length/i,'Veld overschrijdt de toegestane lengte.']];
- function walk(v:unknown,depth=0){if(depth>6||!v||typeof v!=='object')return;
-  if(Array.isArray(v)){v.slice(0,12).forEach(e=>walk(e,depth+1));return;}
+ const rules:[RegExp,string][]=[[/required|mandatory|verplicht|must not be empty|cannot be empty/i,'Verplicht veld ontbreekt.'],[/not supported|unsupported|not allowed|niet ondersteund/i,'Veld of optie wordt niet ondersteund.'],[/invalid|not valid|ongeldig/i,'Veldwaarde is ongeldig.'],[/not found|unknown|not exist/i,'Instelling of optie is niet gevonden.'],[/maximum|too long|max length/i,'Veld overschrijdt de toegestane lengte.']];
+ const fieldNames=new Set(['data','shipments','shipment','recipient','options','physical_properties','carrier','carrier_id','shop_id','account_id','cc','postal_code','city','street','number','box_number','person','company','phone','email','package_type','delivery_type','weight','height','width','length','reference_identifier','sender']);
+ function field(value:string){
+  const parts=value.replace(/\[/g,'.').replace(/\]/g,'').split('.').filter(Boolean);
+  if(parts.length&&parts.length<=12&&parts.every(p=>fieldNames.has(p)||/^\d{1,4}$/.test(p)))fields.add(value.slice(0,140));
+ }
+ let visited=0;
+ function walk(v:unknown,depth=0,context=''){
+  if(depth>10||visited++>300)return;
+  if(typeof v==='string'){
+   // Some APIs return arrays of strings or JSON encoded inside `message`.
+   if(!/error|message|human|detail|description|title|field|property|parameter|attribute|violation/i.test(context))return;
+   const text=v.slice(0,12000);
+   if(/^[\s]*[\[{]/.test(text)){try{walk(JSON.parse(text),depth+1,context)}catch{}}
+   if(/field|property|parameter|attribute|path/i.test(context))field(text);
+   for(const match of text.matchAll(/\b(?:data\.)?(?:shipments?(?:\[\d+\]|\.\d+)?\.)?(?:recipient|options|physical_properties)\.[a-z_]+\b/g))field(match[0]);
+   for(const [pattern,label] of rules)if(pattern.test(text)){messages.add(label);break;}
+   return;
+  }
+  if(!v||typeof v!=='object')return;
+  if(Array.isArray(v)){v.slice(0,12).forEach(e=>walk(e,depth+1,context));return;}
   for(const [k,x] of Object.entries(v).slice(0,30)){
-   if(/^(code|error_code)$/.test(k)&&(typeof x==='number'||typeof x==='string')&&/^[A-Z_0-9.-]{1,40}$/i.test(String(x)))codes.add(String(x));
-   if(/^(field|property|parameter|attribute)$/.test(k)&&typeof x==='string'&&/^(data[.\[]|shipments?[.\[]|recipient[.\[]|options[.\[]|carrier$|shop_id$|account_id$|physical_properties[.\[])[a-zA-Z0-9_.\[\]-]{0,120}$/.test(x))fields.add(x);
-   if(/^(human|message|detail|description|title)$/.test(k)&&typeof x==='string'){for(const [pattern,label] of rules)if(pattern.test(x)){messages.add(label);break;}}
-   if(x&&typeof x==='object')walk(x,depth+1);
+   if(/^(code|error_code|errorCode)$/.test(k)&&(typeof x==='number'||typeof x==='string')&&/^[A-Z_0-9.-]{1,40}$/i.test(String(x))&&!Object.entries(process.env).some(([name,secret])=>/KEY|TOKEN|PASSWORD/.test(name)&&secret&&String(x)===secret))codes.add(String(x));
+   // Field-keyed maps (including errors[field] -> string[]) are also common.
+   if(/error|field|violation/i.test(context))field(k);
+   walk(x,depth+1,context+'.'+k);
   }
  }
  walk(raw);
+ if(!codes.size&&!fields.size&&!messages.size)messages.add('MyParcel gaf geen herkenbare validatiedetails; de oorzaak is nog niet vastgesteld.');
  return {httpStatus:status,providerCodes:[...codes].slice(0,8),providerMessages:[...messages].slice(0,6),providerFields:[...fields].slice(0,8)};
 }
 function headers(){const key=process.env.MYPARCEL_BE_API_KEY;if(!key)throw new HttpError(503,'MyParcel API-sleutel niet ingesteld.');return {Authorization:'bearer '+Buffer.from(key,'utf8').toString('base64'),'User-Agent':'CustomApiCall/2',Accept:'application/json;charset=utf-8'}}
