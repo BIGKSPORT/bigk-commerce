@@ -5,15 +5,17 @@ export default function ShippingTestPage(){
  const [checked,setChecked]=useState(false);
  const [busy,setBusy]=useState(false);
  const [result,setResult]=useState<Result|null>(null);
+ const [needsLogin,setNeedsLogin]=useState(false);
  async function run(){
   if(!checked||busy)return;
-  setBusy(true);setResult(null);
+  setBusy(true);setResult(null);setNeedsLogin(false);
   try{
    const res=await fetch('/api/admin/shipping/myparcel/test-label',{
     method:'POST',headers:{'Content-Type':'application/json'},
     body:JSON.stringify({confirmTestShipment:'CREATE_UNUSED_TEST_LABEL'}),
    });
    const payload=await res.json() as Result;
+   if(res.status===401){setNeedsLogin(true);setResult({error:'Je bent nog niet aangemeld op deze preview. Meld je hieronder aan en open de DPD-test opnieuw.'});return;}
    setResult(res.ok?payload:{...payload,error:payload.diagnostic||payload.error||'Testlabel niet aangemaakt.'});
   }catch{setResult({error:'Verbinding mislukt. Controleer het verzendoverzicht in MyParcel voordat je opnieuw probeert.'});}
   finally{setBusy(false)}
@@ -31,6 +33,7 @@ export default function ShippingTestPage(){
   <button type="button" disabled={!checked||busy||!!result?.created} onClick={run}>
    {busy?'Bezig…':'Maak één DPD-testlabel aan'}
   </button>
+  {needsLogin&&<p role="alert"><a href="/admin" style={{fontWeight:'bold',textDecoration:'underline'}}>Open de adminlogin op deze preview</a>. Kom daarna terug naar deze pagina.</p>}
   {result&&<section role="status" style={{marginTop:20,padding:16,border:'1px solid #aaa'}}>
    {result.error?<><p>{result.error}</p>{result.httpStatus&&<p>MyParcel HTTP-status: {result.httpStatus}</p>}{!!result.providerCodes?.length&&<p>Validatiecodes: {result.providerCodes.join(', ')}</p>}</>:<>
     <p>Testzending aangemaakt: <strong>{result.shipmentId}</strong></p>
