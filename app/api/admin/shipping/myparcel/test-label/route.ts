@@ -3,7 +3,6 @@ import {seller} from '@/lib/seller';
 import {requireAdmin,checkOrigin,body,failure,HttpError,rateLimit} from '@/lib/security';
 export const runtime='nodejs';
 const schema=z.object({
- recipient:address,
  confirmTestShipment:z.literal('CREATE_UNUSED_TEST_LABEL'),
 }).strict();
 /**
@@ -27,7 +26,7 @@ export async function POST(req:Request){
    Authorization:'bearer '+Buffer.from(key,'utf8').toString('base64'),
    'User-Agent':'CustomApiCall/2',
   };
-  const destination={cc:'BE',postal_code:seller.postal,city:seller.city,street:seller.address.replace(/\\s+\\d+$/, ''),number:seller.address.match(/\\d+$/)?.[0]||'',person:seller.name};
+  const destination={cc:'BE',postal_code:seller.postal,city:seller.city,street:seller.address.replace(/\s+\d+$/, ''),number:seller.address.match(/\d+$/)?.[0]||'',person:seller.name};
   if(destination.postal_code!=='2990'||destination.city!=='Wuustwezel'||destination.street!=='Theo Verellenlaan'||destination.number!=='27')throw new HttpError(503,'Magazijnadres is gewijzigd; testlabel geblokkeerd.');
   const shipment={data:{shipments:[{
    carrier:4,
