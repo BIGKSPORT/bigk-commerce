@@ -42,7 +42,11 @@ export async function requireAdmin(req: Request) { const value = cookieValue(req
 export function sessionCookie(name: string, value: string, maxAge: number) { return `${name}=${value}; HttpOnly; SameSite=Strict; Path=/; Max-Age=${maxAge}${process.env.NODE_ENV === 'production' ? '; Secure' : ''}`; }
 export function failure(error: unknown) { if (error instanceof HttpError)
     return Response.json({ error: error.message }, { status: error.status, headers: { 'Cache-Control': 'no-store' } }); if (error instanceof SyntaxError)
-    return Response.json({ error: 'Invalid request body.' }, { status: 400 }); console.error('Request failed', error instanceof Error ? error.name : 'UnknownError'); return Response.json({ error: 'Unable to complete this request. Please try again.' }, { status: 500 }); }
+    return Response.json({ error: 'Invalid request body.' }, { status: 400 }); const code=error&&typeof error==='object'&&'code' in error&&typeof error.code==='string'&&/^[A-Z0-9_]{2,48}$/.test(error.code)?error.code:'UNKNOWN';
+const message=error instanceof Error?error.message:'';
+const category=/DATABASE_URL must/.test(message)?'DATABASE_URL_MISSING':/DATABASE_PROVIDER|temporary SQLite/.test(message)?'DATABASE_PROVIDER_INVALID':/DATABASE_SCHEMA/.test(message)?'DATABASE_SCHEMA_INVALID':/certificate|self.signed|issuer/i.test(message)?'DATABASE_TLS_TRUST':/Tenant or user not found/.test(message)?'DATABASE_POOLER_TENANT':/password authentication failed/.test(message)?'DATABASE_AUTHENTICATION':code;
+console.error('Request failed',error instanceof Error?error.name:'UnknownError',category);
+return Response.json({ error: 'Unable to complete this request. Please try again.' }, { status: 500,headers:{'Cache-Control':'no-store'} }); }
 export async function boundedText(req: Request, maxBytes = 32768) { const reader = req.body?.getReader(); if (!reader)
     return ''; const chunks: Uint8Array[] = []; let length = 0; while (true) {
     const { done, value } = await reader.read();
