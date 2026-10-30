@@ -61,3 +61,8 @@ Source: Stock.xlsx, first sheet (国外订单), **Quantity** column E (not stock
 ## Alpine FZ Hood Cream — physical label verified
 - STYLE **ALPINE FZ HOOD**, NAME **ALPIN**, COLOR **CREAM**, CODE **25301603**, RRP **€93.90**, SIZE **XL**, EAN **6957919562669**.
 - Draft catalogue display family updated to Alpine FZ Hood; supplier name ALPIN retained here as label evidence. Original order and quantities unchanged.
+
+## Nandown Jacket Black — physical label verified
+- STYLE **NANDOWN JKT**, NAME **NAND DOWN**, COLOR **BLACK**, CODE **25302901**, RRP **€186.90**, SIZE **L**, EAN **6957919564564**.
+- Draft catalogue display name changed from Nano Down Jacket to Nandown Jacket for both P019 and alias P020. Size L EAN added only to variant-bearing P019. Duplicate alias P020 remains pending safe deduplication.
+- Supplier order, stock quantities and other size barcodes unchanged.
