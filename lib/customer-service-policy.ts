@@ -5,7 +5,7 @@
  */
 export type SupportCase = {
   kind:'size_exchange'|'withdrawal'|'wrong_item'|'defect'|'lost_delivery'|'other';
-  orderPaymentStatus:'paid'|'fulfilled'|'pending'|'demo'|'cancelled'|'other';
+  orderPaymentStatus:'paid'|'fulfilled'|'pending'|'demo'|'cancelled'|'expired'|'payment_review'|'other';
   daysSinceReceived:number|null;
   country:string;
   remoteArea:'yes'|'no'|'unknown';
