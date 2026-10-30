@@ -26,7 +26,7 @@ export function parseMyParcelCosts(data: unknown): MyParcelCost[] {
     const s=value as Record<string, unknown>;
     const id=s.id;
     if (!(typeof id==='number' && Number.isSafeInteger(id) && id>0)
-      && !(typeof id==='string' && /^\\d+$/.test(id))) return [];
+      && !(typeof id==='string' && /^\d+$/.test(id))) return [];
     const p=s.price && typeof s.price==='object'
       ? s.price as Record<string,unknown> : {};
     const recipient=s.recipient && typeof s.recipient==='object'
@@ -48,7 +48,7 @@ export function parseMyParcelCosts(data: unknown): MyParcelCost[] {
   });
 }
 export async function readMyParcelCost(shipmentId:string):Promise<MyParcelCost[]> {
-  if(!/^\\d{1,16}$/.test(shipmentId)) throw new Error('Invalid MyParcel shipment ID.');
+  if(!/^\d{1,16}$/.test(shipmentId)) throw new Error('Invalid MyParcel shipment ID.');
   const apiKey=process.env.MYPARCEL_BE_API_KEY;
   if(!apiKey) throw new Error('MyParcel Belgium access is not configured.');
   const controller=new AbortController();
