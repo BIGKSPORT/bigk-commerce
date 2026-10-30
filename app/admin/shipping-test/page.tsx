@@ -1,6 +1,6 @@
 'use client';
 import {useState} from 'react';
-type Result={created?:boolean;shipmentId?:string;labelAvailable?:boolean;notice?:string;error?:string;labelHttpStatus?:number};
+type Result={created?:boolean;shipmentId?:string;labelAvailable?:boolean;notice?:string;error?:string;labelHttpStatus?:number;httpStatus?:number;providerCodes?:string[];diagnostic?:string};
 export default function ShippingTestPage(){
  const [checked,setChecked]=useState(false);
  const [busy,setBusy]=useState(false);
@@ -14,7 +14,7 @@ export default function ShippingTestPage(){
     body:JSON.stringify({confirmTestShipment:'CREATE_UNUSED_TEST_LABEL'}),
    });
    const payload=await res.json() as Result;
-   setResult(res.ok?payload:{error:payload.error||'Testlabel niet aangemaakt.'});
+   setResult(res.ok?payload:{...payload,error:payload.diagnostic||payload.error||'Testlabel niet aangemaakt.'});
   }catch{setResult({error:'Verbinding mislukt. Controleer het verzendoverzicht in MyParcel voordat je opnieuw probeert.'});}
   finally{setBusy(false)}
  }
@@ -32,7 +32,7 @@ export default function ShippingTestPage(){
    {busy?'Bezig…':'Maak één DPD-testlabel aan'}
   </button>
   {result&&<section role="status" style={{marginTop:20,padding:16,border:'1px solid #aaa'}}>
-   {result.error?<p>{result.error}</p>:<>
+   {result.error?<><p>{result.error}</p>{result.httpStatus&&<p>MyParcel HTTP-status: {result.httpStatus}</p>}{!!result.providerCodes?.length&&<p>Validatiecodes: {result.providerCodes.join(', ')}</p>}</>:<>
     <p>Testzending aangemaakt: <strong>{result.shipmentId}</strong></p>
     <p>Label beschikbaar: {result.labelAvailable?'Ja':'Nog niet'} (HTTP {result.labelHttpStatus})</p>
     <p>{result.notice}</p>
