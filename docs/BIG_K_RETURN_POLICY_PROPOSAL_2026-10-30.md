@@ -55,3 +55,14 @@ Gegeven: inkoop = 30% van MRP. Voorbeeld MRP €100 incl. 21% btw en inkoop €3
 7. Refundregels, betaling en e-mail notificaties vóór productie testen; voorwaarden juridisch beoordelen.
 
 **Niet live zetten voordat eigenaar inhoud, klantretourbedragen, omruilvoordeel en retouradres bevestigt.**
+
+## Aanvulling 30 oktober 2026 — maat te klein / maatruil
+- Voorbeeld: maat M te klein, klant kiest maat L van hetzelfde artikel/dezelfde kleur.
+- Retourportaal biedt naast **Herroepen en terugbetaling** de vrijwillige keuze **Maat omruilen**. De wettelijke herroepingsmogelijkheid mag hierdoor niet worden beperkt.
+- Controleer variant (maat L) en actuele voorraad; reserveer uitsluitend met vervaldatum en voorraadtransactie. Geen onbeperkte voorraadreservering.
+- Klant betaalt bij een gewone pasvormwissel de retourverzending; BIG K ® betaalt **één keer** de nieuwe standaardlevering voor BE/NL/LU/DE/FR (voorstel, niet live), nadat maat M is ontvangen en op toestand gecontroleerd. Andere/buitenlandse/remote postcodes: kosten vóór bevestiging afzonderlijk valideren.
+- Bij gebrek/verkeerd geleverd product gelden wettelijke kosteloze-remedieverplichtingen, niet deze vrijwillige regeling.
+- BE retourbudget **voorlopig vergelijkbaar met NL** volgens eigenaar, maar **geen fictief BE-labeltarief vastleggen**: actuele MyParcel BE retourkost laten bevestigen vóór klantprijslijst.
+- Bij L niet voorradig: biedt een alternatieve variant aan of behandel herroeping/refund volgens de wet. Geen automatisch gedwongen tegoedbon.
+- Bij een volledige wettelijke herroeping is de goedkoopste standaard oorspronkelijke levering terugbetaalbaar; herroeping kan in beginsel worden gemeld binnen 14 dagen na ontvangst en er zijn daarna doorgaans 14 dagen voor de terugzending. Bij omruiling moet een eventuele aparte verkoop/orderbalans en status traceerbaar blijven.
+- Onderzoek als alternatief 'eerst nieuwe maat versturen' uitsluitend na risicobeheer; standaard is eerst retour ontvangen.
