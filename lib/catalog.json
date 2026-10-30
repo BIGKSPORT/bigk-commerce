@@ -1065,12 +1065,13 @@
           "id": "P018-4",
           "size": "XXL",
           "stock": 0,
-          "reported": 73
+          "reported": 73,
+          "barcode": "6957919563758"
         }
       ],
       "tags": [],
       "content": {
-        "composition": "30% viscose, 70% polyester",
+        "composition": "30% rayon, 70% polyester (physical label; rayon is viscose)",
         "care": "Wash at 30°C on a gentle cycle.",
         "fit": "",
         "details": "Women’s hoodie in coarse-knit, cationic-dyed brushed fabric. Made from 30% viscose and 70% polyester. Fabric weight: 320 g/m²."
