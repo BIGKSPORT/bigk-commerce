@@ -1,0 +1,1 @@
+export const seller={name:'BIGK BV',address:'Theo Verellenlaan 27',postal:'2990',city:'Wuustwezel',country:'Belgium',vat:'BE1034.189.749',enterpriseNumber:'1034.189.749',domain:'bigk.be',origin:'https://bigk.be'} as const;

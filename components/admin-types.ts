@@ -2,7 +2,7 @@ import type {Product,ProductContent,Order} from '@/lib/types';
 import type {ClubEvent} from '@/lib/club-events';
 import type {ClubView} from './club-dashboard';
 export type AuditRow={id:number;action:string;entity:string;created_at:string};
-export type Overview={mode:'live'|'demo';clubEnabled:boolean;emailConfigured:boolean;paymentsConfigured:boolean;duplicates:{code:string;ids:string[]}[];missingPhotos:string[];pendingPrices:string[]};
+export type Overview={environment?:'staging'|'production';maxUploadBytes?:number;mode:'live'|'demo';clubEnabled:boolean;emailConfigured:boolean;paymentsConfigured:boolean;duplicates:{code:string;ids:string[]}[];missingPhotos:string[];pendingPrices:string[]};
 export type ClubOrderView={orderId:string;email:string;status:string;blocked:boolean;deliveredAt:string|null;releaseAt:string|null;reviewedAt:string|null;earned:number;released:number;points:number;waitDays:number|null};
 export type Booking={event_id:string;email:string;status:string;quantity:number;created_at:string};
 export type ClubAdmin={config:{enabled:boolean;waitDays:number|null};members:ClubView[];orders:ClubOrderView[];events:ClubEvent[];bookings:Booking[]};

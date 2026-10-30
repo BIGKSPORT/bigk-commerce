@@ -6,8 +6,10 @@ type Query = (text: string, values: unknown[]) => Promise<{ rows: Row[]; changes
 const context = new AsyncLocalStorage<Query>();
 let client: ReturnType<typeof postgres> | undefined;
 let sqliteQueue: Promise<unknown> = Promise.resolve();
+export function databaseSchema(){const schema=process.env.DATABASE_SCHEMA||'bigk';if(!['bigk','bigk_staging'].includes(schema))throw new Error('DATABASE_SCHEMA must be bigk or bigk_staging.');return schema}
 export function isPostgres() {
   const provider = process.env.DATABASE_PROVIDER || 'sqlite';
+  if(process.env.NETLIFY==='true'&&provider!=='postgres')throw new Error('Netlify requires DATABASE_PROVIDER=postgres; local SQLite is not durable on this host.');
   if (!['sqlite', 'postgres'].includes(provider)) throw new Error('DATABASE_PROVIDER must be sqlite or postgres.');
   return provider === 'postgres';
 }
@@ -18,7 +20,7 @@ function postgresClient() {
     max: localTest ? 1 : 3, prepare: false, ssl: localTest ? false : { rejectUnauthorized: true, ...(process.env.DATABASE_CA_CERT ? { ca: process.env.DATABASE_CA_CERT } : {}) },
     types: { bigint: { to: 20, from: [20], serialize: String, parse: (value: string) => { const n = Number(value); if (!Number.isSafeInteger(n)) throw new Error('Database integer exceeds safe range.'); return n; } } },
     idle_timeout: 20, connect_timeout: 10,
-    connection: { search_path: 'bigk,pg_catalog', statement_timeout: 15000 },
+    connection: { search_path: databaseSchema()+',pg_catalog', statement_timeout: 15000 },
   });
 }
 // Only application-owned constant SQL reaches this adapter. Values stay bound.
@@ -26,15 +28,15 @@ export function postgresQuery(text: string) {
   let index = 0;
   let result = text.replace(/\?/g, () => '$' + (++index));
   result = result.replace(/\browid\b/g, 'position');
-  result = result.replace(/\b(FROM|INTO|UPDATE|JOIN)\s+(products|variants|orders|order_lines|webhook_events|sessions|rate_limits|audit|login_tokens|customer_sessions|email_outbox|club_members|club_orders|club_ledger|club_events|club_bookings|product_content|admin_returns)\b/g, '$1 bigk.$2');
-  result = result.replace(/AS unitPrice\b/g, 'AS "unitPrice"');
+  result = result.replace(/\b(FROM|INTO|UPDATE|JOIN)\s+(products|variants|orders|order_lines|webhook_events|sessions|rate_limits|audit|login_tokens|customer_sessions|email_outbox|club_members|club_orders|club_ledger|club_events|club_bookings|product_content|admin_returns|media_assets|withdrawal_requests)\b/g, '$1 '+databaseSchema()+'.$2');
+  result = result.replace(/AS unitPrice\b/g, 'AS "unitPrice"').replace(/AS variantId\b/g, 'AS "variantId"');
   result = result.replace(/SET hits=hits\+1/g, 'SET hits=rate_limits.hits+1');
   if (/INSERT OR IGNORE INTO/.test(result)) result = result.replace('INSERT OR IGNORE INTO', 'INSERT INTO') + ' ON CONFLICT DO NOTHING';
   return result;
 }
 const sqliteQuery: Query = async (text, values) => {
   const statement = sqlite().prepare(text);
-  const args = values as (string | number | null)[];
+  const args = values as (string | number | null | Uint8Array)[];
   if (/^\s*SELECT\b/i.test(text)) return { rows: statement.all(...args) as Row[], changes: 0 };
   return { rows: [], changes: Number(statement.run(...args).changes) };
 };

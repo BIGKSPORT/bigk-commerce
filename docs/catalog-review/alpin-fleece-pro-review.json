@@ -1,0 +1,523 @@
+{
+  "product": "Alpin Fleece Pro",
+  "sourceFolder": "https://drive.google.com/drive/folders/106AbX8Ci9zJlJ-8UUHI1_MF7103-F7Ln",
+  "reviewedFiles": 61,
+  "priceCents": 14690,
+  "colours": [
+    {
+      "code": "25303101",
+      "productId": "P001",
+      "colour": "Black",
+      "images": [
+        {
+          "id": "1uqRyQhPHwcZwtvHP1edkhbn1bL4AqK8u",
+          "name": "10-2441174-2.jpg",
+          "webPath": "/products/web/alpin-fleece-pro-25303101-1.webp"
+        },
+        {
+          "id": "1bbY2l2yJ5WyCT2-8PfEq_CqyZjimv0Vk",
+          "name": "10-2441167-2.jpg",
+          "webPath": "/products/web/alpin-fleece-pro-25303101-2.webp"
+        },
+        {
+          "id": "1Qd7JYkmB4oP-fANE_xKUDOL8HR6sMqBv",
+          "name": "10-2441164-2.jpg",
+          "webPath": "/products/web/alpin-fleece-pro-25303101-3.webp"
+        },
+        {
+          "id": "1G3ShLl9XjXScTbWeoAyzITWkctX6hr0P",
+          "name": "Zwarte fleecejas met rode ritsdetails.png",
+          "webPath": "/products/web/alpin-fleece-pro-25303101-4.webp"
+        },
+        {
+          "id": "1Z2x1EGaqCrwesHLxTeg5PItbUiQec-42",
+          "name": "Zwarte sherpa jas met BIG K-patch.png",
+          "webPath": "/products/web/alpin-fleece-pro-25303101-5.webp"
+        },
+        {
+          "id": "12nHrqovhppsQ7OMmm8N_Np_nrnbLmQ4b",
+          "name": "Zwarte teddyfleecejas van achteren.png",
+          "webPath": "/products/web/alpin-fleece-pro-25303101-6.webp"
+        }
+      ],
+      "variants": [
+        {
+          "sku": "25303101-S",
+          "size": "S",
+          "ean": "6957919564755",
+          "stockColumnE": 20,
+          "receivedMaster": 20,
+          "sourceRow": 3
+        },
+        {
+          "sku": "25303101-M",
+          "size": "M",
+          "ean": "6957919564762",
+          "stockColumnE": 60,
+          "receivedMaster": 60,
+          "sourceRow": 4
+        },
+        {
+          "sku": "25303101-L",
+          "size": "L",
+          "ean": "6957919564779",
+          "stockColumnE": 60,
+          "receivedMaster": 60,
+          "sourceRow": 5
+        },
+        {
+          "sku": "25303101-XL",
+          "size": "XL",
+          "ean": "6957919564786",
+          "stockColumnE": 50,
+          "receivedMaster": 50,
+          "sourceRow": 6
+        },
+        {
+          "sku": "25303101-2XL",
+          "size": "2XL",
+          "ean": "6957919564793",
+          "stockColumnE": 50,
+          "receivedMaster": 25,
+          "sourceRow": 7
+        },
+        {
+          "sku": "25303101-3XL",
+          "size": "3XL",
+          "ean": "6957919564809",
+          "stockColumnE": 20,
+          "receivedMaster": 9,
+          "sourceRow": 8
+        }
+      ],
+      "stagingQuantity": 260,
+      "receivedMasterQuantity": 224
+    },
+    {
+      "code": "25303102",
+      "productId": "P002",
+      "colour": "Emerald Green",
+      "images": [
+        {
+          "id": "1nBFH9QkMr4VL3yWYpdoCvyb3Wllz1bqz",
+          "name": "10-2441168.jpg",
+          "webPath": "/products/web/alpin-fleece-pro-25303102-1.webp"
+        },
+        {
+          "id": "1aHIg7PwLB0xsM1Gc6L3276KkprQUpkNe",
+          "name": "10-2441160.jpg",
+          "webPath": "/products/web/alpin-fleece-pro-25303102-2.webp"
+        },
+        {
+          "id": "1PxD9Tj0MH9ffJCpkl7FtaLfw7XdVMZE9",
+          "name": "IMG_9167.jpg",
+          "webPath": "/products/web/alpin-fleece-pro-25303102-3.webp"
+        },
+        {
+          "id": "1AnnVokDHRoJpm4L-IqYGREULqmbj9IcP",
+          "name": "10-2441176.jpg",
+          "webPath": "/products/web/alpin-fleece-pro-25303102-4.webp"
+        },
+        {
+          "id": "1gDlRDDKw8LLzensxJ6dWBCxBK7LCo38K",
+          "name": "10-2441177.jpg",
+          "webPath": "/products/web/alpin-fleece-pro-25303102-5.webp"
+        },
+        {
+          "id": "1lHmGfG4Gm5tnB07LF6f7r9aVxbdIVZAx",
+          "name": "10-2441181.jpg",
+          "webPath": "/products/web/alpin-fleece-pro-25303102-6.webp"
+        },
+        {
+          "id": "1OAkYQnpMAadw-gG5_gwRFqvZHqBwPSn4",
+          "name": "10-2441180.jpg",
+          "webPath": "/products/web/alpin-fleece-pro-25303102-7.webp"
+        },
+        {
+          "id": "17Mbx_djcSJLS5MMvYH3LGKlRKGIcp4zu",
+          "name": "10-2441178.jpg",
+          "webPath": "/products/web/alpin-fleece-pro-25303102-8.webp"
+        },
+        {
+          "id": "1OARKmULJziqvfvr7HiTD-82ZC6duY-4n",
+          "name": "10-2441179.jpg",
+          "webPath": "/products/web/alpin-fleece-pro-25303102-9.webp"
+        },
+        {
+          "id": "1tWhlekXgQ21Y79nBtXjBOXsu4Rd17d0q",
+          "name": "IMG_9213.jpg",
+          "webPath": "/products/web/alpin-fleece-pro-25303102-10.webp"
+        }
+      ],
+      "variants": [
+        {
+          "sku": "25303102-S",
+          "size": "S",
+          "ean": "6957919564823",
+          "stockColumnE": 20,
+          "receivedMaster": 20,
+          "sourceRow": 9
+        },
+        {
+          "sku": "25303102-M",
+          "size": "M",
+          "ean": "6957919564830",
+          "stockColumnE": 50,
+          "receivedMaster": 60,
+          "sourceRow": 10
+        },
+        {
+          "sku": "25303102-L",
+          "size": "L",
+          "ean": "6957919564847",
+          "stockColumnE": 60,
+          "receivedMaster": 62,
+          "sourceRow": 11
+        },
+        {
+          "sku": "25303102-XL",
+          "size": "XL",
+          "ean": "6957919564854",
+          "stockColumnE": 50,
+          "receivedMaster": 50,
+          "sourceRow": 12
+        },
+        {
+          "sku": "25303102-2XL",
+          "size": "2XL",
+          "ean": "6957919564861",
+          "stockColumnE": 50,
+          "receivedMaster": 30,
+          "sourceRow": 13
+        },
+        {
+          "sku": "25303102-3XL",
+          "size": "3XL",
+          "ean": "6957919564878",
+          "stockColumnE": 20,
+          "receivedMaster": 10,
+          "sourceRow": 14
+        }
+      ],
+      "stagingQuantity": 250,
+      "receivedMasterQuantity": 232
+    }
+  ],
+  "files": [
+    {
+      "driveFileId": "1se2bc22B2d9mDdnB_XSarhcj3mGBEZkM",
+      "sourceName": "Zwarte teddyjas van achteren.png",
+      "classification": "excluded-unconfirmed-black-edit"
+    },
+    {
+      "driveFileId": "1G3ShLl9XjXScTbWeoAyzITWkctX6hr0P",
+      "sourceName": "Zwarte fleecejas met rode ritsdetails.png",
+      "classification": "selected-black"
+    },
+    {
+      "driveFileId": "12nHrqovhppsQ7OMmm8N_Np_nrnbLmQ4b",
+      "sourceName": "Zwarte teddyfleecejas van achteren.png",
+      "classification": "selected-black"
+    },
+    {
+      "driveFileId": "1Z2x1EGaqCrwesHLxTeg5PItbUiQec-42",
+      "sourceName": "Zwarte sherpa jas met BIG K-patch.png",
+      "classification": "selected-black"
+    },
+    {
+      "driveFileId": "1AnnVokDHRoJpm4L-IqYGREULqmbj9IcP",
+      "sourceName": "10-2441176.jpg",
+      "classification": "selected-emerald"
+    },
+    {
+      "driveFileId": "1gDlRDDKw8LLzensxJ6dWBCxBK7LCo38K",
+      "sourceName": "10-2441177.jpg",
+      "classification": "selected-emerald"
+    },
+    {
+      "driveFileId": "17Mbx_djcSJLS5MMvYH3LGKlRKGIcp4zu",
+      "sourceName": "10-2441178.jpg",
+      "classification": "selected-emerald"
+    },
+    {
+      "driveFileId": "1OARKmULJziqvfvr7HiTD-82ZC6duY-4n",
+      "sourceName": "10-2441179.jpg",
+      "classification": "selected-emerald"
+    },
+    {
+      "driveFileId": "1OAkYQnpMAadw-gG5_gwRFqvZHqBwPSn4",
+      "sourceName": "10-2441180.jpg",
+      "classification": "selected-emerald"
+    },
+    {
+      "driveFileId": "1lHmGfG4Gm5tnB07LF6f7r9aVxbdIVZAx",
+      "sourceName": "10-2441181.jpg",
+      "classification": "selected-emerald"
+    },
+    {
+      "driveFileId": "1oqzb8uZ8wzHMI8WH6jbCbam7_pQLRcsn",
+      "sourceName": "10-2441182.jpg",
+      "classification": "alternate-emerald"
+    },
+    {
+      "driveFileId": "1zrI0T7pQ8AMFfaDJPrqCZrL2kQvgbNP6",
+      "sourceName": "IMG_9164.jpg",
+      "classification": "alternate-emerald"
+    },
+    {
+      "driveFileId": "16oh7O2kvGvzjNUhlrOkzEAaxuP-SDysR",
+      "sourceName": "IMG_9165.jpg",
+      "classification": "alternate-emerald"
+    },
+    {
+      "driveFileId": "1BDD42i3ABmTn5adZRI5T4JzrYsMK9I4g",
+      "sourceName": "IMG_9166.jpg",
+      "classification": "alternate-emerald"
+    },
+    {
+      "driveFileId": "1PxD9Tj0MH9ffJCpkl7FtaLfw7XdVMZE9",
+      "sourceName": "IMG_9167.jpg",
+      "classification": "selected-emerald"
+    },
+    {
+      "driveFileId": "1tWhlekXgQ21Y79nBtXjBOXsu4Rd17d0q",
+      "sourceName": "IMG_9213.jpg",
+      "classification": "selected-emerald"
+    },
+    {
+      "driveFileId": "1HAHOjgwLE5Ksv8UMGjrEnPseGNlSg4DD",
+      "sourceName": "IMG_9215.jpg",
+      "classification": "alternate-emerald"
+    },
+    {
+      "driveFileId": "1t_8xRWADdZK9tvQKaa3BtHA2LCuptvgr",
+      "sourceName": "IMG_9216.jpg",
+      "classification": "alternate-emerald"
+    },
+    {
+      "driveFileId": "1Dz-irgf8U2rMs7vfE2tCzVnfJXNWD8qL",
+      "sourceName": "IMG_9217.jpg",
+      "classification": "alternate-emerald"
+    },
+    {
+      "driveFileId": "1HM_ZU-yMnkM9ayUE65n-MIxFpzttqU5Y",
+      "sourceName": "IMG_9218.jpg",
+      "classification": "alternate-emerald"
+    },
+    {
+      "driveFileId": "1F1maxa19WMJ0izvPecGquFqINOAnotlF",
+      "sourceName": "IMG_9219.jpg",
+      "classification": "alternate-emerald"
+    },
+    {
+      "driveFileId": "1fQ9O0pzesQXf3rBJvsSwDL3Kn_OqV1py",
+      "sourceName": "IMG_9220.jpg",
+      "classification": "alternate-emerald"
+    },
+    {
+      "driveFileId": "1aHIg7PwLB0xsM1Gc6L3276KkprQUpkNe",
+      "sourceName": "10-2441160.jpg",
+      "classification": "selected-emerald"
+    },
+    {
+      "driveFileId": "16b5yJropkEA8SnpHAMUxEHtfBvxdH8dS",
+      "sourceName": "10-2441161.jpg",
+      "classification": "alternate-emerald"
+    },
+    {
+      "driveFileId": "1Kwe6HniNAwDAWh8wR1MMBZiH445yYlqc",
+      "sourceName": "10-2441162.jpg",
+      "classification": "alternate-emerald"
+    },
+    {
+      "driveFileId": "11K_hhd-HaDcuDHCAm8Dqr0w9qWGxvLlU",
+      "sourceName": "10-2441163.jpg",
+      "classification": "alternate-emerald"
+    },
+    {
+      "driveFileId": "1Qd7JYkmB4oP-fANE_xKUDOL8HR6sMqBv",
+      "sourceName": "10-2441164-2.jpg",
+      "classification": "selected-black"
+    },
+    {
+      "driveFileId": "1gvc7wXlwFbAJXc3q4mKKZE_rwkR_004s",
+      "sourceName": "10-2441164.jpg",
+      "classification": "alternate-emerald"
+    },
+    {
+      "driveFileId": "102TY2IvVXqWl_e4XemXdzWMCWx_RuxGV",
+      "sourceName": "10-2441165.jpg",
+      "classification": "alternate-emerald"
+    },
+    {
+      "driveFileId": "1XMBCV2PWLPs17Eh82IdUeTqaK38rHWEZ",
+      "sourceName": "10-2441166.jpg",
+      "classification": "alternate-emerald"
+    },
+    {
+      "driveFileId": "1bbY2l2yJ5WyCT2-8PfEq_CqyZjimv0Vk",
+      "sourceName": "10-2441167-2.jpg",
+      "classification": "selected-black"
+    },
+    {
+      "driveFileId": "1kvq1oprmugWxlaTHQaA5m9SyFVUSElK9",
+      "sourceName": "10-2441167.jpg",
+      "classification": "alternate-emerald"
+    },
+    {
+      "driveFileId": "1nBFH9QkMr4VL3yWYpdoCvyb3Wllz1bqz",
+      "sourceName": "10-2441168.jpg",
+      "classification": "selected-emerald"
+    },
+    {
+      "driveFileId": "1wbItCY5ffGRAbpwMGvPv6tqqODzBUgC5",
+      "sourceName": "10-2441169.jpg",
+      "classification": "alternate-emerald"
+    },
+    {
+      "driveFileId": "1nHuTlorAcU0hDrtjLvGgGI9unF1jiO78",
+      "sourceName": "10-2441170.jpg",
+      "classification": "alternate-emerald"
+    },
+    {
+      "driveFileId": "1v7SCHHEsLMlEprUkbOqFmkoPy73hTtNC",
+      "sourceName": "10-2441171.jpg",
+      "classification": "alternate-emerald"
+    },
+    {
+      "driveFileId": "1qHRkNz-qKjuZ0hwtLw-03_aVNCRMre9B",
+      "sourceName": "10-2441172.jpg",
+      "classification": "alternate-emerald"
+    },
+    {
+      "driveFileId": "18rwryiWh7PsZxGpjZru5z27r_TZKNlBx",
+      "sourceName": "10-2441173.jpg",
+      "classification": "alternate-emerald"
+    },
+    {
+      "driveFileId": "1uqRyQhPHwcZwtvHP1edkhbn1bL4AqK8u",
+      "sourceName": "10-2441174-2.jpg",
+      "classification": "selected-black"
+    },
+    {
+      "driveFileId": "1hfQvWzxbWVLN66e1_oOcMNsAazrkeYE1",
+      "sourceName": "10-2441174.jpg",
+      "classification": "alternate-emerald"
+    },
+    {
+      "driveFileId": "1ykIO57i1XkYHn_cyGZmS5tO2wYVPkRkS",
+      "sourceName": "10-2441175.jpg",
+      "classification": "alternate-emerald"
+    },
+    {
+      "driveFileId": "1dEvN96kcqH5sL5YRrq1b506v1E4rzjHW",
+      "sourceName": "10-2441145.jpg",
+      "classification": "excluded-hooded-product"
+    },
+    {
+      "driveFileId": "1ldwB--Nx08glypTlPPCMB5eAwfGBhYnN",
+      "sourceName": "10-2441146.jpg",
+      "classification": "excluded-hooded-product"
+    },
+    {
+      "driveFileId": "1TwtEpr4QcGJ55RGt_zTJwuuQTgxVtcP2",
+      "sourceName": "10-2441147.jpg",
+      "classification": "excluded-hooded-product"
+    },
+    {
+      "driveFileId": "16vm0LRk73n4VLOG_cKKsOJcRM9vzHReP",
+      "sourceName": "10-2441148.jpg",
+      "classification": "excluded-hooded-product"
+    },
+    {
+      "driveFileId": "1SuXdbIOH5slqT6Rs-G9NLn_lxvtmeDr_",
+      "sourceName": "10-2441149.jpg",
+      "classification": "excluded-hooded-product"
+    },
+    {
+      "driveFileId": "1naWvobooBwnRamtXIIFtQYPAWbQIzmGz",
+      "sourceName": "10-2441150.jpg",
+      "classification": "excluded-hooded-product"
+    },
+    {
+      "driveFileId": "1r6qpkamxIFxWYvmaKrQ4PqSxt2CmIflK",
+      "sourceName": "10-2441151.jpg",
+      "classification": "excluded-hooded-product"
+    },
+    {
+      "driveFileId": "1ErKG0vZhfsewgn2UTvTUVbBJBSd5QThS",
+      "sourceName": "10-2441152.jpg",
+      "classification": "excluded-hooded-product"
+    },
+    {
+      "driveFileId": "1P0QPethJLdRIbr09CjDI8BPo9kcln-tf",
+      "sourceName": "10-2441153.jpg",
+      "classification": "excluded-hooded-product"
+    },
+    {
+      "driveFileId": "16t61ZtuBoLSUNrc8XpDVwPgy_sxrI493",
+      "sourceName": "10-2441154.jpg",
+      "classification": "excluded-hooded-product"
+    },
+    {
+      "driveFileId": "1eCRfu3LntuNIxTF1BO0E8zFXfDgtTdf2",
+      "sourceName": "10-2441155.jpg",
+      "classification": "excluded-hooded-product"
+    },
+    {
+      "driveFileId": "1nT4z_kLLgqcx-m4qxWZqOu-khrmwmGLg",
+      "sourceName": "10-2441156.jpg",
+      "classification": "excluded-hooded-product"
+    },
+    {
+      "driveFileId": "1-bZ-ackUHGPxVV6UUoQj-l5sQGqEKeoW",
+      "sourceName": "10-2441157.jpg",
+      "classification": "excluded-hooded-product"
+    },
+    {
+      "driveFileId": "1LpmMm9-EJ4FWXR_-v5H2LcaGyiM2oqP-",
+      "sourceName": "10-2441158.jpg",
+      "classification": "excluded-hooded-product"
+    },
+    {
+      "driveFileId": "14aMuRziQ9RwCBMMwGrGLIxc5otTXLI-I",
+      "sourceName": "10-2441159.jpg",
+      "classification": "excluded-hooded-product"
+    },
+    {
+      "driveFileId": "1D4GzJD5jjBorFwLgR8l6zHIpOJrzYtu7",
+      "sourceName": "10-2441140.jpg",
+      "classification": "excluded-hooded-product"
+    },
+    {
+      "driveFileId": "1WLdNHxNW7MAqNQNcexL_ND207U9Gv6qq",
+      "sourceName": "10-2441141.jpg",
+      "classification": "excluded-hooded-product"
+    },
+    {
+      "driveFileId": "1CMVGQy_S6PPxxpqhuYF-TolHv8RZ8AEI",
+      "sourceName": "10-2441142.jpg",
+      "classification": "excluded-hooded-product"
+    },
+    {
+      "driveFileId": "18Kw8edc6qIowCGBGcOcUqppS2hV9S572",
+      "sourceName": "10-2441143.jpg",
+      "classification": "excluded-hooded-product"
+    },
+    {
+      "driveFileId": "1fFQAlsOaVJ4YeUIqF_B4qKgpOm03LFGJ",
+      "sourceName": "10-2441144.jpg",
+      "classification": "excluded-hooded-product"
+    }
+  ],
+  "liveChanged": false,
+  "stockSource": {
+    "fileId": "1lhVV0LjC87LZYkhZeeP4AxG7DErFfeVo",
+    "fileName": "Stock.xlsx",
+    "column": "E",
+    "sheet": "\u56fd\u5916\u8ba2\u5355\u6570\u91cf",
+    "sha256": "55f4125b5cc36b299fcfa77bc6b9a7ce3d98ad309d4355b39a974a4be177c526",
+    "secondSheetCheck": "Same quantities in \u9700\u51fa\u5e93\u5b58\u6539\u888b\u5b50\u51fa\u8d27; do not sum both sheets."
+  },
+  "stockConflict": "Column E differs from received master for several sizes. These are staged source quantities, not an update to received or live inventory."
+}

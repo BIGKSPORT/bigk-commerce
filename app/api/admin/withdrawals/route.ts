@@ -1,0 +1,2 @@
+import {z} from 'zod';import {checkOrigin,body,failure,HttpError,requireAdmin} from '@/lib/security';import {resolveWithdrawal} from '@/lib/withdrawal';
+export async function PATCH(req:Request){try{checkOrigin(req);await requireAdmin(req);const d=z.object({id:z.string().min(1).max(100),reason:z.string().trim().min(10).max(1000)}).strict().safeParse(await body(req));if(!d.success)throw new HttpError(400,'Provide the request and a resolution reason.');await resolveWithdrawal(d.data.id,d.data.reason);return Response.json({ok:true})}catch(e){return failure(e)}}

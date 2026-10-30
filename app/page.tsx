@@ -1,3 +1,4 @@
+import {visibleProducts} from '@/lib/catalog-view';
 import { products } from '@/lib/db';
 import { isLive, liveReady } from '@/lib/commerce';
 import Storefront from '@/components/storefront';
@@ -7,4 +8,4 @@ export default async function Home({ searchParams }: {
         category?: string;
         saved?: string;
     }>;
-}) { const { category,saved } = await searchParams; return <Storefront products={(await products()).map(p => ({ ...p, variants: p.variants.map(v => ({ ...v, stock: Math.max(0, v.stock - v.reserved), reserved: 0, reported: null })) }))} mode={isLive() ? 'live' : 'demo'} ready={liveReady()} initialCategory={category} initialSavedOnly={saved==='1'}/>; }
+}) { const { category,saved } = await searchParams; return <Storefront products={visibleProducts(await products()).map(p => ({ ...p, variants: p.variants.map(v => ({ ...v, stock: Math.max(0, v.stock - v.reserved), reserved: 0, reported: null })) }))} mode={isLive() ? 'live' : 'demo'} ready={liveReady()} initialCategory={category} initialSavedOnly={saved==='1'}/>; }

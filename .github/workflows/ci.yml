@@ -1,0 +1,59 @@
+name: BigK launch checks
+on:
+  push:
+    branches: [main, setup/supabase-commerce]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  commerce:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run test:club
+      - run: npm run test:backoffice
+      - run: npm run test:media
+      - run: npm run test:withdrawals
+      - run: npm run test:staging
+      - run: npm run test:postgres
+      - run: npm run build
+      - run: npm run test:http
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Set review paths
+        run: |
+          echo "CHROMIUM_PATH=$(node -e 'console.log(require("playwright").chromium.executablePath())')" >> "$GITHUB_ENV"
+          echo "PREVIEW_OUTPUT=$RUNNER_TEMP/bigk-storefront" >> "$GITHUB_ENV"
+          echo "BACKOFFICE_REVIEW_OUTPUT=$RUNNER_TEMP/bigk-backoffice" >> "$GITHUB_ENV"
+          echo "BACKOFFICE_REVIEW_HTML=$RUNNER_TEMP/BigK_Backoffice_Preview.html" >> "$GITHUB_ENV"
+          echo "CLUB_REVIEW_OUTPUT=$RUNNER_TEMP/bigk-club" >> "$GITHUB_ENV"
+          echo "BIGK_ARTIFACT_DIR=$RUNNER_TEMP/bigk-screenshots" >> "$GITHUB_ENV"
+      - run: npm run preview:build
+      - run: npm run test:preview
+      - run: node tests/alpin-gallery.mjs
+      - run: npm run preview:backoffice
+      - run: npm run test:backoffice-browser
+      - run: node scripts/build-club-review.mjs
+      - run: node tests/club-browser.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: review-screenshots
+          path: ${{ runner.temp }}/bigk-screenshots

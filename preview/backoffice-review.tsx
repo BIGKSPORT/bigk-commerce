@@ -1,3 +1,4 @@
+import {visibleProducts} from '../lib/catalog-view';
 import {createRoot} from 'react-dom/client';
 import {Backoffice} from '../components/backoffice';
 import catalog from '../lib/catalog.json';
@@ -5,7 +6,7 @@ import master from '../docs/catalog-review/master-129-review.json';
 import type {Product,Order} from '../lib/types';
 import {normalSize} from '../components/admin-types';
 import type {AdminTransport} from '../components/admin-types';
-const products=structuredClone(catalog.products).map(p=>({...p,version:0,variants:p.variants.map(v=>({...v,stock:Number(master.records.find(r=>String(r['SKU incl maat']).startsWith((p.code.match(/\d{8}$/)?.[0]||p.code)+'-')&&normalSize(String(r.Maat))===normalSize(v.size))?.['Bevestigde ontvangen voorraad']||0),reserved:0}))})) as Product[];
+const products=visibleProducts(structuredClone(catalog.products)).map(p=>({...p,version:0,variants:p.variants.map(v=>({...v,stock:Number(master.records.find(r=>String(r['SKU incl maat']).startsWith((p.code.match(/\d{8}$/)?.[0]||p.code)+'-')&&normalSize(String(r.Maat))===normalSize(v.size))?.['Bevestigde ontvangen voorraad']||0),reserved:0}))})) as Product[];
 let authorized=true;const audit:any[]=[],events:any[]=[],uploaded:any[]=[],returns:any[]=[];
 const order:Order={id:'demo-order-review-0001',status:'paid',email:'sample@example.test',phone:'+32000000000',subtotal:7990,shipping:695,total:8685,currency:'eur',createdAt:'2026-10-29T12:00:00.000Z',expiresAt:'2026-10-29T12:35:00.000Z',stripeSession:null,tracking:null,deliveryAddress:{name:'Sample Customer (fictional)',address:'Example Street 1',postal:'1000',city:'Brussels',country:'BE'},items:[{name:'Velvet WMS Hood',size:'M',quantity:1,unitPrice:7990}]};
 const record=(action:string,entity:string)=>audit.unshift({id:audit.length+1,action,entity,created_at:new Date().toISOString()});

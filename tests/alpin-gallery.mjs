@@ -1,0 +1,41 @@
+import {chromium} from 'playwright';
+import {readFileSync,readdirSync,existsSync,mkdirSync} from 'node:fs';
+import {resolve,extname} from 'node:path';
+import assert from 'node:assert/strict';
+const artifactRoot=process.env.BIGK_ARTIFACT_DIR||'/workspace/alpin-review-artifacts';
+const root=process.env.PREVIEW_OUTPUT||'/workspace/alpin-preview';
+const assets={};for(const folder of ['brand','products/web'])for(const name of readdirSync(root+'/'+folder))assets['/'+folder+'/'+name]='data:'+(name.endsWith('.svg')?'image/svg+xml':'image/webp')+';base64,'+readFileSync(root+'/'+folder+'/'+name).toString('base64');
+const report=JSON.parse(readFileSync('docs/catalog-review/alpin-fleece-pro-review.json','utf8'));
+assert.equal(report.files.length,61);assert.equal(report.colours[0].images.length,6);assert.equal(report.colours[1].images.length,10);
+const errors=[];const browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium',headless:true,args:['--no-sandbox','--disable-crashpad-for-testing']});
+try{for(const viewport of [{width:1440,height:1000},{width:390,height:844}]){
+const page=await browser.newPage({viewport});page.setDefaultTimeout(8000);page.on('pageerror',e=>errors.push(e.message));
+ await page.setContent('<html><head></head><body><div id="root"></div></body></html>');
+ await page.addStyleTag({content:readFileSync(root+'/app.css','utf8')});
+ await page.evaluate(assets=>{if(!crypto.randomUUID)Object.defineProperty(crypto,'randomUUID',{value:()=> '10000000-1000-4000-8000-100000000000'.replace(/[018]/g,c=>(Number(c)^crypto.getRandomValues(new Uint8Array(1))[0]&15>>Number(c)/4).toString(16))});for(const name of ['localStorage','sessionStorage']){const data=new Map();Object.defineProperty(window,name,{value:{getItem:k=>data.get(k)||null,setItem:(k,v)=>data.set(k,String(v)),removeItem:k=>data.delete(k)}})}history.pushState=(_state,_title,url)=>{const target=new URL(String(url),'https://bigk-preview.invalid');location.hash=target.hash};const replace=()=>{for(const img of document.images){const source=img.getAttribute('src');if(assets[source]){img.loading='eager';img.src=assets[source]}}};new MutationObserver(replace).observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['src']});},assets);
+ await page.addScriptTag({content:readFileSync(root+'/app.js','utf8')});
+
+await page.getByRole('heading',{name:/Looking good/}).waitFor();
+await page.evaluate(()=>window.dispatchEvent(new CustomEvent('bigk-preview-navigate',{detail:'/products/apline-fleece-p001'})));
+await page.locator('.pdp-detail h1').waitFor();
+assert.equal(await page.locator('.pdp-detail h1').textContent(),'Alpin Fleece Pro');
+let gallery=page.getByRole('region',{name:'Product photos'});
+assert.equal(await page.locator('.gallery-thumbnails button').count(),6);
+assert.equal(await page.locator('.product-colour-options a').count(),2);
+await gallery.focus();await gallery.press('ArrowRight');assert.equal(await gallery.getAttribute('data-active-photo'),'2');
+assert(!(await page.locator('.size-options').innerText()).includes('XS'));
+await page.locator('.product-colour-options a').nth(1).click();
+await page.locator('.gallery-thumbnails button').nth(9).waitFor({state:'attached'});
+console.log('Colour switched',viewport.width);assert.equal(await gallery.getAttribute('data-active-photo'),'1');
+await gallery.focus();await gallery.press('Home');await gallery.press('ArrowRight');await gallery.press('ArrowRight');
+assert.equal(await gallery.getAttribute('data-active-photo'),'3');
+assert(await page.locator('.detail-info').innerText().then(x=>x.includes('Emerald Green')));
+await page.emulateMedia({reducedMotion:'reduce'});
+await page.evaluate(()=>scrollTo({top:200,behavior:'instant'}));
+assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+await page.evaluate(()=>scrollTo({top:0,behavior:'instant'}));
+await page.locator('.gallery-slide').nth(2).locator('img').evaluate(im=>{im.loading='eager'});
+await page.waitForFunction(()=>{const im=document.querySelectorAll('.gallery-slide img')[2];return im?.complete&&im.naturalWidth>0});
+mkdirSync(artifactRoot,{recursive:true});await page.screenshot({path:artifactRoot+'/alpin-'+viewport.width+'.png'});
+await page.close();
+}assert.deepEqual(errors,[]);console.log('PASS Alpin Fleece Pro: desktop/mobile, 6 Black + 10 Emerald images, colour switch/reset, keyboard gallery, no XS, no horizontal overflow, no browser errors.');}finally{await browser.close()}

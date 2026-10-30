@@ -1,3 +1,4 @@
+process.env.DATABASE_SCHEMA='bigk';
 import {test} from 'node:test';import assert from 'node:assert/strict';import {mkdtempSync,rmSync,readFileSync} from 'node:fs';import {join} from 'node:path';import {tmpdir} from 'node:os';import sharp from 'sharp';
 import {db,products,closeDatabase,transaction} from '../lib/db';import {hash} from '../lib/security';
 import {PATCH as edit,POST as create} from '../app/api/admin/catalog/route';

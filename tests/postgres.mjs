@@ -18,8 +18,17 @@ try {
   await assert.rejects(() => db.query('SELECT * FROM bigk.orders'), /permission denied/);
   await db.exec('RESET ROLE;');
   const tables = (await db.query("SELECT relname,relrowsecurity FROM pg_class JOIN pg_namespace n ON n.oid=relnamespace WHERE n.nspname='bigk' AND relkind='r'")).rows;
-  assert.equal(tables.length,18); assert(tables.every(t=>t.relrowsecurity));
+  assert.equal(tables.length,20); assert(tables.every(t=>t.relrowsecurity));
   console.log('PASS: migration runs twice; 27 records; all private tables use RLS; anonymous/customer roles cannot read orders.');
+  await db.exec(await readFile(new URL('../supabase/templates/server-role.sql',import.meta.url),'utf8'));
+  await db.exec('SET ROLE bigk_server;');
+  assert.equal((await db.query('SELECT count(*)::int AS n FROM bigk.products')).rows[0].n,27);
+  await db.exec("BEGIN; INSERT INTO bigk.audit(action,entity,created_at) VALUES('role.test','local','2026-10-30'); ROLLBACK;");
+  await assert.rejects(()=>db.query("UPDATE bigk.audit SET action='changed' WHERE false"),/permission denied/);
+  await assert.rejects(()=>db.query("DELETE FROM bigk.club_ledger WHERE false"),/permission denied/);
+  await db.exec('RESET ROLE;');
+  assert.equal((await db.query("SELECT has_table_privilege('anon','bigk.media_assets','SELECT') AS allowed")).rows[0].allowed,false);
+  console.log('PASS: dedicated server group uses RLS and append-only audit/points permissions; browser roles remain denied.');
   server = new PGLiteSocketServer({db,host:'127.0.0.1',port:0});
   await server.start();
   const port = new URL('postgresql://' + server.getServerConn()).port;
@@ -33,4 +42,8 @@ try {
   assert.equal(clubResult,0,'PostgreSQL Club suite failed.');
   const adminResult=await new Promise((resolve,reject)=>{const child=spawn(process.execPath,['--import','tsx','tests/backoffice.test.ts'],{stdio:'inherit',env:{...process.env,NODE_ENV:'test',BIGK_TEST_DATABASE_URL:`postgresql://postgres@127.0.0.1:${port}/postgres`}});child.once('error',reject);child.once('exit',resolve)});
   assert.equal(adminResult,0,'PostgreSQL backoffice suite failed.');
+  const mediaResult=await new Promise((resolve,reject)=>{const child=spawn(process.execPath,['--import','tsx','tests/media-database.test.ts'],{stdio:'inherit',env:{...process.env,NODE_ENV:'test',BIGK_TEST_DATABASE_URL:`postgresql://postgres@127.0.0.1:${port}/postgres`}});child.once('error',reject);child.once('exit',resolve)});
+  assert.equal(mediaResult,0,'PostgreSQL media suite failed.');
+  const withdrawalResult=await new Promise((resolve,reject)=>{const child=spawn(process.execPath,['--import','tsx','tests/withdrawals.test.ts'],{stdio:'inherit',env:{...process.env,NODE_ENV:'test',BIGK_TEST_DATABASE_URL:`postgresql://postgres@127.0.0.1:${port}/postgres`}});child.once('error',reject);child.once('exit',resolve)});
+  assert.equal(withdrawalResult,0,'PostgreSQL withdrawal suite failed.');
 } finally { if(server) await server.stop(); await db.close(); }

@@ -26,7 +26,11 @@
     "test:backoffice-browser": "node tests/backoffice-browser.mjs",
     "catalog:sync-content": "node --import tsx scripts/sync-product-content.ts",
     "catalog:import-master-staging": "node --import tsx scripts/import-master-staging.ts",
-    "backoffice:staging": "node scripts/start-backoffice-staging.mjs"
+    "backoffice:staging": "node scripts/start-backoffice-staging.mjs",
+    "test:media": "node --import tsx tests/media-database.test.ts",
+    "test:withdrawals": "node --import tsx tests/withdrawals.test.ts",
+    "test:staging": "node tests/staging-schema.mjs",
+    "launch:check": "node scripts/check-launch.mjs"
   },
   "dependencies": {
     "lucide-react": "1.64.0",

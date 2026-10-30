@@ -1,3 +1,4 @@
+process.env.DATABASE_SCHEMA='bigk';
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {mkdtempSync,rmSync} from 'node:fs';

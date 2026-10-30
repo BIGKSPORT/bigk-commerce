@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import {seller} from '@/lib/seller';
 import { SimpleHeader } from '@/components/simple-header';
 import { Footer } from '@/components/brand';
 const content:Record<string,{title:string;intro:string;sections:{title:string;text:string}[]}>= {
@@ -11,4 +12,4 @@ const content:Record<string,{title:string;intro:string;sections:{title:string;te
 };
 export function generateStaticParams(){return Object.keys(content).map(slug=>({slug}))}
 export async function generateMetadata({params}:{params:Promise<{slug:string}>}){const {slug}=await params;return {title:content[slug]?.title||'Information'}}
-export default async function Info({params}:{params:Promise<{slug:string}>}){const {slug}=await params,data=content[slug];if(!data)notFound();return <><SimpleHeader/><main id="main" className="page-container policy-page"><span className="eyebrow">BIGK / GOOD TO KNOW</span><h1>{data.title}</h1><p>{data.intro}</p>{data.sections.map(s=><section key={s.title}><h2>{s.title}</h2><p>{s.text}</p></section>)}<p><Link href="/">Back to the collection →</Link></p></main><Footer/></>}
+export default async function Info({params}:{params:Promise<{slug:string}>}){const {slug}=await params,data=content[slug];if(!data)notFound();return <><SimpleHeader/><main id="main" className="page-container policy-page"><span className="eyebrow">BIGK / GOOD TO KNOW</span><h1>{data.title}</h1><address className="seller-details"><strong>{seller.name}</strong><br/>{seller.address}<br/>{seller.postal} {seller.city}, {seller.country}<br/>VAT / enterprise number: {seller.vat}</address><p>{data.intro}</p>{data.sections.map(s=><section key={s.title}><h2>{s.title}</h2><p>{s.text}</p></section>)}<p><Link href="/">Back to the collection →</Link></p></main><Footer/></>}

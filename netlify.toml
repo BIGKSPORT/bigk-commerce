@@ -1,0 +1,17 @@
+# The official Next.js adapter is detected by Netlify; no static export.
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "24"
+  NEXT_TELEMETRY_DISABLED = "1"
+
+# Set server secrets in Netlify's UI, never in this file.
+# Required runtime settings: DATABASE_PROVIDER=postgres, DATABASE_URL,
+# MEDIA_DRIVER=database, APP_URL, ADMIN_PASSWORD_HASH, RECEIPT_SECRET.
+# Keep COMMERCE_MODE=demo and LIVE_COMMERCE_APPROVED=false through staging.
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
