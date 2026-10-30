@@ -79,3 +79,14 @@ Source: Stock.xlsx, first sheet (国外订单), **Quantity** column E (not stock
 ## Velvet WMS Hood Cream/Black — garment hangtag verified
 - STYLE **VELVET WMS HOOD**, NAME **VELVET**, COLOR **CREAM/BLACK**, CODE **25000701**, SIZE **L**, COMPOSITION **30% RAYON / 70% POLYESTER**, MSRP **€79.90**, EAN **6957919563673**.
 - Supplier order uses black-cream, whereas physical hangtag uses cream/black. Use hangtag spelling in draft display. SKU-specific product remains distinct from other Velvet garments/structures; no automatic colourway merging.
+
+## Catalogue + Website agent kickoff audit — 2026-10-30
+
+- **Scope:** draft branch `fix/catalogue-colour-options` only. No production deployments, payments, stock adjustments, order-file modifications, or customer communications authorized.
+- **Catalogue:** 27 entries, **25 unique supplier SKUs**; duplicate/alias entries `P012/P013` for `25301701`, and `P019/P020` for `25302901`. Do not double count these.
+- **Physically photographed:** 9 unique SKUs: `25303101`, `25303102`, `25303201` (last SKU digits / EAN partly occluded), `25303202`, `25301603`, `25301702`, `25302901`, `25000701`, `25000702`. Hence **16 additional unique SKUs not yet label-verified**; physical verification is not equivalent to a full size-level barcode audit.
+- **High-confidence mismatch:** original order `25303202` says cream-black but physical tag says **Dusty Blue**. `25301702` order says cream but physical tag says **Dusty Blue**. Trust tag; preserve original order unchanged.
+- **Order-aligned name corrections in this audit (still NOT physical-label verified):** `25301601` -> Alpine FZ Hood; `25301701` -> Alpine Gillet Hood (both alias entries); `25301902` and `25301903` -> Coreloose.2; `25303001` -> Nandown FZ Gillet. These were normalized from order only, and should not be marked physical-label approved.
+- **Structure safeguard:** `lib/product-family.ts` treats each `250007xx` Velvet product separately as explicitly directed by owner; do not expose those as automatic swatch-colour variants based on numeric prefix.
+- **Remaining website QA:** confirm merchandise images match tag colours for P007 (`25303202`), P014 (`25301702`), check swatches & duplicate listing behavior, verify page rendering and preview-only environment before deployment. No deployment in this audit.
+- **Remaining catalogue QA:** confirm 16 unverified SKUs; check size-level barcodes, photographs, supplier descriptions, and disputed structure differences before approval.
