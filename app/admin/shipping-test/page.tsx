@@ -1,6 +1,6 @@
 'use client';
 import {useState} from 'react';
-type Result={created?:boolean;shipmentId?:string;labelAvailable?:boolean;notice?:string;error?:string;labelHttpStatus?:number;httpStatus?:number;providerCodes?:string[];diagnostic?:string};
+type Result={created?:boolean;shipmentId?:string;labelAvailable?:boolean;notice?:string;error?:string;labelHttpStatus?:number;httpStatus?:number;providerCodes?:string[];providerMessages?:string[];diagnostic?:string};
 export default function ShippingTestPage(){
  const [checked,setChecked]=useState(false);
  const [busy,setBusy]=useState(false);
@@ -35,7 +35,7 @@ export default function ShippingTestPage(){
   </button>
   {needsLogin&&<p role="alert"><a href="/admin" style={{fontWeight:'bold',textDecoration:'underline'}}>Open de adminlogin op deze preview</a>. Kom daarna terug naar deze pagina.</p>}
   {result&&<section role="status" style={{marginTop:20,padding:16,border:'1px solid #aaa'}}>
-   {result.error?<><p>{result.error}</p>{result.httpStatus&&<p>MyParcel HTTP-status: {result.httpStatus}</p>}{!!result.providerCodes?.length&&<p>Validatiecodes: {result.providerCodes.join(', ')}</p>}</>:<>
+   {result.error?<><p>{result.error}</p>{result.httpStatus&&<p>MyParcel HTTP-status: {result.httpStatus}</p>}{!!result.providerCodes?.length&&<p>Validatiecodes: {result.providerCodes.join(', ')}</p>}{!!result.providerMessages?.length&&<p>MyParcel foutomschrijving: {result.providerMessages.join(' | ')}</p>}</>:<>
     <p>Testzending aangemaakt: <strong>{result.shipmentId}</strong></p>
     <p>Label beschikbaar: {result.labelAvailable?'Ja':'Nog niet'} (HTTP {result.labelHttpStatus})</p>
     <p>{result.notice}</p>
