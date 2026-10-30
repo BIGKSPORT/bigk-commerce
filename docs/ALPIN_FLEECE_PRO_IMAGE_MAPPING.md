@@ -49,3 +49,7 @@ The owner explicitly identified these **six images as Black (SKU 25303101)**. Th
 These six are approved for the **black colour assignment**. Do not automatically assign the remaining files to green; visually review them. The other black PNG, `Zwarte teddyjas van achteren.png`, is present in Drive but was **not included in the owner's explicit six-file list**, so keep it pending confirmation.
 
 This documentation update is internal only; no deployment or live catalogue change.
+
+## Emerald Green source confirmation (2026-10-30)
+
+Owner confirms that **Emerald Green images are already present in the same Drive folder**. Assign them to supplier SKU **25303102** only after visually identifying the correct original JPGs. The six owner-confirmed Black files remain assigned exclusively to SKU 25303101. Do not classify all other JPGs as green automatically; there may be extra black images or duplicates. No additional owner upload is required. Image-to-file mapping for Emerald Green remains **pending visual verification**, not completed.
