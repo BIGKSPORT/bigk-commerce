@@ -55,7 +55,8 @@
           "id": "P001-5",
           "size": "XXXL",
           "stock": 0,
-          "reported": 9
+          "reported": 9,
+          "barcode": "6957919564809"
         }
       ],
       "tags": [],
