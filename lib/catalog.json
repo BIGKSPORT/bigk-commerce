@@ -780,9 +780,9 @@
     {
       "id": "P014",
       "slug": "alpine-hood-gillet-p014",
-      "name": "Alpin Vest",
-      "description": "cream hood gillet",
-      "code": "Alpine hood gillet 25301702",
+      "name": "Alpine Gillet Hood",
+      "description": "Dusty Blue hooded gillet",
+      "code": "Alpine Gillet Hood 25301702",
       "category": "Jackets & Vests",
       "priceCents": 6690,
       "approved": false,
@@ -821,7 +821,8 @@
           "id": "P014-4",
           "size": "XXL",
           "stock": 0,
-          "reported": null
+          "reported": null,
+          "barcode": "6957919562812"
         },
         {
           "id": "P014-5",
