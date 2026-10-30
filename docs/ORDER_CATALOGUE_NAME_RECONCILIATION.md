@@ -4,12 +4,12 @@ Source: Stock.xlsx, first sheet (国外订单), **Quantity** column E (not stock
 
 ## Critical conflict
 - **25303102 VERIFIED from physical package label (30 October 2026): STYLE ALPINE FLEECE, NAME FLEECE, COLOR DUSTY BLUE, CODE 25303102, RRP €146.9, SIZE L, EAN 6957919564847.** Supplier order dusty-blue is correct; website Emerald Green is wrong. Only this size barcode has been physically verified. Update draft catalogue after preserving other sizes and mapping photographs.
-- **25303101** order says **Apline Fleece — black FZ fleece**, website says **Alpin Fleece Pro — Black FZ stand-collar fleece**. Name spelling differs; SKU matches.
+- **25303101** order says **Apline Fleece — black FZ fleece**, website says **Alpine Fleece — Black FZ stand-collar fleece**. Name spelling differs; SKU matches.
 
 ## Proposed website names (not yet approved)
 | SKU(s) | Supplier/order wording | Website product family | Colours | Status |
 |---|---|---|---|---|
-| 25303101, 25303102 | Apline Fleece / Alpine FZ | Alpin Fleece Pro | Black; **Dusty Blue (physical label verified for 25303102)** | Confirmed 25303102; Black label pending |
+| 25303101, 25303102 | Apline Fleece / Alpine FZ | Alpine Fleece | Black; **Dusty Blue (physical label verified for 25303102)** | Confirmed 25303102; Black label pending |
 | 25301801, 25301802, 25301803 | Core.2 | Core.2 | Black, Dusty Blue, Cream | Match |
 | 25303201, 25303202 | Alpine Gillet | Alpin Vest Pro | Black, Cream-Black | Rename alias |
 | 25301601, 25301603 | Alpine FZ hood | Alpin Hood | Black, Cream | Rename website from ambiguous Alpin |
@@ -31,3 +31,9 @@ Source: Stock.xlsx, first sheet (国外订单), **Quantity** column E (not stock
 5. 25303102 colour resolved by physical package label: Dusty Blue. Preserve label evidence and verify other SKU labels before changing the authoritative order.
 6. Remove duplicate catalogue records only after verifying all variant and URL references.
 7. This file is a draft audit, not an approved catalogue import or production change.
+
+## Applied to draft catalogue
+- P001 and P002 display family name **Alpine Fleece**.
+- P002 uses **Dusty Blue**; supplier SKU **25303102**, price **€146.90**, size L EAN **6957919564847** physically verified.
+- P001 black name aligned to family for display only; its physical label is not yet verified.
+- All other size barcodes remain unverified from physical labels. No order quantities, stock, prices or live approvals were changed.
