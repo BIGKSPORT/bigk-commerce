@@ -47,3 +47,8 @@ Source: Stock.xlsx, first sheet (国外订单), **Quantity** column E (not stock
 - **25303202** physical packaging: STYLE ALPINE GILLET, NAME GILLET, COLOR DUSTY BLUE, RRP €133.90, SIZE L, EAN **6957919564984**.
 - Supplier order and previous catalogue incorrectly said **cream-black** for this SKU. Draft catalogue colour, display name and size-L barcode corrected. Supplier order retained unchanged as evidence.
 - **Photo review required**: existing P007 image files were previously mapped as cream/black; do not assume they show the verified Dusty Blue garment. No images changed or approved.
+
+## Alpine Gillet Black physical package label
+- STYLE **ALPINE GILLET**, NAME **GILLET**, COLOR **BLACK**, RRP **€133.90**, SIZE **L**. Printed code is partly covered, consistent with order SKU **25303201**; last digits not independently legible.
+- EAN barcode is partly obscured; **do not invent or mark as physically verified**. Black draft display name aligned to Alpine Gillet; product image still missing.
+- Both Alpine Gillet colours now identified, Dusty Blue 25303202 and Black 25303201; barcode for Black L remains pending.
