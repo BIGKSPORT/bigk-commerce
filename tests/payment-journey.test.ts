@@ -67,7 +67,7 @@ await test('isolated complete checkout → webhook → inventory → backoffice 
   const input=payload(),r=await checkout(req('/api/checkout',input));assert.equal(r.status,200);created=await r.json();order=await getOrder(created.id);
   assert.equal(order.status,'pending');assert.equal(order.items[0].unitPrice,fixtureProduct.priceCents);assert.equal((await inventory())!.reserved,1);
   const params=payloads[0];assert.equal(Number(params.get('line_items[0][price_data][unit_amount]')),fixtureProduct.priceCents);
-  assert.equal(params.get('automatic_tax[enabled]'),'true');assert.equal(params.get('metadata[orderId]'),order.id);assert.equal(params.get('payment_method_types[0]'),null);
+  assert.equal(params.get('adaptive_pricing[enabled]'),'false');assert.equal(params.get('automatic_tax[enabled]'),'true');assert.equal(params.get('metadata[orderId]'),order.id);assert.equal(params.get('payment_method_types[0]'),null);
   assert.equal(params.get('success_url'),origin+'/order#'+created.id+'.'+created.receiptToken);
   const duplicate=await (await checkout(req('/api/checkout',input))).json();assert.equal(duplicate.id,created.id);assert.equal(duplicate.url,created.url);assert.equal(creations,1);assert.equal((await inventory())!.reserved,1);
   assert.equal((await db().prepare('SELECT COUNT(*) AS n FROM email_outbox').get())!.n,0);
