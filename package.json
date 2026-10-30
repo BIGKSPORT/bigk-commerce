@@ -31,7 +31,8 @@
     "test:withdrawals": "node --import tsx tests/withdrawals.test.ts",
     "test:staging": "node tests/staging-schema.mjs",
     "launch:check": "node scripts/check-launch.mjs",
-    "test:dpd": "node --import tsx --test tests/dpd-preflight.test.ts"
+    "test:dpd": "node --import tsx --test tests/dpd-preflight.test.ts",
+    "test:myparcel": "node --import tsx --test tests/myparcel-costs.test.ts"
   },
   "dependencies": {
     "lucide-react": "1.64.0",
