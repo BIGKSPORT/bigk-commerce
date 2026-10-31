@@ -9,7 +9,7 @@ export function validGtin(value: string): boolean {
   return (10 - sum % 10) % 10 === check;
 }
 export function canonicalGtin(value: string) { return value.padStart(14, '0'); }
-const optionalCode = (pattern: RegExp) => z.string().trim().regex(pattern).optional();
+const optionalCode = (pattern: RegExp, message: string) => z.string().trim().regex(pattern, message).optional();
 export const tradeSchema = z.object({
   officialName: z.string().trim().max(150).optional(),
   supplierArticle: z.string().trim().max(100).optional(),
@@ -21,9 +21,9 @@ export const tradeSchema = z.object({
   previousSlugs: z.array(z.string().max(180)).max(100).optional(),
   seoTitle: z.string().trim().max(70).optional(),
   seoDescription: z.string().trim().max(320).optional(),
-  hsCode: optionalCode(/^(?:\d{6})?$/),
-  cnCode: optionalCode(/^(?:\d{8})?$/),
-  originCountry: optionalCode(/^(?:[A-Z]{2})?$/),
+  hsCode: optionalCode(/^(?:\d{6})?$/, 'HS code must contain exactly six digits, or be blank.'),
+  cnCode: optionalCode(/^(?:\d{8})?$/, 'CN code must contain exactly eight digits, or be blank.'),
+  originCountry: optionalCode(/^(?:[A-Z]{2})?$/, 'Use an uppercase two-letter country code, for example CN.'),
   weightGrams: z.number().int().min(1).max(1000000).optional(),
   identifiers: z.record(z.string().min(1).max(100), z.object({
     colour: z.string().trim().max(80).optional(),
