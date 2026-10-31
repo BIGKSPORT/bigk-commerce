@@ -1,5 +1,5 @@
 import type {Product} from './types';
-export type TechnologyFeature={id:string;name:string;kind:'material'|'feature';heading:string;description:string;image:string;alt:string;logo?:string;icon?:'pocket'|'hand'};
+export type TechnologyFeature={id:string;name:string;kind:'material'|'feature';heading:string;description:string;image:string;alt:string;logo?:string;icon?:'pocket'|'hand'|'shell'|'binding'};
 const base='/products/alpin-technology/';
 export const alpinIntroduction='A dense, brushed outer fleece meets a soft fleece inner surface. A roomy cut, three zipped pockets and integrated thumb openings make ALPIN a practical layer for cooler days and outdoor walks.';
 export const alpinFeatures:TechnologyFeature[]=[

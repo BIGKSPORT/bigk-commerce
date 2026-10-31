@@ -1,4 +1,5 @@
-import {publicProducts} from '@/lib/catalog-view';
+import {isStagingStorePreview} from '@/lib/staging-store-preview';
+import {publicProducts,visibleProducts} from '@/lib/catalog-view';
 import { products } from '@/lib/db';
 import { isLive, liveReady } from '@/lib/commerce';
 import Storefront from '@/components/storefront';
@@ -8,4 +9,4 @@ export default async function Home({ searchParams }: {
         category?: string;
         saved?: string;
     }>;
-}) { const { category,saved } = await searchParams; return <Storefront products={publicProducts(await products()).map(p => ({ ...p, variants: p.variants.map(v => ({ ...v, stock: Math.max(0, v.stock - v.reserved), reserved: 0, reported: null })) }))} mode={isLive() ? 'live' : 'demo'} ready={liveReady()} initialCategory={category} initialSavedOnly={saved==='1'}/>; }
+}) { const { category,saved } = await searchParams; const preview=await isStagingStorePreview(),raw=await products();return <>{preview&&<div className="info-message" role="status">PRIVATE STORE PREVIEW · Draft products visible · Purchasing disabled · <a href="/admin">Back to backoffice</a></div>}<Storefront products={(preview?visibleProducts(raw):publicProducts(raw)).map(p => ({ ...p, variants: p.variants.filter(v=>!p.content?.trade?.identifiers?.[v.id]?.archived).map(v => ({ ...v, stock: Math.max(0, v.stock - v.reserved), reserved: 0, reported: null })) }))} mode={preview?'live':isLive() ? 'live' : 'demo'} ready={preview?false:liveReady()} initialCategory={category} initialSavedOnly={saved==='1'}/></>; }
