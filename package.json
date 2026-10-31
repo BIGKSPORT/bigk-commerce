@@ -42,7 +42,8 @@
     "test:checkout-browser": "node tests/checkout-browser.mjs",
     "test:product-management": "node --import tsx tests/product-management.test.ts && node tests/product-management.mjs",
     "test:product-management-browser": "node tests/product-management-browser.mjs",
-    "test:alpin": "node --import tsx --test tests/alpin-technology.test.ts && node tests/alpin-technology-browser.mjs"
+    "test:alpin": "node --import tsx --test tests/alpin-technology.test.ts && node tests/alpin-technology-browser.mjs",
+    "test:alpin-vest": "node --import tsx --test tests/alpin-vest-technology.test.ts && node tests/alpin-vest-technology-browser.mjs"
   },
   "dependencies": {
     "exceljs": "4.4.0",
