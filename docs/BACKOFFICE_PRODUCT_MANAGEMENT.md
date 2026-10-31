@@ -40,9 +40,9 @@ Select products using the table checkboxes, then Bulk Edit. Review the exact aff
 
 Export CSV or Excel produces one row per variant, with IDs, versions, EAN, SKU, variant attributes, shared product content, price, stock and publication status. Excel keeps identifiers as string cells. CSV protects spreadsheet formula prefixes. Preserve EAN text formatting when manually editing CSV in spreadsheet software.
 
-Import CSV / Excel accepts the exported template up to 3 MB, 2,000 rows and 100 distinct products. It updates existing variants by variant ID or an existing EAN, never by a mutable product name. To add a new product or variant, create the draft/add its sizes in the editor first and export its template. Arbitrary supplier spreadsheets require conversion to this template; the importer does not guess column mappings.
+Import CSV / Excel accepts the exported template up to 3 MB, 2,000 rows and 100 distinct products. The import wizard supports source-column mapping and optional creation of new private drafts and variants. It never matches records by a mutable product name. See [Bulk data and photos](BULK_IMPORT_AND_PHOTOS.md) for identifiers, mappings and limits.
 
-Blank supplied cells clear values. Missing columns leave fields unchanged. Rows repeating the same product must agree on shared fields. Duplicate rows, EAN/SKU collisions, conflicting colour/size combinations and stale versions are rejected. Importing first validates the entire proposal inside a rolled-back transaction; the administrator explicitly applies it afterwards. Review publication status in the proposal because imports may publish or unpublish products when those columns are provided.
+In the import wizard, blank cells leave existing values unchanged by default; this can be changed explicitly. The original fixed-template API keeps its previous clearing semantics. Missing columns leave fields unchanged. Rows repeating the same product must agree on shared fields. Duplicate rows, EAN/SKU collisions, conflicting colour/size combinations and stale versions are rejected. Importing first validates the entire proposal inside a rolled-back transaction; the administrator explicitly applies it afterwards. Review publication status in the proposal because imports may publish or unpublish products when those columns are provided.
 
 ## History and restoration
 
