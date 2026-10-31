@@ -29,6 +29,7 @@ try {
   await db.exec('RESET ROLE;');
   assert.equal((await db.query("SELECT has_table_privilege('anon','bigk.media_assets','SELECT') AS allowed")).rows[0].allowed,false);
   console.log('PASS: dedicated server group uses RLS and append-only audit/points permissions; browser roles remain denied.');
+  const {productHistorySchema,adminCredentialSchema}=await import('../lib/backoffice-schema.ts');await db.exec((productHistorySchema+adminCredentialSchema).replace(/\b(product_revisions|admin_credentials|products)\b/g,'bigk.$1'));
   server = new PGLiteSocketServer({db,host:'127.0.0.1',port:0});
   await server.start();
   const port = new URL('postgresql://' + server.getServerConn()).port;

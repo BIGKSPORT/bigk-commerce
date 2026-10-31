@@ -27,3 +27,4 @@
 @media(max-width:360px){.site-header{gap:5px}.site-header .brand{--brand-logo-height:23px}.header-actions{gap:2px}.bag-button{padding-left:6px;gap:3px}.hero-buttons{gap:13px}.hero-buttons .text-button{font-size:8px}}
 /* Preserve source photograph colours; branding does not tint product imagery. */
 .hero-image>img,.category-card img,.product-visual img,.detail-image img{mix-blend-mode:normal}
+.bo-history-values{max-height:320px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px}.bo-data-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}.admin-product-editor fieldset{min-width:0;margin-bottom:16px;border:1px solid #ddd;padding:12px}.admin-product-editor legend{max-width:100%;overflow-wrap:anywhere;font-size:12px}.bo-bulk textarea{width:100%;min-height:120px}.bo-import-summary{max-height:360px;overflow:auto}

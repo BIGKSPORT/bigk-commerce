@@ -28,8 +28,8 @@ export async function rateLimit(key: string, limit = 20, seconds = 60) {
         if(Number(row?.hits)>limit)throw new HttpError(429,'Too many requests. Please try again later.');
     });
 }
-export function passwordMatches(password: string) {
-    const encoded = (process.env.ADMIN_PASSWORD_HASH || '').trim();
+export function passwordMatches(password: string, configuredHash = process.env.ADMIN_PASSWORD_HASH || '') {
+    const encoded = configuredHash.trim();
     // A malformed deployment secret is a configuration error, not a bad password.
     const match = /^([a-zA-Z0-9_-]{16,128}):([a-f0-9]{128})$/.exec(encoded);
     if (!match) throw new HttpError(503, 'Admin authentication configuration is invalid.');

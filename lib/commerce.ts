@@ -49,7 +49,7 @@ export async function createOrder(input: CheckoutInput, verifiedEmail?:string) {
         let subtotal = 0;
         const lines = input.items.map(line => { if (ids.has(line.variantId))
             throw new HttpError(400, 'Duplicate variant in bag.'); ids.add(line.variantId); const p = catalog.find(p => p.variants.some(v => v.id === line.variantId)), v = p?.variants.find(v => v.id === line.variantId); if (!p || !v || p.priceCents === null || p.priceCents <= 0)
-            throw new HttpError(409, 'A product no longer has an available price.'); if (isLive() && (!p.active || !p.approved || !p.images.length || v.stock - v.reserved < line.quantity))
+            throw new HttpError(409, 'A product no longer has an available price.'); if(p.content?.trade?.identifiers?.[v.id]?.archived)throw new HttpError(409,'This variant has been archived.'); if (isLive() && (!p.active || !p.approved || !p.images.length || v.stock - v.reserved < line.quantity))
             throw new HttpError(409, `${p.name} is not available in the requested quantity.`); subtotal += p.priceCents * line.quantity; if (!Number.isSafeInteger(subtotal) || subtotal > 10000000)
             throw new HttpError(400, 'Order value exceeds the supported limit.'); return { p, v, quantity: line.quantity }; });
         const id = crypto.randomUUID(), receiptToken = receipt(id), ship = shipping(subtotal), now = new Date(), expires = new Date(now.getTime() + 35 * 60000);

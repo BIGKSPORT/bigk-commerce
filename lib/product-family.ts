@@ -11,7 +11,8 @@ export function productFamily(products:Product[],product:Product){
   .filter((p,i,all)=>all.findIndex(other=>supplierSku(other)===supplierSku(p))===i);
 }
 /** Supplier descriptions begin with the colour, followed by the garment specification. */
-export function colourLabel(product:Pick<Product,'description'>){
+export function colourLabel(product:Pick<Product,'description'|'content'>){
+ if(product.content?.trade?.colour)return product.content.trade.colour;
  const d=product.description.trim();
  const match=d.match(/^(black-cream|cream-black|dusty-blue|emerald green|black|cream|emerald)\b/i);
  if(!match)return 'Colour to confirm';

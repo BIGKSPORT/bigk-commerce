@@ -21,7 +21,7 @@ await test('backoffice protected management',async t=>{await db().prepare('INSER
  const catalog=await products(),p=catalog.find(p=>p.variants.length>1)!;
  const base={id:p.id,version:p.version,priceCents:p.priceCents,approved:false,active:false,variants:p.variants.map(v=>({id:v.id,stock:v.stock})),content:{composition:'Verified fabric',care:'',fit:'',details:'',trade:{seoTitle:'BIG K test layer',seoDescription:'A verified description.',hsCode:'610130',cnCode:'61013090',originCountry:'CN',weightGrams:600,identifiers:{[p.variants[0].id]:{sku:'TEST-SKU-S',gtin:'4006381333931'}}}}};
  assert.equal((await edit(req('/api/admin/catalog',base,'PATCH'))).status,200);
- const saved=(await products()).find(x=>x.id===p.id)!;assert.deepEqual(saved.content,base.content);
+ const saved=(await products()).find(x=>x.id===p.id)!;assert.deepEqual(saved.content,{...base.content,trade:{...base.content.trade,previousSlugs:[]}});
  const invalid={...base,version:saved.version,content:{...base.content,trade:{...base.content.trade,identifiers:{[p.variants[0].id]:{sku:'TEST',gtin:'4006381333932'}}}}};
  assert.equal((await edit(req('/api/admin/catalog',invalid,'PATCH'))).status,400);
  const duplicate={...base,version:saved.version,content:{...base.content,trade:{...base.content.trade,identifiers:{...base.content.trade.identifiers,[p.variants[1].id]:{sku:'OTHER',gtin:'04006381333931'}}}}};

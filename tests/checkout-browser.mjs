@@ -9,6 +9,7 @@ const env={...process.env,NODE_ENV:'production',PORT:'3188',APP_URL:origin,DATAB
 for(const key of ['VERCEL','VERCEL_ENV','VERCEL_URL','VERCEL_BRANCH_URL','ADMIN_CANONICAL_ORIGIN','DATABASE_URL'])delete env[key];
 let server,browser;
 try{
+ await new Promise((resolve,reject)=>{const seed=spawn(process.execPath,['--import','tsx','--input-type=module','-e',"import {db} from './lib/db.ts';await db().prepare('UPDATE products SET active=1,approved=1 WHERE id=?').run('P001');"],{env,stdio:'ignore'});seed.once('error',reject);seed.once('exit',code=>code===0?resolve():reject(Error('Fixture seed failed')))});
  server=spawn(process.execPath,['node_modules/next/dist/bin/next','start','--hostname','127.0.0.1'],{env,stdio:['ignore','ignore','ignore']});
  let ready=false;for(let i=0;i<80;i++){try{if((await fetch(origin+'/api/catalog')).ok){ready=true;break}}catch{}await new Promise(r=>setTimeout(r,250));}assert(ready,'Next server did not start');
  const {products}=await(await fetch(origin+'/api/catalog')).json(),product=products.find(p=>p.priceCents&&p.images.length);

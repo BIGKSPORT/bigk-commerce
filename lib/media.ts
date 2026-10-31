@@ -5,8 +5,8 @@ import sharp from 'sharp';
 import {HttpError} from './security';
 import {db,transaction} from './db';
 export const mediaRoot=()=>resolve(process.env.MEDIA_PATH||'data/uploads');
-export function mediaDriver(){const driver=process.env.MEDIA_DRIVER||'filesystem';if(!['filesystem','database'].includes(driver))throw new Error('MEDIA_DRIVER must be filesystem or database.');if(process.env.NETLIFY==='true'&&driver!=='database')throw new Error('Serverless deployments require MEDIA_DRIVER=database for durable uploads.');return driver}
-export function mediaUploadLimit(){const n=Number(process.env.MEDIA_UPLOAD_LIMIT_BYTES||(process.env.NETLIFY==='true'?3145728:16777216));if(!Number.isSafeInteger(n)||n<1||n>16777216)throw Error('MEDIA_UPLOAD_LIMIT_BYTES must be between 1 and 16777216.');return n}
+export function mediaDriver(){const driver=process.env.MEDIA_DRIVER||((process.env.NETLIFY==='true'||process.env.VERCEL==='1')?'database':'filesystem');if(!['filesystem','database'].includes(driver))throw new Error('MEDIA_DRIVER must be filesystem or database.');if((process.env.NETLIFY==='true'||process.env.VERCEL==='1')&&driver!=='database')throw new Error('Serverless deployments require MEDIA_DRIVER=database for durable uploads.');return driver}
+export function mediaUploadLimit(){const n=Number(process.env.MEDIA_UPLOAD_LIMIT_BYTES||((process.env.NETLIFY==='true'||process.env.VERCEL==='1')?3145728:16777216));if(!Number.isSafeInteger(n)||n<1||n>16777216)throw Error('MEDIA_UPLOAD_LIMIT_BYTES must be between 1 and 16777216.');return n}
 export type MediaItem={id:string;url:string;name:string;width:number;height:number;bytes:number;createdAt:string};
 const limit=()=>{const value=Number(process.env.MEDIA_DATABASE_LIMIT_BYTES||134217728);if(!Number.isSafeInteger(value)||value<1)throw Error('Invalid media database quota.');return value};
 export async function storeImage(data:Uint8Array,name:string):Promise<MediaItem>{

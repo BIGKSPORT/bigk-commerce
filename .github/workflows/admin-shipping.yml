@@ -24,6 +24,7 @@ jobs:
       - run: npm run typecheck
       - run: npm test
       - run: npm run test:backoffice
+      - run: npm run test:product-management
       - run: npm run test:myparcel
       - run: npm run test:auth-shipping
       - run: npm run test:payment-journey
@@ -34,3 +35,12 @@ jobs:
           export CHROMIUM_PATH="$(node -e 'console.log(require("playwright").chromium.executablePath())')"
           npm run test:auth-browser
           npm run test:checkout-browser
+          BIGK_ARTIFACT_DIR="$RUNNER_TEMP/bigk-product-artifacts" npm run test:product-management-browser
+
+      - name: Product management screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: product-management-review
+          path: ${{ runner.temp }}/bigk-product-artifacts/*.png
+          if-no-files-found: ignore

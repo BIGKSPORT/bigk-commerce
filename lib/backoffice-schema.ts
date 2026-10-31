@@ -3,3 +3,10 @@ CREATE TABLE IF NOT EXISTS product_content(product_id TEXT PRIMARY KEY REFERENCE
 CREATE TABLE IF NOT EXISTS admin_returns(id TEXT PRIMARY KEY,order_id TEXT NOT NULL REFERENCES orders(id),reference TEXT NOT NULL UNIQUE,request_hash TEXT NOT NULL,snapshot TEXT NOT NULL,created_at TEXT NOT NULL);
 CREATE INDEX IF NOT EXISTS admin_returns_order ON admin_returns(order_id);
 `;
+export const productHistorySchema=`
+CREATE TABLE IF NOT EXISTS product_revisions(id TEXT PRIMARY KEY,product_id TEXT NOT NULL REFERENCES products(id),version INTEGER NOT NULL,snapshot TEXT NOT NULL,action TEXT NOT NULL,actor TEXT NOT NULL,created_at TEXT NOT NULL);
+CREATE INDEX IF NOT EXISTS product_revisions_product ON product_revisions(product_id,created_at);
+`;
+export const adminCredentialSchema=`
+CREATE TABLE IF NOT EXISTS admin_credentials(id TEXT PRIMARY KEY,password_hash TEXT NOT NULL,recovery_hash TEXT NOT NULL,updated_at TEXT NOT NULL);
+`;

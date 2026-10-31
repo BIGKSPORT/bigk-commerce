@@ -39,17 +39,20 @@
     "test:auth-shipping": "node tests/auth-shipping.mjs",
     "test:auth-browser": "node tests/auth-browser.mjs",
     "test:payment-journey": "node tests/payment-journey.mjs",
-    "test:checkout-browser": "node tests/checkout-browser.mjs"
+    "test:checkout-browser": "node tests/checkout-browser.mjs",
+    "test:product-management": "node --import tsx tests/product-management.test.ts && node tests/product-management.mjs",
+    "test:product-management-browser": "node tests/product-management-browser.mjs"
   },
   "dependencies": {
+    "exceljs": "4.4.0",
     "lucide-react": "1.64.0",
     "next": "16.4.3",
     "postgres": "3.4.9",
     "react": "19.3.1",
     "react-dom": "19.3.1",
+    "sharp": "0.35.5",
     "stripe": "23.0.1",
-    "zod": "4.6.7",
-    "sharp": "0.35.5"
+    "zod": "4.6.7"
   },
   "devDependencies": {
     "@electric-sql/pglite": "0.5.13",
