@@ -2,17 +2,17 @@
 
 ## Scope and mapping
 
-Pilot: existing P007 (`alpine-gillet-p007`), code `Alpine Gillet 25303202`, staging name `Alpin Vest Pro`, description `cream-black Gillet`, price 13390 cents, version 1. Four existing gallery photographs match the supplied cream/beige-black sleeveless stand-collar vest with red chest zip, black contrast panels and separate blue base layer. Preserve all catalogue records, prices, stock, variants, EANs, URLs and publication flags. Read-only staging inspection only; no hosted writes.
+Pilot: existing P007 (`alpine-gillet-p007`), code `Alpine Gillet 25303202`, owner-confirmed staging name `Alpin Gillet`, description `cream-black Gillet`, price 13390 cents, version 2. Four existing gallery photographs match the supplied cream/beige-black sleeveless stand-collar vest with red chest zip, black contrast panels and separate blue base layer. Changed only P007 name, as explicitly requested by the owner, with before/after change history and version increment. Prices, stock, variants, EANs, URLs, photos and publication flags are preserved.
 
 Do not attach to P006 / 25303201 (black entry has no verified gallery), hooded 253017 family, ALPIN fleece or a separate Gilet folder. `hasAlpinVestTechnology` requires explicit P007 + 25303202; names and family prefixes cannot assign claims.
 
-Unresolved historical issue: `docs/ORDER_CATALOGUE_NAME_RECONCILIATION.md` records a physical 25303202 label as Dusty Blue, whereas the CURRENT staging description is cream-black and its gallery matches the new vest technical images. Owner was asked to confirm the article-to-colour association; the existing relationship has not been changed or represented as label-verified. Technical presentation is bound to the currently matched listing, not a newly asserted GTIN allocation. Obtain correct physical article label before reconciling colours or barcodes.
+Owner confirmed 25303202 is cream with black and requested the name Alpin Gillet, resolving the historical Dusty Blue discrepancy in `docs/ORDER_CATALOGUE_NAME_RECONCILIATION.md`. No colour, article or GTIN relationships were changed. A physical label photograph remains useful to verify composition and care.
 
 ## Original Drive evidence
 
 Folder: https://drive.google.com/drive/folders/1N18lEpgfWM06CvKxnf305VocHgxEQXHg
 
-Complete fetched listing has original JPEG product shoot, five main PNG graphics, introduction and three feature graphics, no child folder, specifications card, composition/product label, size chart or care footer. The folder name is Alpin Vest Pro; introduction says ALPIN VEST. Existing storefront name is retained.
+Complete fetched listing has original JPEG product shoot, five main PNG graphics, introduction and three feature graphics, no child folder, specifications card, composition/product label, size chart or care footer. The folder name is Alpin Vest Pro; introduction says ALPIN VEST. The source calls it ALPIN VEST; the owner explicitly corrected the storefront name to Alpin Gillet.
 
 | Drive ID | Original | Read directly from image |
 |---|---|---|
@@ -34,7 +34,7 @@ Layering uses existing verified gallery image `alpin-vest-pro-bigk-alpin-vest000
 - Stretch, weight and fit classification: not established; omitted.
 - Vest-specific size chart and verified model height/weight/worn size: absent; show available variant labels only, no fleece table, jin conversion or automatic size recommendation.
 - Current sewn-in care label: absent; no temperature/bleach/tumble/iron claims, only follow the garment's label.
-- Physical article label for current cream-black vest: needed to resolve historical Dusty Blue discrepancy before changing any product/variant identifiers.
+- Manufacturer label for composition and care: still needed; the owner has confirmed the current article/colour identity.
 
 ## Implementation and checks
 
@@ -43,3 +43,7 @@ Reuse approved `TechnologyBadges`, `TechnologyBlocks`, typography and scoped CSS
 Passed: Next production build/type checking; 25 existing commerce tests; vest isolation unit test; vest browser at 1440/390px (three blocks/no empty card, images decoded, no Chinese DOM/attributes, no copied fleece specifications, base layer exclusion, responsive width, actual selected P007 variant added to bag and persisted after reload); approved fleece tests at both widths. Before/after fleece screenshots are pixel-identical at both widths. Final desktop/mobile vest screenshots visually reviewed for Chinese pixels and source-image accuracy.
 
 Local browser fixtures use disposable SQLite databases and demo cart. No hosted inventory changes, payments, customer messages, fulfilment or production deployment. Existing private product preview workflow is used for owner review.
+
+## Owner correction during review
+
+Owner confirmed 25303202 is cream with black and explicitly requested the name Alpin Gillet. Updated only P007 name in staging, version 1 → 2, with full before/after snapshots in product_revisions and audit entry; price, stock, IDs, EANs, photos, slug and publication flags unchanged. The historical colour discrepancy is resolved by the owner's confirmation; a physical label photograph is still useful for composition and care. Rendered introduction, detail alt text and browser fixture now consistently use ALPIN Gillet. No production changes.

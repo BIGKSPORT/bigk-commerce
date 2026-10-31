@@ -10,7 +10,7 @@ try{
  browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium',headless:true,args:['--no-sandbox']});
  for(const width of [1440,390]){
   const context=await browser.newContext({viewport:{width,height:1000}}),page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
-  await page.goto(origin+'/products/alpine-gillet-p007');await page.getByRole('heading',{name:'Alpin Vest Pro',exact:true}).waitFor();
+  await page.goto(origin+'/products/alpine-gillet-p007');await page.getByRole('heading',{name:'Alpin Gillet',exact:true}).waitFor();
   const tech=page.locator('[data-alpin-vest-technology]');assert.equal(await tech.locator('article').count(),3);assert.equal(await page.locator('[data-alpin-technology]').count(),0);
   for(const section of ['Technology & Construction','Construction & Layering','Materials & Fit','Size guide','Care'])await tech.getByRole('heading',{name:section,exact:true}).waitFor();
   for(const summary of ['Details','Material & care','Size & fit'])await page.locator('summary').filter({hasText:summary}).click();
