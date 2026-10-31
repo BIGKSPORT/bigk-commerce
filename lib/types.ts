@@ -1,5 +1,6 @@
+import type {ProductTrade} from './product-identifiers';
 export type Variant = {id:string;size:string;stock:number;reserved:number;reported:number|null};
-export type ProductContent = {composition:string;care:string;fit:string;details:string};
+export type ProductContent = {trade?:ProductTrade;composition:string;care:string;fit:string;details:string};
 export type Product = {version:number;content?:ProductContent;id:string;slug:string;name:string;description:string;code:string;category:string;priceCents:number|null;approved:boolean;active:boolean;featured:boolean;images:string[];variants:Variant[];tags:string[]};
 export type CartLine = {variantId:string;quantity:number};
 export type OrderStatus = 'demo'|'pending'|'paid'|'fulfilled'|'expired'|'cancelled'|'payment_review';
