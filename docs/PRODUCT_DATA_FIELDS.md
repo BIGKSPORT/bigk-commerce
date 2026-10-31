@@ -12,6 +12,6 @@ The existing product-content table is used; no remote schema change, inventory u
 
 GTIN formatting is not evidence of GS1 ownership. Codes must come from confirmed supplier/GS1 records. Customs field formatting does not verify classification. Composition alone is insufficient: construction, intended use and garment category can change the classification. Unknown identifiers and classifications remain blank. The country field checks uppercase two-letter format, not documentary proof of origin. Weight is a shared product value, not an individually measured size/package weight.
 
-Variant GTINs are emitted on the respective size in product structured data, never as an arbitrary parent-product barcode. This does not yet implement a Google Merchant feed, ProductGroup colour families, per-market tax classification, carrier customs documents, or product-specific SEO copywriting. Indexing restrictions remain unchanged.
+Variant GTINs are emitted on the respective size in product structured data, never as an arbitrary parent-product barcode. This does not yet implement a Google Merchant feed, cross-product colour families, per-market tax classification, carrier customs documents, or product-specific SEO copywriting. Indexing restrictions remain unchanged.
 
 Verification: TypeScript, Next.js production build, authenticated backoffice persistence/validation tests and desktop/mobile browser checks. All browser fixtures and database tests are local and fictitious.
