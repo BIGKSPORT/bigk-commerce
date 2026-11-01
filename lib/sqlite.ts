@@ -1,3 +1,4 @@
+import {crmSchema} from './crm-schema';
 import { DatabaseSync } from 'node:sqlite';
 import { mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
@@ -28,7 +29,7 @@ export function db(){
  PRAGMA user_version=1;`);
  sql.exec(shippingTestSchema);
  sql.exec(clubSchema);
- sql.exec(backofficeSchema);sql.exec(productHistorySchema);sql.exec(adminCredentialSchema);
+ sql.exec(backofficeSchema);sql.exec(crmSchema);sql.exec(productHistorySchema);sql.exec(adminCredentialSchema);
  sql.exec(mediaSchema);
  sql.exec(withdrawalSchema);
  sql.exec(warehouseReceiptSchema);

@@ -1,0 +1,5 @@
+import {customers,customerDetail,customerWrite,saveCustomer,consentWrite,recordConsent} from '@/lib/customer-management';
+import {body,checkOrigin,failure,HttpError,requireAdmin} from '@/lib/security';
+export const runtime='nodejs';
+export async function GET(req:Request){try{await requireAdmin(req);const params=new URL(req.url).searchParams,id=params.get('id');if(id)return Response.json(await customerDetail(id),{headers:{'Cache-Control':'no-store'}});return Response.json({customers:await customers()},{headers:{'Cache-Control':'no-store'}})}catch(e){return failure(e)}}
+export async function POST(req:Request){try{checkOrigin(req);await requireAdmin(req);const data=await body(req);if(data?.action==='consent'){const parsed=consentWrite.safeParse(data.consent);if(!parsed.success)throw new HttpError(400,'Provide consent status, source, evidence and date.');await recordConsent(parsed.data);return Response.json({ok:true})}const parsed=customerWrite.safeParse(data);if(!parsed.success)throw new HttpError(400,'Check customer fields: '+parsed.error.issues[0].message);return Response.json({id:await saveCustomer(parsed.data)})}catch(e){return failure(e)}}

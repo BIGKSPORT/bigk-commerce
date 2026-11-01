@@ -48,7 +48,9 @@
     "test:self-management": "node --import tsx --test tests/self-management-media.test.ts && node tests/self-management-browser.mjs",
     "test:fleece-save": "node --import tsx --test tests/product-validation.test.ts && node tests/fleece-save-browser.mjs",
     "test:launch-safety": "node --import tsx tests/launch-safety.test.ts",
-    "test:account-confirm-browser": "node tests/account-confirm-browser.mjs"
+    "test:account-confirm-browser": "node tests/account-confirm-browser.mjs",
+    "test:customers": "node --import tsx tests/customer-marketing.test.ts && node tests/customer-marketing-postgres.mjs",
+    "test:customers-browser": "node tests/customer-marketing-browser.mjs"
   },
   "dependencies": {
     "exceljs": "4.4.0",

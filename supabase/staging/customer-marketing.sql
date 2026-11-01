@@ -1,0 +1,21 @@
+-- Private development schema only. No production schema changes.
+CREATE TABLE IF NOT EXISTS bigk_staging.crm_customers(id text PRIMARY KEY,email text NOT NULL UNIQUE,profile text NOT NULL,version integer NOT NULL CHECK(version>=0),created_at text NOT NULL,updated_at text NOT NULL);
+CREATE TABLE IF NOT EXISTS bigk_staging.marketing_consents(position bigserial UNIQUE,id text PRIMARY KEY,email text NOT NULL,status text NOT NULL CHECK(status IN ('subscribed','unsubscribed')),source text NOT NULL,evidence text NOT NULL,occurred_at text NOT NULL,created_at text NOT NULL);
+CREATE INDEX IF NOT EXISTS marketing_consents_email ON bigk_staging.marketing_consents(email,occurred_at);
+CREATE TABLE IF NOT EXISTS bigk_staging.marketing_campaigns(id text PRIMARY KEY,config text NOT NULL,version integer NOT NULL CHECK(version>=0),created_at text NOT NULL,updated_at text NOT NULL);
+ALTER TABLE bigk_staging.crm_customers ENABLE ROW LEVEL SECURITY;
+ALTER TABLE bigk_staging.marketing_consents ENABLE ROW LEVEL SECURITY;
+ALTER TABLE bigk_staging.marketing_campaigns ENABLE ROW LEVEL SECURITY;
+REVOKE ALL ON bigk_staging.crm_customers,bigk_staging.marketing_consents,bigk_staging.marketing_campaigns FROM PUBLIC,anon,authenticated;
+REVOKE ALL ON SEQUENCE bigk_staging.marketing_consents_position_seq FROM PUBLIC,anon,authenticated;
+GRANT SELECT,INSERT,UPDATE ON bigk_staging.crm_customers,bigk_staging.marketing_campaigns TO bigk_staging_server;
+GRANT SELECT,INSERT ON bigk_staging.marketing_consents TO bigk_staging_server;
+GRANT USAGE,SELECT ON SEQUENCE bigk_staging.marketing_consents_position_seq TO bigk_staging_server;
+DROP POLICY IF EXISTS staging_crm ON bigk_staging.crm_customers;
+CREATE POLICY staging_crm ON bigk_staging.crm_customers TO bigk_staging_server USING(true) WITH CHECK(true);
+DROP POLICY IF EXISTS staging_campaigns ON bigk_staging.marketing_campaigns;
+CREATE POLICY staging_campaigns ON bigk_staging.marketing_campaigns TO bigk_staging_server USING(true) WITH CHECK(true);
+DROP POLICY IF EXISTS staging_consent_read ON bigk_staging.marketing_consents;
+CREATE POLICY staging_consent_read ON bigk_staging.marketing_consents FOR SELECT TO bigk_staging_server USING(true);
+DROP POLICY IF EXISTS staging_consent_append ON bigk_staging.marketing_consents;
+CREATE POLICY staging_consent_append ON bigk_staging.marketing_consents FOR INSERT TO bigk_staging_server WITH CHECK(true);

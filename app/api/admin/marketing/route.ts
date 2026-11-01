@@ -1,0 +1,6 @@
+import {campaignSchema,saveCampaign,marketingWorkspace,campaigns,eligibleAudience} from '@/lib/marketing';
+import {customers} from '@/lib/customer-management';
+import {body,checkOrigin,failure,HttpError,requireAdmin} from '@/lib/security';
+export const runtime='nodejs';
+export async function GET(req:Request){try{await requireAdmin(req);const id=new URL(req.url).searchParams.get('audience');if(id){const campaign=(await campaigns()).find(c=>c.id===id);if(!campaign)throw new HttpError(404,'Campaign not found.');const audience=eligibleAudience(await customers(),campaign.segment,campaign.tag).map(c=>({email:c.email,firstName:c.firstName,lastName:c.lastName,consentAt:c.consentAt}));return Response.json({audience},{headers:{'Cache-Control':'no-store'}})}return Response.json(await marketingWorkspace(),{headers:{'Cache-Control':'no-store'}})}catch(e){return failure(e)}}
+export async function POST(req:Request){try{checkOrigin(req);await requireAdmin(req);const parsed=campaignSchema.safeParse(await body(req));if(!parsed.success)throw new HttpError(400,'Check campaign fields: '+parsed.error.issues[0].message);return Response.json({id:await saveCampaign(parsed.data),notice:'Draft saved. No messages have been sent.'})}catch(e){return failure(e)}}
