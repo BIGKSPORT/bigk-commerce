@@ -50,7 +50,8 @@
     "test:launch-safety": "node --import tsx tests/launch-safety.test.ts",
     "test:account-confirm-browser": "node tests/account-confirm-browser.mjs",
     "test:customers": "node --import tsx tests/customer-marketing.test.ts && node tests/customer-marketing-postgres.mjs",
-    "test:customers-browser": "node tests/customer-marketing-browser.mjs"
+    "test:customers-browser": "node tests/customer-marketing-browser.mjs",
+    "test:b10": "node --import tsx tests/b10.test.ts && node tests/b10-browser.mjs"
   },
   "dependencies": {
     "exceljs": "4.4.0",

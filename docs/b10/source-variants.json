@@ -1,0 +1,277 @@
+{
+  "sourceFileId": "1NNAJBYIHfE6WYixPIiJ-srq6Lt9mTVpn",
+  "ownerPriceCents": 11999,
+  "allocation": "Owner confirmed the order-file quantities, superseding the earlier 1000 per colour.",
+  "rows": [
+    {
+      "colour": "White",
+      "size": "36",
+      "supplierArticle": "899",
+      "ean": "6957919566438",
+      "sourceRow": 6,
+      "stock": 133
+    },
+    {
+      "colour": "White",
+      "size": "37",
+      "supplierArticle": "899",
+      "ean": "6957919566445",
+      "sourceRow": 7,
+      "stock": 108
+    },
+    {
+      "colour": "White",
+      "size": "38",
+      "supplierArticle": "899",
+      "ean": "6957919566452",
+      "sourceRow": 8,
+      "stock": 108
+    },
+    {
+      "colour": "White",
+      "size": "39",
+      "supplierArticle": "899",
+      "ean": "6957919566469",
+      "sourceRow": 9,
+      "stock": 133
+    },
+    {
+      "colour": "White",
+      "size": "40",
+      "supplierArticle": "899",
+      "ean": "6957919566476",
+      "sourceRow": 10,
+      "stock": 75
+    },
+    {
+      "colour": "White",
+      "size": "41",
+      "supplierArticle": "899",
+      "ean": "6957919566483",
+      "sourceRow": 11,
+      "stock": 183
+    },
+    {
+      "colour": "White",
+      "size": "42",
+      "supplierArticle": "899",
+      "ean": "6957919566490",
+      "sourceRow": 12,
+      "stock": 199
+    },
+    {
+      "colour": "White",
+      "size": "43",
+      "supplierArticle": "899",
+      "ean": "6957919566506",
+      "sourceRow": 13,
+      "stock": 198
+    },
+    {
+      "colour": "White",
+      "size": "44",
+      "supplierArticle": "899",
+      "ean": "6957919566513",
+      "sourceRow": 14,
+      "stock": 215
+    },
+    {
+      "colour": "White",
+      "size": "45",
+      "supplierArticle": "899",
+      "ean": "6957919566520",
+      "sourceRow": 15,
+      "stock": 198
+    },
+    {
+      "colour": "White",
+      "size": "46",
+      "supplierArticle": "899",
+      "ean": "6957919566537",
+      "sourceRow": 16,
+      "stock": 150
+    },
+    {
+      "colour": "Black",
+      "size": "36",
+      "supplierArticle": "899",
+      "ean": "6957919566568",
+      "sourceRow": 19,
+      "stock": 132
+    },
+    {
+      "colour": "Black",
+      "size": "37",
+      "supplierArticle": "899",
+      "ean": "6957919566575",
+      "sourceRow": 20,
+      "stock": 108
+    },
+    {
+      "colour": "Black",
+      "size": "38",
+      "supplierArticle": "899",
+      "ean": "6957919566582",
+      "sourceRow": 21,
+      "stock": 108
+    },
+    {
+      "colour": "Black",
+      "size": "39",
+      "supplierArticle": "899",
+      "ean": "6957919566599",
+      "sourceRow": 22,
+      "stock": 132
+    },
+    {
+      "colour": "Black",
+      "size": "40",
+      "supplierArticle": "899",
+      "ean": "6957919566605",
+      "sourceRow": 23,
+      "stock": 74
+    },
+    {
+      "colour": "Black",
+      "size": "41",
+      "supplierArticle": "899",
+      "ean": "6957919566612",
+      "sourceRow": 24,
+      "stock": 182
+    },
+    {
+      "colour": "Black",
+      "size": "42",
+      "supplierArticle": "899",
+      "ean": "6957919566629",
+      "sourceRow": 25,
+      "stock": 199
+    },
+    {
+      "colour": "Black",
+      "size": "43",
+      "supplierArticle": "899",
+      "ean": "6957919566636",
+      "sourceRow": 26,
+      "stock": 200
+    },
+    {
+      "colour": "Black",
+      "size": "44",
+      "supplierArticle": "899",
+      "ean": "6957919566643",
+      "sourceRow": 27,
+      "stock": 216
+    },
+    {
+      "colour": "Black",
+      "size": "45",
+      "supplierArticle": "899",
+      "ean": "6957919566650",
+      "sourceRow": 28,
+      "stock": 200
+    },
+    {
+      "colour": "Black",
+      "size": "46",
+      "supplierArticle": "899",
+      "ean": "6957919566667",
+      "sourceRow": 29,
+      "stock": 149
+    },
+    {
+      "colour": "Green",
+      "size": "36",
+      "supplierArticle": "899",
+      "ean": "6957919566827",
+      "sourceRow": 45,
+      "stock": 47
+    },
+    {
+      "colour": "Green",
+      "size": "37",
+      "supplierArticle": "899",
+      "ean": "6957919566834",
+      "sourceRow": 46,
+      "stock": 38
+    },
+    {
+      "colour": "Green",
+      "size": "38",
+      "supplierArticle": "899",
+      "ean": "6957919566841",
+      "sourceRow": 47,
+      "stock": 38
+    },
+    {
+      "colour": "Green",
+      "size": "39",
+      "supplierArticle": "899",
+      "ean": "6957919566858",
+      "sourceRow": 48,
+      "stock": 47
+    },
+    {
+      "colour": "Green",
+      "size": "40",
+      "supplierArticle": "899",
+      "ean": "6957919566865",
+      "sourceRow": 49,
+      "stock": 27
+    },
+    {
+      "colour": "Green",
+      "size": "41",
+      "supplierArticle": "899",
+      "ean": "6957919566872",
+      "sourceRow": 50,
+      "stock": 64
+    },
+    {
+      "colour": "Green",
+      "size": "42",
+      "supplierArticle": "899",
+      "ean": "6957919566889",
+      "sourceRow": 51,
+      "stock": 70
+    },
+    {
+      "colour": "Green",
+      "size": "43",
+      "supplierArticle": "899",
+      "ean": "6957919566896",
+      "sourceRow": 52,
+      "stock": 70
+    },
+    {
+      "colour": "Green",
+      "size": "44",
+      "supplierArticle": "899",
+      "ean": "6957919566902",
+      "sourceRow": 53,
+      "stock": 76
+    },
+    {
+      "colour": "Green",
+      "size": "45",
+      "supplierArticle": "899",
+      "ean": "6957919566919",
+      "sourceRow": 54,
+      "stock": 70
+    },
+    {
+      "colour": "Green",
+      "size": "46",
+      "supplierArticle": "899",
+      "ean": "6957919566926",
+      "sourceRow": 55,
+      "stock": 53
+    }
+  ],
+  "orderFileId": "1fO3pJ0hJB1ejI11N-HdZQhFIeRkVEp-J",
+  "confirmedUnitsByColour": {
+    "Black": 1700,
+    "White": 1700,
+    "Green": 600
+  }
+}
