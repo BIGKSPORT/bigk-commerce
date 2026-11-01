@@ -35,7 +35,7 @@ jobs:
         run: |
           export CHROMIUM_PATH="$(node -e 'console.log(require("playwright").chromium.executablePath())')"
           npm run test:auth-browser
-          npm run test:account-confirm-browser
+          BIGK_ARTIFACT_DIR="$RUNNER_TEMP/bigk-product-artifacts" npm run test:account-confirm-browser
           BIGK_ARTIFACT_DIR="$RUNNER_TEMP/bigk-product-artifacts" npm run test:alpin
           BIGK_ARTIFACT_DIR="$RUNNER_TEMP/bigk-product-artifacts" npm run test:alpin-vest
           BIGK_ARTIFACT_DIR="$RUNNER_TEMP/bigk-product-artifacts" npm run test:nano-front
