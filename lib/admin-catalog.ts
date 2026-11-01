@@ -1,3 +1,4 @@
+import {productCategories} from './product-categories';
 import {presentationSchema} from './product-presentation';
 import {z} from 'zod';
 import {tradeSchema,canonicalGtin} from './product-identifiers';
@@ -8,7 +9,7 @@ import {validProductImages} from './media';
 import type {Product} from './types';
 
 export const contentSchema=z.object({presentation:presentationSchema.optional(),trade:tradeSchema.optional(),composition:z.string().max(2000),care:z.string().max(2000),fit:z.string().max(2000),details:z.string().max(5000)}).strict();
-const textFields={name:z.string().trim().min(2).max(150),description:z.string().trim().max(5000),category:z.enum(['Jackets & Vests','Pants','Accessories','Other']),images:z.array(z.string().max(250)).max(30),tags:z.array(z.string().trim().min(1).max(50)).max(20),featured:z.boolean(),content:contentSchema};
+const textFields={name:z.string().trim().min(2).max(150),description:z.string().trim().max(5000),category:z.enum(productCategories),images:z.array(z.string().max(250)).max(30),tags:z.array(z.string().trim().min(1).max(50)).max(20),featured:z.boolean(),content:contentSchema};
 export const editProductSchema=z.object({inventoryBaseline:z.record(z.string(),z.object({stock:z.number().int().min(0),reserved:z.number().int().min(0)}).strict()).optional(),version:z.number().int().min(0),id:z.string().max(100),slug:z.string().min(1).max(180).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/).optional(),priceCents:z.number().int().min(1).max(1000000).nullable(),approved:z.boolean(),active:z.boolean(),variants:z.array(z.object({id:z.string().min(1).max(100),size:z.string().trim().min(1).max(15).optional(),stock:z.number().int().min(0).max(100000)}).strict()).min(1).max(100),name:textFields.name.optional(),description:textFields.description.optional(),category:textFields.category.optional(),images:textFields.images.optional(),tags:textFields.tags.optional(),featured:textFields.featured.optional(),content:textFields.content.optional()}).strict();
 export type ProductEdit=z.infer<typeof editProductSchema>;
 const normalSize=(value:string)=>value.toUpperCase().replace(/^XXXL$/,'3XL').replace(/^XXL$/,'2XL');

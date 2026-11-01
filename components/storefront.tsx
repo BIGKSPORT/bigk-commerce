@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState, useId, type ReactNode } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import {productCategories} from '@/lib/product-categories';
 import editorial from '@/lib/editorial.json';
 import { ArrowUpRight, ArrowRight, Search, Heart, ShoppingBag, UserRound, X, Plus, Minus, SlidersHorizontal, Check, MoveRight, Layers3, Sparkles, Package, ShieldCheck, ChevronRight, Menu, Scale, ArrowLeft, Share2, House } from 'lucide-react';
 import { Brand, Footer } from './brand';
@@ -20,7 +21,7 @@ import {productFamily, colourLabel as catalogueColourLabel} from '@/lib/product-
 import ProductCardMedia from './product-card-media';
 import { money } from '@/lib/format';
 import type { Product, CartLine } from '@/lib/types';
-const categories=['All','Jackets & Vests','Pants','Accessories'];
+const categories=['All',...productCategories.filter(category=>category!=='Other')];
 export function Modal({title,onClose,children,wide=false,className=''}:{title:string;onClose:()=>void;children:ReactNode;wide?:boolean;className?:string}){const ref=useRef<HTMLDialogElement>(null),titleId=useId();useEffect(()=>{const d=ref.current;d?.showModal();return()=>d?.close()},[]);return <dialog ref={ref} aria-labelledby={titleId} className={'modal '+(wide?'wide':'')+' '+className} onCancel={event=>{event.preventDefault();onClose()}} onClick={e=>{if(e.target===e.currentTarget)onClose()}}><div className="modal-heading"><h2 id={titleId}>{title}</h2><button className="icon-button" onClick={onClose} aria-label="Close dialog"><X size={22}/></button></div>{children}</dialog>}
 function colourLabel(product:Product){return hasAlpinTechnology(product)&&/25303102$/.test(product.code)?'Mist Blue':catalogueColourLabel(product)}
 export default function Storefront({products,mode,ready,initialCategory,initialProduct,initialSavedOnly=false}:{products:Product[];mode:'demo'|'live';ready:boolean;initialCategory?:string;initialProduct?:string;initialSavedOnly?:boolean}){
