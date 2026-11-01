@@ -1,10 +1,10 @@
 import {emailDeliveryAllowed} from '@/lib/email-policy';
 import { z } from 'zod';
 import { db } from '@/lib/db';
-import { body, checkOrigin, failure, hash, HttpError, rateLimit, token } from '@/lib/security';
+import { body, checkOrigin, failure, hash, HttpError, rateLimit, rateLimitVisitor, token } from '@/lib/security';
 export async function POST(req: Request) { try {
     checkOrigin(req);
-    (await rateLimit('magic-link-global', 20, 300));
+    await rateLimitVisitor(req,'magic-link',10,300,5000);
     if (!process.env.RESEND_API_KEY || !process.env.EMAIL_FROM)
         throw new HttpError(503, 'Customer sign-in is not available until the store email service is connected.');
     const parsed = z.object({ email: z.email().max(254) }).safeParse(await body(req));

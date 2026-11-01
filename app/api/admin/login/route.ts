@@ -1,10 +1,10 @@
 import {adminPasswordHash} from '@/lib/admin-access';
 import { db, audit } from '@/lib/db';
-import { body, checkOrigin, failure, HttpError, hash, token, rateLimit, passwordMatches, sessionCookie } from '@/lib/security';
+import { body, checkOrigin, failure, HttpError, hash, token, rateLimit, rateLimitVisitor, passwordMatches, sessionCookie } from '@/lib/security';
 export const runtime = 'nodejs';
 export async function POST(req: Request) { try {
     checkOrigin(req);
-    (await rateLimit('admin-login-global', 6, 300));
+    await rateLimitVisitor(req,'admin-login',6,300,1000);
     const configuredHash=await adminPasswordHash();
     if (!configuredHash)
         throw new HttpError(503, 'Admin access is not configured.');

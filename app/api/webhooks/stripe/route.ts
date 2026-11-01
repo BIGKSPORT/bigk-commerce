@@ -1,6 +1,7 @@
 import type Stripe from 'stripe';
 import {stripeClient} from '@/lib/stripe-client';
 import {stripeKeyMode} from '@/lib/stripe-config';
+import {audit} from '@/lib/db';
 import { cancelPayment, settlePayment } from '@/lib/commerce';
 import { boundedText, failure, HttpError } from '@/lib/security';
 export const runtime = 'nodejs';
@@ -22,8 +23,10 @@ export async function POST(req: Request) {
         if (['checkout.session.completed', 'checkout.session.async_payment_succeeded', 'checkout.session.expired', 'checkout.session.async_payment_failed'].includes(event.type)) {
             const session = event.data.object as Stripe.Checkout.Session;
             const expectedLive=stripeKeyMode()==='live';
-            if(event.livemode!==expectedLive||session.livemode!==expectedLive)
-                throw new HttpError(400,'Payment event belongs to a different Stripe environment.');
+            if(event.livemode!==expectedLive||session.livemode!==expectedLive){
+                await audit('payment.event_environment_ignored',event.id);
+                return Response.json({received:true,ignored:true});
+            }
             const id = session.metadata?.orderId;
             if (!id)
                 throw new HttpError(400, 'Missing order reference.');

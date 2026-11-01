@@ -65,7 +65,7 @@ export async function createOrder(input: CheckoutInput, verifiedEmail?:string) {
     }));
 }
 export async function getOrder(id: string): Promise<Order | undefined> { const row = (await db().prepare('SELECT * FROM orders WHERE id=?').get(id)) as Record<string, unknown> | undefined; if (!row)
-    return; const c = JSON.parse(String(row.customer)); return { deliveryAddress: { name: c.name || [c.firstName, c.lastName].filter(Boolean).join(' '), address: c.address || '', postal: c.postal || '', city: c.city || '', country: c.country || '' }, id: String(row.id), status: row.status as OrderStatus, pointsDiscount:Math.max(0,Number(row.subtotal)+Number(row.shipping)-Number(row.total)), subtotal: Number(row.subtotal), shipping: Number(row.shipping), total: Number(row.total), currency: String(row.currency), email: String(row.email), phone: String(row.phone), createdAt: String(row.created_at), expiresAt: String(row.expires_at), stripeSession: row.stripe_session ? String(row.stripe_session) : null, tracking: row.tracking ? String(row.tracking) : null, withdrawals:(await db().prepare('SELECT * FROM withdrawal_requests WHERE order_id=? ORDER BY created_at DESC').all(id)).map(r=>({id:String(r.id),status:String(r.status),createdAt:String(r.created_at),items:JSON.parse(String(r.snapshot)).items})), items: ((await db().prepare('SELECT variant_id AS variantId,name,size,quantity,unit_price AS unitPrice FROM order_lines WHERE order_id=?').all(id)) as unknown as Order['items']) }; }
+    return; const c = JSON.parse(String(row.customer)); return { paymentReviewReason:row.status==='payment_review'?((await db().prepare("SELECT action FROM audit WHERE entity=? AND action LIKE 'payment.refund_review.%' ORDER BY id DESC LIMIT 1").get(String(row.id)))?.action as string|undefined)?.split('.').at(-1) as Order['paymentReviewReason']:undefined,deliveryAddress: { name: c.name || [c.firstName, c.lastName].filter(Boolean).join(' '), address: c.address || '', postal: c.postal || '', city: c.city || '', country: c.country || '' }, id: String(row.id), status: row.status as OrderStatus, pointsDiscount:Math.max(0,Number(row.subtotal)+Number(row.shipping)-Number(row.total)), subtotal: Number(row.subtotal), shipping: Number(row.shipping), total: Number(row.total), currency: String(row.currency), email: String(row.email), phone: String(row.phone), createdAt: String(row.created_at), expiresAt: String(row.expires_at), stripeSession: row.stripe_session ? String(row.stripe_session) : null, tracking: row.tracking ? String(row.tracking) : null, withdrawals:(await db().prepare('SELECT * FROM withdrawal_requests WHERE order_id=? ORDER BY created_at DESC').all(id)).map(r=>({id:String(r.id),status:String(r.status),createdAt:String(r.created_at),items:JSON.parse(String(r.snapshot)).items})), items: ((await db().prepare('SELECT variant_id AS variantId,name,size,quantity,unit_price AS unitPrice FROM order_lines WHERE order_id=?').all(id)) as unknown as Order['items']) }; }
 export async function verifyReceipt(id: string, value: string) { const row = (await db().prepare('SELECT receipt_hash FROM orders WHERE id=?').get(id)) as {
     receipt_hash: string;
 } | undefined; return !!value && row?.receipt_hash === hash(value); }
@@ -87,18 +87,26 @@ export async function settlePayment(eventId: string, orderId: string, sessionId:
             (await sql.prepare('INSERT INTO webhook_events VALUES(?,?)').run(eventId, new Date().toISOString()));
             return 'already-paid';
         }
-        const valid = order.status === 'pending' && order.expiresAt>new Date().toISOString() && amount === order.total && currency === 'eur';
-        if (order.status === 'pending') {
-            if (valid) {
-                for (const l of (await sql.prepare('SELECT variant_id,quantity FROM order_lines WHERE order_id=?').all(orderId)) as {
-                    variant_id: string;
-                    quantity: number;
-                }[])
-                    (await sql.prepare('UPDATE variants SET stock=stock-?,reserved=reserved-? WHERE id=?').run(l.quantity, l.quantity, l.variant_id));
-            }
-            else
-                (await release(orderId));
+        const holdsReservation = order.status === 'pending';
+        const recoverable = ['pending', 'expired', 'cancelled'].includes(order.status);
+        const lines = await sql.prepare('SELECT variant_id,quantity FROM order_lines WHERE order_id=?').all(orderId);
+        const exactPayment = amount === order.total && currency === order.currency;
+        // Expiration releases a reservation, not a verified payment. Reacquire only free stock.
+        let stockAvailable = lines.length > 0;
+        for (const line of lines) {
+            const variant = await sql.prepare('SELECT stock,reserved FROM variants WHERE id=?').get(line.variant_id);
+            const free = variant ? Number(variant.stock) - (holdsReservation ? 0 : Number(variant.reserved)) : 0;
+            if (!variant || free < Number(line.quantity) || holdsReservation && Number(variant.reserved) < Number(line.quantity)) stockAvailable = false;
         }
+        // Released Club points cannot be silently reused for a late discounted order.
+        const pointsReleased = !holdsReservation && Boolean(order.pointsDiscount);
+        const valid = recoverable && exactPayment && stockAvailable && !pointsReleased;
+        if (valid) {
+            for (const line of lines) {
+                if (holdsReservation) await sql.prepare('UPDATE variants SET stock=stock-?,reserved=reserved-? WHERE id=?').run(line.quantity,line.quantity,line.variant_id);
+                else await sql.prepare('UPDATE variants SET stock=stock-? WHERE id=?').run(line.quantity,line.variant_id);
+            }
+        } else if (holdsReservation) await release(orderId);
         (await sql.prepare('UPDATE orders SET status=? WHERE id=?').run(valid ? 'paid' : 'payment_review', orderId));
         (await sql.prepare('INSERT INTO webhook_events VALUES(?,?)').run(eventId, new Date().toISOString()));
         if (valid && delivery)
@@ -106,7 +114,7 @@ export async function settlePayment(eventId: string, orderId: string, sessionId:
         await clubPayment(orderId,valid);
         if (valid)
             (await sql.prepare("INSERT OR IGNORE INTO email_outbox(order_id,kind,email) VALUES(?,'confirmation',?)").run(orderId, order.email));
-        (await audit(valid ? 'payment.confirmed' : 'payment.review', orderId));
+        (await audit(valid ? 'payment.confirmed' : exactPayment && !stockAvailable ? 'payment.refund_review.stock_unavailable' : pointsReleased ? 'payment.refund_review.club_points_released' : 'payment.review', orderId));
         return valid ? 'paid' : 'payment_review';
     }));
 }

@@ -1,13 +1,13 @@
 import {stripeClient} from '@/lib/stripe-client';
 import {customerEmail,clubPaymentItems} from '@/lib/club';
 import { checkoutSchema, createOrder, getOrder, isLive } from '@/lib/commerce';
-import { body, checkOrigin, failure, rateLimit, HttpError, hash } from '@/lib/security';
+import { body, checkOrigin, failure, rateLimit, rateLimitVisitor, HttpError, hash } from '@/lib/security';
 import { db } from '@/lib/db';
 export const runtime = 'nodejs';
 export async function POST(req: Request) {
     try {
         checkOrigin(req);
-        (await rateLimit('checkout-global', 100, 60));
+        await rateLimitVisitor(req,'checkout',30,60,10000);
         const parsed = checkoutSchema.safeParse(await body(req));
         if (!parsed.success)
             throw new HttpError(400, 'Check your contact details, international phone number, address and bag.');

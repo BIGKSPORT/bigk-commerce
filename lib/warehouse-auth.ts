@@ -1,5 +1,6 @@
 import {createHmac,randomBytes,scryptSync,timingSafeEqual} from 'node:crypto';
-import {cookieValue,HttpError} from './security';
+import {db} from './db';
+import {cookieValue,HttpError,hash} from './security';
 export type WarehouseRole='picker'|'returns'|'lead';
 type Account={id:string;name:string;role:WarehouseRole;passwordHash:string};
 const roles=new Set<WarehouseRole>(['picker','returns','lead']);
@@ -43,13 +44,15 @@ export function authenticateWarehouse(id:string,password:string){
 function signature(payload:string){
  return createHmac('sha256',secret()).update(payload).digest('base64url');
 }
-export function createWarehouseSession(id:string){
+export async function createWarehouseSession(id:string){
  const account=accounts().find(a=>a.id===id);
  if(!account)throw new HttpError(403,'Invalid warehouse account.');
  const payload=Buffer.from(JSON.stringify({
-  id,issued:Date.now(),nonce:randomBytes(12).toString('hex')
+  id,issued:Date.now(),credentialVersion:createHmac('sha256',secret()).update(account.passwordHash).digest('hex'),nonce:randomBytes(12).toString('hex')
  })).toString('base64url');
- return payload+'.'+signature(payload);
+ const value=payload+'.'+signature(payload);
+ await db().prepare('INSERT INTO sessions(hash,expires_at) VALUES(?,?)').run(hash('warehouse:'+value),new Date(Date.now()+2*3600000).toISOString());
+ return value;
 }
 export function warehouseCookie(value:string,maxAge:number){
  return `bigk_warehouse=${value}; HttpOnly; SameSite=Strict; Path=/; Max-Age=${maxAge}${process.env.NODE_ENV==='production'?'; Secure':''}`;
@@ -72,7 +75,10 @@ export async function requireWarehouse(req:Request,roles?:WarehouseRole[]){
    Date.now()-s.issued>2*3600000)
   throw new HttpError(401,'Warehouse session expired.');
  const account=accounts().find(a=>a.id===s.id);
+ if(!account||s.credentialVersion!==createHmac('sha256',secret()).update(account.passwordHash).digest('hex')||!await db().prepare('SELECT hash FROM sessions WHERE hash=? AND expires_at>?').get(hash('warehouse:'+value),new Date().toISOString()))throw new HttpError(401,'Warehouse sign-in required.');
  if(!account||roles&&!roles.includes(account.role))
   throw new HttpError(403,'Warehouse role is not authorised.');
  return {id:account.id,name:account.name,role:account.role};
 }
+
+export async function revokeWarehouseSession(req:Request){const value=cookieValue(req,'bigk_warehouse');if(value)await db().prepare('DELETE FROM sessions WHERE hash=?').run(hash('warehouse:'+value))}

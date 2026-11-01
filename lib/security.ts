@@ -1,3 +1,4 @@
+import {isIP} from 'node:net';
 import { createHash, randomBytes, scryptSync, timingSafeEqual } from 'node:crypto';
 import { db, transaction } from './db';
 export const hash = (value: string) => createHash('sha256').update(value).digest('hex');
@@ -18,6 +19,17 @@ export function checkOrigin(req: Request) {
     const origin = req.headers.get('origin');
     if (!origin || !trusted.some(candidate => new URL(candidate).origin === origin))
         throw new HttpError(403, 'Request origin rejected.');
+}
+export function visitorRateKey(req:Request,platform=process.env.VERCEL==='1'?'vercel':process.env.NETLIFY==='true'?'netlify':'local'){
+    // Trust forwarding headers only when our hosting platform owns the ingress.
+    const address=(platform==='vercel'?req.headers.get('x-forwarded-for'):platform==='netlify'?req.headers.get('x-nf-client-connection-ip'):null)?.split(',')[0].trim()||'';
+    const ip=isIP(address);
+    const normalized=ip===6&&!address.includes('%')?new URL('http://['+address+']').hostname:ip===4?address:'unattributed';
+    return hash(normalized);
+}
+export async function rateLimitVisitor(req:Request,scope:string,limit:number,seconds:number,globalLimit:number){
+    await rateLimit(scope+':visitor:'+visitorRateKey(req),limit,seconds);
+    await rateLimit(scope+'-global',globalLimit,seconds);
 }
 export async function rateLimit(key: string, limit = 20, seconds = 60) {
     await transaction(async()=>{

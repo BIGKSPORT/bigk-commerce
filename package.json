@@ -46,7 +46,9 @@
     "test:alpin-vest": "node --import tsx --test tests/alpin-vest-technology.test.ts && node tests/alpin-vest-technology-browser.mjs",
     "test:nano-front": "node --import tsx --test tests/nano-technology.test.ts && node tests/nano-front-browser.mjs",
     "test:self-management": "node --import tsx --test tests/self-management-media.test.ts && node tests/self-management-browser.mjs",
-    "test:fleece-save": "node --import tsx --test tests/product-validation.test.ts && node tests/fleece-save-browser.mjs"
+    "test:fleece-save": "node --import tsx --test tests/product-validation.test.ts && node tests/fleece-save-browser.mjs",
+    "test:launch-safety": "node --import tsx tests/launch-safety.test.ts",
+    "test:account-confirm-browser": "node tests/account-confirm-browser.mjs"
   },
   "dependencies": {
     "exceljs": "4.4.0",
