@@ -1,0 +1,6 @@
+import {z} from 'zod';
+const text=(max:number)=>z.string().max(max).refine(value=>!/[\u3400-\u9fff]/u.test(value),'Use customer-facing text without Chinese characters.');
+export const presentationSchema=z.object({enabled:z.boolean(),introduction:text(3000),detailCaption:text(500),sizeGuide:text(5000),sizeTable:text(10000),features:z.array(z.object({id:z.string().min(1).max(100),name:text(80),kind:z.enum(['material','feature']),heading:text(200),description:text(3000),image:z.string().max(250),alt:text(300),logo:z.string().max(250).optional(),icon:z.enum(['pocket','hand','shell','binding']).optional()}).strict()).max(12)}).strict().refine(p=>{const rows=parseSizeTable(p.sizeTable);return rows.length<=40&&rows.every(row=>row.length===rows[0]?.length&&row.length<=30&&row.every(cell=>cell.length<=100))},'Use a rectangular size table: paste tab-separated columns with the same number of cells on each row.');
+export type ProductPresentation=z.infer<typeof presentationSchema>;
+export function parseSizeTable(value:string){return value.trim()?value.trim().split(/\r?\n/).map(row=>row.split('\t').map(cell=>cell.trim())):[]}
+export const emptyPresentation=():ProductPresentation=>({enabled:false,introduction:'',detailCaption:'',sizeGuide:'',sizeTable:'',features:[]});

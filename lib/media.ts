@@ -1,3 +1,4 @@
+import staticProductMedia from './static-product-media.json';
 import {createHash} from 'node:crypto';
 import {mkdir,readFile,writeFile,readdir} from 'node:fs/promises';
 import {resolve,join} from 'node:path';
@@ -25,4 +26,16 @@ export async function storeImage(data:Uint8Array,name:string):Promise<MediaItem>
 }
 export async function readWebImage(id:string){if(!/^[a-f0-9]{64}$/.test(id))return null;if(mediaDriver()==='database'){const row=await db().prepare('SELECT web FROM media_assets WHERE id=?').get(id);return row?new Uint8Array(row.web as Uint8Array):null}try{return new Uint8Array(await readFile(join(mediaRoot(),id+'.webp')))}catch(e){if((e as NodeJS.ErrnoException).code==='ENOENT')return null;throw e}}
 export async function uploadedMedia():Promise<MediaItem[]>{if(mediaDriver()==='database')return (await db().prepare('SELECT metadata FROM media_assets ORDER BY created_at DESC').all()).map(r=>JSON.parse(String(r.metadata)) as MediaItem);let files:string[];try{files=await readdir(mediaRoot())}catch(e){if((e as NodeJS.ErrnoException).code==='ENOENT')return [];throw e}return (await Promise.all(files.filter(f=>/^[a-f0-9]{64}\.json$/.test(f)).map(async f=>JSON.parse(await readFile(join(mediaRoot(),f),'utf8')) as MediaItem))).sort((a,b)=>b.createdAt.localeCompare(a.createdAt))}
-export async function validProductImages(images:string[]){if(new Set(images).size!==images.length)throw new HttpError(400,'Remove duplicate photo selections.');for(const url of images){if(/^\/products\/web\/[a-zA-Z0-9_-]+\.webp$/.test(url)){try{await readFile(resolve('public'+url))}catch{throw new HttpError(400,'A selected image is missing. Upload it again.')}}else if(/^\/api\/media\/[a-f0-9]{64}\.webp$/.test(url)){if(!await readWebImage(url.split('/').pop()!.replace('.webp','')))throw new HttpError(400,'A selected image is missing. Upload it again.')}else throw new HttpError(400,'Choose a photo from the media library.')}}
+const staticImages=new Set<string>(staticProductMedia);
+export async function validProductImages(images:string[]){
+ if(new Set(images).size!==images.length)throw new HttpError(400,'Remove duplicate photo selections.');
+ for(const url of images){
+  // Vercel serves static files from its CDN; they need not exist in a Function's filesystem.
+  if(staticImages.has(url))continue;
+  if(/^\/api\/media\/[a-f0-9]{64}\.webp$/.test(url)){
+   if(await readWebImage(url.split('/').pop()!.replace('.webp','')))continue;
+   throw new HttpError(400,'An uploaded photo is missing from media storage. Remove that photo or upload it again; your other changes are retained in this editor.');
+  }
+  throw new HttpError(400,'This photo is not in the deployed image library. Choose an existing library photo or upload it again.');
+ }
+}

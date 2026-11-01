@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --hostname 0.0.0.0",
-    "build": "next build --webpack && node scripts/build-jobs.mjs && node scripts/check-payment-config.mjs",
+    "build": "node scripts/build-static-media-manifest.mjs && next build --webpack && node scripts/build-jobs.mjs && node scripts/check-payment-config.mjs",
     "start": "next start --hostname 0.0.0.0",
     "typecheck": "tsc --noEmit",
     "test": "node --import tsx tests/commerce.test.ts",
@@ -44,7 +44,8 @@
     "test:product-management-browser": "node tests/product-management-browser.mjs",
     "test:alpin": "node --import tsx --test tests/alpin-technology.test.ts && node tests/alpin-technology-browser.mjs",
     "test:alpin-vest": "node --import tsx --test tests/alpin-vest-technology.test.ts && node tests/alpin-vest-technology-browser.mjs",
-    "test:nano-front": "node --import tsx --test tests/nano-technology.test.ts && node tests/nano-front-browser.mjs"
+    "test:nano-front": "node --import tsx --test tests/nano-technology.test.ts && node tests/nano-front-browser.mjs",
+    "test:self-management": "node --import tsx --test tests/self-management-media.test.ts && node tests/self-management-browser.mjs"
   },
   "dependencies": {
     "exceljs": "4.4.0",

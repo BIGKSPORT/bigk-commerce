@@ -37,6 +37,7 @@ jobs:
           BIGK_ARTIFACT_DIR="$RUNNER_TEMP/bigk-product-artifacts" npm run test:alpin
           BIGK_ARTIFACT_DIR="$RUNNER_TEMP/bigk-product-artifacts" npm run test:alpin-vest
           BIGK_ARTIFACT_DIR="$RUNNER_TEMP/bigk-product-artifacts" npm run test:nano-front
+          BIGK_ARTIFACT_DIR="$RUNNER_TEMP/bigk-product-artifacts" npm run test:self-management
           npm run test:checkout-browser
           BIGK_ARTIFACT_DIR="$RUNNER_TEMP/bigk-product-artifacts" npm run test:product-management-browser
 

@@ -26,6 +26,7 @@ export const tradeSchema = z.object({
   originCountry: optionalCode(/^(?:[A-Z]{2})?$/, 'Use an uppercase two-letter country code, for example CN.'),
   weightGrams: z.number().int().min(1).max(1000000).optional(),
   identifiers: z.record(z.string().min(1).max(100), z.object({
+    images: z.array(z.string().max(250)).max(30).optional(),
     colour: z.string().trim().max(80).optional(),
     supplierArticle: z.string().trim().max(100).optional(),
     archived: z.boolean().optional(),
