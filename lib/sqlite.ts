@@ -1,3 +1,5 @@
+import blogStarters from '../docs/blog-starter-articles.json';
+import {growthSchema} from './growth-schema';
 import {crmSchema} from './crm-schema';
 import { DatabaseSync } from 'node:sqlite';
 import { mkdirSync } from 'node:fs';
@@ -29,10 +31,11 @@ export function db(){
  PRAGMA user_version=1;`);
  sql.exec(shippingTestSchema);
  sql.exec(clubSchema);
- sql.exec(backofficeSchema);sql.exec(crmSchema);sql.exec(productHistorySchema);sql.exec(adminCredentialSchema);sql.exec(adminMfaSchema);
+ sql.exec(backofficeSchema);sql.exec(crmSchema);sql.exec(growthSchema);sql.exec(productHistorySchema);sql.exec(adminCredentialSchema);sql.exec(adminMfaSchema);
  sql.exec(mediaSchema);
  sql.exec(withdrawalSchema);
  sql.exec(warehouseReceiptSchema);
+ for(const p of blogStarters){const now=new Date().toISOString();sql.prepare('INSERT OR IGNORE INTO blog_posts(id,slug,title,excerpt,cover_image,cover_alt,body,status,version,published_at,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)').run(p.id,p.slug,p.title,p.excerpt,p.coverImage,p.coverAlt,p.body,p.status,1,p.status==='published'?now:null,now,now)}
  instance=sql;
  if(!(sql.prepare('SELECT COUNT(*) AS n FROM products').get() as {n:number}).n){transaction(()=>{for(const p of catalog.products){sql.prepare('INSERT INTO products(id,slug,name,description,code,category,price_cents,approved,active,featured,images,tags) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)').run(p.id,p.slug,p.name,p.description,p.code,p.category,p.priceCents,0,0,p.featured?1:0,JSON.stringify(p.images),JSON.stringify(p.tags));if(p.content)sql.prepare('INSERT INTO product_content(product_id,content) VALUES(?,?)').run(p.id,JSON.stringify(p.content));for(const v of p.variants)sql.prepare('INSERT INTO variants(id,product_id,size,stock,reported) VALUES(?,?,?,?,?)').run(v.id,p.id,v.size,0,v.reported)}})}
  return sql;

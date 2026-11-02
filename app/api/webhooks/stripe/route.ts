@@ -1,3 +1,4 @@
+import {scheduleEmailDelivery} from '@/lib/email-dispatch';
 import type Stripe from 'stripe';
 import {stripeClient} from '@/lib/stripe-client';
 import {stripeKeyMode} from '@/lib/stripe-config';
@@ -35,6 +36,7 @@ export async function POST(req: Request) {
             else if (session.payment_status === 'paid')
                 (await settlePayment(event.id, id, session.id, session.amount_total ?? -1, session.currency ?? '', session.collected_information?.shipping_details ? { name: session.collected_information.shipping_details.name, address: [session.collected_information.shipping_details.address.line1, session.collected_information.shipping_details.address.line2].filter(Boolean).join(', '), postal: session.collected_information.shipping_details.address.postal_code || '', city: session.collected_information.shipping_details.address.city || '', country: session.collected_information.shipping_details.address.country || '' } : undefined));
         }
+        scheduleEmailDelivery();
         return Response.json({ received: true });
     }
     catch (e) {

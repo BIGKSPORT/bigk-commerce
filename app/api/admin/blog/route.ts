@@ -1,0 +1,3 @@
+import {blogPosts,blogWrite,saveBlog} from '@/lib/blog';import {boundedText,checkOrigin,requireAdmin,failure,HttpError} from '@/lib/security';
+export const runtime='nodejs';export async function GET(req:Request){try{await requireAdmin(req);return Response.json({posts:await blogPosts(true)},{headers:{'Cache-Control':'no-store'}})}catch(e){return failure(e)}}
+export async function POST(req:Request){try{checkOrigin(req);await requireAdmin(req);const p=blogWrite.safeParse(JSON.parse(await boundedText(req,140000)));if(!p.success)throw new HttpError(400,p.error.issues[0].message);return Response.json({id:await saveBlog(p.data)})}catch(e){return failure(e)}}

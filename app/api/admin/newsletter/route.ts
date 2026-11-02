@@ -1,0 +1,1 @@
+import {newsletterSummary} from '@/lib/newsletter';import {requireAdmin,failure} from '@/lib/security';export async function GET(req:Request){try{await requireAdmin(req);return Response.json(await newsletterSummary(),{headers:{'Cache-Control':'no-store'}})}catch(e){return failure(e)}}

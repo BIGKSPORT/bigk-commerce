@@ -1,0 +1,1 @@
+import {SimpleHeader} from '@/components/simple-header';import NewsletterPreference from '@/components/newsletter-preference';export const metadata={title:'Newsletter preferences',robots:{index:false,follow:false},referrer:'no-referrer'};export default function Page(){return <><SimpleHeader/><NewsletterPreference action="unsubscribe"/></>}

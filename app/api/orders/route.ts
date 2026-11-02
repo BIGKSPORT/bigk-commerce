@@ -7,7 +7,7 @@ export async function GET(req: Request) { try {
     if (!(await verifyReceipt(id, value)))
         throw new HttpError(404, 'Order not found or receipt link is invalid.');
     const order = (await getOrder(id))!;
-    return Response.json({ id: order.id, status: order.status, subtotal: order.subtotal, shipping: order.shipping, total: order.total, createdAt: order.createdAt, tracking: order.tracking, items: order.items }, { headers: { 'Cache-Control': 'no-store' } });
+    return Response.json({ id: order.id, status: order.status, subtotal: order.subtotal, shipping: order.shipping, total: order.total, createdAt: order.createdAt, tracking: order.tracking, carrier:order.carrier,trackingUrl:order.trackingUrl, items: order.items }, { headers: { 'Cache-Control': 'no-store' } });
 }
 catch (e) {
     return failure(e);

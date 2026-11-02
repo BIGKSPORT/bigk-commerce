@@ -23,6 +23,8 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
       - run: node --import tsx tests/admin-mfa.test.ts
+      - run: node --import tsx tests/growth.test.ts
+      - run: node tests/growth-postgres.mjs
       - run: npm test
       - run: npm run test:launch-safety
       - run: npm run test:customers
@@ -39,6 +41,7 @@ jobs:
           BIGK_ARTIFACT_DIR="$RUNNER_TEMP/bigk-product-artifacts" npm run test:product-groups
           npm run test:auth-browser
           node tests/admin-mfa-browser.mjs
+          BIGK_ARTIFACT_DIR="$RUNNER_TEMP/bigk-product-artifacts" node tests/growth-browser.mjs
           BIGK_ARTIFACT_DIR="$RUNNER_TEMP/bigk-product-artifacts" npm run test:b10
           BIGK_ARTIFACT_DIR="$RUNNER_TEMP/bigk-product-artifacts" npm run test:account-confirm-browser
           BIGK_ARTIFACT_DIR="$RUNNER_TEMP/bigk-product-artifacts" npm run test:customers-browser

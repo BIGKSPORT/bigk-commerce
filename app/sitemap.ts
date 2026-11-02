@@ -1,3 +1,4 @@
+import {blogPosts} from '@/lib/blog';
 import {productGroups,sharedProducts} from '@/lib/product-groups';
 import {publicProducts} from '@/lib/catalog-view';
 import {hasAlpinTechnology} from '@/lib/alpin-technology';
@@ -22,5 +23,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const slug=p.group?.slug||p.slug;seen.add(slug);
     entries.push({url:seller.origin+'/products/'+encodeURIComponent(slug),changeFrequency:'weekly',priority:0.8});
   }
+  entries.push({url:seller.origin+'/blog',changeFrequency:'weekly',priority:0.6});for(const p of await blogPosts())entries.push({url:seller.origin+'/blog/'+p.slug,lastModified:new Date(p.updatedAt),priority:0.6});
   return entries;
 }
