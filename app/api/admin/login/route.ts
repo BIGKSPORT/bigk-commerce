@@ -11,7 +11,7 @@ export async function POST(req: Request) { try {
         throw new HttpError(503, 'Admin access is not configured.');
     const data = await body(req);
     if (!data || typeof data.password !== 'string' || data.password.length > 256 || !passwordMatches(data.password,configuredHash))
-        throw new HttpError(401, 'Incorrect password or authenticator code.');
+        throw new HttpError(401, mfaRequired()?'Incorrect password or authenticator code.':'Incorrect password.');
     const value = token();
     await transaction(async()=>{if(mfaRequired()){if(typeof data.code!=='string'||data.code.length>100)throw new HttpError(401,'Enter your authenticator code.');await checkSecondFactor(data.code.trim())}
     (await db().prepare('DELETE FROM sessions WHERE expires_at<?').run(new Date().toISOString()));
