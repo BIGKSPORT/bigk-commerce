@@ -29,7 +29,7 @@ export function postgresQuery(text: string) {
   let index = 0;
   let result = text.replace(/\?/g, () => '$' + (++index));
   result = result.replace(/\browid\b/g, 'position');
-  result = result.replace(/\b(FROM|INTO|UPDATE|JOIN)\s+(products|variants|orders|order_lines|webhook_events|sessions|rate_limits|audit|login_tokens|customer_sessions|email_outbox|club_members|club_orders|club_ledger|club_events|club_bookings|product_content|crm_customers|marketing_consents|marketing_campaigns|product_revisions|admin_credentials|admin_returns|media_assets|withdrawal_requests|warehouse_return_receipts|shipping_test_attempts)\b/g, '$1 '+databaseSchema()+'.$2');
+  result = result.replace(/\b(FROM|INTO|UPDATE|JOIN)\s+(admin_mfa|products|variants|orders|order_lines|webhook_events|sessions|rate_limits|audit|login_tokens|customer_sessions|email_outbox|club_members|club_orders|club_ledger|club_events|club_bookings|product_content|crm_customers|marketing_consents|marketing_campaigns|product_revisions|admin_credentials|admin_returns|media_assets|withdrawal_requests|warehouse_return_receipts|shipping_test_attempts)\b/g, '$1 '+databaseSchema()+'.$2');
   result = result.replace(/AS unitPrice\b/g, 'AS "unitPrice"').replace(/AS variantId\b/g, 'AS "variantId"');
   result = result.replace(/SET hits=hits\+1/g, 'SET hits=rate_limits.hits+1');
   if (/INSERT OR IGNORE INTO/.test(result)) result = result.replace('INSERT OR IGNORE INTO', 'INSERT INTO') + ' ON CONFLICT DO NOTHING';

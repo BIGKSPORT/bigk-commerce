@@ -7,7 +7,7 @@ import {shippingTestSchema} from './shipping-test-schema';
 import {withdrawalSchema} from './withdrawal-schema';
 import {warehouseReceiptSchema} from './warehouse-receipt-schema';
 import {mediaSchema} from './media-schema';
-import {backofficeSchema,productHistorySchema,adminCredentialSchema} from './backoffice-schema';
+import {backofficeSchema,productHistorySchema,adminCredentialSchema,adminMfaSchema} from './backoffice-schema';
 import {clubSchema} from './club-schema';
 import type { Product } from './types';
 let instance: DatabaseSync | undefined;
@@ -29,7 +29,7 @@ export function db(){
  PRAGMA user_version=1;`);
  sql.exec(shippingTestSchema);
  sql.exec(clubSchema);
- sql.exec(backofficeSchema);sql.exec(crmSchema);sql.exec(productHistorySchema);sql.exec(adminCredentialSchema);
+ sql.exec(backofficeSchema);sql.exec(crmSchema);sql.exec(productHistorySchema);sql.exec(adminCredentialSchema);sql.exec(adminMfaSchema);
  sql.exec(mediaSchema);
  sql.exec(withdrawalSchema);
  sql.exec(warehouseReceiptSchema);

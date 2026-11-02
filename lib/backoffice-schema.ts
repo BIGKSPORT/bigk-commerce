@@ -10,3 +10,5 @@ CREATE INDEX IF NOT EXISTS product_revisions_product ON product_revisions(produc
 export const adminCredentialSchema=`
 CREATE TABLE IF NOT EXISTS admin_credentials(id TEXT PRIMARY KEY,password_hash TEXT NOT NULL,recovery_hash TEXT NOT NULL,updated_at TEXT NOT NULL);
 `;
+
+export const adminMfaSchema=`CREATE TABLE IF NOT EXISTS admin_mfa(id TEXT PRIMARY KEY,secret_encrypted TEXT NOT NULL,last_counter BIGINT NOT NULL,backup_hashes TEXT NOT NULL,updated_at TEXT NOT NULL);`;
