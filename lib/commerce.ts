@@ -1,3 +1,4 @@
+import {alpinPublicProduct} from './alpin-fleece';
 import {stripeKeyMode} from './stripe-config';
 import {databaseSchema,isPostgres} from './database';
 import {clubConfig,reserveClubOrder,clubPayment} from './club';
@@ -45,7 +46,7 @@ export async function createOrder(input: CheckoutInput, verifiedEmail?:string) {
                 throw new HttpError(409, 'This checkout has ended. Start a new checkout.');
             return { id: previous.id, receiptToken: receipt(previous.id), reused: true };
         }
-        const ids = new Set<string>(), catalog = (await products());
+        const ids = new Set<string>(), catalog = (await products()).map(alpinPublicProduct);
         let subtotal = 0;
         const lines = input.items.map(line => { if (ids.has(line.variantId))
             throw new HttpError(400, 'Duplicate variant in bag.'); ids.add(line.variantId); const p = catalog.find(p => p.variants.some(v => v.id === line.variantId)), v = p?.variants.find(v => v.id === line.variantId); if (!p || !v || p.priceCents === null || p.priceCents <= 0)

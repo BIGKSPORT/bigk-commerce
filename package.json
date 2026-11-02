@@ -42,7 +42,7 @@
     "test:checkout-browser": "node tests/checkout-browser.mjs",
     "test:product-management": "node --import tsx tests/product-management.test.ts && node tests/product-management.mjs",
     "test:product-management-browser": "node tests/product-management-browser.mjs",
-    "test:alpin": "node --import tsx --test tests/alpin-technology.test.ts && node tests/alpin-technology-browser.mjs",
+    "test:alpin": "node --import tsx tests/alpin-technology.test.ts && node --import tsx tests/alpin-fleece.test.ts && node --import tsx tests/alpin-fleece-commerce.ts && node tests/alpin-fleece-browser.mjs",
     "test:alpin-vest": "node --import tsx --test tests/alpin-vest-technology.test.ts && node tests/alpin-vest-technology-browser.mjs",
     "test:nano-front": "node --import tsx --test tests/nano-technology.test.ts && node tests/nano-front-browser.mjs",
     "test:self-management": "node --import tsx --test tests/self-management-media.test.ts && node tests/self-management-browser.mjs",
@@ -51,7 +51,8 @@
     "test:account-confirm-browser": "node tests/account-confirm-browser.mjs",
     "test:customers": "node --import tsx tests/customer-marketing.test.ts && node tests/customer-marketing-postgres.mjs",
     "test:customers-browser": "node tests/customer-marketing-browser.mjs",
-    "test:b10": "node --import tsx tests/b10.test.ts && node tests/b10-browser.mjs"
+    "test:b10": "node --import tsx tests/b10.test.ts && node tests/b10-browser.mjs",
+    "test:care": "node --import tsx tests/care-instructions.test.tsx"
   },
   "dependencies": {
     "exceljs": "4.4.0",

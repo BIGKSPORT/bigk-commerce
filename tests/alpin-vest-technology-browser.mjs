@@ -12,9 +12,9 @@ try{
   const context=await browser.newContext({viewport:{width,height:1000}}),page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.goto(origin+'/products/alpine-gillet-p007');await page.getByRole('heading',{name:'Alpin Gillet',exact:true}).waitFor();
   const tech=page.locator('[data-alpin-vest-technology]');assert.equal(await tech.locator('article').count(),3);assert.equal(await page.locator('[data-alpin-technology]').count(),0);
-  for(const section of ['Technology & Construction','Construction & Layering','Materials & Fit','Size guide','Care'])await tech.getByRole('heading',{name:section,exact:true}).waitFor();
+  for(const section of ['Technology & Construction','Construction & Layering','Materials & Fit','Size guide'])await tech.getByRole('heading',{name:section,exact:true}).waitFor();
   for(const summary of ['Details','Material & care','Size & fit'])await page.locator('summary').filter({hasText:summary}).click();
-  const text=await page.locator('body').innerText();assert(!/[\u3400-\u9fff]/u.test(await page.locator('body').evaluate(e=>e.outerHTML)));assert(!/THUMB LOOP|thumb openings|cuffs|100% polyester|185 cm|78 kg|non-stretch|roomy fit|30°C/i.test(text));assert(text.includes('not included'));assert(text.includes('€133.90'));
+  const text=await page.locator('body').innerText();assert(!/[\u3400-\u9fff]/u.test(await page.locator('body').evaluate(e=>e.outerHTML)));assert(!/THUMB LOOP|thumb openings|cuffs|100% polyester|185 cm|78 kg|non-stretch|roomy fit/i.test(text));assert(text.includes('not included'));assert(text.includes('€133.90'));
   for(const img of await tech.locator('img').all()){await img.scrollIntoViewIfNeeded();await img.evaluate(el=>el.decode());assert(await img.evaluate(el=>el.naturalWidth>0))}
   const cards=tech.locator('article');const third=await cards.nth(2).boundingBox(),first=await cards.nth(0).boundingBox();if(width===1440)assert(third.width>first.width*1.9);
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
@@ -22,6 +22,7 @@ try{
   await page.evaluate(()=>scrollTo(0,0));await page.screenshot({path:join(artifacts,'alpin-vest-'+width+'.png'),fullPage:true});
   await page.getByRole('button',{name:'S',exact:true}).first().click();await page.getByRole('button',{name:'Add to demo bag',exact:true}).click();await page.getByRole('heading',{name:'Your bag (1)',exact:true}).waitFor();
   let bag=await page.evaluate(()=>JSON.parse(localStorage.getItem('bigk-bag-v2')||'[]'));assert.equal(bag[0].quantity,1);assert(bag[0].variantId.startsWith('P007'));await page.reload();bag=await page.evaluate(()=>JSON.parse(localStorage.getItem('bigk-bag-v2')||'[]'));assert.equal(bag[0].quantity,1);
+  assert.equal(await page.locator('#care-instructions [data-care-symbol]').count(),5);
   assert.deepEqual(errors,[]);await context.close();console.log('PASS '+width+'px: vest-specific three-card layout, source images, no Chinese or fleece-only specs, separate base layer, actual size/bag persistence.');
  }
 }catch(e){console.error(output.slice(-2000));throw e}finally{await browser?.close();if(server&&server.exitCode===null){const stopped=new Promise(resolve=>server.once('exit',resolve));server.kill();await stopped}await rm(dir,{recursive:true,force:true})}
