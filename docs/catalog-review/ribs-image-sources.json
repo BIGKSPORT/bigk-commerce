@@ -55,6 +55,27 @@
       "driveId": "14tEnNAE-IeVnklQT1B38ULHF3cM0K5y4",
       "path": "/products/ribs/medium-red-main.webp",
       "bytes": 51252
+    },
+    {
+      "key": "low-red-side",
+      "driveId": "1FUfJNBV1p3jOllY1qTwgRjA4MK-nK9Ln",
+      "path": "/products/ribs/low-red-side.webp",
+      "bytes": 83238,
+      "review": "Visually verified red low-cut sock, clean original photography, no text overlays."
+    },
+    {
+      "key": "low-red-angle",
+      "driveId": "1xd2KYyGfmUO2zpZq284hoj2pGQL5Ro11",
+      "path": "/products/ribs/low-red-angle.webp",
+      "bytes": 80264,
+      "review": "Visually verified red low-cut sock, clean original photography, no text overlays."
+    },
+    {
+      "key": "low-red-front",
+      "driveId": "1tgkdmuFFzpk_CGLsBI-o1butJTmzIudb",
+      "path": "/products/ribs/low-red-front.webp",
+      "bytes": 66858,
+      "review": "Visually verified red low-cut sock, clean original photography, no text overlays."
     }
   ]
 }

@@ -339,3 +339,22 @@
 .series-brand{min-height:164px}.series-brand-art{height:102px}.series-brand-alpin .series-brand-art img{width:132px;height:132px;max-height:132px}@media(max-width:650px){.series-brand{min-height:144px}.series-brand-art{height:88px}.series-brand-alpin .series-brand-art img{width:112px;height:112px;max-height:112px}}
 .series-brand{background:#fff}
 .series-discovery-heading>a{display:inline-flex;align-items:center;gap:8px}
+
+/* Compact desktop PDP: one full-size photo, a thumbnail rail and adjacent details. */
+@media(min-width:761px){
+ .pdp-shell{max-width:1360px;--pdp-gallery-height:min(540px,calc(100svh - 460px));padding-bottom:48px}
+ .pdp-detail{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(300px,.88fr);gap:48px;align-items:start;isolation:auto}
+ .pdp-detail>.product-gallery,.pdp-detail>.gallery-pending{position:sticky;top:120px;height:auto;min-width:0;z-index:auto}
+ .pdp-detail>.product-gallery,.pdp-detail>.product-gallery:not(:has(.gallery-thumbnails)){display:grid;grid-template-columns:minmax(0,1fr);gap:10px;background:transparent}
+ .pdp-detail .gallery-stage{grid-column:1;grid-row:1;width:100%}
+ .pdp-detail .gallery-window.detail-image{width:100%;height:var(--pdp-gallery-height);min-height:300px;max-height:620px;aspect-ratio:auto}
+ .pdp-detail .gallery-enlarge,.pdp-detail .gallery-track,.pdp-detail .gallery-slide{height:100%;width:100%}
+ .pdp-detail .gallery-slide>img{width:100%;height:100%;object-fit:contain}
+ .pdp-detail .gallery-thumbnails{grid-column:1;grid-row:2;display:flex;flex-direction:row;gap:8px;width:100%;max-width:100%;height:82px;max-height:82px!important;overflow-x:auto;overflow-y:hidden;padding:2px;margin:0}
+ .pdp-detail .gallery-thumbnails button{flex:0 0 62px;width:62px;height:76px}
+ .pdp-detail>.detail-info{position:static;top:auto;z-index:auto;margin:0;padding:0;background:#fff;border:0;border-radius:0;box-shadow:none;min-height:0;overflow-wrap:anywhere}
+ .pdp-detail>.detail-info::before{display:none}
+ .pdp-detail>.gallery-pending{height:var(--pdp-gallery-height);min-height:300px}
+ .pdp-detail .detail-info h1{font-size:32px}
+}
+@media(min-width:761px) and (max-width:1000px){.pdp-detail{gap:26px;grid-template-columns:minmax(0,1fr) minmax(280px,.9fr)}}
