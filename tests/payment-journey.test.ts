@@ -36,7 +36,8 @@ globalThis.fetch=async(input,init)=>{
  if(url.origin==='https://api.resend.com'){mails.push(JSON.parse(String(init?.body)));return Response.json({id:'local_fixture_email'});}
  throw Error('Unexpected provider request blocked in isolated test');
 };
-const fixtureProduct=(await products()).find(p=>p.priceCents&&p.images.length)!;
+const fixtureProduct=(await products()).find(p=>p.id==='P001')!;
+const expectedProductName='Alpin Fleece';
 const variant=fixtureProduct.variants[0];
 await db().prepare('UPDATE products SET approved=1,active=1 WHERE id=?').run(fixtureProduct.id);
 await db().prepare('UPDATE variants SET stock=20,reserved=0 WHERE id=?').run(variant.id);
@@ -65,7 +66,7 @@ await test('isolated complete checkout → webhook → inventory → backoffice 
  });
  await t.test('server prices reach Stripe; duplicate checkout reuses one session and reservation',async()=>{
   const input=payload(),r=await checkout(req('/api/checkout',input));assert.equal(r.status,200);created=await r.json();order=await getOrder(created.id);
-  assert.equal(order.status,'pending');assert.equal(order.items[0].unitPrice,fixtureProduct.priceCents);assert.equal((await inventory())!.reserved,1);
+  assert.equal(order.status,'pending');assert.equal(order.items[0].name,expectedProductName);assert.equal(order.items[0].unitPrice,fixtureProduct.priceCents);assert.equal((await inventory())!.reserved,1);
   const params=payloads[0];assert.equal(Number(params.get('line_items[0][price_data][unit_amount]')),fixtureProduct.priceCents);
   assert.equal(params.get('adaptive_pricing[enabled]'),'false');assert.equal(params.get('automatic_tax[enabled]'),'true');assert.equal(params.get('metadata[orderId]'),order.id);assert.equal(params.get('payment_method_types[0]'),null);
   assert.equal(params.get('success_url'),origin+'/order#'+created.id+'.'+created.receiptToken);
@@ -97,7 +98,7 @@ await test('isolated complete checkout → webhook → inventory → backoffice 
  await t.test('confirmation content is verified through a mocked approved test inbox only',async()=>{
   process.env.EMAIL_DELIVERY_ENABLED='true';process.env.EMAIL_TEST_RECIPIENT='other@example.test';assert.equal((await deliverEmails()).sent,0);assert.equal(mails.length,0);
   process.env.EMAIL_TEST_RECIPIENT='buyer@example.test';assert.equal((await deliverEmails()).sent,1);assert.equal(mails.length,1);
-  assert.equal(mails[0].to,'buyer@example.test');assert(mails[0].text.includes(fixtureProduct.name));assert(mails[0].text.includes('Total: '+money(order.total)));assert(mails[0].text.includes('Delivery: '+money(order.shipping)));assert(!mails[0].text.includes(created.receiptToken));
+  assert.equal(mails[0].to,'buyer@example.test');assert(mails[0].text.includes(expectedProductName));assert(mails[0].text.includes(order.items[0].name));assert(mails[0].text.includes('Total: '+money(order.total)));assert(mails[0].text.includes('Delivery: '+money(order.shipping)));assert(!mails[0].text.includes(created.receiptToken));
   assert.equal((await deliverEmails()).sent,0);assert.equal(mails.length,1);process.env.EMAIL_DELIVERY_ENABLED='false';
  });
  await t.test('cancelled and expired payments release reservations without affecting paid inventory',async()=>{
