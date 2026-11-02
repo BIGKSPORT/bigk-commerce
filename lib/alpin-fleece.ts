@@ -1,3 +1,4 @@
+import {parseSizeTable} from './product-presentation';
 import {careCopy,careSymbols} from './i18n/care';
 import type {Product} from './types';
 import type {Locale} from './i18n/config';
@@ -45,12 +46,14 @@ export function alpinMappingIssues(products:Product[]) {
   for(const p of family)if(alpinArticle(p)! in gtins&&p.priceCents!==14690)issues.push(`Price conflict for ${p.id}: stored ${p.priceCents}; owner supplied 14690 cents.`);
   return issues;
 }
+/** Preserve stored historical charts while excluding unoffered XS from the public fleece size guide. */
+export function alpinPublicSizeTable(table:string){const rows=parseSizeTable(table);if(!rows.length)return table;const excluded=new Set(rows[0].map((cell,index)=>cell.trim().toUpperCase()==='XS'?index:-1).filter(index=>index>=0));return rows.filter(row=>row[0]?.trim().toUpperCase()!=='XS').map(row=>row.filter((_,index)=>!excluded.has(index)).join('\t')).join('\n')}
 /** Exact owner-approved name, prose and mappings. Prices and inventory remain database values. */
 export function alpinPublicProduct(product:Product):Product {
   if(!hasAlpinTechnology(product))return product;
   const mapping=alpinVariantMapping(product),identifiers={...product.content?.trade?.identifiers};
   for(const v of mapping){const current=identifiers[v.id];identifiers[v.id]={...current,sku:v.sku,gtin:current?.gtin||v.gtin,colour:v.colour,supplierArticle:v.article};}
-  return {...product,name:alpinName,description:product.content?.translations?.en?.description||copy.en.shortDescription,variants:product.variants.filter(v=>mapping.some(m=>m.id===v.id)),content:{...product.content,details:product.content?.translations?.en?.details||copy.en.paragraphs.join('\n\n'),composition:product.content?.translations?.en?.composition||'Main fabric: 100% polyester',fit:product.content?.translations?.en?.fit||'Roomy. Non-stretch main fabric. Model: 185 cm, 78 kg, XL.',care:careSymbols.map(symbol=>careCopy.en.instructions[symbol]).join(' · ')+' '+careCopy.en.advice,trade:{...product.content?.trade,colour:alpinProductColour(product),identifiers}}};
+  return {...product,name:alpinName,description:product.content?.translations?.en?.description||copy.en.shortDescription,variants:product.variants.filter(v=>mapping.some(m=>m.id===v.id)),content:{...product.content,presentation:product.content?.presentation?{...product.content.presentation,sizeTable:alpinPublicSizeTable(product.content.presentation.sizeTable)}:undefined,details:product.content?.translations?.en?.details||copy.en.paragraphs.join('\n\n'),composition:product.content?.translations?.en?.composition||'Main fabric: 100% polyester',fit:product.content?.translations?.en?.fit||'Roomy. Non-stretch main fabric. Model: 185 cm, 78 kg, XL.',care:careSymbols.map(symbol=>careCopy.en.instructions[symbol]).join(' · ')+' '+careCopy.en.advice,trade:{...product.content?.trade,colour:alpinProductColour(product),identifiers}}};
 }
 export function alpinCopy(locale:AlpinLocale){return copy[locale]}
 export function alpinVariantUrl(locale:AlpinLocale,article:string,size?:string) {

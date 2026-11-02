@@ -2,7 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import type {Product} from '../lib/types';
-import {alpinPublicProduct,alpinMappingIssues,alpinVariantMapping,alpinSize,alpinCopy,alpinPaths,alpinLocales} from '../lib/alpin-fleece';
+import {alpinPublicProduct,alpinPublicSizeTable,alpinMappingIssues,alpinVariantMapping,alpinSize,alpinCopy,alpinPaths,alpinLocales} from '../lib/alpin-fleece';
 import {alpinMetadata,alpinStructuredData} from '../lib/alpin-fleece-seo';
 const data=JSON.parse(readFileSync('docs/catalog-review/alpin-fleece-pro-review.json','utf8'));
 const family:Product[]=data.colours.map((colour:any)=>({id:colour.productId,code:colour.code,name:'Alpin Fleece Pro',slug:colour.productId,version:1,description:colour.colour,active:true,approved:true,featured:false,category:'Fleece',priceCents:14690,images:colour.images.map((i:any)=>i.webPath),tags:[],variants:colour.variants.map((v:any,i:number)=>({id:colour.productId+'-'+i,size:alpinSize(v.size),stock:v.receivedMaster,reserved:i===0?1:0,reported:null}))}));
@@ -24,3 +24,5 @@ test('all languages share product identity and twelve live stock-based offers, c
  const out=structuredClone(family);out[0].variants[0].reserved=out[0].variants[0].stock;assert.equal((alpinStructuredData('en',out)['@graph'][0] as any).hasVariant[0].offers.availability,'https://schema.org/OutOfStock');
 });
 test('vest and other garments stay untouched',()=>{const vest={...family[0],id:'P007',code:'25303202',name:'Alpin Vest Pro'};assert.equal(alpinPublicProduct(vest),vest)});
+
+test('editable fleece size charts exclude historical XS in either orientation without changing other garments or stored source',()=>{const source='Size\tXS\tS\tM\nChest\t94\t100\t106';assert.equal(alpinPublicSizeTable(source),'Size\tS\tM\nChest\t100\t106');assert.equal(source.includes('XS'),true);assert.equal(alpinPublicSizeTable('Size\tChest\nXS\t94\nS\t100'),'Size\tChest\nS\t100')});
