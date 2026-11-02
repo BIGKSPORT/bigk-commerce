@@ -1,0 +1,60 @@
+{
+  "folder": "https://drive.google.com/drive/folders/14m_PSJK3mfUukxtyyXh7CbDWoFbLTfR5",
+  "review": "Visually checked for correct Low/Medium height and colour. Customer gallery uses only images without Chinese text. Original filenames remain internal.",
+  "images": [
+    {
+      "key": "low-white",
+      "driveId": "1bfAL1BiAouBTPzH-zS3R2QStnncjQte8",
+      "path": "/products/ribs/low-white.webp",
+      "bytes": 33366
+    },
+    {
+      "key": "low-black",
+      "driveId": "16EfkYYws5TYL6qA50lvmP_fxZ2yr8O_4",
+      "path": "/products/ribs/low-black.webp",
+      "bytes": 31816
+    },
+    {
+      "key": "low-red",
+      "driveId": "1sHM6WjCqpHGknm2CV_ViNrCetFpcHYiN",
+      "path": "/products/ribs/low-red.webp",
+      "bytes": 33692
+    },
+    {
+      "key": "medium-white-sku",
+      "driveId": "1zCzb_cK4H_U6htvxaXqmNxS1UqrkBToY",
+      "path": "/products/ribs/medium-white.webp",
+      "bytes": 37048
+    },
+    {
+      "key": "medium-black-sku",
+      "driveId": "1-cH0NZ07rc3Nyf9cEifVqlzLM4jI6Grk",
+      "path": "/products/ribs/medium-black.webp",
+      "bytes": 31530
+    },
+    {
+      "key": "medium-red-sku",
+      "driveId": "1tcq1Vggo0O2uxlfxLgI4njha23EDQ_4j",
+      "path": "/products/ribs/medium-red.webp",
+      "bytes": 39204
+    },
+    {
+      "key": "medium-white-main",
+      "driveId": "1z6ylx4sditGlesuBajH2Tg0Xgt9F7biN",
+      "path": "/products/ribs/medium-white-main.webp",
+      "bytes": 48494
+    },
+    {
+      "key": "medium-black-main",
+      "driveId": "1lTcQOfcdMt-h5GR1riOK98aGAXMGwXkO",
+      "path": "/products/ribs/medium-black-main.webp",
+      "bytes": 43856
+    },
+    {
+      "key": "medium-red-main",
+      "driveId": "14tEnNAE-IeVnklQT1B38ULHF3cM0K5y4",
+      "path": "/products/ribs/medium-red-main.webp",
+      "bytes": 51252
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+import {products} from '@/lib/db';
+import {productGroups,sharedProducts} from '@/lib/product-groups';
+import {groupEditSchema,newColourSchema,archiveColourSchema,saveSharedProduct,addProductColour,archiveProductColour} from '@/lib/admin-product-groups';
+import {checkOrigin,requireAdmin,boundedText,failure,HttpError} from '@/lib/security';
+import {invalidProductResponse} from '@/lib/product-validation';
+export async function GET(req:Request){try{await requireAdmin(req);const catalog=await products();return Response.json({groups:productGroups(catalog,true),effectiveProducts:sharedProducts(catalog)},{headers:{'Cache-Control':'no-store'}})}catch(error){return failure(error)}}
+export async function PATCH(req:Request){try{checkOrigin(req);await requireAdmin(req);const raw=JSON.parse(await boundedText(req,262144));if(raw.action==='archive-colour'){const {action,...data}=raw;const parsed=archiveColourSchema.safeParse(data);if(!parsed.success)return invalidProductResponse(parsed.error);await archiveProductColour(parsed.data);}else{const parsed=groupEditSchema.safeParse(raw);if(!parsed.success)return invalidProductResponse(parsed.error);await saveSharedProduct(parsed.data);}return Response.json({ok:true})}catch(error){return failure(error)}}
+export async function POST(req:Request){try{checkOrigin(req);await requireAdmin(req);const parsed=newColourSchema.safeParse(JSON.parse(await boundedText(req,262144)));if(!parsed.success)return invalidProductResponse(parsed.error);const id=await addProductColour(parsed.data);return Response.json({id},{status:201})}catch(error){return failure(error)}}

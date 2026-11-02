@@ -1,0 +1,144 @@
+{
+  "source": "https://drive.google.com/file/d/1lWC-tcSEy3OZRJyXr-ySnsx_QGEqrjYZ/view",
+  "file": "RIBS_Order.xlsx",
+  "quantityColumn": "Qty",
+  "quantityMeaning": "Order quantity; not a confirmed current physical stock count.",
+  "rows": [
+    {
+      "year": 2024,
+      "article": "24309002",
+      "name": "RIBS LOW SOCKS",
+      "size": "35-39",
+      "ean": "6957919554282",
+      "orderedQuantity": 100
+    },
+    {
+      "year": 2024,
+      "article": "24309002",
+      "name": "RIBS LOW SOCKS",
+      "size": "40-43",
+      "ean": "6957919554299",
+      "orderedQuantity": 100
+    },
+    {
+      "year": 2024,
+      "article": "24309100",
+      "name": "RIBS MEDIUM SOCKS",
+      "size": "35-39",
+      "ean": "6957919554305",
+      "orderedQuantity": 100
+    },
+    {
+      "year": 2024,
+      "article": "24309100",
+      "name": "RIBS MEDIUM SOCKS",
+      "size": "40-43",
+      "ean": "6957919554312",
+      "orderedQuantity": 100
+    },
+    {
+      "year": 2024,
+      "article": "24309000",
+      "name": "RIBS LOW SOCKS",
+      "size": "35-39",
+      "ean": "6957919554244",
+      "orderedQuantity": 100
+    },
+    {
+      "year": 2024,
+      "article": "24309000",
+      "name": "RIBS LOW SOCKS",
+      "size": "40-43",
+      "ean": "6957919554251",
+      "orderedQuantity": 100
+    },
+    {
+      "year": 2024,
+      "article": "24309101",
+      "name": "RIBS MEDIUM SOCKS",
+      "size": "35-39",
+      "ean": "6957919554329",
+      "orderedQuantity": 100
+    },
+    {
+      "year": 2024,
+      "article": "24309101",
+      "name": "RIBS MEDIUM SOCKS",
+      "size": "40-43",
+      "ean": "6957919554336",
+      "orderedQuantity": 100
+    },
+    {
+      "year": 2024,
+      "article": "24309200",
+      "name": "RIBS LONG SOCKS",
+      "size": "35-39",
+      "ean": "6957919554367",
+      "orderedQuantity": 100
+    },
+    {
+      "year": 2024,
+      "article": "24309200",
+      "name": "RIBS LONG SOCKS",
+      "size": "40-43",
+      "ean": "6957919554374",
+      "orderedQuantity": 100
+    },
+    {
+      "year": 2024,
+      "article": "24309201",
+      "name": "RIBS LONG SOCKS",
+      "size": "40-43",
+      "ean": "6957919554398",
+      "orderedQuantity": 100
+    },
+    {
+      "year": 2024,
+      "article": "24309102",
+      "name": "RIBS MEDIUM SOCKS",
+      "size": "35-39",
+      "ean": "6957919554343",
+      "orderedQuantity": 100
+    },
+    {
+      "year": 2024,
+      "article": "24309102",
+      "name": "RIBS MEDIUM SOCKS",
+      "size": "40-43",
+      "ean": "6957919554350",
+      "orderedQuantity": 100
+    },
+    {
+      "year": 2024,
+      "article": "24309202",
+      "name": "RIBS LONG SOCKS",
+      "size": "35-39",
+      "ean": "6957919554404",
+      "orderedQuantity": 100
+    },
+    {
+      "year": 2024,
+      "article": "24309202",
+      "name": "RIBS LONG SOCKS",
+      "size": "40-43",
+      "ean": "6957919554411",
+      "orderedQuantity": 100
+    },
+    {
+      "year": 2024,
+      "article": "24309001",
+      "name": "RIBS LOW SOCKS",
+      "size": "35-39",
+      "ean": "6957919554268",
+      "orderedQuantity": 100
+    },
+    {
+      "year": 2024,
+      "article": "24309001",
+      "name": "RIBS LOW SOCKS",
+      "size": "40-43",
+      "ean": "6957919554275",
+      "orderedQuantity": 100
+    }
+  ]
+}

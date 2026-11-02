@@ -1,3 +1,4 @@
+import {sharedProducts} from '@/lib/product-groups';
 import {suggestMapping,mappedRows,supplierPlan,defaultImportOptions} from '@/lib/supplier-import';
 import {z} from 'zod';
 import ExcelJS from 'exceljs';
@@ -6,7 +7,7 @@ import {visibleProducts} from '@/lib/catalog-view';
 import {columns,exportRows,writeCsv,readCsvMatrix,rowsToRecords,importPlan,applyProductBatch} from '@/lib/catalog-files';
 import {checkOrigin,failure,HttpError,requireAdmin} from '@/lib/security';
 export const runtime='nodejs';
-export async function GET(req:Request){try{await requireAdmin(req);const params=new URL(req.url).searchParams,ids=params.get('ids')?.split(','),catalog=visibleProducts(await products()).filter(p=>!ids||ids.includes(p.id)),template=params.get('template')==='1',rows=template?[]:exportRows(catalog),selectedColumns=template?columns.filter(c=>!['productId','variantId','version','priceCents','approved','active','images','verified','archived'].includes(c)).concat([]) as string[]:[...columns],xlsx=params.get('format')==='xlsx';let data:Buffer;if(template)selectedColumns.push('priceEUR');
+export async function GET(req:Request){try{await requireAdmin(req);const params=new URL(req.url).searchParams,ids=params.get('ids')?.split(','),catalog=visibleProducts(sharedProducts(await products())).filter(p=>!ids||ids.includes(p.id)),template=params.get('template')==='1',rows=template?[]:exportRows(catalog),selectedColumns=template?columns.filter(c=>!['productId','variantId','version','priceCents','approved','active','images','verified','archived'].includes(c)).concat([]) as string[]:[...columns],xlsx=params.get('format')==='xlsx';let data:Buffer;if(template)selectedColumns.push('priceEUR');
  if(xlsx){const book=new ExcelJS.Workbook(),sheet=book.addWorksheet('Products');sheet.addRow(selectedColumns);for(const row of rows)sheet.addRow(selectedColumns.map(key=>(row as Record<string,string>)[key]||''));sheet.views=[{state:'frozen',ySplit:1}];sheet.columns.forEach(column=>{column.width=24});data=Buffer.from(await book.xlsx.writeBuffer())}else data=Buffer.from(template?'\uFEFF'+selectedColumns.join(',')+'\r\n':writeCsv(rows));
  return Response.json({filename:(template?'bigk-import-template.':'bigk-products.')+(xlsx?'xlsx':'csv'),mime:xlsx?'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':'text/csv;charset=utf-8',data:data.toString('base64')},{headers:{'Cache-Control':'no-store'}})}catch(e){return failure(e)}}
 // Reject oversized ZIP expansion before handing an authenticated upload to the workbook reader.

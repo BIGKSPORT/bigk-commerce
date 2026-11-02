@@ -1,0 +1,101 @@
+{
+  "source": "Latest owner-corrected catalogue screenshot, 2026-11-02; exact name ALPIN HOOD GILLET supersedes earlier screenshot",
+  "productName": "ALPIN HOOD GILLET",
+  "priceCents": 6690,
+  "currency": "EUR",
+  "stockPolicy": "Preserve recorded stock; no quantities supplied in this evidence. New variants remain unavailable pending stock confirmation.",
+  "photoPolicy": "Illustrations confirm colour blocking; they are not verified product photographs.",
+  "colours": [
+    {
+      "article": "25301701",
+      "colour": "Black",
+      "variants": [
+        {
+          "size": "S",
+          "ean": "6957919562706"
+        },
+        {
+          "size": "M",
+          "ean": "6957919562713"
+        },
+        {
+          "size": "L",
+          "ean": "6957919562720"
+        },
+        {
+          "size": "XL",
+          "ean": "6957919562737"
+        },
+        {
+          "size": "XXL",
+          "ean": "6957919562744"
+        },
+        {
+          "size": "XXXL",
+          "ean": "6957919562751"
+        }
+      ]
+    },
+    {
+      "article": "25301702",
+      "colour": "Cream",
+      "variants": [
+        {
+          "size": "S",
+          "ean": "6957919562775"
+        },
+        {
+          "size": "M",
+          "ean": "6957919562782"
+        },
+        {
+          "size": "L",
+          "ean": "6957919562799"
+        },
+        {
+          "size": "XL",
+          "ean": "6957919562805"
+        },
+        {
+          "size": "XXL",
+          "ean": "6957919562812"
+        },
+        {
+          "size": "XXXL",
+          "ean": "6957919562829"
+        }
+      ]
+    },
+    {
+      "article": "25301703",
+      "colour": "Dusty Blue",
+      "variants": [
+        {
+          "size": "S",
+          "ean": "6957919562843"
+        },
+        {
+          "size": "M",
+          "ean": "6957919562850"
+        },
+        {
+          "size": "L",
+          "ean": "6957919562867"
+        },
+        {
+          "size": "XL",
+          "ean": "6957919562874"
+        },
+        {
+          "size": "XXL",
+          "ean": "6957919562881"
+        },
+        {
+          "size": "XXXL",
+          "ean": "6957919562898"
+        }
+      ]
+    }
+  ],
+  "construction": "Hooded; sleeveless; distinct from stand-collar 253032xx"
+}

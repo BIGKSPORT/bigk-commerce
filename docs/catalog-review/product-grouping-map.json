@@ -1,0 +1,2050 @@
+{
+  "date": "2026-11-02",
+  "environment": "bigk_staging",
+  "styles": 20,
+  "colours": 38,
+  "variants": 190,
+  "physicalStock": 9824,
+  "groups": [
+    {
+      "id": "P001",
+      "name": "Alpin Fleece",
+      "slug": "apline-fleece-p001",
+      "colours": [
+        {
+          "id": "P001",
+          "recordId": "P001",
+          "article": "25303101",
+          "colour": "Black",
+          "priceCents": 14690,
+          "images": 6,
+          "sizes": [
+            {
+              "id": "P001-0",
+              "size": "S",
+              "ean": "6957919564755",
+              "sku": "25303101-S",
+              "stock": 20,
+              "reserved": 0
+            },
+            {
+              "id": "P001-1",
+              "size": "M",
+              "ean": "6957919564762",
+              "sku": "25303101-M",
+              "stock": 60,
+              "reserved": 0
+            },
+            {
+              "id": "P001-2",
+              "size": "L",
+              "ean": "6957919564779",
+              "sku": "25303101-L",
+              "stock": 60,
+              "reserved": 0
+            },
+            {
+              "id": "P001-3",
+              "size": "XL",
+              "ean": "6957919564786",
+              "sku": "25303101-XL",
+              "stock": 50,
+              "reserved": 0
+            },
+            {
+              "id": "P001-4",
+              "size": "XXL",
+              "ean": "6957919564793",
+              "sku": "25303101-XXL",
+              "stock": 25,
+              "reserved": 0
+            },
+            {
+              "id": "P001-5",
+              "size": "XXXL",
+              "ean": "6957919564809",
+              "sku": "25303101-XXXL",
+              "stock": 9,
+              "reserved": 0
+            }
+          ]
+        },
+        {
+          "id": "P002",
+          "recordId": "P002",
+          "article": "25303102",
+          "colour": "Dusty Blue",
+          "priceCents": 14690,
+          "images": 10,
+          "sizes": [
+            {
+              "id": "P002-0",
+              "size": "S",
+              "ean": "6957919564823",
+              "sku": "25303102-S",
+              "stock": 20,
+              "reserved": 0
+            },
+            {
+              "id": "P002-1",
+              "size": "M",
+              "ean": "6957919564830",
+              "sku": "25303102-M",
+              "stock": 60,
+              "reserved": 0
+            },
+            {
+              "id": "P002-2",
+              "size": "L",
+              "ean": "6957919564847",
+              "sku": "25303102-L",
+              "stock": 62,
+              "reserved": 0
+            },
+            {
+              "id": "P002-3",
+              "size": "XL",
+              "ean": "6957919564854",
+              "sku": "25303102-XL",
+              "stock": 50,
+              "reserved": 0
+            },
+            {
+              "id": "P002-4",
+              "size": "XXL",
+              "ean": "6957919564861",
+              "sku": "25303102-XXL",
+              "stock": 30,
+              "reserved": 0
+            },
+            {
+              "id": "P002-5",
+              "size": "XXXL",
+              "ean": "6957919564878",
+              "sku": "25303102-XXXL",
+              "stock": 10,
+              "reserved": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "P003",
+      "name": "Core.2",
+      "slug": "core-2-p003",
+      "colours": [
+        {
+          "id": "P003",
+          "recordId": "P003",
+          "article": "25301801",
+          "colour": "Black",
+          "priceCents": 6690,
+          "images": 0,
+          "sizes": [
+            {
+              "id": "P003-0",
+              "size": "S",
+              "ean": null,
+              "sku": null,
+              "stock": 90,
+              "reserved": 0
+            },
+            {
+              "id": "P003-1",
+              "size": "M",
+              "ean": null,
+              "sku": null,
+              "stock": 80,
+              "reserved": 0
+            },
+            {
+              "id": "P003-2",
+              "size": "L",
+              "ean": null,
+              "sku": null,
+              "stock": 80,
+              "reserved": 0
+            },
+            {
+              "id": "P003-3",
+              "size": "XL",
+              "ean": null,
+              "sku": null,
+              "stock": 50,
+              "reserved": 0
+            },
+            {
+              "id": "P003-4",
+              "size": "XXL",
+              "ean": null,
+              "sku": null,
+              "stock": 50,
+              "reserved": 0
+            },
+            {
+              "id": "P003-5",
+              "size": "XXXL",
+              "ean": null,
+              "sku": null,
+              "stock": 20,
+              "reserved": 0
+            }
+          ]
+        },
+        {
+          "id": "P004",
+          "recordId": "P004",
+          "article": "25301802",
+          "colour": "Dusty Blue",
+          "priceCents": 6690,
+          "images": 6,
+          "sizes": [
+            {
+              "id": "P004-0",
+              "size": "S",
+              "ean": null,
+              "sku": null,
+              "stock": 90,
+              "reserved": 0
+            },
+            {
+              "id": "P004-1",
+              "size": "M",
+              "ean": null,
+              "sku": null,
+              "stock": 80,
+              "reserved": 0
+            },
+            {
+              "id": "P004-2",
+              "size": "L",
+              "ean": null,
+              "sku": null,
+              "stock": 80,
+              "reserved": 0
+            },
+            {
+              "id": "P004-3",
+              "size": "XL",
+              "ean": null,
+              "sku": null,
+              "stock": 50,
+              "reserved": 0
+            },
+            {
+              "id": "P004-4",
+              "size": "XXL",
+              "ean": null,
+              "sku": null,
+              "stock": 50,
+              "reserved": 0
+            },
+            {
+              "id": "P004-5",
+              "size": "XXXL",
+              "ean": null,
+              "sku": null,
+              "stock": 20,
+              "reserved": 0
+            }
+          ]
+        },
+        {
+          "id": "P005",
+          "recordId": "P005",
+          "article": "25301803",
+          "colour": "Cream",
+          "priceCents": 6690,
+          "images": 0,
+          "sizes": [
+            {
+              "id": "P005-0",
+              "size": "S",
+              "ean": null,
+              "sku": null,
+              "stock": 80,
+              "reserved": 0
+            },
+            {
+              "id": "P005-1",
+              "size": "M",
+              "ean": null,
+              "sku": null,
+              "stock": 100,
+              "reserved": 0
+            },
+            {
+              "id": "P005-2",
+              "size": "L",
+              "ean": null,
+              "sku": null,
+              "stock": 60,
+              "reserved": 0
+            },
+            {
+              "id": "P005-3",
+              "size": "XL",
+              "ean": null,
+              "sku": null,
+              "stock": 80,
+              "reserved": 0
+            },
+            {
+              "id": "P005-4",
+              "size": "XXL",
+              "ean": null,
+              "sku": null,
+              "stock": 50,
+              "reserved": 0
+            },
+            {
+              "id": "P005-5",
+              "size": "XXXL",
+              "ean": null,
+              "sku": null,
+              "stock": 20,
+              "reserved": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "P006",
+      "name": "ALPIN VEST",
+      "slug": "alpine-gillet-p006",
+      "colours": [
+        {
+          "id": "P006",
+          "recordId": "P006",
+          "article": "25303201",
+          "colour": "Black",
+          "priceCents": 13390,
+          "images": 0,
+          "sizes": [
+            {
+              "id": "P006-0",
+              "size": "S",
+              "ean": "6957919564892",
+              "sku": "25303201-S",
+              "stock": 20,
+              "reserved": 0
+            },
+            {
+              "id": "P006-1",
+              "size": "M",
+              "ean": "6957919564908",
+              "sku": "25303201-M",
+              "stock": 59,
+              "reserved": 0
+            },
+            {
+              "id": "P006-2",
+              "size": "L",
+              "ean": "6957919564915",
+              "sku": "25303201-L",
+              "stock": 60,
+              "reserved": 0
+            },
+            {
+              "id": "P006-3",
+              "size": "XL",
+              "ean": "6957919564922",
+              "sku": "25303201-XL",
+              "stock": 60,
+              "reserved": 0
+            },
+            {
+              "id": "P006-4",
+              "size": "XXL",
+              "ean": "6957919564939",
+              "sku": "25303201-XXL",
+              "stock": 28,
+              "reserved": 0
+            },
+            {
+              "id": "P006-5",
+              "size": "XXXL",
+              "ean": "6957919564946",
+              "sku": "25303201-XXXL",
+              "stock": 9,
+              "reserved": 0
+            },
+            {
+              "id": "V-c8832185-1f38-f662-0b21-745400b0cb7c",
+              "size": "XS",
+              "ean": "6957919564885",
+              "sku": "25303201-XS",
+              "stock": 0,
+              "reserved": 0
+            }
+          ]
+        },
+        {
+          "id": "P007",
+          "recordId": "P007",
+          "article": "25303202",
+          "colour": "Beige/Black",
+          "priceCents": 13390,
+          "images": 4,
+          "sizes": [
+            {
+              "id": "P007-0",
+              "size": "S",
+              "ean": "6957919564960",
+              "sku": "25303202-S",
+              "stock": 24,
+              "reserved": 0
+            },
+            {
+              "id": "P007-1",
+              "size": "M",
+              "ean": "6957919564977",
+              "sku": "25303202-M",
+              "stock": 50,
+              "reserved": 0
+            },
+            {
+              "id": "P007-2",
+              "size": "L",
+              "ean": "6957919564984",
+              "sku": "25303202-L",
+              "stock": 70,
+              "reserved": 0
+            },
+            {
+              "id": "P007-3",
+              "size": "XL",
+              "ean": "6957919564991",
+              "sku": "25303202-XL",
+              "stock": 60,
+              "reserved": 0
+            },
+            {
+              "id": "P007-4",
+              "size": "XXL",
+              "ean": "6957919565004",
+              "sku": "25303202-XXL",
+              "stock": 38,
+              "reserved": 0
+            },
+            {
+              "id": "P007-5",
+              "size": "XXXL",
+              "ean": "6957919565011",
+              "sku": "25303202-XXXL",
+              "stock": 10,
+              "reserved": 0
+            },
+            {
+              "id": "V-7064bb4f-e122-6cfd-b642-188aa9e6b912",
+              "size": "XS",
+              "ean": "6957919564953",
+              "sku": "25303202-XS",
+              "stock": 0,
+              "reserved": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "P008",
+      "name": "Alpin",
+      "slug": "alpine-fz-hood-p008",
+      "colours": [
+        {
+          "id": "P008",
+          "recordId": "P008",
+          "article": "25301601",
+          "colour": "Black",
+          "priceCents": 9390,
+          "images": 0,
+          "sizes": [
+            {
+              "id": "P008-0",
+              "size": "S",
+              "ean": null,
+              "sku": null,
+              "stock": 18,
+              "reserved": 0
+            },
+            {
+              "id": "P008-1",
+              "size": "M",
+              "ean": null,
+              "sku": null,
+              "stock": 47,
+              "reserved": 0
+            },
+            {
+              "id": "P008-2",
+              "size": "L",
+              "ean": null,
+              "sku": null,
+              "stock": 62,
+              "reserved": 0
+            },
+            {
+              "id": "P008-3",
+              "size": "XL",
+              "ean": null,
+              "sku": null,
+              "stock": 51,
+              "reserved": 0
+            },
+            {
+              "id": "P008-4",
+              "size": "XXL",
+              "ean": null,
+              "sku": null,
+              "stock": 32,
+              "reserved": 0
+            },
+            {
+              "id": "P008-5",
+              "size": "XXXL",
+              "ean": null,
+              "sku": null,
+              "stock": 7,
+              "reserved": 0
+            }
+          ]
+        },
+        {
+          "id": "P009",
+          "recordId": "P009",
+          "article": "25301603",
+          "colour": "Cream",
+          "priceCents": 9390,
+          "images": 5,
+          "sizes": [
+            {
+              "id": "P009-0",
+              "size": "S",
+              "ean": null,
+              "sku": null,
+              "stock": 31,
+              "reserved": 0
+            },
+            {
+              "id": "P009-1",
+              "size": "M",
+              "ean": null,
+              "sku": null,
+              "stock": 50,
+              "reserved": 0
+            },
+            {
+              "id": "P009-2",
+              "size": "L",
+              "ean": null,
+              "sku": null,
+              "stock": 63,
+              "reserved": 0
+            },
+            {
+              "id": "P009-3",
+              "size": "XL",
+              "ean": null,
+              "sku": null,
+              "stock": 58,
+              "reserved": 0
+            },
+            {
+              "id": "P009-4",
+              "size": "XXL",
+              "ean": null,
+              "sku": null,
+              "stock": 29,
+              "reserved": 0
+            },
+            {
+              "id": "P009-5",
+              "size": "XXXL",
+              "ean": null,
+              "sku": null,
+              "stock": 6,
+              "reserved": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "P010",
+      "name": "Core Pants",
+      "slug": "core-pants-p010",
+      "colours": [
+        {
+          "id": "P010",
+          "recordId": "P010",
+          "article": "25302701",
+          "colour": "Black",
+          "priceCents": 9390,
+          "images": 3,
+          "sizes": [
+            {
+              "id": "P010-0",
+              "size": "S",
+              "ean": null,
+              "sku": null,
+              "stock": 20,
+              "reserved": 0
+            },
+            {
+              "id": "P010-1",
+              "size": "M",
+              "ean": null,
+              "sku": null,
+              "stock": 48,
+              "reserved": 0
+            },
+            {
+              "id": "P010-2",
+              "size": "L",
+              "ean": null,
+              "sku": null,
+              "stock": 30,
+              "reserved": 0
+            },
+            {
+              "id": "P010-3",
+              "size": "XL",
+              "ean": null,
+              "sku": null,
+              "stock": 30,
+              "reserved": 0
+            },
+            {
+              "id": "P010-4",
+              "size": "XXL",
+              "ean": null,
+              "sku": null,
+              "stock": 30,
+              "reserved": 0
+            },
+            {
+              "id": "P010-5",
+              "size": "XXXL",
+              "ean": null,
+              "sku": null,
+              "stock": 20,
+              "reserved": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "P011",
+      "name": "Neofit Pants",
+      "slug": "neofit-pants-p011",
+      "colours": [
+        {
+          "id": "P011",
+          "recordId": "P011",
+          "article": "25300801",
+          "colour": "Black",
+          "priceCents": 11990,
+          "images": 4,
+          "sizes": [
+            {
+              "id": "P011-0",
+              "size": "S",
+              "ean": null,
+              "sku": null,
+              "stock": 20,
+              "reserved": 0
+            },
+            {
+              "id": "P011-1",
+              "size": "M",
+              "ean": null,
+              "sku": null,
+              "stock": 30,
+              "reserved": 0
+            },
+            {
+              "id": "P011-2",
+              "size": "L",
+              "ean": null,
+              "sku": null,
+              "stock": 30,
+              "reserved": 0
+            },
+            {
+              "id": "P011-3",
+              "size": "XL",
+              "ean": null,
+              "sku": null,
+              "stock": 30,
+              "reserved": 0
+            },
+            {
+              "id": "P011-4",
+              "size": "XXL",
+              "ean": null,
+              "sku": null,
+              "stock": 30,
+              "reserved": 0
+            },
+            {
+              "id": "P011-5",
+              "size": "XXXL",
+              "ean": null,
+              "sku": null,
+              "stock": 20,
+              "reserved": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "P012",
+      "name": "ALPIN HOOD GILLET",
+      "slug": "alpine-gillet-hood-p012",
+      "colours": [
+        {
+          "id": "P012",
+          "recordId": "P012",
+          "article": "25301701",
+          "colour": "Black",
+          "priceCents": 6690,
+          "images": 0,
+          "sizes": [
+            {
+              "id": "P012-0",
+              "size": "S",
+              "ean": "6957919562706",
+              "sku": "25301701-S",
+              "stock": 20,
+              "reserved": 0
+            },
+            {
+              "id": "P013-0",
+              "size": "M",
+              "ean": "6957919562713",
+              "sku": "25301701-M",
+              "stock": 40,
+              "reserved": 0
+            },
+            {
+              "id": "P013-1",
+              "size": "L",
+              "ean": "6957919562720",
+              "sku": "25301701-L",
+              "stock": 100,
+              "reserved": 0
+            },
+            {
+              "id": "P013-2",
+              "size": "Xl",
+              "ean": "6957919562737",
+              "sku": "25301701-XL",
+              "stock": 50,
+              "reserved": 0
+            },
+            {
+              "id": "P013-3",
+              "size": "XXL",
+              "ean": "6957919562744",
+              "sku": "25301701-XXL",
+              "stock": 80,
+              "reserved": 0
+            },
+            {
+              "id": "P013-4",
+              "size": "XXXL",
+              "ean": "6957919562751",
+              "sku": "25301701-XXXL",
+              "stock": 20,
+              "reserved": 0
+            }
+          ]
+        },
+        {
+          "id": "P014",
+          "recordId": "P014",
+          "article": "25301702",
+          "colour": "Cream",
+          "priceCents": 6690,
+          "images": 2,
+          "sizes": [
+            {
+              "id": "P014-0",
+              "size": "S",
+              "ean": "6957919562775",
+              "sku": "25301702-S",
+              "stock": 25,
+              "reserved": 0
+            },
+            {
+              "id": "P014-1",
+              "size": "M",
+              "ean": "6957919562782",
+              "sku": "25301702-M",
+              "stock": 30,
+              "reserved": 0
+            },
+            {
+              "id": "P014-2",
+              "size": "L",
+              "ean": "6957919562799",
+              "sku": "25301702-L",
+              "stock": 100,
+              "reserved": 0
+            },
+            {
+              "id": "P014-3",
+              "size": "Xl",
+              "ean": "6957919562805",
+              "sku": "25301702-XL",
+              "stock": 50,
+              "reserved": 0
+            },
+            {
+              "id": "P014-4",
+              "size": "XXL",
+              "ean": "6957919562812",
+              "sku": "25301702-XXL",
+              "stock": 80,
+              "reserved": 0
+            },
+            {
+              "id": "P014-5",
+              "size": "XXXL",
+              "ean": "6957919562829",
+              "sku": "25301702-XXXL",
+              "stock": 20,
+              "reserved": 0
+            }
+          ]
+        },
+        {
+          "id": "P028",
+          "recordId": "P028",
+          "article": "25301703",
+          "colour": "Dusty Blue",
+          "priceCents": 6690,
+          "images": 0,
+          "sizes": [
+            {
+              "id": "V-86e7f7c5-a36f-0f47-6037-2f64f38d80af",
+              "size": "S",
+              "ean": "6957919562843",
+              "sku": "25301703-S",
+              "stock": 0,
+              "reserved": 0
+            },
+            {
+              "id": "V-7c862605-e4c2-3d83-c49e-27fd71dcb988",
+              "size": "M",
+              "ean": "6957919562850",
+              "sku": "25301703-M",
+              "stock": 0,
+              "reserved": 0
+            },
+            {
+              "id": "V-ddca9f6d-32b0-bdd4-d2d5-a48d1468b634",
+              "size": "L",
+              "ean": "6957919562867",
+              "sku": "25301703-L",
+              "stock": 0,
+              "reserved": 0
+            },
+            {
+              "id": "V-2d68f353-4789-ff76-2930-ff52e5161c1b",
+              "size": "XL",
+              "ean": "6957919562874",
+              "sku": "25301703-XL",
+              "stock": 0,
+              "reserved": 0
+            },
+            {
+              "id": "V-87ea3410-03ce-08a5-c167-be7bf2b73b93",
+              "size": "XXL",
+              "ean": "6957919562881",
+              "sku": "25301703-XXL",
+              "stock": 0,
+              "reserved": 0
+            },
+            {
+              "id": "V-e59d618d-bfa1-3c87-e11f-3d06b90a1793",
+              "size": "XXXL",
+              "ean": "6957919562898",
+              "sku": "25301703-XXXL",
+              "stock": 0,
+              "reserved": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "P015",
+      "name": "Corelosse.2",
+      "slug": "coreloose-2-p015",
+      "colours": [
+        {
+          "id": "P015",
+          "recordId": "P015",
+          "article": "25301902",
+          "colour": "Emerald",
+          "priceCents": 5390,
+          "images": 3,
+          "sizes": [
+            {
+              "id": "P015-0",
+              "size": "S",
+              "ean": null,
+              "sku": null,
+              "stock": 70,
+              "reserved": 0
+            },
+            {
+              "id": "P015-1",
+              "size": "M",
+              "ean": null,
+              "sku": null,
+              "stock": 70,
+              "reserved": 0
+            },
+            {
+              "id": "P015-2",
+              "size": "L",
+              "ean": null,
+              "sku": null,
+              "stock": 80,
+              "reserved": 0
+            },
+            {
+              "id": "P015-3",
+              "size": "XL",
+              "ean": null,
+              "sku": null,
+              "stock": 80,
+              "reserved": 0
+            },
+            {
+              "id": "P015-4",
+              "size": "XXL",
+              "ean": null,
+              "sku": null,
+              "stock": 20,
+              "reserved": 0
+            },
+            {
+              "id": "P015-5",
+              "size": "XXXL",
+              "ean": null,
+              "sku": null,
+              "stock": 20,
+              "reserved": 0
+            }
+          ]
+        },
+        {
+          "id": "P016",
+          "recordId": "P016",
+          "article": "25301903",
+          "colour": "Cream",
+          "priceCents": 5390,
+          "images": 4,
+          "sizes": [
+            {
+              "id": "P016-0",
+              "size": "S",
+              "ean": null,
+              "sku": null,
+              "stock": 70,
+              "reserved": 0
+            },
+            {
+              "id": "P016-1",
+              "size": "M",
+              "ean": null,
+              "sku": null,
+              "stock": 30,
+              "reserved": 0
+            },
+            {
+              "id": "P016-2",
+              "size": "L",
+              "ean": null,
+              "sku": null,
+              "stock": 100,
+              "reserved": 0
+            },
+            {
+              "id": "P016-3",
+              "size": "XL",
+              "ean": null,
+              "sku": null,
+              "stock": 80,
+              "reserved": 0
+            },
+            {
+              "id": "P016-4",
+              "size": "XXL",
+              "ean": null,
+              "sku": null,
+              "stock": 70,
+              "reserved": 0
+            },
+            {
+              "id": "P016-5",
+              "size": "XXXL",
+              "ean": null,
+              "sku": null,
+              "stock": 20,
+              "reserved": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "P017",
+      "name": "Velvet WMS Hood",
+      "slug": "velvet-wms-hood-p017",
+      "colours": [
+        {
+          "id": "P017",
+          "recordId": "P017",
+          "article": "25000701",
+          "colour": "Black-Cream",
+          "priceCents": 7990,
+          "images": 1,
+          "sizes": [
+            {
+              "id": "P017-0",
+              "size": "S",
+              "ean": null,
+              "sku": null,
+              "stock": 34,
+              "reserved": 0
+            },
+            {
+              "id": "P017-1",
+              "size": "M",
+              "ean": null,
+              "sku": null,
+              "stock": 62,
+              "reserved": 0
+            },
+            {
+              "id": "P017-2",
+              "size": "L",
+              "ean": null,
+              "sku": null,
+              "stock": 58,
+              "reserved": 0
+            },
+            {
+              "id": "P017-3",
+              "size": "XL",
+              "ean": null,
+              "sku": null,
+              "stock": 50,
+              "reserved": 0
+            },
+            {
+              "id": "P017-4",
+              "size": "XXL",
+              "ean": null,
+              "sku": null,
+              "stock": 16,
+              "reserved": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "P018",
+      "name": "Velvet WMS Hood",
+      "slug": "velvet-wms-hood-p018",
+      "colours": [
+        {
+          "id": "P018",
+          "recordId": "P018",
+          "article": "25000702",
+          "colour": "Emerald",
+          "priceCents": 7990,
+          "images": 1,
+          "sizes": [
+            {
+              "id": "P018-0",
+              "size": "S",
+              "ean": null,
+              "sku": null,
+              "stock": 60,
+              "reserved": 0
+            },
+            {
+              "id": "P018-1",
+              "size": "M",
+              "ean": null,
+              "sku": null,
+              "stock": 100,
+              "reserved": 0
+            },
+            {
+              "id": "P018-2",
+              "size": "L",
+              "ean": null,
+              "sku": null,
+              "stock": 80,
+              "reserved": 0
+            },
+            {
+              "id": "P018-3",
+              "size": "XL",
+              "ean": null,
+              "sku": null,
+              "stock": 50,
+              "reserved": 0
+            },
+            {
+              "id": "P018-4",
+              "size": "XXL",
+              "ean": null,
+              "sku": null,
+              "stock": 20,
+              "reserved": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "P019",
+      "name": "Nano Down Jacket",
+      "slug": "nandown-jkt-p019",
+      "colours": [
+        {
+          "id": "P019",
+          "recordId": "P019",
+          "article": "25302901",
+          "colour": "Black",
+          "priceCents": 18690,
+          "images": 4,
+          "sizes": [
+            {
+              "id": "P019-0",
+              "size": "S",
+              "ean": null,
+              "sku": null,
+              "stock": 27,
+              "reserved": 0
+            },
+            {
+              "id": "P020-0",
+              "size": "M",
+              "ean": null,
+              "sku": null,
+              "stock": 30,
+              "reserved": 0
+            },
+            {
+              "id": "P020-1",
+              "size": "L",
+              "ean": null,
+              "sku": null,
+              "stock": 30,
+              "reserved": 0
+            },
+            {
+              "id": "P020-2",
+              "size": "XL",
+              "ean": null,
+              "sku": null,
+              "stock": 30,
+              "reserved": 0
+            },
+            {
+              "id": "P020-3",
+              "size": "XXL",
+              "ean": null,
+              "sku": null,
+              "stock": 24,
+              "reserved": 0
+            },
+            {
+              "id": "P020-4",
+              "size": "XXXL",
+              "ean": null,
+              "sku": null,
+              "stock": 7,
+              "reserved": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "P021",
+      "name": "Nano Down Gillet",
+      "slug": "nandown-fz-gillet-p021",
+      "colours": [
+        {
+          "id": "P021",
+          "recordId": "P021",
+          "article": "25303001",
+          "colour": "Black",
+          "priceCents": 14690,
+          "images": 7,
+          "sizes": [
+            {
+              "id": "P021-0",
+              "size": "S",
+              "ean": null,
+              "sku": null,
+              "stock": 50,
+              "reserved": 0
+            },
+            {
+              "id": "P021-1",
+              "size": "M",
+              "ean": null,
+              "sku": null,
+              "stock": 46,
+              "reserved": 0
+            },
+            {
+              "id": "P021-2",
+              "size": "L",
+              "ean": null,
+              "sku": null,
+              "stock": 42,
+              "reserved": 0
+            },
+            {
+              "id": "P021-3",
+              "size": "XL",
+              "ean": null,
+              "sku": null,
+              "stock": 30,
+              "reserved": 0
+            },
+            {
+              "id": "P021-4",
+              "size": "XXL",
+              "ean": null,
+              "sku": null,
+              "stock": 28,
+              "reserved": 0
+            },
+            {
+              "id": "P021-5",
+              "size": "XXXL",
+              "ean": null,
+              "sku": null,
+              "stock": 10,
+              "reserved": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "P022",
+      "name": "Summit",
+      "slug": "summit-p022",
+      "colours": [
+        {
+          "id": "P022",
+          "recordId": "P022",
+          "article": "25302101",
+          "colour": "Black",
+          "priceCents": 11990,
+          "images": 4,
+          "sizes": [
+            {
+              "id": "P022-0",
+              "size": "S",
+              "ean": null,
+              "sku": null,
+              "stock": 0,
+              "reserved": 0
+            },
+            {
+              "id": "P022-1",
+              "size": "M",
+              "ean": null,
+              "sku": null,
+              "stock": 36,
+              "reserved": 0
+            },
+            {
+              "id": "P022-2",
+              "size": "L",
+              "ean": null,
+              "sku": null,
+              "stock": 40,
+              "reserved": 0
+            },
+            {
+              "id": "P022-3",
+              "size": "XL",
+              "ean": null,
+              "sku": null,
+              "stock": 30,
+              "reserved": 0
+            },
+            {
+              "id": "P022-4",
+              "size": "XXL",
+              "ean": null,
+              "sku": null,
+              "stock": 6,
+              "reserved": 0
+            },
+            {
+              "id": "P022-5",
+              "size": "XXXL",
+              "ean": null,
+              "sku": null,
+              "stock": 0,
+              "reserved": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "P023",
+      "name": "Snake Scarf",
+      "slug": "snake-scarf-p023",
+      "colours": [
+        {
+          "id": "P023",
+          "recordId": "P023",
+          "article": "25302401",
+          "colour": "Black",
+          "priceCents": 2690,
+          "images": 1,
+          "sizes": [
+            {
+              "id": "P023-0",
+              "size": "one size",
+              "ean": null,
+              "sku": null,
+              "stock": 50,
+              "reserved": 0
+            }
+          ]
+        },
+        {
+          "id": "P024",
+          "recordId": "P024",
+          "article": "25302402",
+          "colour": "Cream",
+          "priceCents": 2690,
+          "images": 1,
+          "sizes": [
+            {
+              "id": "P024-0",
+              "size": "one size",
+              "ean": null,
+              "sku": null,
+              "stock": 50,
+              "reserved": 0
+            }
+          ]
+        },
+        {
+          "id": "P025",
+          "recordId": "P025",
+          "article": "25302403",
+          "colour": "Emerald",
+          "priceCents": 2690,
+          "images": 1,
+          "sizes": [
+            {
+              "id": "P025-0",
+              "size": "one size",
+              "ean": null,
+              "sku": null,
+              "stock": 50,
+              "reserved": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "P026",
+      "name": "Velvet WMS Hood",
+      "slug": "velvet-wms-hood-p026",
+      "colours": [
+        {
+          "id": "P026",
+          "recordId": "P026",
+          "article": "25000704",
+          "colour": "Cream",
+          "priceCents": 7990,
+          "images": 4,
+          "sizes": [
+            {
+              "id": "P026-0",
+              "size": "S",
+              "ean": null,
+              "sku": null,
+              "stock": 56,
+              "reserved": 0
+            },
+            {
+              "id": "P026-1",
+              "size": "M",
+              "ean": null,
+              "sku": null,
+              "stock": 50,
+              "reserved": 0
+            },
+            {
+              "id": "P026-2",
+              "size": "L",
+              "ean": null,
+              "sku": null,
+              "stock": 55,
+              "reserved": 0
+            },
+            {
+              "id": "P026-3",
+              "size": "XL",
+              "ean": null,
+              "sku": null,
+              "stock": 50,
+              "reserved": 0
+            },
+            {
+              "id": "P026-4",
+              "size": "XXL",
+              "ean": null,
+              "sku": null,
+              "stock": 20,
+              "reserved": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "P027",
+      "name": "Velvet WMS Hood",
+      "slug": "velvet-wms-hood-p027",
+      "colours": [
+        {
+          "id": "P027",
+          "recordId": "P027",
+          "article": "25000703",
+          "colour": "Black",
+          "priceCents": 7990,
+          "images": 5,
+          "sizes": [
+            {
+              "id": "P027-0",
+              "size": "S",
+              "ean": null,
+              "sku": null,
+              "stock": 50,
+              "reserved": 0
+            },
+            {
+              "id": "P027-1",
+              "size": "M",
+              "ean": null,
+              "sku": null,
+              "stock": 60,
+              "reserved": 0
+            },
+            {
+              "id": "P027-2",
+              "size": "L",
+              "ean": null,
+              "sku": null,
+              "stock": 80,
+              "reserved": 0
+            },
+            {
+              "id": "P027-3",
+              "size": "XL",
+              "ean": null,
+              "sku": null,
+              "stock": 50,
+              "reserved": 0
+            },
+            {
+              "id": "P027-4",
+              "size": "XXL",
+              "ean": null,
+              "sku": null,
+              "stock": 16,
+              "reserved": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "B10",
+      "name": "B10 Sneakers",
+      "slug": "b10-sneakers",
+      "colours": [
+        {
+          "id": "B10:Black",
+          "recordId": "B10",
+          "article": "899",
+          "colour": "Black",
+          "priceCents": 11999,
+          "images": 5,
+          "sizes": [
+            {
+              "id": "B10-black-36",
+              "size": "36",
+              "ean": "6957919566568",
+              "sku": "B10-BLACK-36",
+              "stock": 132,
+              "reserved": 0
+            },
+            {
+              "id": "B10-black-37",
+              "size": "37",
+              "ean": "6957919566575",
+              "sku": "B10-BLACK-37",
+              "stock": 108,
+              "reserved": 0
+            },
+            {
+              "id": "B10-black-38",
+              "size": "38",
+              "ean": "6957919566582",
+              "sku": "B10-BLACK-38",
+              "stock": 108,
+              "reserved": 0
+            },
+            {
+              "id": "B10-black-39",
+              "size": "39",
+              "ean": "6957919566599",
+              "sku": "B10-BLACK-39",
+              "stock": 132,
+              "reserved": 0
+            },
+            {
+              "id": "B10-black-40",
+              "size": "40",
+              "ean": "6957919566605",
+              "sku": "B10-BLACK-40",
+              "stock": 74,
+              "reserved": 0
+            },
+            {
+              "id": "B10-black-41",
+              "size": "41",
+              "ean": "6957919566612",
+              "sku": "B10-BLACK-41",
+              "stock": 182,
+              "reserved": 0
+            },
+            {
+              "id": "B10-black-42",
+              "size": "42",
+              "ean": "6957919566629",
+              "sku": "B10-BLACK-42",
+              "stock": 199,
+              "reserved": 0
+            },
+            {
+              "id": "B10-black-43",
+              "size": "43",
+              "ean": "6957919566636",
+              "sku": "B10-BLACK-43",
+              "stock": 200,
+              "reserved": 0
+            },
+            {
+              "id": "B10-black-44",
+              "size": "44",
+              "ean": "6957919566643",
+              "sku": "B10-BLACK-44",
+              "stock": 216,
+              "reserved": 0
+            },
+            {
+              "id": "B10-black-45",
+              "size": "45",
+              "ean": "6957919566650",
+              "sku": "B10-BLACK-45",
+              "stock": 200,
+              "reserved": 0
+            },
+            {
+              "id": "B10-black-46",
+              "size": "46",
+              "ean": "6957919566667",
+              "sku": "B10-BLACK-46",
+              "stock": 149,
+              "reserved": 0
+            }
+          ]
+        },
+        {
+          "id": "B10:White",
+          "recordId": "B10",
+          "article": "899",
+          "colour": "White",
+          "priceCents": 11999,
+          "images": 2,
+          "sizes": [
+            {
+              "id": "B10-white-36",
+              "size": "36",
+              "ean": "6957919566438",
+              "sku": "B10-WHITE-36",
+              "stock": 133,
+              "reserved": 0
+            },
+            {
+              "id": "B10-white-37",
+              "size": "37",
+              "ean": "6957919566445",
+              "sku": "B10-WHITE-37",
+              "stock": 108,
+              "reserved": 0
+            },
+            {
+              "id": "B10-white-38",
+              "size": "38",
+              "ean": "6957919566452",
+              "sku": "B10-WHITE-38",
+              "stock": 108,
+              "reserved": 0
+            },
+            {
+              "id": "B10-white-39",
+              "size": "39",
+              "ean": "6957919566469",
+              "sku": "B10-WHITE-39",
+              "stock": 133,
+              "reserved": 0
+            },
+            {
+              "id": "B10-white-40",
+              "size": "40",
+              "ean": "6957919566476",
+              "sku": "B10-WHITE-40",
+              "stock": 75,
+              "reserved": 0
+            },
+            {
+              "id": "B10-white-41",
+              "size": "41",
+              "ean": "6957919566483",
+              "sku": "B10-WHITE-41",
+              "stock": 183,
+              "reserved": 0
+            },
+            {
+              "id": "B10-white-42",
+              "size": "42",
+              "ean": "6957919566490",
+              "sku": "B10-WHITE-42",
+              "stock": 199,
+              "reserved": 0
+            },
+            {
+              "id": "B10-white-43",
+              "size": "43",
+              "ean": "6957919566506",
+              "sku": "B10-WHITE-43",
+              "stock": 198,
+              "reserved": 0
+            },
+            {
+              "id": "B10-white-44",
+              "size": "44",
+              "ean": "6957919566513",
+              "sku": "B10-WHITE-44",
+              "stock": 215,
+              "reserved": 0
+            },
+            {
+              "id": "B10-white-45",
+              "size": "45",
+              "ean": "6957919566520",
+              "sku": "B10-WHITE-45",
+              "stock": 198,
+              "reserved": 0
+            },
+            {
+              "id": "B10-white-46",
+              "size": "46",
+              "ean": "6957919566537",
+              "sku": "B10-WHITE-46",
+              "stock": 150,
+              "reserved": 0
+            }
+          ]
+        },
+        {
+          "id": "B10:Green",
+          "recordId": "B10",
+          "article": "899",
+          "colour": "Green",
+          "priceCents": 11999,
+          "images": 1,
+          "sizes": [
+            {
+              "id": "B10-green-36",
+              "size": "36",
+              "ean": "6957919566827",
+              "sku": "B10-GREEN-36",
+              "stock": 47,
+              "reserved": 0
+            },
+            {
+              "id": "B10-green-37",
+              "size": "37",
+              "ean": "6957919566834",
+              "sku": "B10-GREEN-37",
+              "stock": 38,
+              "reserved": 0
+            },
+            {
+              "id": "B10-green-38",
+              "size": "38",
+              "ean": "6957919566841",
+              "sku": "B10-GREEN-38",
+              "stock": 38,
+              "reserved": 0
+            },
+            {
+              "id": "B10-green-39",
+              "size": "39",
+              "ean": "6957919566858",
+              "sku": "B10-GREEN-39",
+              "stock": 47,
+              "reserved": 0
+            },
+            {
+              "id": "B10-green-40",
+              "size": "40",
+              "ean": "6957919566865",
+              "sku": "B10-GREEN-40",
+              "stock": 27,
+              "reserved": 0
+            },
+            {
+              "id": "B10-green-41",
+              "size": "41",
+              "ean": "6957919566872",
+              "sku": "B10-GREEN-41",
+              "stock": 64,
+              "reserved": 0
+            },
+            {
+              "id": "B10-green-42",
+              "size": "42",
+              "ean": "6957919566889",
+              "sku": "B10-GREEN-42",
+              "stock": 70,
+              "reserved": 0
+            },
+            {
+              "id": "B10-green-43",
+              "size": "43",
+              "ean": "6957919566896",
+              "sku": "B10-GREEN-43",
+              "stock": 70,
+              "reserved": 0
+            },
+            {
+              "id": "B10-green-44",
+              "size": "44",
+              "ean": "6957919566902",
+              "sku": "B10-GREEN-44",
+              "stock": 76,
+              "reserved": 0
+            },
+            {
+              "id": "B10-green-45",
+              "size": "45",
+              "ean": "6957919566919",
+              "sku": "B10-GREEN-45",
+              "stock": 70,
+              "reserved": 0
+            },
+            {
+              "id": "B10-green-46",
+              "size": "46",
+              "ean": "6957919566926",
+              "sku": "B10-GREEN-46",
+              "stock": 53,
+              "reserved": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RIBS-LOW-WHITE",
+      "name": "RIBS LOW SOCKS",
+      "slug": "ribs-low-white-socks",
+      "colours": [
+        {
+          "id": "RIBS-LOW-WHITE",
+          "recordId": "RIBS-LOW-WHITE",
+          "article": "24309000",
+          "colour": "White",
+          "priceCents": 990,
+          "images": 1,
+          "sizes": [
+            {
+              "id": "RIBS-24309000-35-39",
+              "size": "35-39",
+              "ean": "6957919554244",
+              "sku": "24309000-35-39",
+              "stock": 0,
+              "reserved": 0
+            },
+            {
+              "id": "RIBS-24309000-40-43",
+              "size": "40-43",
+              "ean": "6957919554251",
+              "sku": "24309000-40-43",
+              "stock": 0,
+              "reserved": 0
+            }
+          ]
+        },
+        {
+          "id": "RIBS-LOW-BLACK",
+          "recordId": "RIBS-LOW-BLACK",
+          "article": "24309001",
+          "colour": "Black",
+          "priceCents": 990,
+          "images": 1,
+          "sizes": [
+            {
+              "id": "RIBS-24309001-35-39",
+              "size": "35-39",
+              "ean": "6957919554268",
+              "sku": "24309001-35-39",
+              "stock": 0,
+              "reserved": 0
+            },
+            {
+              "id": "RIBS-24309001-40-43",
+              "size": "40-43",
+              "ean": "6957919554275",
+              "sku": "24309001-40-43",
+              "stock": 0,
+              "reserved": 0
+            }
+          ]
+        },
+        {
+          "id": "RIBS-LOW-RED",
+          "recordId": "RIBS-LOW-RED",
+          "article": "24309002",
+          "colour": "Red",
+          "priceCents": 990,
+          "images": 1,
+          "sizes": [
+            {
+              "id": "RIBS-24309002-35-39",
+              "size": "35-39",
+              "ean": "6957919554282",
+              "sku": "24309002-35-39",
+              "stock": 0,
+              "reserved": 0
+            },
+            {
+              "id": "RIBS-24309002-40-43",
+              "size": "40-43",
+              "ean": "6957919554299",
+              "sku": "24309002-40-43",
+              "stock": 0,
+              "reserved": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RIBS-MEDIUM-WHITE",
+      "name": "RIBS MEDIUM SOCKS",
+      "slug": "ribs-medium-white-socks",
+      "colours": [
+        {
+          "id": "RIBS-MEDIUM-WHITE",
+          "recordId": "RIBS-MEDIUM-WHITE",
+          "article": "24309100",
+          "colour": "White",
+          "priceCents": 1390,
+          "images": 2,
+          "sizes": [
+            {
+              "id": "RIBS-24309100-35-39",
+              "size": "35-39",
+              "ean": "6957919554305",
+              "sku": "24309100-35-39",
+              "stock": 0,
+              "reserved": 0
+            },
+            {
+              "id": "RIBS-24309100-40-43",
+              "size": "40-43",
+              "ean": "6957919554312",
+              "sku": "24309100-40-43",
+              "stock": 0,
+              "reserved": 0
+            }
+          ]
+        },
+        {
+          "id": "RIBS-MEDIUM-BLACK",
+          "recordId": "RIBS-MEDIUM-BLACK",
+          "article": "24309101",
+          "colour": "Black",
+          "priceCents": 1390,
+          "images": 2,
+          "sizes": [
+            {
+              "id": "RIBS-24309101-35-39",
+              "size": "35-39",
+              "ean": "6957919554329",
+              "sku": "24309101-35-39",
+              "stock": 0,
+              "reserved": 0
+            },
+            {
+              "id": "RIBS-24309101-40-43",
+              "size": "40-43",
+              "ean": "6957919554336",
+              "sku": "24309101-40-43",
+              "stock": 0,
+              "reserved": 0
+            }
+          ]
+        },
+        {
+          "id": "RIBS-MEDIUM-RED",
+          "recordId": "RIBS-MEDIUM-RED",
+          "article": "24309102",
+          "colour": "Red",
+          "priceCents": 1390,
+          "images": 2,
+          "sizes": [
+            {
+              "id": "RIBS-24309102-35-39",
+              "size": "35-39",
+              "ean": "6957919554343",
+              "sku": "24309102-35-39",
+              "stock": 0,
+              "reserved": 0
+            },
+            {
+              "id": "RIBS-24309102-40-43",
+              "size": "40-43",
+              "ean": "6957919554350",
+              "sku": "24309102-40-43",
+              "stock": 0,
+              "reserved": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RIBS-LONG-WHITE",
+      "name": "RIBS LONG SOCKS",
+      "slug": "ribs-long-white-socks",
+      "colours": [
+        {
+          "id": "RIBS-LONG-WHITE",
+          "recordId": "RIBS-LONG-WHITE",
+          "article": "24309200",
+          "colour": "White",
+          "priceCents": 1490,
+          "images": 0,
+          "sizes": [
+            {
+              "id": "RIBS-24309200-35-39",
+              "size": "35-39",
+              "ean": "6957919554367",
+              "sku": "24309200-35-39",
+              "stock": 0,
+              "reserved": 0
+            },
+            {
+              "id": "RIBS-24309200-40-43",
+              "size": "40-43",
+              "ean": "6957919554374",
+              "sku": "24309200-40-43",
+              "stock": 0,
+              "reserved": 0
+            }
+          ]
+        },
+        {
+          "id": "RIBS-LONG-BLACK",
+          "recordId": "RIBS-LONG-BLACK",
+          "article": "24309201",
+          "colour": "Black",
+          "priceCents": 1490,
+          "images": 0,
+          "sizes": [
+            {
+              "id": "RIBS-24309201-35-39",
+              "size": "35-39",
+              "ean": "6957919554381",
+              "sku": "24309201-35-39",
+              "stock": 0,
+              "reserved": 0
+            },
+            {
+              "id": "RIBS-24309201-40-43",
+              "size": "40-43",
+              "ean": "6957919554398",
+              "sku": "24309201-40-43",
+              "stock": 0,
+              "reserved": 0
+            }
+          ]
+        },
+        {
+          "id": "RIBS-LONG-RED",
+          "recordId": "RIBS-LONG-RED",
+          "article": "24309202",
+          "colour": "Red",
+          "priceCents": 1490,
+          "images": 0,
+          "sizes": [
+            {
+              "id": "RIBS-24309202-35-39",
+              "size": "35-39",
+              "ean": "6957919554404",
+              "sku": "24309202-35-39",
+              "stock": 0,
+              "reserved": 0
+            },
+            {
+              "id": "RIBS-24309202-40-43",
+              "size": "40-43",
+              "ean": "6957919554411",
+              "sku": "24309202-40-43",
+              "stock": 0,
+              "reserved": 0
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

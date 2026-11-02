@@ -11,6 +11,9 @@ export function validGtin(value: string): boolean {
 export function canonicalGtin(value: string) { return value.padStart(14, '0'); }
 const optionalCode = (pattern: RegExp, message: string) => z.string().trim().regex(pattern, message).optional();
 export const tradeSchema = z.object({
+  pendingColours: z.array(z.object({article:z.string().max(100),colour:z.string().max(80),reason:z.string().max(500)}).strict()).max(30).optional(),
+  parentProductId: z.string().min(1).max(100).optional(),
+  sharedOverrides: z.array(z.enum(['description','category','composition','care','fit','details','presentation','seo','translations'])).optional(),
   officialName: z.string().trim().max(150).optional(),
   supplierArticle: z.string().trim().max(100).optional(),
   colour: z.string().trim().max(80).optional(),
@@ -27,6 +30,7 @@ export const tradeSchema = z.object({
   weightGrams: z.number().int().min(1).max(1000000).optional(),
   identifiers: z.record(z.string().min(1).max(100), z.object({
     images: z.array(z.string().max(250)).max(30).optional(),
+    colourId: z.string().min(1).max(100).optional(),
     colour: z.string().trim().max(80).optional(),
     supplierArticle: z.string().trim().max(100).optional(),
     archived: z.boolean().optional(),

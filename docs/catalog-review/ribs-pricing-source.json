@@ -1,0 +1,152 @@
+{
+  "source": "https://docs.google.com/spreadsheets/d/1oJ42bGMg4GdAfij2DdEdVBHuplSxEkKXZs0s_X_Lyls/edit",
+  "sheet": "BigKPRICING",
+  "priceColumn": "MSRP (€)",
+  "review": "Draft catalogue prices from documented MSRP. Current physical availability is not inferred from historical pricing-sheet stock or the order quantities.",
+  "rows": [
+    {
+      "article": "24309000",
+      "catalogueName": "RIBS LOW (Socks)",
+      "colour": "White",
+      "size": "35-39",
+      "ean": "6957919554244",
+      "msrpCents": 990
+    },
+    {
+      "article": "24309000",
+      "catalogueName": "RIBS LOW (Socks)",
+      "colour": "White",
+      "size": "40-43",
+      "ean": "6957919554251",
+      "msrpCents": 990
+    },
+    {
+      "article": "24309001",
+      "catalogueName": "RIBS LOW (Socks)",
+      "colour": "Black",
+      "size": "35-39",
+      "ean": "6957919554268",
+      "msrpCents": 990
+    },
+    {
+      "article": "24309001",
+      "catalogueName": "RIBS LOW (Socks)",
+      "colour": "Black",
+      "size": "40-43",
+      "ean": "6957919554275",
+      "msrpCents": 990
+    },
+    {
+      "article": "24309002",
+      "catalogueName": "RIBS LOW (Socks)",
+      "colour": "Red",
+      "size": "35-39",
+      "ean": "6957919554282",
+      "msrpCents": 990
+    },
+    {
+      "article": "24309002",
+      "catalogueName": "RIBS LOW (Socks)",
+      "colour": "Red",
+      "size": "40-43",
+      "ean": "6957919554299",
+      "msrpCents": 990
+    },
+    {
+      "article": "24309100",
+      "catalogueName": "RIBS MEDIUM (Socks)",
+      "colour": "White",
+      "size": "35-39",
+      "ean": "6957919554305",
+      "msrpCents": 1390
+    },
+    {
+      "article": "24309100",
+      "catalogueName": "RIBS MEDIUM (Socks)",
+      "colour": "White",
+      "size": "40-43",
+      "ean": "6957919554312",
+      "msrpCents": 1390
+    },
+    {
+      "article": "24309101",
+      "catalogueName": "RIBS MEDIUM (Socks)",
+      "colour": "Black",
+      "size": "35-39",
+      "ean": "6957919554329",
+      "msrpCents": 1390
+    },
+    {
+      "article": "24309101",
+      "catalogueName": "RIBS MEDIUM (Socks)",
+      "colour": "Black",
+      "size": "40-43",
+      "ean": "6957919554336",
+      "msrpCents": 1390
+    },
+    {
+      "article": "24309102",
+      "catalogueName": "RIBS MEDIUM (Socks)",
+      "colour": "Red",
+      "size": "35-39",
+      "ean": "6957919554343",
+      "msrpCents": 1390
+    },
+    {
+      "article": "24309102",
+      "catalogueName": "RIBS MEDIUM (Socks)",
+      "colour": "Red",
+      "size": "40-43",
+      "ean": "6957919554350",
+      "msrpCents": 1390
+    },
+    {
+      "article": "24309200",
+      "catalogueName": "RIBS LONG (Socks)",
+      "colour": "White",
+      "size": "35-39",
+      "ean": "6957919554367",
+      "msrpCents": 1490
+    },
+    {
+      "article": "24309200",
+      "catalogueName": "RIBS LONG (Socks)",
+      "colour": "White",
+      "size": "40-43",
+      "ean": "6957919554374",
+      "msrpCents": 1490
+    },
+    {
+      "article": "24309201",
+      "catalogueName": "RIBS LONG (Socks)",
+      "colour": "Black",
+      "size": "35-39",
+      "ean": "6957919554381",
+      "msrpCents": 1490
+    },
+    {
+      "article": "24309201",
+      "catalogueName": "RIBS LONG (Socks)",
+      "colour": "Black",
+      "size": "40-43",
+      "ean": "6957919554398",
+      "msrpCents": 1490
+    },
+    {
+      "article": "24309202",
+      "catalogueName": "RIBS LONG (Socks)",
+      "colour": "Red",
+      "size": "35-39",
+      "ean": "6957919554404",
+      "msrpCents": 1490
+    },
+    {
+      "article": "24309202",
+      "catalogueName": "RIBS LONG (Socks)",
+      "colour": "Red",
+      "size": "40-43",
+      "ean": "6957919554411",
+      "msrpCents": 1490
+    }
+  ]
+}

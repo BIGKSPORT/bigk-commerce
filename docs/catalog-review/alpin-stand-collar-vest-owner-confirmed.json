@@ -1,0 +1,79 @@
+{
+  "source": "Latest owner correction and catalogue screenshot, 2026-11-02; supersedes earlier Alpin Gillet naming instruction",
+  "productName": "ALPIN VEST",
+  "construction": "Stand collar; sleeveless; no hood",
+  "priceCents": 13390,
+  "currency": "EUR",
+  "stockPolicy": "Preserve existing stock. Screenshot gives no stock quantities; missing XS variants start unavailable.",
+  "photoPolicy": "Catalogue illustrations confirm construction and colour blocking; do not substitute them for verified photographs.",
+  "colours": [
+    {
+      "article": "25303201",
+      "colour": "Black",
+      "variants": [
+        {
+          "size": "XS",
+          "ean": "6957919564885"
+        },
+        {
+          "size": "S",
+          "ean": "6957919564892"
+        },
+        {
+          "size": "M",
+          "ean": "6957919564908"
+        },
+        {
+          "size": "L",
+          "ean": "6957919564915"
+        },
+        {
+          "size": "XL",
+          "ean": "6957919564922"
+        },
+        {
+          "size": "XXL",
+          "ean": "6957919564939"
+        },
+        {
+          "size": "XXXL",
+          "ean": "6957919564946"
+        }
+      ]
+    },
+    {
+      "article": "25303202",
+      "colour": "Beige/Black",
+      "variants": [
+        {
+          "size": "XS",
+          "ean": "6957919564953"
+        },
+        {
+          "size": "S",
+          "ean": "6957919564960"
+        },
+        {
+          "size": "M",
+          "ean": "6957919564977"
+        },
+        {
+          "size": "L",
+          "ean": "6957919564984"
+        },
+        {
+          "size": "XL",
+          "ean": "6957919564991"
+        },
+        {
+          "size": "XXL",
+          "ean": "6957919565004"
+        },
+        {
+          "size": "XXXL",
+          "ean": "6957919565011"
+        }
+      ]
+    }
+  ]
+}

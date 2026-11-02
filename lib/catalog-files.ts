@@ -1,3 +1,4 @@
+import {sharedProducts} from './product-groups';
 import type {ImportOperation} from './catalog-import-schema';
 import {canonicalGtin} from './product-identifiers';
 import {editProductSchema,type ProductEdit,updateProduct,productWarnings,createProduct} from './admin-catalog';
@@ -26,8 +27,8 @@ export function readCsvMatrix(text:string):string[][]{
  if(quoted)throw new HttpError(400,'Unclosed CSV quote.');if(field||row.length){row.push(field);rows.push(row)}if(rows.length>2001||rows.some(row=>row.length>128))throw new HttpError(400,'Use at most 2,000 variant rows and 128 columns.');return rows;
 }
 export function rowsToRecords(rows:string[][]):FileRow[]{const header=rows.shift();if(!header||!header.length||header.some(h=>!columns.includes(h as Column))||new Set(header).size!==header.length)throw new HttpError(400,'Use the export template column names; duplicate or unknown columns are not accepted.');if(rows.length>2000)throw new HttpError(400,'Import at most 2,000 variant rows at once.');return rows.filter(row=>row.some(Boolean)).map((row,index)=>{if(row.length!==header.length)throw new HttpError(400,'Column count differs on row '+(index+2)+'.');return Object.fromEntries(header.map((h,i)=>[h,row[i].replace(/^'(?=\s*[=+@-])/,'')]))})}
-export function editFromProduct(p:Product):ProductEdit{return {inventoryBaseline:Object.fromEntries(p.variants.map(v=>[v.id,{stock:v.stock,reserved:v.reserved}])),id:p.id,version:p.version,name:p.name,slug:p.slug,description:p.description,category:p.category as ProductEdit['category'],priceCents:p.priceCents,approved:p.approved,active:p.active,images:p.images,tags:p.tags,featured:p.featured,content:structuredClone(p.content||{composition:'',care:'',fit:'',details:''}),variants:p.variants.map(v=>({id:v.id,size:v.size,stock:v.stock}))}}
-export async function importPlan(rows:FileRow[]):Promise<ProductEdit[]>{const catalog=await products(),edits=new Map<string,ProductEdit>(),seenVariants=new Set<string>(),shared=new Map<string,string>();
+export function editFromProduct(p:Product):ProductEdit{return {groupVersion:p.group?.version,inventoryBaseline:Object.fromEntries(p.variants.map(v=>[v.id,{stock:v.stock,reserved:v.reserved}])),id:p.id,version:p.version,name:p.name,slug:p.slug,description:p.description,category:p.category as ProductEdit['category'],priceCents:p.priceCents,approved:p.approved,active:p.active,images:p.images,tags:p.tags,featured:p.featured,content:structuredClone(p.content||{composition:'',care:'',fit:'',details:''}),variants:p.variants.map(v=>({id:v.id,size:v.size,stock:v.stock}))}}
+export async function importPlan(rows:FileRow[]):Promise<ProductEdit[]>{const catalog=sharedProducts(await products()),edits=new Map<string,ProductEdit>(),seenVariants=new Set<string>(),shared=new Map<string,string>();
  if(!rows.length)throw new HttpError(400,'No variant rows found.');
  for(const [index,row] of rows.entries()){
   let p=row.productId?catalog.find(p=>p.id===row.productId):undefined;

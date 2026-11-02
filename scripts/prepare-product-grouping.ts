@@ -1,0 +1,19 @@
+import {readFileSync,writeFileSync} from 'node:fs';
+import {groupingPlan} from '../lib/product-group-migration';
+import type {Product} from '../lib/types';
+const [input,output,inventoryFingerprint]=process.argv.slice(2);
+if(!input||!output||!/^[a-f0-9]{32}$/.test(inventoryFingerprint||''))throw Error('Usage: prepare-product-grouping.ts snapshot.json output.sql staging-inventory-md5');
+const before=JSON.parse(readFileSync(input,'utf8')) as Product[],plan=groupingPlan(before);
+const quote=(value:unknown)=>"'"+String(value).replace(/'/g,"''")+"'";
+const sql=["BEGIN; SELECT pg_advisory_xact_lock(2049351,1);",`DO $guard$ BEGIN IF (SELECT md5(jsonb_agg(to_jsonb(v) ORDER BY id)::text) FROM bigk_staging.variants v)<>${quote(inventoryFingerprint)} THEN RAISE EXCEPTION 'Inventory changed since snapshot; capture a fresh snapshot before migrating'; END IF; END $guard$;`];
+for(const p of plan.updated){const old=before.find(old=>old.id===p.id)!;sql.push(`DO $change$ BEGIN IF (SELECT version FROM bigk_staging.products WHERE id=${quote(p.id)})<>${old.version} THEN RAISE EXCEPTION 'Product version changed: ${p.id}'; END IF; END $change$;`);
+ sql.push(`INSERT INTO bigk_staging.product_revisions(id,product_id,version,snapshot,action,actor,created_at) VALUES(${quote(p.id+':'+old.version)},${quote(p.id)},${old.version},${quote(JSON.stringify(old))},'Before reviewed catalogue grouping','Owner-authorized development migration',CURRENT_TIMESTAMP::text) ON CONFLICT(id) DO NOTHING;`);
+ sql.push(`UPDATE bigk_staging.products SET name=${quote(p.name)},description=${quote(p.description)},version=version+1 WHERE id=${quote(p.id)} AND version=${old.version};`);
+ sql.push(`INSERT INTO bigk_staging.product_content(product_id,content) VALUES(${quote(p.id)},${quote(JSON.stringify(p.content))}) ON CONFLICT(product_id) DO UPDATE SET content=excluded.content;`);
+}
+for(const p of plan.added){sql.push(`INSERT INTO bigk_staging.products(id,slug,name,description,code,category,price_cents,approved,active,featured,images,tags,version) VALUES(${[p.id,p.slug,p.name,p.description,p.code,p.category].map(quote).join(',')},${p.priceCents},0,0,0,'[]','[]',0);`);sql.push(`INSERT INTO bigk_staging.product_content(product_id,content) VALUES(${quote(p.id)},${quote(JSON.stringify(p.content))});`)}
+for(const p of [...plan.updated,...plan.added])for(const v of p.variants)if(!before.some(old=>old.variants.some(ov=>ov.id===v.id)))sql.push(`INSERT INTO bigk_staging.variants(id,product_id,size,stock,reserved,reported) VALUES(${quote(v.id)},${quote(p.id)},${quote(v.size)},0,0,NULL);`);
+sql.push(`DO $verify$ BEGIN IF (SELECT md5(jsonb_agg(to_jsonb(v) ORDER BY id)::text) FROM bigk_staging.variants v WHERE id IN (${before.flatMap(p=>p.variants.map(v=>quote(v.id))).join(',')}))<>${quote(inventoryFingerprint)} THEN RAISE EXCEPTION 'Existing inventory changed during grouping; rolling back'; END IF; END $verify$;`);
+sql.push(`INSERT INTO bigk_staging.audit(action,entity,created_at) VALUES('catalog.grouping.migrated','Reviewed development groups; owner-corrected ALPIN VEST / ALPIN HOOD GILLET; existing stock preserved',CURRENT_TIMESTAMP::text); COMMIT;`);
+writeFileSync(output,sql.join('\n')+'\n');writeFileSync(output+'.review.json',JSON.stringify({updated:plan.updated.map(p=>({id:p.id,name:p.name,parent:p.content?.trade?.parentProductId||p.id,article:p.content?.trade?.supplierArticle,colour:p.content?.trade?.colour})),added:plan.added,existingVariants:before.reduce((n,p)=>n+p.variants.length,0),resultVariants:plan.catalog.reduce((n,p)=>n+p.variants.length,0),physicalStockBefore:before.flatMap(p=>p.variants).reduce((n,v)=>n+v.stock,0),physicalStockAfter:plan.catalog.flatMap(p=>p.variants).reduce((n,v)=>n+v.stock,0)},null,2)+'\n');
+console.log(JSON.stringify({updated:plan.updated.length,added:plan.added.length,newVariants:plan.catalog.flatMap(p=>p.variants).length-before.flatMap(p=>p.variants).length,sql:output}));

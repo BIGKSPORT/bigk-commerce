@@ -52,7 +52,8 @@
     "test:customers": "node --import tsx tests/customer-marketing.test.ts && node tests/customer-marketing-postgres.mjs",
     "test:customers-browser": "node tests/customer-marketing-browser.mjs",
     "test:b10": "node --import tsx tests/b10.test.ts && node tests/b10-browser.mjs",
-    "test:care": "node --import tsx tests/care-instructions.test.tsx"
+    "test:care": "node --import tsx tests/care-instructions.test.tsx",
+    "test:product-groups": "node --import tsx tests/product-groups.test.ts && node --import tsx tests/ribs.test.ts && node tests/product-groups-browser.mjs"
   },
   "dependencies": {
     "exceljs": "4.4.0",

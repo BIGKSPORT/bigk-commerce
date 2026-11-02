@@ -1,3 +1,5 @@
+import {productTranslationsSchema} from './i18n/product-translation-schema';
+import {parentId,colourOptions,rawColour,sharedFields} from './product-groups';
 import {productCategories} from './product-categories';
 import {presentationSchema} from './product-presentation';
 import {z} from 'zod';
@@ -8,9 +10,10 @@ import {HttpError} from './security';
 import {validProductImages} from './media';
 import type {Product} from './types';
 
-export const contentSchema=z.object({presentation:presentationSchema.optional(),trade:tradeSchema.optional(),composition:z.string().max(2000),care:z.string().max(2000),fit:z.string().max(2000),details:z.string().max(5000)}).strict();
-const textFields={name:z.string().trim().min(2).max(150),description:z.string().trim().max(5000),category:z.enum(productCategories),images:z.array(z.string().max(250)).max(30),tags:z.array(z.string().trim().min(1).max(50)).max(20),featured:z.boolean(),content:contentSchema};
-export const editProductSchema=z.object({inventoryBaseline:z.record(z.string(),z.object({stock:z.number().int().min(0),reserved:z.number().int().min(0)}).strict()).optional(),version:z.number().int().min(0),id:z.string().max(100),slug:z.string().min(1).max(180).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/).optional(),priceCents:z.number().int().min(1).max(1000000).nullable(),approved:z.boolean(),active:z.boolean(),variants:z.array(z.object({id:z.string().min(1).max(100),size:z.string().trim().min(1).max(15).optional(),stock:z.number().int().min(0).max(100000)}).strict()).min(1).max(100),name:textFields.name.optional(),description:textFields.description.optional(),category:textFields.category.optional(),images:textFields.images.optional(),tags:textFields.tags.optional(),featured:textFields.featured.optional(),content:textFields.content.optional()}).strict();
+const customerText=(max:number)=>z.string().max(max).refine(value=>!/[\u3400-\u9fff]/u.test(value),'Use customer-facing text without Chinese characters.');
+export const contentSchema=z.object({translations:productTranslationsSchema.optional(),presentation:presentationSchema.optional(),trade:tradeSchema.optional(),composition:customerText(2000),care:customerText(2000),fit:customerText(2000),details:customerText(5000)}).strict();
+const textFields={name:z.string().trim().min(2).max(150).refine(value=>!/[\u3400-\u9fff]/u.test(value),'Use a customer-facing product name.'),description:customerText(5000),category:z.enum(productCategories),images:z.array(z.string().max(250)).max(30),tags:z.array(z.string().trim().min(1).max(50)).max(20),featured:z.boolean(),content:contentSchema};
+export const editProductSchema=z.object({groupVersion:z.number().int().min(0).optional(),inventoryBaseline:z.record(z.string(),z.object({stock:z.number().int().min(0),reserved:z.number().int().min(0)}).strict()).optional(),version:z.number().int().min(0),id:z.string().max(100),slug:z.string().min(1).max(180).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/).optional(),priceCents:z.number().int().min(1).max(1000000).nullable(),approved:z.boolean(),active:z.boolean(),variants:z.array(z.object({id:z.string().min(1).max(100),size:z.string().trim().min(1).max(15).optional(),stock:z.number().int().min(0).max(100000)}).strict()).min(1).max(100),name:textFields.name.optional(),description:textFields.description.optional(),category:textFields.category.optional(),images:textFields.images.optional(),tags:textFields.tags.optional(),featured:textFields.featured.optional(),content:textFields.content.optional()}).strict();
 export type ProductEdit=z.infer<typeof editProductSchema>;
 const normalSize=(value:string)=>value.toUpperCase().replace(/^XXXL$/,'3XL').replace(/^XXL$/,'2XL');
 export function productWarnings(p:Product){const warnings:string[]=[];
@@ -31,7 +34,21 @@ export async function updateProduct(data:ProductEdit){if(data.images)await valid
  if(data.inventoryBaseline&&p.variants.some(v=>{const old=data.inventoryBaseline![v.id];return !old||old.stock!==v.stock||old.reserved!==v.reserved}))throw new HttpError(409,'Inventory changed since these values were loaded. Refresh and review the changes again.');
  const ids=new Set(data.variants.map(v=>v.id));
  if(ids.size!==data.variants.length||p.variants.some(v=>!ids.has(v.id)))throw new HttpError(400,'Retain every existing variant; archive it instead of deleting its history.');
+ const root=catalog.find(other=>other.id===parentId(p,catalog));
+ if(root&&root.id!==p.id){
+  if(data.groupVersion!==undefined&&data.groupVersion!==root.version)throw new HttpError(409,'Shared product information changed in another session. Refresh before saving this colour.');
+  if(data.name!==undefined&&data.name!==root.name)throw new HttpError(400,'Product name is shared. Edit it through Edit shared product.');
+  const incoming=structuredClone(data.content??p.content??{composition:'',care:'',fit:'',details:''});
+  const overrides=new Set(incoming.trade?.sharedOverrides||p.content?.trade?.sharedOverrides||[]);
+  const patch={...data,name:p.name};
+  for(const field of ['description','category'] as const)if(data[field]!==undefined){if(data[field]===root[field]){overrides.delete(field);(patch as Record<string,unknown>)[field]=p[field];}else overrides.add(field);}
+  for(const field of ['composition','care','fit','details','presentation','translations'] as const)if(data.content){if(JSON.stringify(incoming[field])===JSON.stringify(root.content?.[field])){overrides.delete(field);(incoming as Record<string,unknown>)[field]=p.content?.[field];}else overrides.add(field);}
+  if(data.content){const seo=(content:Product['content'])=>[content?.trade?.seoTitle,content?.trade?.seoDescription];if(JSON.stringify(seo(incoming))===JSON.stringify(seo(root.content))){overrides.delete('seo');incoming.trade={...incoming.trade,seoTitle:p.content?.trade?.seoTitle,seoDescription:p.content?.trade?.seoDescription};}else overrides.add('seo');}
+  incoming.trade={...incoming.trade,parentProductId:root.id,sharedOverrides:[...overrides]};data={...patch,content:incoming};
+ }
  const content=structuredClone(data.content??p.content??{composition:'',care:'',fit:'',details:''});
+ if(content.trade?.parentProductId){const target=catalog.find(other=>other.id===content.trade!.parentProductId);if(!target||target.id===p.id||aliasTarget(target)||parentId(target,catalog)!==target.id)throw new HttpError(400,'Choose an existing parent product; nested or circular product groups are not allowed.');}
+
  // Redirect history is server-owned; clients cannot redirect another product.
  const slug=data.slug??p.slug,previousSlugs=[...(p.content?.trade?.previousSlugs||[])];
  if(slug!==p.slug){if(previousSlugs.length>=100)throw new HttpError(409,'URL history limit reached.');previousSlugs.push(p.slug)}
@@ -47,6 +64,9 @@ export async function updateProduct(data:ProductEdit){if(data.images)await valid
   if(!current&&catalog.some(other=>other.variants.some(x=>x.id===v.id)))throw new HttpError(409,'Variant belongs to another product.');
   if(v.stock<(current?.reserved||0))throw new HttpError(409,'Stock cannot be below reserved units.');
   if(p.code.endsWith('25300801')&&normalSize(size)==='XS')throw new HttpError(400,'Neofit is not made in XS.');
+  const candidateColour=(identifiers[v.id]?.colour||content.trade.colour||rawColour(p)).trim().toLowerCase();
+  const previousColour=(p.content?.trade?.identifiers?.[v.id]?.colour||p.content?.trade?.colour||rawColour(p)).trim().toLowerCase();
+  if((!current||candidateColour!==previousColour)&&colourOptions(catalog,p,true).some(option=>option.product.id!==p.id&&option.colour.trim().toLowerCase()===candidateColour))throw new HttpError(409,'This colour already has its own article record. Edit that colour and its sizes instead.');
   const value=identifiers[v.id],combo=(value?.colour||content.trade.colour||'').trim().toLowerCase()+'|'+normalSize(size);
   if(!value?.archived){if(combinations.has(combo))throw new HttpError(409,'Two active variants have the same colour and size.');combinations.add(combo)}
   if(value?.gtin){const key=canonicalGtin(value.gtin);if(gtins.has(key)||others.some(other=>other.gtin&&canonicalGtin(other.gtin)===key))throw new HttpError(409,'This GTIN is already assigned to another variant.');gtins.add(key)}
