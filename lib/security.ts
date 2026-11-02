@@ -49,7 +49,7 @@ export function passwordMatches(password: string, configuredHash = process.env.A
     return timingSafeEqual(scryptSync(password, match[1], 64), Buffer.from(match[2], 'hex'));
 }
 export function cookieValue(req: Request, name: string) { return (req.headers.get('cookie') || '').split(';').map(v => v.trim()).find(v => v.startsWith(name + '='))?.slice(name.length + 1) || ''; }
-export async function requireAdmin(req: Request) { const value = cookieValue(req, 'bigk_admin'); const session = (await db().prepare('SELECT hash FROM sessions WHERE hash=? AND expires_at>?').get(hash(value), new Date().toISOString())); if (!value || !session)
+export async function requireAdmin(req: Request) { const value = cookieValue(req, 'bigk_admin'); if(!value)throw new HttpError(401, 'Sign in to the admin area.'); const session = (await db().prepare('SELECT hash FROM sessions WHERE hash=? AND expires_at>?').get(hash(value), new Date().toISOString())); if (!value || !session)
     throw new HttpError(401, 'Sign in to the admin area.'); }
 export function sessionCookie(name: string, value: string, maxAge: number) { return `${name}=${value}; HttpOnly; SameSite=Strict; Path=/; Max-Age=${maxAge}${process.env.NODE_ENV === 'production' ? '; Secure' : ''}`; }
 export function failure(error: unknown) { if (error instanceof HttpError)
