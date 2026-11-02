@@ -13,7 +13,7 @@ try{
   const context=await browser.newContext({viewport:{width,height:1000}}),page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.goto(origin+'/admin');await page.getByLabel('Admin password',{exact:true}).fill(password);await page.getByRole('button',{name:'Sign in securely'}).click();await page.getByRole('navigation',{name:'Backoffice navigation'}).waitFor();
   await page.goto(origin+'/#catalog');await page.getByRole('link',{name:'View Nano Down Jacket',exact:true}).waitFor();await page.screenshot({path:join(artifacts,'front-'+width+'.png'),fullPage:true});
-  for(const [slug,name,kind,count] of [['nandown-jkt-p019','Nano Down Jacket','jacket',3],['nandown-fz-gillet-p021','Nano Down Gillet','gillet',4],['alpine-gillet-p007','Alpin Gillet','alpin',3]]){
+  for(const [slug,name,kind,count] of [['nandown-jkt-p019','Nano Down Jacket','jacket',3],['nandown-fz-gillet-p021','Nano Down Gillet','gillet',4],['alpine-gillet-p007','ALPIN VEST','alpin',3]]){
    await page.goto(origin+'/products/'+slug);await page.getByRole('heading',{name,exact:true}).waitFor();const tech=page.locator(kind==='alpin'?'[data-alpin-vest-technology]':'[data-nano-technology]');assert.equal(await tech.locator('article').count(),count);
    assert(await page.getByRole('button',{name:'Add to bag',exact:true}).isDisabled());assert(!/[\u3400-\u9fff]/u.test(await page.locator('body').evaluate(e=>e.outerHTML)));assert.equal(await page.locator('script[type="application/ld+json"]').count(),0);
    for(const img of await tech.locator('img').all()){await img.scrollIntoViewIfNeeded();await img.evaluate(e=>e.decode());assert(await img.evaluate(e=>e.naturalWidth>0))}

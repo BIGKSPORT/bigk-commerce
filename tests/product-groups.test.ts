@@ -8,9 +8,11 @@ import {productGroups,sharedProducts,colourOptions,groupUrl,parentId} from '../l
 import {resolveGroupSelection} from '../lib/product-group-routing';
 import {groupingPlan} from '../lib/product-group-migration';
 import {saveSharedProduct,addProductColour,archiveProductColour,groupEditSchema} from '../lib/admin-product-groups';
+import {importB10Draft} from '../lib/b10-import';
+import {publicProducts} from '../lib/catalog-view';
 import {updateProduct} from '../lib/admin-catalog';
 const dir=mkdtempSync(join(tmpdir(),'bigk-groups-'));
-process.env.DATABASE_PROVIDER='sqlite';process.env.DATABASE_PATH=join(dir,'test.sqlite');process.env.DATABASE_URL='';process.env.APP_URL='https://bigk.example';process.env.COMMERCE_MODE='demo';
+process.env.DATABASE_SCHEMA='bigk_staging';process.env.DATABASE_PROVIDER='sqlite';process.env.DATABASE_PATH=join(dir,'test.sqlite');process.env.DATABASE_URL='';process.env.APP_URL='https://bigk.example';process.env.COMMERCE_MODE='demo';
 const stock=(catalog:Awaited<ReturnType<typeof products>>)=>catalog.flatMap(p=>p.variants.map(v=>[p.id,v.id,v.size,v.stock,v.reserved]));
 try{
  await test('catalogue groups preserve independent colour identities and inventory',async t=>{
@@ -44,11 +46,15 @@ try{
    catalog=await products();assert(catalog.find(p=>p.id===child.id)!.content?.trade?.sharedOverrides?.includes('composition'));
    const members=catalog.filter(p=>parentId(p,catalog)===root.id);root=catalog.find(p=>p.id===root.id)!;await saveSharedProduct({id:root.id,versions:Object.fromEntries(members.map(p=>[p.id,p.version])),name:root.name,description:root.description,category:root.category as any,content:{...root.content!,composition:'Updated shared composition'}});
    assert.equal(sharedProducts(await products()).find(p=>p.id===child.id)!.content?.composition,'Explicit colour-specific composition');
-   const latest=(await products()).find(p=>p.id===child.id)!;await assert.rejects(()=>updateProduct({id:latest.id,version:latest.version,name:'A separate name',priceCents:latest.priceCents,active:false,approved:false,variants:latest.variants}),/name is shared/);
+   const latest=(await products()).find(p=>p.id===child.id)!;await assert.rejects(()=>updateProduct({id:latest.id,version:latest.version,groupVersion:root.version,priceCents:latest.priceCents,active:false,approved:false,variants:latest.variants}),/Shared product information changed/);await assert.rejects(()=>updateProduct({id:latest.id,version:latest.version,name:'A separate name',priceCents:latest.priceCents,active:false,approved:false,variants:latest.variants}),/name is shared/);
   });
   await t.test('new colour inherits shared information, starts draft at zero stock, rejects duplicate colours and archives without deleting variants',async()=>{
    root=(await products()).find(p=>p.id===root.id)!;const before=stock(await products());const payload={parentId:root.id,version:root.version,colour:'Owner confirmed test colour',article:'99993456',sizes:['S','M'],priceCents:root.priceCents,images:[]};const id=await addProductColour(payload);const catalog=await products(),added=catalog.find(p=>p.id===id)!;assert.equal(parentId(added,catalog),root.id);assert(added.variants.every(v=>v.stock===0));assert.equal(added.active,false);assert.equal(sharedProducts(catalog).find(p=>p.id===id)!.description,root.description);for(const row of before)assert(stock(catalog).some(value=>JSON.stringify(value)===JSON.stringify(row)));
    await assert.rejects(()=>addProductColour(payload),/already exists/);await archiveProductColour({parentId:root.id,colourId:id,version:added.version,archived:true});const archived=(await products()).find(p=>p.id===id)!;assert.equal(archived.variants.length,2);assert.equal(colourOptions(await products(),root).some(o=>o.product.id===id),false);
+  });
+  await t.test('adding a colour to a published B10 keeps the new colour private and preserves all 33 original identifiers',async()=>{
+   await importB10Draft();let p=(await products()).find(p=>p.id==='B10')!;await updateProduct({id:p.id,version:p.version,priceCents:p.priceCents,approved:true,active:true,variants:p.variants});p=(await products()).find(p=>p.id==='B10')!;const identifiers=structuredClone(p.content?.trade?.identifiers);
+   const id=await addProductColour({parentId:p.id,version:p.version,colour:'Reviewed fourth colour',article:'99998888',sizes:['40','41'],images:[],priceCents:12999});const catalog=await products(),added=catalog.find(p=>p.id===id)!;assert.equal(added.active,false);assert.equal(added.approved,false);assert.equal(added.priceCents,12999);assert(added.variants.every(v=>v.stock===0));assert(!publicProducts(catalog).some(p=>p.id===id));assert.equal(catalog.find(p=>p.id==='B10')!.variants.length,33);assert.deepEqual(catalog.find(p=>p.id==='B10')!.content?.trade?.identifiers,identifiers);
   });
   await t.test('translation schema rejects translated names or commercial data',()=>{const payload={id:root.id,versions:{},name:root.name,description:root.description,category:root.category,content:{...root.content,translations:{nl:{name:'Translated name',priceCents:1}}}};assert.equal(groupEditSchema.safeParse(payload).success,false)});
  });
