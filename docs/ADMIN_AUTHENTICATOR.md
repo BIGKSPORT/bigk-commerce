@@ -11,3 +11,5 @@ Enrolment invalidates every existing admin session. MFA sessions use a distinct 
 Preserve `ADMIN_MFA_KEY`: changing it without re-encrypting stored secrets locks access. Never place QR secrets, setup links, passwords or recovery codes in logs, screenshots or source control.
 
 Verification: RFC 6238 vectors, encrypted-secret tampering, code replay, setup link replay, old session rejection, password reset, recovery-code consumption and a browser enrolment/login journey. Real owner enrolment must be completed by the owner on their own device.
+
+A setup link now derives a stable secret using purpose-separated HMAC-SHA256, so restarting the same link does not invalidate a QR already scanned. Different links retain distinct secrets. Codes normalize common spacing, zero-width paste separators and full-width digits without dropping leading zeroes. A reused valid TOTP returns a wait-for-next-code message and is still rejected. The login form stays in setup mode until the website enrolment is actually saved.
