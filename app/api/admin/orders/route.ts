@@ -10,7 +10,8 @@ export async function GET(req: Request) { try {
     const rows = (await db().prepare('SELECT id FROM orders ORDER BY created_at DESC LIMIT 200').all()) as {
         id: string;
     }[];
-    return Response.json({ carts:await savedCartOverview(), orders: await Promise.all(rows.map(async (r) => (await getOrder(r.id)))), audit: (await db().prepare('SELECT * FROM audit ORDER BY id DESC LIMIT 50').all()) }, { headers: { 'Cache-Control': 'no-store' } });
+    let carts:Awaited<ReturnType<typeof savedCartOverview>>=[];let cartTrackingAvailable=true;try{carts=await savedCartOverview()}catch{cartTrackingAvailable=false;console.error('Saved cart report unavailable')}
+    return Response.json({ carts,cartTrackingAvailable, orders: await Promise.all(rows.map(async (r) => (await getOrder(r.id)))), audit: (await db().prepare('SELECT * FROM audit ORDER BY id DESC LIMIT 50').all()) }, { headers: { 'Cache-Control': 'no-store' } });
 }
 catch (e) {
     return failure(e);

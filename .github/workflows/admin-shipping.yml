@@ -43,6 +43,7 @@ jobs:
         run: |
           export BIGK_ARTIFACT_DIR="$RUNNER_TEMP/bigk-product-artifacts"
           export CHROMIUM_PATH="$(node -e 'console.log(require("playwright").chromium.executablePath())')"
+          node tests/cart-sessions-browser.mjs
           BIGK_ARTIFACT_DIR="$RUNNER_TEMP/bigk-product-artifacts" npm run test:product-groups
           npm run test:auth-browser
           node tests/admin-mfa-browser.mjs
