@@ -281,3 +281,30 @@ export const contentCopy:Record<string,{nl:string;fr:string}>={
     "fr": "← Le Journal BIG K"
   }
 };
+
+Object.assign(contentCopy,{
+  "Explore jackets, fleece, vests, pants and accessories. Find product details, available colours and sizes on each product page.": {
+    "nl": "Ontdek jassen, fleece, bodywarmers, broeken en accessoires. Op elke productpagina vind je productinformatie, beschikbare kleuren en maten.",
+    "fr": "Découvrez vestes, polaires, gilets, pantalons et accessoires. Retrouvez les détails, les couleurs disponibles et les tailles sur chaque fiche produit."
+  },
+  "Find your everyday fit": {
+    "nl": "Vind jouw stijl voor elke dag",
+    "fr": "Trouvez votre style au quotidien"
+  },
+  "Browse the collection by style, colour or size. Save your favourites, compare products and find the pieces that suit your day.": {
+    "nl": "Bekijk de collectie op stijl, kleur of maat. Bewaar je favorieten, vergelijk producten en vind de kleding die bij jouw dag past.",
+    "fr": "Parcourez la collection par style, couleur ou taille. Enregistrez vos favoris, comparez les produits et trouvez les pièces adaptées à votre quotidien."
+  },
+  "Customer service": {
+    "nl": "Klantenservice",
+    "fr": "Service client"
+  },
+  "Email team@bigk.be for help with products, your order or your account. Include your order reference if you have one. Never send payment card details, passwords or authenticator codes.": {
+    "nl": "Mail naar team@bigk.be voor hulp bij producten, je bestelling of je account. Vermeld je bestelreferentie als je die hebt. Stuur nooit betaalkaartgegevens, wachtwoorden of authenticatiecodes.",
+    "fr": "Écrivez à team@bigk.be pour toute question sur les produits, votre commande ou votre compte. Indiquez votre référence de commande si vous en avez une. N’envoyez jamais de données de carte bancaire, de mots de passe ni de codes d’authentification."
+  },
+  "Use the private receipt link from your order to view its status. You can also sign in to your account using a single-use link sent by email.": {
+    "nl": "Bekijk de status via de persoonlijke ontvangstlink van je bestelling. Je kunt ook inloggen op je account via een eenmalige link die je per e-mail ontvangt.",
+    "fr": "Consultez le statut de votre commande via son lien privé de reçu. Vous pouvez également vous connecter à votre compte à l’aide d’un lien à usage unique envoyé par e-mail."
+  }
+});
