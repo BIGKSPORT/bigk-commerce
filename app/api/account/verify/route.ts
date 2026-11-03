@@ -1,7 +1,8 @@
+import {isSiteLocale,localizePath,siteLanguageCookie} from '@/lib/i18n/site-routing';
 import {db,transaction} from '@/lib/db';
-import {hash,token,sessionCookie,checkOrigin,boundedText,failure,rateLimitVisitor} from '@/lib/security';
+import {hash,token,sessionCookie,checkOrigin,boundedText,failure,rateLimitVisitor,cookieValue} from '@/lib/security';
 const validToken=(value:string)=>/^[A-Za-z0-9_-]{32,128}$/.test(value);
-const target=(req:Request,path:string)=>new URL(path,process.env.APP_URL||new URL(req.url).origin);
+const target=(req:Request,path:string)=>{const hint=new URL(req.url).searchParams.get('lang')||cookieValue(req,siteLanguageCookie);return new URL(isSiteLocale(hint)?localizePath(path,hint):path,process.env.APP_URL||new URL(req.url).origin)};
 /** A scanner following a link must never consume it or create a session. */
 export async function GET(req:Request){const value=new URL(req.url).searchParams.get('token')||'',url=target(req,validToken(value)?'/account/confirm':'/account');if(validToken(value))url.searchParams.set('token',value);else url.searchParams.set('error','expired');return new Response(null,{status:303,headers:{Location:url.toString(),'Cache-Control':'no-store','Referrer-Policy':'no-referrer'}})}
 export async function POST(req:Request){try{

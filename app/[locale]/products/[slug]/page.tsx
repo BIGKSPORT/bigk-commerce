@@ -1,3 +1,4 @@
+import GenericProductPage,{generateMetadata as genericMetadata} from '@/app/products/[slug]/page';
 import {cache} from 'react';
 import {notFound,permanentRedirect} from 'next/navigation';
 import {sharedProducts} from '@/lib/product-groups';
@@ -13,9 +14,10 @@ const load=cache(async()=>{const [catalog,preview]=await Promise.all([products()
 type Props={params:Promise<{locale:string;slug:string}>;searchParams:Promise<{colour?:string;size?:string}>};
 function indexable(preview:boolean){return !preview&&process.env.INDEXING_ENABLED==='true'&&isLive()&&process.env.LIVE_COMMERCE_APPROVED==='true'}
 function canonicalSlug(locale:AlpinLocale){return alpinPaths[locale].split('/').at(-1)}
-export async function generateMetadata({params}:Props){const {locale}=await params;if(!isAlpinLocale(locale))return {robots:{index:false,follow:false}};const {family,preview}=await load();const visible=family.filter(p=>preview||p.active&&p.approved);return alpinMetadata(locale,visible,indexable(preview)&&visible.length>0&&visible.every(p=>p.images.length))}
+export async function generateMetadata({params}:Props){const {locale,slug}=await params;if(!isAlpinLocale(locale))return {robots:{index:false,follow:false}};const {family,preview}=await load();if(!['alpin-fleece-jacket','alpin-fleecejas','veste-polaire-alpin',...family.flatMap(p=>[p.slug,...p.content?.trade?.previousSlugs||[]])].includes(slug))return genericMetadata({params:Promise.resolve({slug}),searchParams:Promise.resolve({})});const visible=family.filter(p=>preview||p.active&&p.approved);return alpinMetadata(locale,visible,indexable(preview)&&visible.length>0&&visible.every(p=>p.images.length))}
 export default async function Page({params,searchParams}:Props){
  const [{locale,slug},selection,{family,preview}]=await Promise.all([params,searchParams,load()]);
+ if(isAlpinLocale(locale)&&!['alpin-fleece-jacket','alpin-fleecejas','veste-polaire-alpin',...family.flatMap(p=>[p.slug,...p.content?.trade?.previousSlugs||[]])].includes(slug))return <GenericProductPage params={Promise.resolve({slug})} searchParams={searchParams}/>;
  if(!isAlpinLocale(locale)||family.length<2||!preview&&!family.some(p=>p.active&&p.approved))notFound();
  const aliases=['alpin-fleece-jacket','alpin-fleecejas','veste-polaire-alpin',...family.flatMap(p=>[p.slug,...p.content?.trade?.previousSlugs||[]])];
  if(slug!==canonicalSlug(locale)){if(!aliases.includes(slug))notFound();const query=new URLSearchParams();const old=family.find(p=>p.slug===slug);query.set('colour',selection.colour||(old?.id==='P002'?'Dusty Blue':'Black'));if(selection.size)query.set('size',alpinSize(selection.size));permanentRedirect(alpinPaths[locale]+'?'+query);}

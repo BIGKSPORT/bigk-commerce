@@ -17,6 +17,9 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run typecheck
+      - run: node --import tsx tests/email-job-kind.test.ts
+      - run: node --import tsx tests/site-language.test.ts
+      - run: node tests/launch-domain.test.mjs
       - run: npm test
       - run: npm run test:club
       - run: npm run test:backoffice
@@ -45,6 +48,8 @@ jobs:
           echo "BACKOFFICE_REVIEW_HTML=$RUNNER_TEMP/BigK_Backoffice_Preview.html" >> "$GITHUB_ENV"
           echo "CLUB_REVIEW_OUTPUT=$RUNNER_TEMP/bigk-club" >> "$GITHUB_ENV"
           echo "BIGK_ARTIFACT_DIR=$RUNNER_TEMP/bigk-screenshots" >> "$GITHUB_ENV"
+      - run: npm run build
+      - run: node tests/site-language-browser.mjs
       - run: npm run preview:build
       - run: npm run test:preview
       - run: node tests/alpin-gallery.mjs

@@ -9,8 +9,9 @@ let uri;try{uri=new URL(env.DATABASE_URL)}catch{}
 check('Database connection configured',uri?.protocol==='postgresql:'||uri?.protocol==='postgres:');
 check('Dedicated database login',uri?.username&&!['postgres','postgres.tvlfpxlfuatvtuiyrcam'].includes(uri.username));
 let origin;try{origin=new URL(env.APP_URL)}catch{}
-check('HTTPS application origin',origin?.protocol==='https:'&&origin.pathname==='/'&&!origin.search&&!origin.hash);
-check('Expected website domain',staging?origin?.hostname.endsWith('.netlify.app'):origin?.hostname==='bigk.be');
+const expectedOrigin=staging?'https://bigk-commerce-git-fix-catalogue-colour-options-hello-35126091.vercel.app':'https://bigk.be';
+check('HTTPS application origin',origin?.protocol==='https:'&&origin.pathname==='/'&&!origin.search&&!origin.hash&&!origin.username&&!origin.password);
+check('Expected website domain',origin?.origin===expectedOrigin);
 check('Durable product photo storage',env.MEDIA_DRIVER==='database');
 check('Hosting-safe upload limit',Number(env.MEDIA_UPLOAD_LIMIT_BYTES)>0&&Number(env.MEDIA_UPLOAD_LIMIT_BYTES)<=3145728);
 check('Admin password hash',/^[a-f0-9]{32}:[a-f0-9]{128}$/.test(env.ADMIN_PASSWORD_HASH||''));

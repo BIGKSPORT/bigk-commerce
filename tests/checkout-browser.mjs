@@ -1,6 +1,6 @@
 import {chromium} from 'playwright';
 import {spawn} from 'node:child_process';
-import {mkdtemp,rm} from 'node:fs/promises';
+import {mkdtemp,rm,mkdir} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import assert from 'node:assert/strict';
@@ -16,7 +16,14 @@ try{
  browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium',headless:true,args:['--no-sandbox']});
  for(const width of [390,1440]){
   const context=await browser.newContext({viewport:{width,height:900}}),page=await context.newPage();let firstKey='',calls=0;
+  await page.route('**/api/account/profile',route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({email:'saved@example.test',profile:{firstName:'Saved',lastName:'Buyer',phone:'+32470123456',shippingAddress:'Saved Street 2',postal:'1000',city:'Brussels',country:'BE'}})}));
   await page.goto(origin+'/checkout');await page.evaluate(id=>localStorage.setItem('bigk-bag-v2',JSON.stringify([{variantId:id,quantity:1}])),product.variants[0].id);await page.reload();
+  await page.locator('input[name="firstName"]').fill('Already typed');await page.getByRole('button',{name:'Use saved details',exact:true}).click();
+  assert.equal(await page.locator('input[name="firstName"]').inputValue(),'Already typed');assert.equal(await page.locator('input[name="address"]').inputValue(),'Saved Street 2');assert.equal(await page.locator('input[name="email"]').inputValue(),'saved@example.test');assert(!(await page.evaluate(()=>localStorage.getItem('bigk-bag-v2'))).includes('saved@example.test'));
+  await page.locator('.checkout-product img').first().waitFor();await page.locator('.checkout-product img').first().evaluate(i=>i.decode());
+  assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'Checkout fits the viewport');
+  assert.equal(await page.locator('.newsletter-signup').count(),0);
+  const review=process.env.BIGK_ARTIFACT_DIR||'/workspace/bigk-checkout-review';await mkdir(review,{recursive:true});await page.screenshot({path:join(review,'checkout-'+width+'.png'),fullPage:true});
   await page.route('**/api/checkout',async route=>{
    const data=route.request().postDataJSON();calls++;
    if(calls===1){firstKey=data.requestKey;await route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({error:'Temporary fixture failure.'})});}

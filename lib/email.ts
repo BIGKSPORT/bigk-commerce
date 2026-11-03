@@ -1,10 +1,9 @@
-import {emailHtml} from './order-email-template';
+import {emailHtml,orderEmailContent} from './order-email-template';
 import {emailDeliveryAllowed} from './email-policy';
 import {createHash} from 'node:crypto';
 import {clubReminder} from './club';
 import { db, transaction } from './db';
 import { getOrder } from './commerce';
-import { money } from './format';
 type Job = {
     id: number;
     order_id: string;
@@ -22,15 +21,20 @@ export async function deliverEmails(maxJobs=20) { if(!Number.isInteger(maxJobs)|
     if('blocked' in job)return {sent,failed,blocked:true};
     const order = (await getOrder(job.order_id));
     try {
+        if(job.kind!=='confirmation'&&job.kind!=='shipment'&&!/^club-expiry:[A-Za-z0-9-]+$/.test(job.kind)&&!/^withdrawal:[A-Za-z0-9-]+$/.test(job.kind))throw Error('Unsupported email job kind');
         if (!order)
             throw Error('Order missing');
+        if(job.kind==='confirmation'&&!['paid','fulfilled'].includes(order.status))throw Error('Payment is not verified');
+        if(job.kind==='shipment'&&order.status!=='fulfilled')throw Error('Shipment is not recorded');
         const reminder=job.kind.startsWith('club-expiry:')?await clubReminder(job.email,job.kind.slice('club-expiry:'.length)):null;
         if(job.kind.startsWith('club-expiry:')&&!reminder){await db().prepare('UPDATE email_outbox SET sent_at=?,lease_until=0 WHERE id=?').run(new Date().toISOString(),job.id);continue}
         const withdrawal=job.kind.startsWith('withdrawal:')?await db().prepare('SELECT * FROM withdrawal_requests WHERE id=? AND order_id=?').get(job.kind.slice('withdrawal:'.length),job.order_id):null;
-        const subject = withdrawal?'Your BigK withdrawal request has been received':reminder?'Your BigK Club points expire soon': job.kind === 'shipment' ? 'Your BigK order is on its way' : 'Your BigK order is confirmed';
-        const text = withdrawal?['BIGK BV acknowledges your withdrawal request.','Reference: '+String(withdrawal.id),'Received: '+String(withdrawal.created_at),JSON.parse(String(withdrawal.snapshot)).statement,...JSON.parse(String(withdrawal.snapshot)).items.map((l:{name:string;size:string;quantity:number})=>l.name+' / '+l.size+' × '+l.quantity),'This acknowledgement records your request; it does not confirm that a refund has already been issued.'].join('\n'):reminder?['You have '+reminder.points+' BigK Club points expiring on '+new Date(reminder.expiresAt).toLocaleDateString('en-GB',{timeZone:'Europe/Brussels'})+'.','Check your current balance and rules: '+new URL('/account/club',process.env.APP_URL).toString(),'100 points = €3, subject to the 10% product-subtotal limit.'].join('\n'):[subject, '', 'Order ' + order.id.slice(0, 8).toUpperCase(), ...order.items.map(l => `${l.name} / ${l.size} × ${l.quantity} — ${money(l.unitPrice * l.quantity)}`), '', ...(order.pointsDiscount?['BigK Club discount: -'+money(order.pointsDiscount)]:[]), 'Subtotal: ' + money(order.subtotal), 'Delivery: ' + money(order.shipping), 'Total: ' + money(order.total), ...(job.kind === 'shipment' && order.tracking ? ['Tracking reference: ' + order.tracking] : []), '', 'View your order history: ' + new URL('/account', process.env.APP_URL).toString()].join('\n');
+        if(job.kind.startsWith('withdrawal:')&&!withdrawal)throw Error('Withdrawal request missing');
+        const translated=(job.kind==='confirmation'||job.kind==='shipment')?orderEmailContent(order,job.kind,process.env.APP_URL):null;
+        const subject = withdrawal?'Your BigK withdrawal request has been received':reminder?'Your BigK Club points expire soon': translated!.subject;
+        const text = withdrawal?['BIGK BV acknowledges your withdrawal request.','Reference: '+String(withdrawal.id),'Received: '+String(withdrawal.created_at),JSON.parse(String(withdrawal.snapshot)).statement,...JSON.parse(String(withdrawal.snapshot)).items.map((l:{name:string;size:string;quantity:number})=>l.name+' / '+l.size+' × '+l.quantity),'This acknowledgement records your request; it does not confirm that a refund has already been issued.'].join('\n'):reminder?['You have '+reminder.points+' BigK Club points expiring on '+new Date(reminder.expiresAt).toLocaleDateString('en-GB',{timeZone:'Europe/Brussels'})+'.','Check your current balance and rules: '+new URL('/account/club',process.env.APP_URL).toString(),'100 points = €3, subject to the 10% product-subtotal limit.'].join('\n'):translated!.text;
         const trackingUrl=job.kind==='shipment'&&order.trackingUrl?order.trackingUrl:null;
-        const html=emailHtml(subject,text,{label:trackingUrl?'Track your parcel':'View your account',url:trackingUrl||new URL('/account',process.env.APP_URL).toString()});
+        const html=emailHtml(subject,text,translated?.action||{label:trackingUrl?'Track your parcel':'View your account',url:trackingUrl||new URL('/account',process.env.APP_URL).toString()},translated?.language||'en');
         const response = await fetch('https://api.resend.com/emails', { method: 'POST', headers: { Authorization: 'Bearer ' + process.env.RESEND_API_KEY, 'Content-Type': 'application/json', 'Idempotency-Key': 'bigk-'+createHash('sha256').update((process.env.APP_URL||'')+'|'+(process.env.DATABASE_SCHEMA||'bigk')).digest('hex').slice(0,16)+'-outbox-' + job.id }, body: JSON.stringify({ from: process.env.EMAIL_FROM, to: job.email, subject, text, html }), signal: AbortSignal.timeout(10000) });
         if (!response.ok)
             throw Error('Provider rejected delivery');
