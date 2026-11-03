@@ -308,3 +308,22 @@ Object.assign(contentCopy,{
     "fr": "Consultez le statut de votre commande via son lien privé de reçu. Vous pouvez également vous connecter à votre compte à l’aide d’un lien à usage unique envoyé par e-mail."
   }
 });
+
+Object.assign(contentCopy,{
+  "Order online for delivery to Belgium, the Netherlands, Germany, France and Luxembourg. For other European destinations, contact team@bigk.be to arrange delivery before ordering.": {
+    "nl": "Bestel online voor levering in België, Nederland, Duitsland, Frankrijk en Luxemburg. Neem voor andere Europese bestemmingen vóór je bestelling contact op met team@bigk.be om de levering af te spreken.",
+    "fr": "Commandez en ligne pour une livraison en Belgique, aux Pays-Bas, en Allemagne, en France et au Luxembourg. Pour les autres destinations européennes, contactez team@bigk.be avant de commander afin d’organiser la livraison."
+  },
+  "Standard delivery costs €6.95 for orders below €100 and is free from €100 in supported countries. The delivery charge is shown at checkout.": {
+    "nl": "Standaardlevering kost €6,95 voor bestellingen onder €100 en is gratis vanaf €100 in de ondersteunde landen. De verzendkosten worden bij het afrekenen getoond.",
+    "fr": "La livraison standard coûte 6,95 € pour les commandes de moins de 100 € et est gratuite à partir de 100 € dans les pays desservis. Les frais de livraison sont affichés au moment du paiement."
+  },
+  "Delivery times": {
+    "nl": "Levertijden",
+    "fr": "Délais de livraison"
+  },
+  "Belgium: delivery within 24 hours for orders placed before 12:00. The Netherlands: 48 hours. Germany and France: 3 days. Other European destinations, including Luxembourg: 3–5 days.": {
+    "nl": "België: levering binnen 24 uur bij bestellingen vóór 12.00 uur. Nederland: 48 uur. Duitsland en Frankrijk: 3 dagen. Andere Europese bestemmingen, waaronder Luxemburg: 3–5 dagen.",
+    "fr": "Belgique : livraison sous 24 heures pour les commandes passées avant 12 h. Pays-Bas : 48 heures. Allemagne et France : 3 jours. Autres destinations européennes, dont le Luxembourg : 3 à 5 jours."
+  }
+});
