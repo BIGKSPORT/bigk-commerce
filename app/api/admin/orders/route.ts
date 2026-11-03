@@ -1,3 +1,4 @@
+import {savedCartOverview} from '@/lib/cart-sessions';
 import {scheduleEmailDelivery} from '@/lib/email-dispatch';
 import { db, audit, transaction } from '@/lib/db';
 import { getOrder, expireReservations } from '@/lib/commerce';
@@ -9,7 +10,7 @@ export async function GET(req: Request) { try {
     const rows = (await db().prepare('SELECT id FROM orders ORDER BY created_at DESC LIMIT 200').all()) as {
         id: string;
     }[];
-    return Response.json({ orders: await Promise.all(rows.map(async (r) => (await getOrder(r.id)))), audit: (await db().prepare('SELECT * FROM audit ORDER BY id DESC LIMIT 50').all()) }, { headers: { 'Cache-Control': 'no-store' } });
+    return Response.json({ carts:await savedCartOverview(), orders: await Promise.all(rows.map(async (r) => (await getOrder(r.id)))), audit: (await db().prepare('SELECT * FROM audit ORDER BY id DESC LIMIT 50').all()) }, { headers: { 'Cache-Control': 'no-store' } });
 }
 catch (e) {
     return failure(e);

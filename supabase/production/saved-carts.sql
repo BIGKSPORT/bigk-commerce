@@ -1,0 +1,14 @@
+CREATE TABLE IF NOT EXISTS bigk.cart_sessions(id text PRIMARY KEY,items text NOT NULL,stage text NOT NULL,total integer NOT NULL CHECK(total>=0),created_at text NOT NULL,updated_at text NOT NULL,expires_at text NOT NULL,order_id text);
+CREATE INDEX IF NOT EXISTS cart_sessions_updated ON bigk.cart_sessions(updated_at);
+CREATE INDEX IF NOT EXISTS cart_sessions_expires ON bigk.cart_sessions(expires_at);
+ALTER TABLE bigk.cart_sessions ENABLE ROW LEVEL SECURITY;
+REVOKE ALL ON bigk.cart_sessions FROM PUBLIC,anon,authenticated;
+GRANT SELECT,INSERT,UPDATE,DELETE ON bigk.cart_sessions TO bigk_production_web;
+CREATE POLICY cart_server_access ON bigk.cart_sessions TO bigk_production_web USING(true) WITH CHECK(true);
+CREATE TABLE IF NOT EXISTS bigk_staging.cart_sessions(id text PRIMARY KEY,items text NOT NULL,stage text NOT NULL,total integer NOT NULL CHECK(total>=0),created_at text NOT NULL,updated_at text NOT NULL,expires_at text NOT NULL,order_id text);
+CREATE INDEX IF NOT EXISTS cart_sessions_updated ON bigk_staging.cart_sessions(updated_at);
+CREATE INDEX IF NOT EXISTS cart_sessions_expires ON bigk_staging.cart_sessions(expires_at);
+ALTER TABLE bigk_staging.cart_sessions ENABLE ROW LEVEL SECURITY;
+REVOKE ALL ON bigk_staging.cart_sessions FROM PUBLIC,anon,authenticated;
+GRANT SELECT,INSERT,UPDATE,DELETE ON bigk_staging.cart_sessions TO bigk_staging_server;
+CREATE POLICY cart_server_access ON bigk_staging.cart_sessions TO bigk_staging_server USING(true) WITH CHECK(true);

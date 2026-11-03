@@ -1,3 +1,4 @@
+import {linkSavedCart} from '@/lib/cart-sessions';
 import {stripeClient} from '@/lib/stripe-client';
 import {customerEmail,clubPaymentItems} from '@/lib/club';
 import { checkoutSchema, createOrder, getOrder, isLive } from '@/lib/commerce';
@@ -14,6 +15,7 @@ export async function POST(req: Request) {
         (await rateLimit('checkout:' + hash(parsed.data.email.toLowerCase()), 5, 300));
         let email:string|undefined;try{email=await customerEmail(req)}catch(e){if(!(e instanceof HttpError)||e.status!==401)throw e}
         const result = (await createOrder(parsed.data,email)), order = (await getOrder(result.id))!;
+        await linkSavedCart(req,result.id);
         if (!isLive())
             return Response.json({ ...result, mode: 'demo' }, { headers: { 'Cache-Control': 'no-store' } });
         const stripe = stripeClient();

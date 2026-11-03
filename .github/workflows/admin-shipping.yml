@@ -1,7 +1,7 @@
 name: Admin authentication and shipping staging checks
 on:
   push:
-    branches: [fix/catalogue-colour-options]
+    branches: [fix/catalogue-colour-options, feat/saved-carts]
   pull_request:
     paths:
       - 'lib/security.ts'
@@ -22,6 +22,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run typecheck
+      - run: node --import tsx tests/cart-sessions.test.ts
       - run: node --import tsx tests/email-job-kind.test.ts
       - run: node --import tsx tests/site-language.test.ts
       - run: node tests/launch-domain.test.mjs
