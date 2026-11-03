@@ -327,3 +327,30 @@ Object.assign(contentCopy,{
     "fr": "Belgique : livraison sous 24 heures pour les commandes passées avant 12 h. Pays-Bas : 48 heures. Allemagne et France : 3 jours. Autres destinations européennes, dont le Luxembourg : 3 à 5 jours."
   }
 });
+
+Object.assign(contentCopy,{
+  "Return shipping costs": {
+    "nl": "Kosten van retourverzending",
+    "fr": "Frais de retour"
+  },
+  "For a change-of-mind return, you pay the direct cost of return shipping. BIG K does not offer free return shipping for these returns. For return questions, contact team@bigk.be and include your order reference.": {
+    "nl": "Bij een retour omdat je van gedachten verandert, betaal je zelf de rechtstreekse kosten van de retourverzending. BIG K biedt hiervoor geen gratis retourverzending aan. Mail voor vragen over je retour naar team@bigk.be en vermeld je bestelreferentie.",
+    "fr": "Pour un retour après un changement d’avis, les frais directs de retour sont à votre charge. BIG K ne propose pas de retour gratuit dans ce cas. Pour toute question sur votre retour, écrivez à team@bigk.be en indiquant votre référence de commande."
+  },
+  "Return address": {
+    "nl": "Retouradres",
+    "fr": "Adresse de retour"
+  },
+  "BIGK BV, Theo Verellenlaan 27, 2990 Wuustwezel, Belgium.": {
+    "nl": "BIGK BV, Theo Verellenlaan 27, 2990 Wuustwezel, België.",
+    "fr": "BIGK BV, Theo Verellenlaan 27, 2990 Wuustwezel, Belgique."
+  },
+  "Wrong or faulty items": {
+    "nl": "Verkeerd of defect artikel",
+    "fr": "Article incorrect ou défectueux"
+  },
+  "Received the wrong item or a faulty product? Contact team@bigk.be so we can arrange the appropriate solution. Necessary return shipping costs for a legal guarantee remedy are not charged to you.": {
+    "nl": "Een verkeerd of defect artikel ontvangen? Mail naar team@bigk.be, zodat we een passende oplossing kunnen regelen. Noodzakelijke retourkosten voor een oplossing onder de wettelijke garantie worden niet aan jou aangerekend.",
+    "fr": "Vous avez reçu un article incorrect ou défectueux ? Contactez team@bigk.be afin que nous puissions organiser une solution adaptée. Les frais de retour nécessaires dans le cadre de la garantie légale ne vous sont pas facturés."
+  }
+});
