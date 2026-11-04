@@ -1,7 +1,7 @@
 name: Admin authentication and shipping staging checks
 on:
   push:
-    branches: [fix/catalogue-colour-options, feat/saved-carts]
+    branches: [fix/catalogue-colour-options, feat/saved-carts, feat/cart-upsell]
   pull_request:
     paths:
       - 'lib/security.ts'
@@ -23,6 +23,7 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
       - run: node --import tsx tests/cart-sessions.test.ts
+      - run: node --import tsx tests/cart-upsell.test.ts
       - run: node --import tsx tests/email-job-kind.test.ts
       - run: node --import tsx tests/site-language.test.ts
       - run: node tests/launch-domain.test.mjs
@@ -43,6 +44,7 @@ jobs:
         run: |
           export BIGK_ARTIFACT_DIR="$RUNNER_TEMP/bigk-product-artifacts"
           export CHROMIUM_PATH="$(node -e 'console.log(require("playwright").chromium.executablePath())')"
+          node tests/cart-upsell-browser.mjs
           node tests/cart-sessions-browser.mjs
           BIGK_ARTIFACT_DIR="$RUNNER_TEMP/bigk-product-artifacts" npm run test:product-groups
           npm run test:auth-browser
