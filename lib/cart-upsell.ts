@@ -13,7 +13,7 @@ export function cartOffer(catalog:Product[],bag:CartLine[]):CartOffer|null{
  const rank=Math.min(...owners.map(owner=>{const index=(complementary[owner.category]||['Accessories']).indexOf(product.category);return index<0?10:index}));
  const delivery=gap>0&&product.priceCents!>=gap&&product.priceCents!<=gap+2000;
  return {product,variants,rank,delivery};
- }).filter(p=>p.variants.length);
+ }).filter(p=>p.variants.length&&p.rank<10);
  choices.sort((a,b)=>a.rank-b.rank||Number(b.delivery)-Number(a.delivery)||a.product.priceCents!-b.product.priceCents!||a.product.id.localeCompare(b.product.id));
  const choice=choices[0];return choice?{product:choice.product,variants:choice.variants,subtotal,reason:choice.delivery?'free_delivery':'complement'}:null;
 }

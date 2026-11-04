@@ -12,4 +12,5 @@ for(const blocked of [{...socks,active:false},{...socks,approved:false},{...sock
 assert.equal(cartOffer([fleece,scarf],[{variantId:'fleece-M',quantity:1}])?.reason,'complement');
 assert.equal(cartOffer([jacket,fleece],[{variantId:'jacket-M',quantity:1}])?.reason,'complement','Do not push a large extra spend purely for free delivery');
 assert.deepEqual(cartOffer([jacket,scarf],[{variantId:'jacket-M',quantity:1}])?.variants.map(v=>v.id),['scarf-M']);
+assert.equal(cartOffer([p('shoe','Sneakers',11999),fleece],[{variantId:'shoe-M',quantity:1}]),null,'Hide irrelevant offers instead of forcing one');
 console.log('PASS cart upsell: one relevant eligible item, family exclusion, safe stock, shipping fit, no forced expensive delivery upsell.');
