@@ -11,11 +11,14 @@ import {Footer} from '../components/brand';
 import Link from './link';
 import seed from '../lib/catalog.json';
 import type {Product} from '../lib/types';
-// Reuse the reviewed style/colour identities; retain every seed variant, stock value and photo.
+// Reuse reviewed article/colour identities; retain every seed variant, stock value and photo.
+// This private demo explicitly joins four Velvet fixture records to exercise colour navigation.
+// It does not change or infer any production catalogue relationship.
+const demoVelvetArticles:Record<string,string>={P017:'25000701',P018:'25000702',P026:'25000704',P027:'25000703'};
 const allProducts=seed.products.map(p=>{
  const group=reviewedMap.groups.find(group=>group.colours.some(colour=>colour.recordId===p.id&&p.code.endsWith(colour.article))),colour=group?.colours.find(colour=>colour.recordId===p.id);
- const source=p as unknown as Product;
- return {...source,...(group&&colour?{name:group.name,content:{composition:'',care:'',fit:'',details:'',...source.content,trade:{...source.content?.trade,parentProductId:group.id===p.id?undefined:group.id,colour:colour.colour,sharedOverrides:[...new Set([...(source.content?.trade?.sharedOverrides||[]),'description' as const])]}}}:{}),version:0,variants:p.variants.map(v=>({...v,reserved:0}))};
+ const source=p as unknown as Product,demoParent=demoVelvetArticles[p.id]&&p.code.endsWith(demoVelvetArticles[p.id])?'P017':undefined;
+ return {...source,...(group&&colour?{name:group.name,content:{composition:'',care:'',fit:'',details:'',...source.content,trade:{...source.content?.trade,parentProductId:demoParent&&demoParent!==p.id?demoParent:group.id===p.id?undefined:group.id,colour:colour.colour,sharedOverrides:[...new Set([...(source.content?.trade?.sharedOverrides||[]),'description' as const])]}}}:{}),version:0,variants:p.variants.map(v=>({...v,reserved:0}))};
 }) as Product[];
 const products=visibleProducts(allProducts);
 const originalFetch=window.fetch.bind(window);
