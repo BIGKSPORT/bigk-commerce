@@ -1,3 +1,5 @@
+import {adminOrderBatch} from '@/lib/admin-order-query';
+import {shopFeatures} from '@/lib/shop-features';
 import {savedCartOverview} from '@/lib/cart-sessions';
 import {scheduleEmailDelivery} from '@/lib/email-dispatch';
 import { db, audit, transaction } from '@/lib/db';
@@ -7,11 +9,12 @@ export const runtime = 'nodejs';
 export async function GET(req: Request) { try {
     (await requireAdmin(req));
     (await expireReservations());
-    const rows = (await db().prepare('SELECT id FROM orders ORDER BY created_at DESC LIMIT 200').all()) as {
+    let batching=false;try{batching=(await shopFeatures()).admin_order_batching}catch{}
+    const rows = batching?[]:(await db().prepare('SELECT id FROM orders ORDER BY created_at DESC LIMIT 200').all()) as {
         id: string;
     }[];
     let carts:Awaited<ReturnType<typeof savedCartOverview>>=[];let cartTrackingAvailable=true;try{carts=await savedCartOverview()}catch{cartTrackingAvailable=false;console.error('Saved cart report unavailable')}
-    return Response.json({ carts,cartTrackingAvailable, orders: await Promise.all(rows.map(async (r) => (await getOrder(r.id)))), audit: (await db().prepare('SELECT * FROM audit ORDER BY id DESC LIMIT 50').all()) }, { headers: { 'Cache-Control': 'no-store' } });
+    return Response.json({ carts,cartTrackingAvailable, orders: batching?await adminOrderBatch():await Promise.all(rows.map(async (r) => (await getOrder(r.id)))), audit: (await db().prepare('SELECT * FROM audit ORDER BY id DESC LIMIT 50').all()) }, { headers: { 'Cache-Control': 'no-store' } });
 }
 catch (e) {
     return failure(e);
@@ -32,3 +35,4 @@ export async function PATCH(req: Request) { try {
 catch (e) {
     return failure(e);
 } }
+
