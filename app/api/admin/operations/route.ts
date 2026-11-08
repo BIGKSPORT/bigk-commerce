@@ -1,5 +1,5 @@
 import {z} from 'zod';
-import {db} from '@/lib/db';
+import {operationsDb as db} from '@/lib/operations-db';
 import {body,checkOrigin,failure,HttpError,requireAdmin} from '@/lib/security';
 import {featureNames,setFeature,shopFeatures} from '@/lib/shop-features';
 import {changeStaff,inviteSchema,inviteStaff,staffList} from '@/lib/staff-access';
