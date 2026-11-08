@@ -30,7 +30,7 @@ node --import tsx tests/catalog-translations.test.ts
 npm run build
 ```
 
-Both central database adapters remain unchanged; the new tables use a separate, narrowly scoped qualification helper. The new code is confined to private admin/staff routes and their server helpers, plus additive translation schemas. The public shop does not import the new staff/admin components. Static review builders now replace Node environment references with an empty browser-safe object; no host environment values are embedded.
+Both central database adapters remain unchanged; the new tables use a separate, narrowly scoped qualification helper. The new tools are confined to private admin/staff routes and their server helpers, plus additive translation schemas. Public changes remove draft translations from product payloads and restore saved carts through a local browser event instead of a page reload; checkout forms and navigation are preserved. The public shop does not import the new staff/admin components. Static review builders now replace Node environment references with an empty browser-safe object; no host environment values are embedded. The static demo reuses reviewed colour identities and the existing product-route resolver; its gallery checks distinguish the current desktop columns from the mobile overlay.
 
 ## Database and rollback
 
