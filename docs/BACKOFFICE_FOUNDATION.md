@@ -30,7 +30,7 @@ node --import tsx tests/catalog-translations.test.ts
 npm run build
 ```
 
-The central database adapter remains unchanged; the new tables use a separate, narrowly scoped qualification helper. The new code is confined to private admin/staff routes and their server helpers, plus additive translation schemas. The public shop does not import the new staff/admin components.
+Both central database adapters remain unchanged; the new tables use a separate, narrowly scoped qualification helper. The new code is confined to private admin/staff routes and their server helpers, plus additive translation schemas. The public shop does not import the new staff/admin components.
 
 ## Database and rollback
 
