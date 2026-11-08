@@ -4,7 +4,8 @@ import {mkdtempSync,rmSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import type Stripe from 'stripe';
-import {db,products,closeDatabase} from '../lib/db';
+import {products,closeDatabase} from '../lib/db';
+import {operationsDb as db} from '../lib/operations-db';
 import {adminSessionHash,totp} from '../lib/admin-mfa';
 import {checkoutSchema,createOrder,getOrder} from '../lib/commerce';
 import {adminOrderBatch} from '../lib/admin-order-query';
@@ -86,7 +87,7 @@ await test('operations foundation protects roles, stock, billing and customer em
  await t.test('issuing an invoice is idempotent, serialised, immutable and test-marked',async()=>{
   await setFeature('invoice_printing',true);process.env.STRIPE_SECRET_KEY='sk_test_fixture';process.env.DATABASE_SCHEMA='bigk_staging';const original=globalThis.fetch;let calls=0;
   globalThis.fetch=async(url)=>{calls++;return Response.json(String(url).includes('line_items')?{object:'list',data:lineFixture(),has_more:false}:invoiceFixture());};
-  try{const issued=await issueInvoice(orderId);assert.match(issued.number,/^TEST-BIGK-\d{4}-000001$/);assert.equal(issued.test,true);assert.equal((await issueInvoice(orderId)).number,issued.number);assert.equal(calls,2);assert.deepEqual(await savedInvoice(orderId),issued);await db().prepare('UPDATE orders SET customer=? WHERE id=?').run(JSON.stringify({firstName:'Changed after issue'}),orderId);assert.equal((await savedInvoice(orderId))!.buyer.name,'Test Buyer');}finally{globalThis.fetch=original;process.env.DATABASE_SCHEMA=testSchema;delete process.env.VERCEL_ENV;}
+  try{const [issued,concurrent]=await Promise.all([issueInvoice(orderId),issueInvoice(orderId)]);assert.equal(concurrent.number,issued.number);assert.match(issued.number,/^TEST-BIGK-\d{4}-000001$/);assert.equal(issued.test,true);assert.equal((await issueInvoice(orderId)).number,issued.number);assert.equal(calls,4);assert.deepEqual(await savedInvoice(orderId),issued);await db().prepare('UPDATE orders SET customer=? WHERE id=?').run(JSON.stringify({firstName:'Changed after issue'}),orderId);assert.equal((await savedInvoice(orderId))!.buyer.name,'Test Buyer');}finally{globalThis.fetch=original;process.env.DATABASE_SCHEMA=testSchema;delete process.env.VERCEL_ENV;}
  });
  await t.test('staff disable/reset revokes sessions immediately and flags do not delete data',async()=>{
   await changeStaff(staffIds[0],'disable');await assert.rejects(()=>requireStaff(req('/api/staff/auth',stockCookie)),/sign-in/);
