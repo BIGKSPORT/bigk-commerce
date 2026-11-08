@@ -1,0 +1,14 @@
+import {writeFileSync} from 'node:fs';
+import {db,products} from '../../lib/db';
+import {adminSessionHash} from '../../lib/admin-mfa';
+import {checkoutSchema,createOrder,getOrder} from '../../lib/commerce';
+import {setFeature} from '../../lib/shop-features';
+import {hash} from '../../lib/security';
+import {seller} from '../../lib/seller';
+process.env.DATABASE_PROVIDER='sqlite';process.env.COMMERCE_MODE='demo';
+await db().prepare('INSERT INTO sessions(hash,expires_at) VALUES(?,?)').run(adminSessionHash('operations-browser-owner'),'2099-01-01');
+for(const feature of ['staff_portal','photo_packing_slips','customer_email','invoice_printing','admin_order_batching'] as const)await setFeature(feature,true);
+const p=(await products()).find(p=>p.priceCents&&p.images.length)!;const input=checkoutSchema.parse({items:[{variantId:p.variants[0].id,quantity:1}],email:'browser-customer@example.test',phone:'+32470123456',firstName:'Browser',lastName:'Customer',country:'BE',address:'Test Street 1',postal:'1000',city:'Brussels',consent:true,requestKey:crypto.randomUUID()});const created=await createOrder(input);await db().prepare("UPDATE orders SET status='paid' WHERE id=?").run(created.id);const order=(await getOrder(created.id))!;
+const now=new Date().toISOString(),snapshot={number:'TEST-BIGK-BROWSER-000001',issuedAt:now,orderId:order.id,orderDate:order.createdAt,test:true,seller,buyer:{name:'Browser Customer',address:'Test Street 1',postal:'1000',city:'Brussels',country:'BE',email:order.email},lines:[{description:order.items[0].name,quantity:1,gross:order.total,tax:0}],shipping:0,shippingTax:0,taxes:[],total:order.total,tax:0,net:order.total,stripeSession:'cs_test_browser_fixture'};
+await db().prepare('INSERT INTO order_invoices(order_id,number,snapshot,created_at) VALUES(?,?,?,?)').run(order.id,snapshot.number,JSON.stringify(snapshot),now);
+writeFileSync(process.env.OPERATIONS_FIXTURE_PATH!,JSON.stringify({orderId:order.id,productName:p.name,customerId:'C-'+hash(order.email).slice(0,24)}));
