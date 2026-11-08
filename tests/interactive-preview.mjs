@@ -16,7 +16,7 @@ try{
  const search=page.getByRole('textbox',{name:'Search catalogue'});
  // Catalogue hover changes the photograph; the primary link opens a real PDP.
  await search.fill('Velvet');
- const black=page.locator('.product-card').filter({hasText:'black FZ hood'});
+ const black=page.locator('.product-card[data-product-id="P027"]');
  await black.scrollIntoViewIfNeeded();const media=black.locator('.card-photo-carousel');const box=await media.boundingBox();
  await page.mouse.move(box.x+box.width*.8,box.y+box.height*.4);
  assert(Number(await media.getAttribute('data-active-photo'))>1,'Pointer position changes the catalogue photograph');
