@@ -30,7 +30,7 @@ node --import tsx tests/catalog-translations.test.ts
 npm run build
 ```
 
-The new code is confined to private admin/staff routes and their server helpers, plus additive translation schemas. The public shop does not import the new staff/admin components.
+The central database adapter remains unchanged; the new tables use a separate, narrowly scoped qualification helper. The new code is confined to private admin/staff routes and their server helpers, plus additive translation schemas. The public shop does not import the new staff/admin components.
 
 ## Database and rollback
 
@@ -68,5 +68,5 @@ No paid services or dependencies are added. Staff screens fetch 25 rows at a tim
 ## DONE / NEXT / BACKLOG
 
 DONE: the operations increment above and isolated regression tests.
-NEXT: complete preview build and browser verification, then review this increment before production.
+NEXT: complete preview build and browser verification, then review this increment before production. The new branch needs its own scoped staging credentials in Vercel; broadening the old branch credential to every preview was rejected by automatic approval review. Production configuration was not changed.
 BACKLOG within Phase 1: full catalogue server-side filtering/sorting/saved views, scheduled publication, editor role, variant-specific pricing, expanded translation completeness dashboard and the rest of the catalogue-scale management work. Later phases: collections, complete six-language public journeys, SEO/feeds, consent and analytics/advertising.
