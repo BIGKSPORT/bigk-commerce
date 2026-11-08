@@ -11,7 +11,7 @@ Goal: extend the existing admin with practical staff, stock, printing and custom
 - Customer profile: individual plain-text customer-service email and recent message history through the existing Resend account. Preview recipient allowlisting remains enforced. Retries retain the same provider idempotency key; accepted means provider acceptance, not confirmed delivery.
 - Consumer invoice preparation/printing from verified Stripe payment, billing address and completed VAT breakdown. Atomic, year-based numbering, one immutable snapshot per order, repeat printing uses that snapshot. Test documents are explicitly marked TEST. Business billing and unsupported VAT cases require accountant review; no tax percentage is invented. This is not a structured B2B e-invoice or credit-note service.
 - Optional four-query order loading replaces the per-order query pattern without changing the existing API response.
-- Six-language product drafts: EN/NL/FR/DE/IT/ES, including care and editable technical blocks/image descriptions. This prepares stored content; public routing and complete application of translated content are still Phase 3. Product names and commercial identifiers retain their existing behavior in this increment.
+- Six-language product drafts: EN/NL/FR/DE/IT/ES, including care and editable technical blocks/image descriptions. This prepares stored content; public routing and complete application of translated content are still Phase 3. Product names and commercial identifiers retain their existing behavior in this increment. Draft translation text is removed from public product payloads.
 
 ## Branch and complete source
 
@@ -30,7 +30,7 @@ node --import tsx tests/catalog-translations.test.ts
 npm run build
 ```
 
-Both central database adapters remain unchanged; the new tables use a separate, narrowly scoped qualification helper. The new code is confined to private admin/staff routes and their server helpers, plus additive translation schemas. The public shop does not import the new staff/admin components.
+Both central database adapters remain unchanged; the new tables use a separate, narrowly scoped qualification helper. The new code is confined to private admin/staff routes and their server helpers, plus additive translation schemas. The public shop does not import the new staff/admin components. Static review builders now replace Node environment references with an empty browser-safe object; no host environment values are embedded.
 
 ## Database and rollback
 
