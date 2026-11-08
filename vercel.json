@@ -8,10 +8,6 @@
       "path": "/api/jobs/email",
       "schedule": "*/5 * * * *"
     }
-  ],
-  "git": {
-    "deploymentEnabled": {
-      "feat/backoffice-foundation": false
-    }
-  }
+  ]
 }
+
