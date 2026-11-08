@@ -1,4 +1,6 @@
-import {visibleProducts,resolveProduct} from '../lib/catalog-view';
+import reviewedMap from '../docs/catalog-review/product-grouping-map.json';
+import {resolveGroupSelection} from '../lib/product-group-routing';
+import {visibleProducts} from '../lib/catalog-view';
 import {useEffect,useState} from 'react';
 import {createRoot} from 'react-dom/client';
 import Storefront from '../components/storefront';
@@ -9,7 +11,12 @@ import {Footer} from '../components/brand';
 import Link from './link';
 import seed from '../lib/catalog.json';
 import type {Product} from '../lib/types';
-const allProducts=seed.products.map(p=>({...p,version:0,variants:p.variants.map(v=>({...v,reserved:0}))})) as Product[];
+// Reuse the reviewed style/colour identities; retain every seed variant, stock value and photo.
+const allProducts=seed.products.map(p=>{
+ const group=reviewedMap.groups.find(group=>group.colours.some(colour=>colour.recordId===p.id&&p.code.endsWith(colour.article))),colour=group?.colours.find(colour=>colour.recordId===p.id);
+ const source=p as unknown as Product;
+ return {...source,...(group&&colour?{name:group.name,content:{composition:'',care:'',fit:'',details:'',...source.content,trade:{...source.content?.trade,parentProductId:group.id===p.id?undefined:group.id,colour:colour.colour,sharedOverrides:[...new Set([...(source.content?.trade?.sharedOverrides||[]),'description' as const])]}}}:{}),version:0,variants:p.variants.map(v=>({...v,reserved:0}))};
+}) as Product[];
 const products=visibleProducts(allProducts);
 const originalFetch=window.fetch.bind(window);
 const previewOrigin=location.origin==='null'?'https://bigk-preview.invalid':location.origin;
@@ -44,7 +51,8 @@ function App(){
  else if(path==='/order')content=<Receipt/>;
  else if(path==='/account'||path==='/admin')content=<><SimpleHeader/><main id="main" className="page-container policy-page"><span className="eyebrow">INTERACTIVE PREVIEW</span><h1>{path==='/account'?'Your BigK account.':'Store management.'}</h1><p className="page-intro">Sign-in and account management are not connected in this preview. You can explore products, save favourites, compare items and try the demo shopping bag.</p><Link href="/" className="button dark">Back to the collection</Link></main><Footer/></>;
  else if(path.startsWith('/info/')){const title:Record<string,string>={about:'Looking good. Moving fast.',delivery:'Delivery & returns',contact:'Contact BigK',privacy:'Privacy',terms:'Terms'};content=<><SimpleHeader/><main id="main" className="page-container policy-page"><span className="eyebrow">BIGK / PREVIEW</span><h1>{title[path.split('/')[2]]||'BigK'}</h1><p className="page-intro">This is a private demonstration of the BigK website. Final business details, delivery policies and legal notices are awaiting approval. No payments, shipments or real purchase orders are created.</p><Link href="/" className="button dark">Explore the collection</Link></main><Footer/></>}
- else{const slug=path.startsWith('/products/')?path.split('/')[2]:null;content=<Storefront products={products} mode="demo" ready={false} initialSavedOnly={new URLSearchParams(route.split('?')[1]).get('saved')==='1'} initialCategory={new URLSearchParams(route.split('?')[1]).get('category')||undefined} initialProduct={slug?resolveProduct(allProducts,slug)?.id:undefined}/>}
+ else{const slug=path.startsWith('/products/')?path.split('/')[2]:null,query=new URLSearchParams(route.split('?')[1]),selected=slug?resolveGroupSelection(allProducts,products,slug,{colourId:query.get('colourId')||undefined,colour:query.get('colour')||undefined,size:query.get('size')||undefined}):null;content=<Storefront products={products} mode="demo" ready={false} initialSavedOnly={new URLSearchParams(route.split('?')[1]).get('saved')==='1'} initialCategory={new URLSearchParams(route.split('?')[1]).get('category')||undefined} initialProduct={selected?.selected.product.id} initialColour={selected?.selected.colour} initialSize={selected?.size}/>}
  return <><div className="preview-notice">INTERACTIVE PREVIEW · Payments disabled · Use fictional details only</div><div key={route}>{content}</div></>;
 }
 createRoot(document.getElementById('root')!).render(<App/>);
+
