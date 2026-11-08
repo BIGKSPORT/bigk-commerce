@@ -1,5 +1,6 @@
 import {z} from 'zod';
-import {db,transaction} from './db';
+import {transaction} from './db';
+import {operationsDb as db} from './operations-db';
 import {customerDetail} from './customer-management';
 import {emailDeliveryAllowed} from './email-policy';
 import {hash,HttpError} from './security';
