@@ -1,5 +1,6 @@
 import type Stripe from 'stripe';
-import {db,transaction} from './db';
+import {transaction} from './db';
+import {operationsDb as db} from './operations-db';
 import {getOrder} from './commerce';
 import {stripeClient} from './stripe-client';
 import {databaseSchema} from './database';
