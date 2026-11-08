@@ -1,4 +1,5 @@
-import {db,audit} from './db';
+import {audit} from './db';
+import {operationsDb as db} from './operations-db';
 export type OperationActor={id:string;name:string;role:'owner'|'stock_manager'|'warehouse_manager'};
 export const ownerActor:OperationActor={id:'owner',name:'Store owner',role:'owner'};
 export async function operationAudit(actor:OperationActor,action:string,entity:string,details:unknown){
