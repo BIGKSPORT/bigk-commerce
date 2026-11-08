@@ -1,7 +1,8 @@
 import {createHmac,randomBytes,scryptSync} from 'node:crypto';
 import QRCode from 'qrcode';
 import {z} from 'zod';
-import {db,transaction} from './db';
+import {transaction} from './db';
+import {operationsDb as db} from './operations-db';
 import {base32,counterFor,seal,unseal} from './admin-mfa';
 import {cookieValue,hash,HttpError,passwordMatches,requireAdmin,sessionCookie,token} from './security';
 import {requireFeature} from './shop-features';
@@ -34,7 +35,7 @@ export async function staffLogin(email:string,password:string,code:string){await
  const value=token();await db().prepare('DELETE FROM staff_sessions WHERE expires_at<?').run(new Date().toISOString());await db().prepare('INSERT INTO staff_sessions(hash,staff_id,account_version,expires_at) VALUES(?,?,?,?)').run(hash('staff:'+value),row.id,row.version,new Date(Date.now()+2*3600000).toISOString());
  await operationAudit({id:String(row.id),name:String(row.name),role:staffRole.parse(row.role)},'staff.login',String(row.id),{});return sessionCookie('bigk_staff',value,7200);
 });}
-export async function requireStaff(req:Request,role?:'stock_manager'|'warehouse_manager'):Promise<OperationActor>{await requireFeature('staff_portal');const value=cookieValue(req,'bigk_staff');if(!value)throw new HttpError(401,'Staff sign-in required.');const row=await db().prepare('SELECT a.id,a.name,a.role FROM staff_sessions s JOIN staff_accounts a ON a.id=s.staff_id WHERE s.hash=? AND s.expires_at>? AND a.active=1 AND a.version=s.account_version').get(hash('staff:'+value),new Date().toISOString());if(!row)throw new HttpError(401,'Staff sign-in required.');if(role&&row.role!==role)throw new HttpError(403,'This action is not permitted for your role.');return {id:String(row.id),name:String(row.name),role:staffRole.parse(row.role)};}
+export async function requireStaff(req:Request,role?:'stock_manager'|'warehouse_manager'):Promise<OperationActor>{const value=cookieValue(req,'bigk_staff');if(!value)throw new HttpError(401,'Staff sign-in required.');await requireFeature('staff_portal');const row=await db().prepare('SELECT a.id,a.name,a.role FROM staff_sessions s JOIN staff_accounts a ON a.id=s.staff_id WHERE s.hash=? AND s.expires_at>? AND a.active=1 AND a.version=s.account_version').get(hash('staff:'+value),new Date().toISOString());if(!row)throw new HttpError(401,'Staff sign-in required.');if(role&&row.role!==role)throw new HttpError(403,'This action is not permitted for your role.');return {id:String(row.id),name:String(row.name),role:staffRole.parse(row.role)};}
 export async function requireOperator(req:Request,role:'stock_manager'|'warehouse_manager'){try{await requireAdmin(req);return ownerActor;}catch(e){if(!(e instanceof HttpError)||e.status!==401)throw e;}return requireStaff(req,role);}
 export async function changeStaff(id:string,action:'disable'|'reset'){return transaction(async()=>{
  const row=await db().prepare('SELECT id FROM staff_accounts WHERE id=?').get(id);if(!row)throw new HttpError(404,'Staff account not found.');
