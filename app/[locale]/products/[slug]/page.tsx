@@ -1,3 +1,4 @@
+import {publicProductData} from '@/lib/public-product';
 import GenericProductPage,{generateMetadata as genericMetadata} from '@/app/products/[slug]/page';
 import {cache} from 'react';
 import {notFound,permanentRedirect} from 'next/navigation';
@@ -27,6 +28,7 @@ export default async function Page({params,searchParams}:Props){
  const selected=requested?available.find(p=>alpinProductColour(p).toLowerCase()===requested.toLowerCase()):available[0];if(!selected)notFound();const colour=alpinProductColour(selected);
  const requestedSize=alpinSize(selection.size||'');
  const size=selected.variants.some(v=>alpinSize(v.size)===requestedSize&&!selected.content?.trade?.identifiers?.[v.id]?.archived)?requestedSize:'';
- const publicFamily=available.map(alpinPublicProduct).map(p=>({...p,variants:p.variants.map(v=>({...v,stock:Math.max(0,v.stock-v.reserved),reserved:0,reported:null}))}));
+ const publicFamily=available.map(alpinPublicProduct).map(publicProductData).map(p=>({...p,variants:p.variants.map(v=>({...v,stock:Math.max(0,v.stock-v.reserved),reserved:0,reported:null}))}));
  return <>{!preview&&<script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(alpinStructuredData(locale,available)).replace(/</g,'\\u003c')}}/>}<AlpinFleecePage key={locale+colour+size} products={publicFamily} locale={locale} initialColour={colour} initialSize={size} preview={preview} mode={isLive()?'live':'demo'} ready={!preview&&liveReady()}/></>;
 }
+
