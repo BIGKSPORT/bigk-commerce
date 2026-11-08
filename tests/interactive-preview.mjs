@@ -12,7 +12,7 @@ try{
  await page.addStyleTag({content:readFileSync(root+'/app.css','utf8')});
  await page.evaluate(assets=>{if(!crypto.randomUUID)Object.defineProperty(crypto,'randomUUID',{value:()=> '10000000-1000-4000-8000-100000000000'.replace(/[018]/g,c=>(Number(c)^crypto.getRandomValues(new Uint8Array(1))[0]&15>>Number(c)/4).toString(16))});for(const name of ['localStorage','sessionStorage']){const data=new Map();Object.defineProperty(window,name,{value:{getItem:k=>data.get(k)||null,setItem:(k,v)=>data.set(k,String(v)),removeItem:k=>data.delete(k)}})}history.pushState=(_state,_title,url)=>{const target=new URL(String(url),'https://bigk-preview.invalid');location.hash=target.hash};const replace=()=>{for(const img of document.images){const source=img.getAttribute('src');if(assets[source]){img.loading='eager';img.src=assets[source]}}};new MutationObserver(replace).observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['src']});},assets);
  await page.addScriptTag({content:readFileSync(root+'/app.js','utf8')});
- await page.getByRole('heading',{name:/Looking good/}).waitFor();
+ try{await page.getByRole('heading',{name:/Looking good/}).waitFor();}catch(error){console.error('PREVIEW_RENDER_DIAGNOSTIC',JSON.stringify({errors,body:(await page.locator('body').innerText()).slice(0,1500),headings:await page.locator('h1').evaluateAll(nodes=>nodes.map(node=>({text:node.textContent,alt:node.querySelector('img')?.alt,visible:getComputedStyle(node).visibility,display:getComputedStyle(node).display,width:node.getBoundingClientRect().width,height:node.getBoundingClientRect().height})))}));throw error;}
  const search=page.getByRole('textbox',{name:'Search catalogue'});
  // Catalogue hover changes the photograph; the primary link opens a real PDP.
  await search.fill('Velvet');
@@ -72,3 +72,4 @@ try{
  await page.getByRole('link',{name:'Back to the collection'}).click();await page.getByRole('textbox',{name:'Search catalogue'}).fill('Velvet');await page.locator('#catalog').screenshot({path:artifactRoot+'/bigk-velvet-preview.png'});
  await page.setViewportSize({width:390,height:844});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);assert.deepEqual(errors,[]);console.log('PASS: isolated interactive preview — catalogue hover, full product page, hover zoom, arrows, thumbnail hover, keyboard gallery, full-screen zoom, recording-style overlay actions, catalogue product help, real touch swipe, four Velvet colours, Nano vest 7-photo gallery, size/bag, demo checkout to receipt, discarded contact details, navigation, mobile overflow. No live services called.');
 }finally{await browser.close()}
+
