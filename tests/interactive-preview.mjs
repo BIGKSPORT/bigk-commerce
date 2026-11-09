@@ -72,7 +72,8 @@ try{
  await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
  await page.waitForFunction(()=>document.querySelector('.product-gallery').dataset.activePhoto==='2'&&Math.abs(document.querySelector('.gallery-enlarge').scrollLeft-document.querySelector('.gallery-enlarge').clientWidth)<2);
  assert.equal(await page.locator('dialog.image-viewer[open]').count(),0,'Swipe stays on the product page');
- await mobileViewport.tap({position:{x:mobileStage.width*.5,y:mobileStage.height*.3}});
+ await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:from,y,id:3}]});
+ await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
  assert.equal(await page.locator('dialog.image-viewer[open]').count(),0,'Tapping does not open a duplicate mobile gallery');
  // The same native surface supports vertical scrolling into the overlapping product panel.
  const scrollBefore=await page.evaluate(()=>scrollY);
