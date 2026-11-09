@@ -433,3 +433,8 @@
 
 
 .category-bar>a{color:inherit;text-decoration:none}.category-bar>a:hover{text-decoration:underline}.category-bar>a:focus-visible{outline:3px solid #e4002b;outline-offset:-3px}
+
+/* Mobile PDP: larger photos, with the existing sticky gallery and overlapping sheet retained. */
+@media(max-width:760px){
+ .pdp-shell{--pdp-gallery-height:min(150vw,calc(100svh - 72px))}
+}

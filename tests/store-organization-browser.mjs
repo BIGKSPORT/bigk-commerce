@@ -57,6 +57,18 @@ try{
  const blue=before.find(p=>p.id==='P002');
  await shop.evaluate(ids=>localStorage.setItem('bigk-bag-v2',JSON.stringify(ids.map(variantId=>({variantId,quantity:1})))),blue.variants.slice(3,5).map(v=>v.id));
  await shop.goto(origin+'/en/products/alpin-fleece-jacket?colour=Dusty%20Blue');
+
+ const photoLayout=await shop.evaluate(()=>{
+  const header=document.querySelector('header.simple-header').getBoundingClientRect(),gallery=document.querySelector('.pdp-detail>.product-gallery'),g=gallery.getBoundingClientRect(),sheet=document.querySelector('.pdp-detail>.detail-info').getBoundingClientRect(),preview=document.querySelector('main').parentElement.querySelector(':scope>div[role="status"]');
+  return {headerHeight:header.height,gap:g.top-header.bottom,previewHeight:preview?.getBoundingClientRect().height||0,height:g.height,expected:Math.min(innerWidth*1.5,innerHeight-72),position:getComputedStyle(gallery).position,overlap:g.bottom-sheet.top};
+ });
+ assert.equal(photoLayout.headerHeight,60,'Alpin mobile header stays compact');
+ assert(photoLayout.gap<=photoLayout.previewHeight+2,'Photo starts directly after the header/status');
+ assert(Math.abs(photoLayout.height-photoLayout.expected)<=2,'Mobile product photo uses the larger frame');
+ assert.equal(photoLayout.position,'sticky','Existing overlapping gallery behavior retained');
+ assert(photoLayout.overlap>=16&&photoLayout.overlap<=20,'Existing sheet overlap retained');
+ await shop.locator('.gallery-enlarge img').first().evaluate(img=>img.decode());
+ await shop.screenshot({path:join(process.env.BIGK_ARTIFACT_DIR||root,'alpin-higher-larger-photo-mobile.png')});
  await shop.locator('header.simple-header>button').click();
  await shop.locator('[data-bag-variant="'+blue.variants[3].id+'"] img').evaluate(img=>img.decode());
  assert.equal(await shop.locator('[data-bag-variant]').count(),2);
