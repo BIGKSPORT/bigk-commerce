@@ -1,8 +1,10 @@
-import {parentId,colourOptions,type ColourOption} from './product-groups';
+import {hasAlpinTechnology} from './alpin-technology';
+import {alpinProductColour} from './alpin-fleece';
+import {parentId,colourOptions,rawColour,type ColourOption} from './product-groups';
 import type {Product,CartLine} from './types';
 export function bagMedia(product:Product,variantId:string){
  const identity=product.content?.trade?.identifiers?.[variantId];
- return {image:identity?.images?.[0]||product.images[0]||'',colour:identity?.colour||product.content?.trade?.colour||'',size:product.variants.find(v=>v.id===variantId)?.size||''};
+ return {image:identity?.images?.[0]||product.images[0]||'',colour:identity?.colour||product.content?.trade?.colour||(hasAlpinTechnology(product)?alpinProductColour(product):rawColour(product)),size:product.variants.find(v=>v.id===variantId)?.size||''};
 }
 /** Catalogue-only suggestions; never reserve stock or add a size without a choice. */
 export function bagSuggestions(products:Product[],bag:CartLine[]):ColourOption[]{
