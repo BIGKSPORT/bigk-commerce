@@ -10,6 +10,7 @@ import {groupingPlan} from '../lib/product-group-migration';
 import {saveSharedProduct,addProductColour,archiveProductColour,groupEditSchema} from '../lib/admin-product-groups';
 import {importB10Draft} from '../lib/b10-import';
 import {publicProducts} from '../lib/catalog-view';
+import {localizedPublicProducts,sourceHashes} from '../lib/i18n/published-product-translations';
 import {updateProduct} from '../lib/admin-catalog';
 const dir=mkdtempSync(join(tmpdir(),'bigk-groups-'));
 process.env.DATABASE_SCHEMA='bigk_staging';process.env.DATABASE_PROVIDER='sqlite';process.env.DATABASE_PATH=join(dir,'test.sqlite');process.env.DATABASE_URL='';process.env.APP_URL='https://bigk.example';process.env.COMMERCE_MODE='demo';
@@ -51,6 +52,12 @@ try{
     assert.deepEqual(entry.selected.product.content?.trade?.identifiers,raw.content?.trade?.identifiers);
    }
    assert.equal(resolveGroupSelection(before,source,group.parent.slug,{colourId:'P003'}),undefined);
+   const copy=structuredClone(before.filter(p=>['P017','P018','P026','P027'].includes(p.id)));copy.forEach(p=>{p.active=true;p.approved=true;});
+   const master=sharedProducts(copy).find(p=>p.id==='P017')!;
+   copy.find(p=>p.id==='P017')!.content={...master.content!,translationPublications:{nl:{copy:{description:'Goedgekeurde VELVET-producttekst'},sourceHashes:sourceHashes(master),approvedAt:new Date().toISOString()}}};
+   const translated=localizedPublicProducts(copy,'nl',true);assert.equal(translated.length,4);
+   for(const p of translated){assert.equal(p.description,'Goedgekeurde VELVET-producttekst');assert.deepEqual(p.variants,before.find(raw=>raw.id===p.id)!.variants);}
+
   });
   let root=before.find(p=>p.id==='P003')!;
   await t.test('shared edits reach all grouped colours without touching prices, photos, IDs, EANs or physical/reserved stock',async()=>{
