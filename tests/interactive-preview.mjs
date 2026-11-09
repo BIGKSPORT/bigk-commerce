@@ -8,7 +8,7 @@ const assets={};for(const folder of ['brand','products/web'])for(const name of r
 const browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium',headless:true,args:['--no-sandbox','--disable-crashpad-for-testing']});
 try{
  const page=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[];page.setDefaultTimeout(8000);page.on('pageerror',e=>errors.push(e.message));
- await page.setContent('<html><head></head><body><div id="root"></div></body></html>');
+ await page.setContent('<!doctype html><html><head></head><body><div id="root"></div></body></html>');assert.equal(await page.evaluate(()=>document.compatMode),'CSS1Compat');
  await page.addStyleTag({content:readFileSync(root+'/app.css','utf8')});
  await page.evaluate(assets=>{if(!crypto.randomUUID)Object.defineProperty(crypto,'randomUUID',{value:()=> '10000000-1000-4000-8000-100000000000'.replace(/[018]/g,c=>(Number(c)^crypto.getRandomValues(new Uint8Array(1))[0]&15>>Number(c)/4).toString(16))});for(const name of ['localStorage','sessionStorage']){const data=new Map();Object.defineProperty(window,name,{value:{getItem:k=>data.get(k)||null,setItem:(k,v)=>data.set(k,String(v)),removeItem:k=>data.delete(k)}})}history.pushState=(_state,_title,url)=>{const target=new URL(String(url),'https://bigk-preview.invalid');location.hash=target.hash};const replace=()=>{for(const img of document.images){const source=img.getAttribute('src');if(assets[source]){img.loading='eager';img.src=assets[source]}}};new MutationObserver(replace).observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['src']});},assets);
  await page.addScriptTag({content:readFileSync(root+'/app.js','utf8')});

@@ -30,4 +30,6 @@ No new public database query or polling. Ordering and grouping reuse the catalog
 
 For a rollback to code predating this optional JSON field, first use the current authenticated storefront API to save and publish a document with organization omitted; older strict parsers do not accept new JSON keys. Prefer the existing feature/off controls for immediate operational rollback without removing saved settings.
 
+The isolated browser review fixtures now declare HTML5 doctype and assert CSS1Compat, matching the existing deployed HTML. Without doctype, quirks mode matches CSS classes case-insensitively; minified pairs such as .g/.G and .a/.A collided and produced false layout overflow. Width assertions remain strict and retain diagnostic screenshots. Reference: https://html.spec.whatwg.org/multipage/semantics-other.html#case-sensitivity-and-string-comparison
+
 New homepage layout settings remain a private draft until the owner publishes them through the existing MFA-protected admin. Code deployment does not move live products or overwrite the owner's existing campaign choices.
