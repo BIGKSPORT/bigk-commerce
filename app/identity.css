@@ -438,3 +438,12 @@
 @media(max-width:760px){
  .pdp-shell{--pdp-gallery-height:min(150vw,calc(100svh - 72px))}
 }
+
+/* One native mobile photo gallery; preserve the sticky frame and overlapping sheet. */
+@media(max-width:760px){
+ .gallery-enlarge{overflow-x:auto;overflow-y:hidden;touch-action:pan-x pan-y pinch-zoom;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain;cursor:auto}
+ .gallery-enlarge::-webkit-scrollbar{display:none}
+ .gallery-enlarge .gallery-track{transform:none!important;transition:none}
+ .gallery-enlarge .gallery-slide{scroll-snap-align:start;scroll-snap-stop:always}
+ .product-gallery .gallery-expand{display:none}
+}
