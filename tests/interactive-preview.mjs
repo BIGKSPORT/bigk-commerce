@@ -59,49 +59,34 @@ try{
  await page.getByRole('link',{name:/^Choose cream$/i}).click();await page.locator('.pdp-detail h1').waitFor();assert.equal(await gallery.getAttribute('data-active-photo'),'1');assert.equal(await page.locator('.gallery-thumbnails button').count(),4);
  await page.setViewportSize({width:390,height:844});await page.evaluate(()=>scrollTo({top:0,behavior:'instant'}));await page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
  const cdp=await page.context().newCDPSession(page);await cdp.send('Emulation.setTouchEmulationEnabled',{enabled:true,maxTouchPoints:1});
- const mobileStage=await page.getByRole('button',{name:'Enlarge product image',exact:true}).boundingBox();const y=Math.min(760,mobileStage.y+mobileStage.height*.4),from=mobileStage.x+mobileStage.width*.8,to=mobileStage.x+mobileStage.width*.2;
+ const mobileViewport=page.locator('.gallery-enlarge'),mobileStage=await mobileViewport.boundingBox();
+ const y=Math.min(760,mobileStage.y+mobileStage.height*.4),from=mobileStage.x+mobileStage.width*.8,to=mobileStage.x+mobileStage.width*.2;
+ assert.equal(await mobileViewport.getAttribute('role'),'group','Mobile uses one inline gallery');
+ assert.equal(await page.locator('.gallery-expand:visible').count(),0,'Mobile has no second-gallery toggle');
  assert(await page.evaluate(({x,y})=>!!document.elementFromPoint(x,y)?.closest('.gallery-enlarge'),{x:from,y}),'Touch starts on the visible image');
  await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:from,y,id:1}]});
  for(let i=1;i<=5;i++)await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:from+(to-from)*i/5,y,id:1}]});
+ const progress=await mobileViewport.evaluate(el=>({left:el.scrollLeft,snap:getComputedStyle(el).scrollSnapType,transform:getComputedStyle(el.querySelector('.gallery-track')).transform}));
+ assert(progress.left>30,'Native photo strip follows the finger before release');
+ assert.equal(progress.snap,'x mandatory');assert.equal(progress.transform,'none');
  await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
- assert.equal(await gallery.getAttribute('data-active-photo'),'2','Horizontal touch swipe advances the product image');
- // A short drag follows the finger before release, then settles to the adjacent photograph.
- const startX=from,shortDistance=30;
- await gallery.evaluate(async el=>{await Promise.all(el.getAnimations({subtree:true}).map(a=>a.finished.catch(()=>{})))});
- const resting=await stage.locator('.gallery-track').evaluate(el=>new DOMMatrixReadOnly(getComputedStyle(el).transform).m41);
- await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:startX,y,id:2}]});
- for(let i=1;i<=3;i++)await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:startX-shortDistance*i/3,y,id:2}]});
- const dragging=await stage.evaluate(el=>({dragging:el.dataset.dragging,x:new DOMMatrixReadOnly(getComputedStyle(el.querySelector('.gallery-track')).transform).m41,transition:getComputedStyle(el.querySelector('.gallery-track')).transitionDuration}));
- assert.equal(dragging.dragging,'true');assert(Math.abs(dragging.x-resting+shortDistance)<2,'Photo follows the finger before release');assert.equal(dragging.transition,'0s','Dragging has no animation lag');
- assert.equal(await gallery.getAttribute('data-active-photo'),'2','Photo selection commits on release');
- await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
- assert.equal(await gallery.getAttribute('data-active-photo'),'3','A gentle 30px swipe advances the photo');
- assert.equal(await page.locator('dialog.image-viewer[open]').count(),0,'Swiping does not open zoom');
- await gallery.evaluate(async el=>{await Promise.all(el.getAnimations({subtree:true}).map(a=>a.finished.catch(()=>{})))});
- // Cancellation restores the current frame and does not select another image.
- await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:from,y,id:3}]});
- await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:from-50,y,id:3}]});
- await cdp.send('Input.dispatchTouchEvent',{type:'touchCancel',touchPoints:[]});
- assert.equal(await gallery.getAttribute('data-active-photo'),'3');assert.equal(await stage.getAttribute('data-dragging'),null);
- await gallery.evaluate(async el=>{await Promise.all(el.getAnimations({subtree:true}).map(a=>a.finished.catch(()=>{})))});
- // A tap with tiny hand movement still opens the existing full-screen viewer.
- assert(await page.evaluate(({x,y})=>!!document.elementFromPoint(x,y)?.closest('.gallery-enlarge'),{x:from,y}),'Tap begins on the photograph');
- await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:from,y,id:5}]});
- await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:from-3,y:y+1,id:5}]});
- await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
- await page.locator('dialog.image-viewer[open]').waitFor();await page.keyboard.press('Escape');
- // Vertical movement starting on the photograph remains ordinary page scrolling.
+ await page.waitForFunction(()=>document.querySelector('.product-gallery').dataset.activePhoto==='2'&&Math.abs(document.querySelector('.gallery-enlarge').scrollLeft-document.querySelector('.gallery-enlarge').clientWidth)<2);
+ assert.equal(await page.locator('dialog.image-viewer[open]').count(),0,'Swipe stays on the product page');
+ await mobileViewport.tap({position:{x:mobileStage.width*.5,y:mobileStage.height*.3}});
+ assert.equal(await page.locator('dialog.image-viewer[open]').count(),0,'Tapping does not open a duplicate mobile gallery');
+ // The same native surface supports vertical scrolling into the overlapping product panel.
  const scrollBefore=await page.evaluate(()=>scrollY);
- await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:from,y,id:4}]});
- for(let i=1;i<=6;i++)await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:from+2,y:y-i*25,id:4}]});
+ await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:from,y,id:2}]});
+ for(let i=1;i<=6;i++)await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:from+2,y:y-i*25,id:2}]});
  await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
  await page.waitForFunction(before=>scrollY>before+40,scrollBefore);
- assert.equal(await gallery.getAttribute('data-active-photo'),'3','Vertical scrolling does not change photos');
- assert.equal(await page.locator('dialog.image-viewer[open]').count(),0,'Scrolling does not open zoom');
+ assert.equal(await gallery.getAttribute('data-active-photo'),'2','Vertical scrolling does not change photos');
+ assert.equal(await page.locator('dialog.image-viewer[open]').count(),0);
  await page.evaluate(()=>scrollTo({top:0,behavior:'instant'}));
- await page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
  await page.emulateMedia({reducedMotion:'reduce'});
- assert.equal(await stage.locator('.gallery-track').evaluate(el=>getComputedStyle(el).transitionDuration),'0s','Reduced-motion preference remains respected');
+ await gallery.press('Home');
+ await page.waitForFunction(()=>document.querySelector('.gallery-enlarge').scrollLeft<2);
+ assert.equal(await gallery.getAttribute('data-active-photo'),'1','Keyboard navigation and reduced motion remain available');
  await page.emulateMedia({reducedMotion:'no-preference'});
  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
  await gallery.evaluate(async el=>{await Promise.all(el.getAnimations({subtree:true}).map(a=>a.finished.catch(()=>{})))});assert(await page.locator('.pdp-mobile-header').isVisible());assert(await page.locator('.gallery-product-actions').isVisible());assert(await page.locator('.gallery-meter').isVisible());assert(await page.getByRole('navigation',{name:'Mobile shopping navigation'}).isVisible());await page.screenshot({path:artifactRoot+'/bigk-product-page-mobile.png'});
