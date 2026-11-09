@@ -1,3 +1,4 @@
+import {PATCH as catalogPATCH} from '../app/api/admin/catalog/route';
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {mkdtempSync,rmSync} from 'node:fs';
@@ -32,6 +33,8 @@ await test('category administration preserves products and supports six sportswe
  const content={composition:'',care:'',fit:'',details:''};
  const id=await createProduct({name:'Category test top',description:'',category:'Training tops',code:'99887766',priceCents:null,images:[],sizes:['S'],tags:[],featured:false,content});
  const p=(await products()).find(p=>p.id===id)!;
+ const rejected=await catalogPATCH(new Request('http://localhost:3000/api/admin/catalog',{method:'PATCH',headers:{cookie,origin:'http://localhost:3000','content-type':'application/json'},body:JSON.stringify({id,version:p.version,priceCents:p.priceCents,approved:false,active:false,variants:p.variants.map(v=>({id:v.id,size:v.size,stock:v.stock})),category:'invalid-private-value'})}));assert.equal(rejected.status,400);const invalid=await rejected.json();assert.equal(invalid.fields[0].path,'category');assert(invalid.error.includes('Product category'));assert(!JSON.stringify(invalid).includes('invalid-private-value'));assert.equal((await products()).find(p=>p.id===id)!.version,p.version);
+
  await writeCategory({action:'archive',name:'Training tops',version:1});assert.equal((await products()).find(p=>p.id===id)!.category,'Training tops');await validateCategory('Training tops','Training tops');await assert.rejects(()=>validateCategory('Training tops'),/active category/);assert.equal((await publicCategoryOptions())!.find(c=>c.name==='Training tops')!.active,false);await writeCategory({action:'restore',name:'Training tops',version:2});
  await assert.rejects(()=>validateCategory('Unknown category'),/active category/);
  await assert.rejects(()=>supplierPlan([{productId:id,variantId:p.variants[0].id,category:'Unknown category'}],defaultImportOptions),/active category/);
