@@ -17,6 +17,11 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run typecheck
+      - run: node --import tsx tests/catalog-translations.test.ts
+      - run: node --import tsx tests/operations.test.ts
+      - run: node --import tsx tests/categories.test.ts
+      - run: node --import tsx tests/search-visibility.test.ts
+      - run: node tests/operations-postgres.mjs
       - run: node --import tsx tests/email-job-kind.test.ts
       - run: node --import tsx tests/site-language.test.ts
       - run: node tests/launch-domain.test.mjs
@@ -49,6 +54,7 @@ jobs:
           echo "CLUB_REVIEW_OUTPUT=$RUNNER_TEMP/bigk-club" >> "$GITHUB_ENV"
           echo "BIGK_ARTIFACT_DIR=$RUNNER_TEMP/bigk-screenshots" >> "$GITHUB_ENV"
       - run: npm run build
+      - run: node --import tsx tests/operations-browser.mjs
       - run: node tests/site-language-browser.mjs
       - run: npm run preview:build
       - run: npm run test:preview
@@ -62,3 +68,4 @@ jobs:
         with:
           name: review-screenshots
           path: ${{ runner.temp }}/bigk-screenshots
+

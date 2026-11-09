@@ -1,3 +1,4 @@
+import {validateCategory} from './catalog-categories';
 import {sharedProducts} from './product-groups';
 import type {ImportOperation} from './catalog-import-schema';
 import {canonicalGtin} from './product-identifiers';
@@ -51,6 +52,7 @@ export async function importPlan(rows:FileRow[]):Promise<ProductEdit[]>{const ca
   for(const key of ['verified','archived'] as const)if(row[key]!==undefined)identifier[key]=bool(row[key]!,key);
   content.trade.identifiers={...content.trade.identifiers,[known.id]:identifier};
  }
+ for(const edit of edits.values())await validateCategory(edit.category||'Other',catalog.find(p=>p.id===edit.id)?.category);
  return [...edits.values()].map(edit=>{const parsed=editProductSchema.safeParse(edit);if(!parsed.success)throw new HttpError(400,'Invalid import values: '+parsed.error.issues[0].message);return parsed.data});
 }
 class PreviewRollback extends Error{constructor(public result:unknown){super('Rollback preview')}}
@@ -63,3 +65,4 @@ export async function applyProductBatch(edits:ImportOperation[],dryRun:boolean){
  await updateProduct(edit);
  }const after=await products();const result={count:edits.length,changes:edits.map(edit=>{const p=after.find(p=>p.id===edit.id)!;return {id:p.id,before:before.find(x=>x.id===p.id),action:before.some(x=>x.id===p.id)?'update':'create',after:p,warnings:productWarnings(p)}})};if(dryRun)throw new PreviewRollback(result);return result})}catch(e){if(e instanceof PreviewRollback)return e.result;throw e}
 }
+

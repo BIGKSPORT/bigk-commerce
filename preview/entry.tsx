@@ -1,4 +1,7 @@
-import {visibleProducts,resolveProduct} from '../lib/catalog-view';
+import {alpinPublicProduct} from '../lib/alpin-fleece';
+import reviewedMap from '../docs/catalog-review/product-grouping-map.json';
+import {resolveGroupSelection} from '../lib/product-group-routing';
+import {visibleProducts} from '../lib/catalog-view';
 import {useEffect,useState} from 'react';
 import {createRoot} from 'react-dom/client';
 import Storefront from '../components/storefront';
@@ -9,7 +12,15 @@ import {Footer} from '../components/brand';
 import Link from './link';
 import seed from '../lib/catalog.json';
 import type {Product} from '../lib/types';
-const allProducts=seed.products.map(p=>({...p,version:0,variants:p.variants.map(v=>({...v,reserved:0}))})) as Product[];
+// Reuse reviewed article/colour identities; retain every seed variant, stock value and photo.
+// This private demo explicitly joins four Velvet fixture records to exercise colour navigation.
+// It does not change or infer any production catalogue relationship.
+const demoVelvetArticles:Record<string,string>={P017:'25000701',P018:'25000702',P026:'25000704',P027:'25000703'};
+const allProducts=seed.products.map(p=>{
+ const group=reviewedMap.groups.find(group=>group.colours.some(colour=>colour.recordId===p.id&&p.code.endsWith(colour.article))),colour=group?.colours.find(colour=>colour.recordId===p.id);
+ const source=p as unknown as Product,demoParent=demoVelvetArticles[p.id]&&p.code.endsWith(demoVelvetArticles[p.id])?'P017':undefined;
+ return {...source,...(group&&colour?{name:group.name,content:{composition:'',care:'',fit:'',details:'',...source.content,trade:{...source.content?.trade,parentProductId:demoParent&&demoParent!==p.id?demoParent:group.id===p.id?undefined:group.id,colour:colour.colour,sharedOverrides:[...new Set([...(source.content?.trade?.sharedOverrides||[]),'description' as const])]}}}:{}),version:0,variants:p.variants.map(v=>({...v,reserved:0}))};
+}).map(p=>alpinPublicProduct(p as Product)) as Product[];
 const products=visibleProducts(allProducts);
 const originalFetch=window.fetch.bind(window);
 const previewOrigin=location.origin==='null'?'https://bigk-preview.invalid':location.origin;
@@ -39,12 +50,13 @@ function App(){
  const [route,setRoute]=useState(location.pathname+location.search);
  useEffect(()=>{const navigate=(event:Event)=>{const destination=(event as CustomEvent<string>).detail;history.pushState({},'',destination);const target=new URL(destination,previewOrigin);setRoute(target.pathname+target.search);window.scrollTo(0,0)};const pop=()=>setRoute(location.pathname+location.search);window.addEventListener('bigk-preview-navigate',navigate);window.addEventListener('popstate',pop);return()=>{window.removeEventListener('bigk-preview-navigate',navigate);window.removeEventListener('popstate',pop)}},[]);
  useEffect(()=>{if(!route.startsWith('/checkout'))return;const demo:Record<string,string>={firstName:'Demo',lastName:'Customer',email:'demo@example.test',phone:'+32470123456',address:'Example Street 1',postal:'1000',city:'Brussels'};const fill=()=>{for(const [name,value] of Object.entries(demo)){const field=document.querySelector<HTMLInputElement>('input[name="'+name+'"]');if(field&&!field.value)field.value=value}};const timer=setInterval(fill,200);return()=>clearInterval(timer)},[route]);
- const path=route.split('?')[0];let content;
+ const path=route.split('?')[0].replace(/^\/(?:en|nl|fr)(?=\/|$)/,'')||'/';let content;
  if(path==='/checkout')content=<Checkout/>;
  else if(path==='/order')content=<Receipt/>;
  else if(path==='/account'||path==='/admin')content=<><SimpleHeader/><main id="main" className="page-container policy-page"><span className="eyebrow">INTERACTIVE PREVIEW</span><h1>{path==='/account'?'Your BigK account.':'Store management.'}</h1><p className="page-intro">Sign-in and account management are not connected in this preview. You can explore products, save favourites, compare items and try the demo shopping bag.</p><Link href="/" className="button dark">Back to the collection</Link></main><Footer/></>;
  else if(path.startsWith('/info/')){const title:Record<string,string>={about:'Looking good. Moving fast.',delivery:'Delivery & returns',contact:'Contact BigK',privacy:'Privacy',terms:'Terms'};content=<><SimpleHeader/><main id="main" className="page-container policy-page"><span className="eyebrow">BIGK / PREVIEW</span><h1>{title[path.split('/')[2]]||'BigK'}</h1><p className="page-intro">This is a private demonstration of the BigK website. Final business details, delivery policies and legal notices are awaiting approval. No payments, shipments or real purchase orders are created.</p><Link href="/" className="button dark">Explore the collection</Link></main><Footer/></>}
- else{const slug=path.startsWith('/products/')?path.split('/')[2]:null;content=<Storefront products={products} mode="demo" ready={false} initialSavedOnly={new URLSearchParams(route.split('?')[1]).get('saved')==='1'} initialCategory={new URLSearchParams(route.split('?')[1]).get('category')||undefined} initialProduct={slug?resolveProduct(allProducts,slug)?.id:undefined}/>}
+ else{const requestedSlug=path.startsWith('/products/')?path.split('/')[2]:null,slug=requestedSlug&&['alpin-fleece-jacket','alpin-fleecejas','veste-polaire-alpin'].includes(requestedSlug)?allProducts.find(p=>p.id==='P001')!.slug:requestedSlug,query=new URLSearchParams(route.split('?')[1]),selected=slug?resolveGroupSelection(allProducts,products,slug,{colourId:query.get('colourId')||undefined,colour:query.get('colour')||undefined,size:query.get('size')||undefined}):null;content=<Storefront products={products} mode="demo" ready={false} initialSavedOnly={new URLSearchParams(route.split('?')[1]).get('saved')==='1'} initialCategory={new URLSearchParams(route.split('?')[1]).get('category')||undefined} initialProduct={selected?.selected.product.id} initialColour={selected?.selected.colour} initialSize={selected?.size}/>}
  return <><div className="preview-notice">INTERACTIVE PREVIEW · Payments disabled · Use fictional details only</div><div key={route}>{content}</div></>;
 }
 createRoot(document.getElementById('root')!).render(<App/>);
+

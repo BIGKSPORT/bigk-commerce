@@ -1,3 +1,5 @@
+import {publicIndexingEnabled} from '@/lib/search-visibility';
+import {publicProductData} from '@/lib/public-product';
 import GenericProductPage,{generateMetadata as genericMetadata} from '@/app/products/[slug]/page';
 import {cache} from 'react';
 import {notFound,permanentRedirect} from 'next/navigation';
@@ -12,7 +14,7 @@ import AlpinFleecePage from '@/components/alpin-fleece-page';
 export const dynamic='force-dynamic';
 const load=cache(async()=>{const [catalog,preview]=await Promise.all([products(),isStagingStorePreview()]);return {family:sharedProducts(catalog).filter(hasAlpinTechnology),preview}});
 type Props={params:Promise<{locale:string;slug:string}>;searchParams:Promise<{colour?:string;size?:string}>};
-function indexable(preview:boolean){return !preview&&process.env.INDEXING_ENABLED==='true'&&isLive()&&process.env.LIVE_COMMERCE_APPROVED==='true'}
+function indexable(preview:boolean){return !preview&&publicIndexingEnabled()}
 function canonicalSlug(locale:AlpinLocale){return alpinPaths[locale].split('/').at(-1)}
 export async function generateMetadata({params}:Props){const {locale,slug}=await params;if(!isAlpinLocale(locale))return {robots:{index:false,follow:false}};const {family,preview}=await load();if(!['alpin-fleece-jacket','alpin-fleecejas','veste-polaire-alpin',...family.flatMap(p=>[p.slug,...p.content?.trade?.previousSlugs||[]])].includes(slug))return genericMetadata({params:Promise.resolve({slug}),searchParams:Promise.resolve({})});const visible=family.filter(p=>preview||p.active&&p.approved);return alpinMetadata(locale,visible,indexable(preview)&&visible.length>0&&visible.every(p=>p.images.length))}
 export default async function Page({params,searchParams}:Props){
@@ -27,6 +29,7 @@ export default async function Page({params,searchParams}:Props){
  const selected=requested?available.find(p=>alpinProductColour(p).toLowerCase()===requested.toLowerCase()):available[0];if(!selected)notFound();const colour=alpinProductColour(selected);
  const requestedSize=alpinSize(selection.size||'');
  const size=selected.variants.some(v=>alpinSize(v.size)===requestedSize&&!selected.content?.trade?.identifiers?.[v.id]?.archived)?requestedSize:'';
- const publicFamily=available.map(alpinPublicProduct).map(p=>({...p,variants:p.variants.map(v=>({...v,stock:Math.max(0,v.stock-v.reserved),reserved:0,reported:null}))}));
+ const publicFamily=available.map(alpinPublicProduct).map(publicProductData).map(p=>({...p,variants:p.variants.map(v=>({...v,stock:Math.max(0,v.stock-v.reserved),reserved:0,reported:null}))}));
  return <>{!preview&&<script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(alpinStructuredData(locale,available)).replace(/</g,'\\u003c')}}/>}<AlpinFleecePage key={locale+colour+size} products={publicFamily} locale={locale} initialColour={colour} initialSize={size} preview={preview} mode={isLive()?'live':'demo'} ready={!preview&&liveReady()}/></>;
 }
+

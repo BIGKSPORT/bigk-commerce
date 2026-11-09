@@ -1,3 +1,4 @@
+import {validateCategory} from './catalog-categories';
 import {products} from './db';
 import {visibleProducts} from './catalog-view';
 import {colourLabel} from './product-family';
@@ -64,5 +65,7 @@ export async function supplierPlan(input:FileRow[],options:ImportOptions,firstDa
   if(size)target.size=size;if(row.stock!==undefined){if(!/^\d+$/.test(row.stock))throw new HttpError(400,'Row '+(index+firstDataRow)+': stock must be a non-negative whole number.');target.stock=Number(row.stock)}
   const identifier={...(content.trade.identifiers![target.id]||{sku:'',gtin:''})};if(row.gtin!==undefined&&row.gtin!==identifier.gtin&&row.verified===undefined)identifier.verified=false;for(const field of ['sku','gtin','colour','supplierArticle'] as const)if(row[field]!==undefined)identifier[field]=row[field]!;for(const field of ['archived','verified'] as const)if(row[field]!==undefined)identifier[field]=row[field]==='true';content.trade.identifiers![target.id]=identifier;
  }
+ for(const plan of plans.values())await validateCategory(plan.category||'Other',catalog.find(p=>p.id===plan.id)?.category);
  if(plans.size>100)throw new HttpError(400,'Import at most 100 products at a time.');return [...plans.values()].map(plan=>{const parsed=importOperationSchema.safeParse(plan);if(!parsed.success)throw new HttpError(400,(plan.name||plan.id)+': '+parsed.error.issues[0].message);return parsed.data});
 }
+
