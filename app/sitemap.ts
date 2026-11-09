@@ -1,3 +1,4 @@
+import {publicIndexingEnabled} from '@/lib/search-visibility';
 import {siteLocales,localizePath} from '@/lib/i18n/site-routing';
 import {blogPosts} from '@/lib/blog';
 import {productGroups,sharedProducts} from '@/lib/product-groups';
@@ -11,7 +12,7 @@ import { seller } from '@/lib/seller';
 export const dynamic = 'force-dynamic';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const publicIndexing = process.env.INDEXING_ENABLED === 'true' && process.env.COMMERCE_MODE === 'live' && process.env.LIVE_COMMERCE_APPROVED === 'true';
+  const publicIndexing = publicIndexingEnabled();
   if (!publicIndexing) return [];
   const catalog = await products();
   const seen = new Set<string>();
@@ -27,3 +28,4 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const posts=await blogPosts();for(const locale of siteLocales){entries.push({url:seller.origin+'/'+locale+'/blog',changeFrequency:'weekly',priority:0.6});for(const p of posts)entries.push({url:seller.origin+'/'+locale+'/blog/'+p.slug,lastModified:new Date(p.updatedAt),priority:0.6});}
   return entries;
 }
+
