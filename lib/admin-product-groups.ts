@@ -3,8 +3,8 @@ import {products,db,transaction,audit} from './db';
 import {updateProduct,createProduct,contentSchema} from './admin-catalog';
 import {family,parentId,colourOptions,normalizedSize} from './product-groups';
 import {HttpError} from './security';
-import {productCategories} from './product-categories';
-export const groupEditSchema=z.object({id:z.string().max(100),versions:z.record(z.string(),z.number().int().min(0)),name:z.string().min(2).max(150).refine(value=>!/[\u3400-\u9fff]/u.test(value),'Use a customer-facing product name.'),description:z.string().max(5000).refine(value=>!/[\u3400-\u9fff]/u.test(value),'Use customer-facing text without Chinese characters.'),category:z.enum(productCategories),content:contentSchema}).strict();
+import {categoryNameSchema} from './catalog-categories';
+export const groupEditSchema=z.object({id:z.string().max(100),versions:z.record(z.string(),z.number().int().min(0)),name:z.string().min(2).max(150).refine(value=>!/[\u3400-\u9fff]/u.test(value),'Use a customer-facing product name.'),description:z.string().max(5000).refine(value=>!/[\u3400-\u9fff]/u.test(value),'Use customer-facing text without Chinese characters.'),category:categoryNameSchema,content:contentSchema}).strict();
 export async function saveSharedProduct(data:z.infer<typeof groupEditSchema>){return transaction(async()=>{
  const catalog=await products(),p=catalog.find(p=>p.id===data.id);if(!p||parentId(p,catalog)!==p.id)throw new HttpError(404,'Parent product not found.');
  const members=family(catalog,p);if(members.some(member=>data.versions[member.id]!==member.version)||Object.keys(data.versions).length!==members.length)throw new HttpError(409,'This product group changed in another session. Refresh before saving shared content.');
@@ -22,7 +22,7 @@ export async function addProductColour(data:z.infer<typeof newColourSchema>){ret
  // Every newly added colour has its own draft record, including additions to legacy multi-colour products.
  // This keeps unreviewed images, price and publication status out of an already-published parent.
  if(!/^\d{8}$/.test(data.article))throw new HttpError(400,'Supplier article must contain eight digits for a new colour record.');
- const id=await createProduct({name:p.name,description:p.description,category:z.enum(productCategories).parse(p.category),code:data.article,priceCents:data.priceCents,images:data.images,sizes:data.sizes,tags:[],featured:false,content:{composition:'',care:'',fit:'',details:'',trade:{parentProductId:p.id,colour:data.colour,supplierArticle:data.article,originCountry:p.content?.trade?.originCountry||''}}});
+ const id=await createProduct({name:p.name,description:p.description,category:categoryNameSchema.parse(p.category),code:data.article,priceCents:data.priceCents,images:data.images,sizes:data.sizes,tags:[],featured:false,content:{composition:'',care:'',fit:'',details:'',trade:{parentProductId:p.id,colour:data.colour,supplierArticle:data.article,originCountry:p.content?.trade?.originCountry||''}}});
  await audit('catalog.colour.created',p.id+':'+id);return id;
 })}
 export const archiveColourSchema=z.object({parentId:z.string().max(100),colourId:z.string().max(220),version:z.number().int().min(0),archived:z.boolean()}).strict();
@@ -32,3 +32,4 @@ export async function archiveProductColour(data:z.infer<typeof archiveColourSche
  for(const v of option.variants)identifiers[v.id]={...identifiers[v.id],sku:identifiers[v.id]?.sku||'',gtin:identifiers[v.id]?.gtin||'',archived:data.archived};
  content.trade={...content.trade,identifiers};await updateProduct({id:p.id,version:p.version,content,priceCents:p.priceCents,active:p.active&&Object.values(identifiers).some(identifier=>!identifier.archived),approved:p.approved,variants:p.variants.map(v=>({id:v.id,size:v.size,stock:v.stock}))});return p.id;
 })}
+
