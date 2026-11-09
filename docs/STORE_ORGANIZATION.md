@@ -36,6 +36,8 @@ New homepage layout settings remain a private draft until the owner publishes th
 
 ## Clothing-first ordering correction
 
-The previous fallback used the alphabetical category query, so Accessories could lead when no homepage document had been published. Public navigation, catalogue sections, the organizer and the category starter now use a shared clothing-first fallback. Unrecognized/custom categories precede Accessories and Other. Explicit owner ordering still takes precedence. This is a presentation default, not a hero-product selection.
+The previous fallback used the alphabetical category query, so Accessories could lead when no homepage document had been published. Public navigation, catalogue sections, the organizer and the category starter now use a shared clothing-first fallback. Unrecognized/custom categories precede the fallback buckets; Accessories follows Other unless explicitly reordered. Explicit owner ordering still takes precedence. This is a presentation default, not a hero-product selection.
 
 The new organization action uses the same owner MFA, Origin, rate limit and optimistic version checks. It patches only display settings into the saved draft and live document. Live campaigns stay as published; disabled old campaigns are retained with their section switches off, and unreviewed campaign drafts are never published by this action. The existing off switch remains available. No database migration, new service or dependency.
+
+Removed categories that still contain styles stay available in the display-order editor, marked Not in menu. Their products remain ordered in All products; the category stays excluded from public navigation and category tiles. The catalogue's full category union uses the same clothing-first fallback, so an archived Fleece category cannot push its garments below accessories.
