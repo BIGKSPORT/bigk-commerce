@@ -31,6 +31,7 @@ export function sharedProducts(catalog:Product[]):Product[]{return catalog.map(p
  const overrides=p.content?.trade?.sharedOverrides||[];const inherit=(field:SharedField)=>!overrides.includes(field);
  const content={composition:'',care:'',fit:'',details:'',...p.content};
  for(const key of ['composition','care','fit','details','presentation','translations'] as const)if(inherit(key)&&parent.content?.[key]!==undefined)(content as Record<string,unknown>)[key]=parent.content[key];
+ if(inherit('translations'))content.translationPublications=parent.content?.translationPublications;
  content.trade={...p.content?.trade,colour:p.content?.trade?.colour||rawColour(p),...(inherit('seo')?{seoTitle:parent.content?.trade?.seoTitle,seoDescription:parent.content?.trade?.seoDescription}:{} )};
  return {...p,group:{id:parent.id,slug:parent.slug,version:parent.version},name:parent.name,description:inherit('description')?parent.description:p.description,category:inherit('category')?parent.category:p.category,content};
 })}
@@ -55,3 +56,4 @@ export function groupUrl(catalog:Product[],option:ColourOption,size?:string){
  return '/products/'+(root.group?.slug||root.slug)+(params.size?'?'+params:'');
 }
 export function optionFor(catalog:Product[],p:Product,colour?:string){return colourOptions(catalog,p).find(option=>option.product.id===p.id&&(!colour||option.colour===colour))}
+

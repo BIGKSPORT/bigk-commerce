@@ -1,9 +1,10 @@
+import type {TranslationPublication} from './i18n/translation-publication-schema';
 import type {ProductPresentation} from './product-presentation';
 import type {ProductTrade} from './product-identifiers';
 import type {ProductTranslation} from './i18n/product-content';
 export type {ProductTranslation} from './i18n/product-content';
 export type Variant = {id:string;size:string;stock:number;reserved:number;reported:number|null};
-export type ProductContent = {translations?:Partial<Record<'en'|'nl'|'fr'|'de'|'it'|'es',ProductTranslation>>;presentation?:ProductPresentation;trade?:ProductTrade;composition:string;care:string;fit:string;details:string};
+export type ProductContent = {localizedCopy?:ProductTranslation;translationPublications?:Partial<Record<'nl'|'fr'|'de'|'it'|'es',TranslationPublication>>;translations?:Partial<Record<'en'|'nl'|'fr'|'de'|'it'|'es',ProductTranslation>>;presentation?:ProductPresentation;trade?:ProductTrade;composition:string;care:string;fit:string;details:string};
 export type Product = {group?:{id:string;slug:string;version:number};version:number;content?:ProductContent;id:string;slug:string;name:string;description:string;code:string;category:string;priceCents:number|null;approved:boolean;active:boolean;featured:boolean;images:string[];variants:Variant[];tags:string[]};
 export type CartLine = {variantId:string;quantity:number};
 export type OrderStatus = 'demo'|'pending'|'paid'|'fulfilled'|'expired'|'cancelled'|'payment_review';

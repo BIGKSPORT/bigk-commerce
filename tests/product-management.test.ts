@@ -33,14 +33,14 @@ await test('independent product management',async t=>{
   assert.equal((await edit(post('/api/admin/catalog',payload,true,'PATCH'))).status,200);nano=(await products()).find(p=>p.id===nano.id)!;assert.equal(nano.name,payload.name);assert.equal(nano.content?.composition,payload.content.composition);assert.deepEqual(nano.variants.map(v=>v.id),originalVariantIds);for(const [i,v] of nano.variants.entries())assert.equal(nano.content?.trade?.identifiers?.[v.id].gtin,testGtin(i));assert.equal(resolveProduct(await products(),originalSlug)?.id,nano.id);
  });
  await t.test('drafts are private, published products become visible and unpublish removes them',async()=>{
-  assert(!(await (await publicCatalog()).json()).products.some((p:any)=>p.id===nano.id));let payload=editFromProduct(nano);payload.images=['/products/web/nano-test-does-not-exist.webp'];assert.equal((await edit(post('/api/admin/catalog',payload,true,'PATCH'))).status,400);
-  payload=editFromProduct(nano);payload.images=(await products()).find(p=>p.images.length)!.images;payload.priceCents=9990;payload.approved=true;payload.active=true;assert.equal((await edit(post('/api/admin/catalog',payload,true,'PATCH'))).status,200);nano=(await products()).find(p=>p.id===nano.id)!;assert((await (await publicCatalog()).json()).products.some((p:any)=>p.id===nano.id));
+  assert(!(await (await publicCatalog(new Request('http://localhost:3000/api/catalog'))).json()).products.some((p:any)=>p.id===nano.id));let payload=editFromProduct(nano);payload.images=['/products/web/nano-test-does-not-exist.webp'];assert.equal((await edit(post('/api/admin/catalog',payload,true,'PATCH'))).status,400);
+  payload=editFromProduct(nano);payload.images=(await products()).find(p=>p.images.length)!.images;payload.priceCents=9990;payload.approved=true;payload.active=true;assert.equal((await edit(post('/api/admin/catalog',payload,true,'PATCH'))).status,200);nano=(await products()).find(p=>p.id===nano.id)!;assert((await (await publicCatalog(new Request('http://localhost:3000/api/catalog'))).json()).products.some((p:any)=>p.id===nano.id));
  });
  let added='';
  await t.test('add colour/size with permanent ID, reject collisions and archive without deleting',async()=>{
   let payload=editFromProduct(nano);added='V-'+crypto.randomUUID();payload.variants.push({id:added,size:nano.variants[0].size,stock:2});payload.content!.trade!.identifiers![added]={sku:'NANO-GREEN-TEST',gtin:testGtin(100),colour:'Green',verified:true};assert.equal((await edit(post('/api/admin/catalog',payload,true,'PATCH'))).status,200);nano=(await products()).find(p=>p.id===nano.id)!;
   payload=editFromProduct(nano);payload.content!.trade!.identifiers![added].colour='Black';assert.equal((await edit(post('/api/admin/catalog',payload,true,'PATCH'))).status,409);
-  payload=editFromProduct(nano);payload.content!.trade!.identifiers![added].archived=true;assert.equal((await edit(post('/api/admin/catalog',payload,true,'PATCH'))).status,200);nano=(await products()).find(p=>p.id===nano.id)!;assert(nano.variants.some(v=>v.id===added));assert(!(await (await publicCatalog()).json()).products.find((p:any)=>p.id===nano.id).variants.some((v:any)=>v.id===added));
+  payload=editFromProduct(nano);payload.content!.trade!.identifiers![added].archived=true;assert.equal((await edit(post('/api/admin/catalog',payload,true,'PATCH'))).status,200);nano=(await products()).find(p=>p.id===nano.id)!;assert(nano.variants.some(v=>v.id===added));assert(!(await (await publicCatalog(new Request('http://localhost:3000/api/catalog'))).json()).products.find((p:any)=>p.id===nano.id).variants.some((v:any)=>v.id===added));
  });
  await t.test('CSV round trip retains leading zero GTINs and quoted/multiline content',async()=>{
   const rows=exportRows([nano]);rows[0].description='A quoted "test"\nsecond line';rows.forEach(row=>row.description=rows[0].description);const reread=readCsv(writeCsv(rows));assert.equal(reread[0].gtin,rows[0].gtin);const operations=await importPlan(reread);const version=nano.version;await applyProductBatch(operations,true);assert.equal((await products()).find(p=>p.id===nano.id)!.version,version);await applyProductBatch(operations,false);nano=(await products()).find(p=>p.id===nano.id)!;assert.equal(nano.description,rows[0].description);
@@ -101,3 +101,4 @@ await test('independent product management',async t=>{
  });
  });
 }finally{await closeDatabase();rmSync(dir,{recursive:true,force:true})}
+

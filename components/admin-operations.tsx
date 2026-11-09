@@ -3,7 +3,7 @@ import {useEffect,useState,type FormEvent} from 'react';
 import type {AdminTransport} from './admin-types';
 type Staff={id:string;name:string;email:string;role:string;active:number};
 type Audit={id:string;actor_name:string;action:string;entity:string;details:string;created_at:string};
-const labels:Record<string,string>={category_management:'Manage categories and six-language category labels',staff_portal:'Staff login and stock tools',photo_packing_slips:'Product photos on packing slips',customer_email:'Customer service email',invoice_printing:'Numbered invoice printing',admin_order_batching:'Efficient order loading',catalog_translation_drafts:'Six-language product and technology drafts'};
+const labels:Record<string,string>={category_management:'Manage categories and six-language category labels',staff_portal:'Staff login and stock tools',photo_packing_slips:'Product photos on packing slips',customer_email:'Customer service email',invoice_printing:'Numbered invoice printing',admin_order_batching:'Efficient order loading',catalog_translation_drafts:'Product translations: edit, review and publish'};
 export default function AdminOperations({transport}:{transport:AdminTransport}){
  const [loadState,setLoadState]=useState<'loading'|'ready'|'error'>('loading');
  const [visibility,setVisibility]=useState<{enabled:boolean;requested:boolean;preview:boolean}|null>(null);

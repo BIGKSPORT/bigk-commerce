@@ -1,0 +1,5 @@
+import {body,checkOrigin,failure,HttpError,requireAdmin} from '@/lib/security';
+import {reviewLocale,reviewWriteSchema,reviewProductTranslation,translationReviewState} from '@/lib/review-product-translation';
+export const runtime='nodejs';
+export async function GET(req:Request){try{await requireAdmin(req);const url=new URL(req.url),id=reviewWriteSchema.shape.id.safeParse(url.searchParams.get('id')),locale=reviewLocale.safeParse(url.searchParams.get('locale'));if(!id.success)throw new HttpError(400,'Choose a product.');if(!locale.success)throw new HttpError(400,'Choose a translation language.');return Response.json(await translationReviewState(id.data,locale.data),{headers:{'Cache-Control':'no-store'}});}catch(e){return failure(e);}}
+export async function POST(req:Request){try{checkOrigin(req);await requireAdmin(req);const parsed=reviewWriteSchema.safeParse(await body(req));if(!parsed.success)throw new HttpError(400,'Check product, version and language.');return Response.json(await reviewProductTranslation(parsed.data),{headers:{'Cache-Control':'no-store'}});}catch(e){return failure(e);}}
