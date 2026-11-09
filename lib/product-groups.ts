@@ -1,6 +1,7 @@
 import type {Product,Variant} from './types';
 /** Explicit source-reviewed identities; never infer interchangeability from a name or prefix. */
 export const reviewedGroups=[
+ {parent:'P017',members:['P017','P018','P026','P027'],articles:['25000701','25000702','25000704','25000703'],evidence:'Owner confirms VELVET is one product in four colours; current supplier articles and colour records verified'},
  {parent:'P001',members:['P001','P002'],articles:['25303101','25303102'],evidence:'Owner ALPIN brief, source labels and twelve confirmed EANs'},
  {parent:'P006',members:['P006','P007'],articles:['25303201','25303202'],evidence:'Latest owner correction: Alpin Vest, stand-collar model, Black and Beige/Black; distinct from hooded 253017xx'},
  {parent:'P012',members:['P012','P014'],articles:['25301701','25301702'],evidence:'Owner explicitly confirmed hooded vest articles: Black 01, Cream 02; Dusty Blue 03 identifiers confirmed in owner screenshot; stock quantities unconfirmed'},
@@ -14,7 +15,15 @@ export type SharedField=typeof sharedFields[number];
 export type ColourOption={id:string;product:Product;colour:string;article:string;images:string[];variants:Variant[];archived:boolean};
 export type ProductGroup={id:string;parent:Product;records:Product[];colours:ColourOption[]};
 export const normalizedSize=(size:string)=>size.trim().toUpperCase().replace(/^XXXL$/,'3XL').replace(/^XXL$/,'2XL');
-export function rawColour(p:Product){return p.content?.trade?.colour||p.description.match(/^(black-cream|cream-black|dusty-blue|emerald green|emerald|black|cream|white|green)\b/i)?.[1].replace(/\b\w/g,c=>c.toUpperCase())||'Colour to confirm'}
+export function rawColour(p:Pick<Product,'description'|'content'>&Partial<Pick<Product,'code'>>){
+ if(p.content?.trade?.colour)return p.content.trade.colour;
+ const labels=[...new Set(Object.values(p.content?.trade?.identifiers||{}).map(v=>v.colour).filter((v):v is string=>Boolean(v)))];
+ if(labels.length===1)return labels[0];
+ const velvet:Record<string,string>={'25000701':'Beige/Black','25000702':'Emerald','25000704':'Cream','25000703':'Black'};
+ const code=p.code?.match(/\d{8}$/)?.[0];if(code&&velvet[code])return velvet[code];
+ return p.description.match(/^(black[-/]cream|cream[-/]black|dusty[ -]blue|emerald green|emerald|black|cream|white|green)\b/i)?.[1].replace(/\b\w/g,c=>c.toUpperCase())||'Colour to confirm';
+}
+
 const article=(p:Product)=>p.content?.trade?.supplierArticle||p.code.match(/\b\d{8}\b/)?.[0]||p.code;
 const alias=(p:Product)=>p.tags.some(tag=>tag.startsWith('alias:'));
 export function parentId(p:Product,catalog:Product[]):string {
@@ -27,13 +36,13 @@ export function parentId(p:Product,catalog:Product[]):string {
 export function family(catalog:Product[],p:Product){const root=parentId(p,catalog);return catalog.filter(other=>!alias(other)&&parentId(other,catalog)===root)}
 /** Source records remain intact. Inheritance is resolved for presentation and new order names only. */
 export function sharedProducts(catalog:Product[]):Product[]{return catalog.map(p=>{
- const parent=catalog.find(other=>other.id===parentId(p,catalog));if(!parent)return p;if(parent.id===p.id)return {...p,group:{id:p.id,slug:p.slug,version:p.version}};
+ const parent=catalog.find(other=>other.id===parentId(p,catalog));if(!parent)return p;const description=parent.id==='P017'&&parent.code.endsWith('25000701')&&/^(?:black[-/]cream|cream[-/]black|emerald|cream|black) FZ hood$/i.test(parent.description)?'Women’s full-zip hoodie.':parent.description;if(parent.id===p.id)return {...p,description,group:{id:p.id,slug:p.slug,version:p.version}};
  const overrides=p.content?.trade?.sharedOverrides||[];const inherit=(field:SharedField)=>!overrides.includes(field);
  const content={composition:'',care:'',fit:'',details:'',...p.content};
  for(const key of ['composition','care','fit','details','presentation','translations'] as const)if(inherit(key)&&parent.content?.[key]!==undefined)(content as Record<string,unknown>)[key]=parent.content[key];
  if(inherit('translations'))content.translationPublications=parent.content?.translationPublications;
  content.trade={...p.content?.trade,colour:p.content?.trade?.colour||rawColour(p),...(inherit('seo')?{seoTitle:parent.content?.trade?.seoTitle,seoDescription:parent.content?.trade?.seoDescription}:{} )};
- return {...p,group:{id:parent.id,slug:parent.slug,version:parent.version},name:parent.name,description:inherit('description')?parent.description:p.description,category:inherit('category')?parent.category:p.category,content};
+ return {...p,group:{id:parent.id,slug:parent.slug,version:parent.version},name:parent.name,description:inherit('description')?description:p.description,category:inherit('category')?parent.category:p.category,content};
 })}
 export function colourOptions(catalog:Product[],p:Product,includeArchived=false):ColourOption[]{return family(catalog,p).flatMap(record=>{
  const identifiers=record.content?.trade?.identifiers||{};
@@ -57,3 +66,9 @@ export function groupUrl(catalog:Product[],option:ColourOption,size?:string){
 }
 export function optionFor(catalog:Product[],p:Product,colour?:string){return colourOptions(catalog,p).find(option=>option.product.id===p.id&&(!colour||option.colour===colour))}
 
+
+/** The owner requested one VELVET listing with four swatches; other styles keep their existing full-colour layout. */
+export function singleListingCards(options:ColourOption[],catalog:Product[]){
+ const matches=options.filter(option=>parentId(option.product,catalog)==='P017'),chosen=matches.find(option=>option.product.id==='P017')||matches[0];
+ return options.filter(option=>parentId(option.product,catalog)!=='P017'||option===chosen);
+}
