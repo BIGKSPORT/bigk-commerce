@@ -18,7 +18,7 @@ const page=await browser.newPage({viewport});page.setDefaultTimeout(8000);page.o
 await page.getByRole('heading',{name:/Looking good/}).waitFor();
 await page.evaluate(()=>window.dispatchEvent(new CustomEvent('bigk-preview-navigate',{detail:'/products/apline-fleece-p001'})));
 await page.locator('.pdp-detail h1').waitFor();
-assert.equal(await page.locator('.pdp-detail h1').textContent(),'Alpin Fleece Pro');
+assert.equal(await page.locator('.pdp-detail h1').textContent(),'Alpin Fleece');
 let gallery=page.getByRole('region',{name:'Product photos'});
 assert.equal(await page.locator('.gallery-thumbnails button').count(),6);
 assert.equal(await page.locator('.product-colour-options a').count(),2);
@@ -29,7 +29,7 @@ await page.locator('.gallery-thumbnails button').nth(9).waitFor({state:'attached
 console.log('Colour switched',viewport.width);assert.equal(await gallery.getAttribute('data-active-photo'),'1');
 await gallery.focus();await gallery.press('Home');await gallery.press('ArrowRight');await gallery.press('ArrowRight');
 assert.equal(await gallery.getAttribute('data-active-photo'),'3');
-assert(await page.locator('.detail-info').innerText().then(x=>x.includes('Emerald Green')));
+assert(await page.locator('.detail-info').innerText().then(x=>x.includes('Dusty Blue')));
 await page.emulateMedia({reducedMotion:'reduce'});
 await page.evaluate(()=>scrollTo({top:200,behavior:'instant'}));
 assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
@@ -38,4 +38,5 @@ await page.locator('.gallery-slide').nth(2).locator('img').evaluate(im=>{im.load
 await page.waitForFunction(()=>{const im=document.querySelectorAll('.gallery-slide img')[2];return im?.complete&&im.naturalWidth>0});
 mkdirSync(artifactRoot,{recursive:true});await page.screenshot({path:artifactRoot+'/alpin-'+viewport.width+'.png'});
 await page.close();
-}assert.deepEqual(errors,[]);console.log('PASS Alpin Fleece Pro: desktop/mobile, 6 Black + 10 Emerald images, colour switch/reset, keyboard gallery, no XS, no horizontal overflow, no browser errors.');}finally{await browser.close()}
+}assert.deepEqual(errors,[]);console.log('PASS Alpin Fleece: desktop/mobile, 6 Black + 10 Dusty Blue images, colour switch/reset, keyboard gallery, no XS, no horizontal overflow, no browser errors.');}finally{await browser.close()}
+
