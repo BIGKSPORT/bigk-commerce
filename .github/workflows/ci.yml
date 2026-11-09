@@ -20,6 +20,7 @@ jobs:
       - run: node --import tsx tests/catalog-translations.test.ts
       - run: node --import tsx tests/published-translations.test.ts
       - run: node --import tsx tests/store-organization.test.ts
+      - run: node --import tsx tests/bag-presentation.test.ts
       - run: node --import tsx tests/operations.test.ts
       - run: node --import tsx tests/categories.test.ts
       - run: node --import tsx tests/search-visibility.test.ts

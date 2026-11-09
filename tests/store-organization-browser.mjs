@@ -29,13 +29,44 @@ try{
    const frame=section.querySelector('.b10-feature-image').getBoundingClientRect(),image=section.querySelector('.b10-feature-image>img').getBoundingClientRect();
    return {background:getComputedStyle(section).backgroundColor,left:image.left-frame.left,right:frame.right-image.right,overflow:document.documentElement.scrollWidth>innerWidth+1};
   });
-  assert.equal(spacing.background,'rgb(255, 255, 255)');
-  assert(spacing.left>=20&&spacing.right>=20,'Shoe image has white breathing room');
-  assert.equal(spacing.overflow,false);
+  assert.equal(spacing.background,'rgb(238, 236, 232)','B10 campaign background retained');
+  const shoe=shop.locator('.product-card[data-product-id="B10"] .card-photo-carousel img').first();
+  const presentation=await shoe.evaluate(image=>({fit:getComputedStyle(image).objectFit,padding:parseFloat(getComputedStyle(image).paddingLeft),background:getComputedStyle(image).backgroundColor}));
+  assert.equal(presentation.fit,'contain');assert(presentation.padding>=14);assert.equal(presentation.background,'rgb(255, 255, 255)');await shoe.scrollIntoViewIfNeeded();await shoe.evaluate(img=>img.decode());await shop.locator('.product-card[data-product-id="B10"]').first().screenshot({path:join(process.env.BIGK_ARTIFACT_DIR||root,'contained-sneaker-card-'+width+'.png')});
+  const hero=shop.locator('.hero-image');
+  assert(decodeURIComponent(await hero.locator('img').getAttribute('src')).includes(before.find(p=>p.id==='P007').images[0]));
+  assert.equal(await shop.locator('.section-number,.finder-number,.hero-detail strong').count(),0);
+  if(width===390){await shop.evaluate(()=>window.scrollTo({top:0,left:0,behavior:'instant'}));const layout=await shop.evaluate(()=>({hero:document.querySelector('.hero-image').getBoundingClientRect().top,header:document.querySelector('.site-header').getBoundingClientRect().bottom,title:document.querySelector('.hero-title').getBoundingClientRect().height}));assert(layout.hero<=layout.header+60,'Mobile starts at the hero image');assert(layout.title<=2,'Slogan does not consume mobile space');}
+  if(spacing.overflow)console.error('Mobile overflow diagnostics',await shop.evaluate(()=>[...document.querySelectorAll('body *')].map(e=>({tag:e.tagName,cls:typeof e.className==='string'?e.className:'',left:e.getBoundingClientRect().left,right:e.getBoundingClientRect().right})).filter(e=>e.right>innerWidth+1||e.left < -1).slice(0,25)));assert.equal(spacing.overflow,false);
   const screenshots=process.env.BIGK_ARTIFACT_DIR||root;
   await shop.locator('.b10-feature').screenshot({path:join(screenshots,'clean-b10-home-'+width+'.png')});
  }
  await shop.setViewportSize({width:1280,height:844});
+ await shop.setViewportSize({width:390,height:844});
+ const b10=before.find(p=>p.id==='B10'),green=b10.variants.find(v=>b10.content.trade.identifiers[v.id].colour==='Green');
+ await shop.evaluate(id=>localStorage.setItem('bigk-bag-v2',JSON.stringify([{variantId:id,quantity:1}])),green.id);
+ await shop.goto(origin+'/en');
+ await shop.locator('.header-actions button[aria-label^="Open bag"]').click();
+ const greenRow=shop.locator('[data-bag-variant="'+green.id+'"]');
+ await greenRow.locator('img').evaluate(img=>img.decode());
+ assert(decodeURIComponent(await greenRow.locator('img').getAttribute('src')).includes('green-'));
+ assert.equal(await shop.locator('[data-bag-suggestions]').count(),1);assert(await shop.locator('dialog[open]').evaluate(d=>d.scrollWidth<=d.clientWidth+1),'Mobile bag has no horizontal overflow');
+ assert(await shop.locator('[data-bag-suggestions] a').count()<=2);
+ assert(!(await shop.locator('[data-bag-suggestions]').innerHTML()).includes('/products/b10-sneakers'));
+ await shop.screenshot({path:join(process.env.BIGK_ARTIFACT_DIR||root,'bag-green-shoe-with-suggestions.png')});
+ const blue=before.find(p=>p.id==='P002');
+ await shop.evaluate(ids=>localStorage.setItem('bigk-bag-v2',JSON.stringify(ids.map(variantId=>({variantId,quantity:1})))),blue.variants.slice(3,5).map(v=>v.id));
+ await shop.goto(origin+'/en/products/alpin-fleece-jacket?colour=Dusty%20Blue');
+ await shop.locator('header.simple-header>button').click();
+ await shop.locator('[data-bag-variant="'+blue.variants[3].id+'"] img').evaluate(img=>img.decode());
+ assert.equal(await shop.locator('[data-bag-variant]').count(),2);
+ await shop.locator('[data-bag-suggestions]').waitFor();assert(await shop.locator('dialog[open]').evaluate(d=>d.scrollWidth<=d.clientWidth+1),'Mobile Alpin bag has no horizontal overflow');
+ assert(!(await shop.locator('[data-bag-suggestions]').innerHTML()).includes('alpin-fleece-jacket'));
+ await shop.screenshot({path:join(process.env.BIGK_ARTIFACT_DIR||root,'alpin-bag-photos-and-suggestions.png')});
+ await shop.evaluate(()=>localStorage.removeItem('bigk-bag-v2'));
+ await shop.setViewportSize({width:1280,height:844});
+ await shop.goto(origin+'/en');
+
  assert.equal(await shop.locator('[data-catalogue-overview]').count(),0,'Full catalogue is the default');
  const unauthorized=await visitor.request.post(origin+'/api/admin/storefront',{headers:{Origin:origin},data:{action:'organization',version:0,organization:{}}});assert.equal(unauthorized.status(),401);await page.getByRole('button',{name:'Apply display settings to live shop',exact:true}).click();await page.getByText('Display settings applied to the live shop. Other campaign drafts remain private.',{exact:true}).first().waitFor();assert.equal(await banner.getByLabel('Heading / announcement text',{exact:true}).inputValue(),'PRIVATE UNSAVED BANNER');assert(await page.getByRole('button',{name:'Save draft',exact:true}).isEnabled());await shop.reload();assert(!(await shop.content()).includes('PRIVATE UNSAVED BANNER'));
  const previewNames=await shop.locator('.product-grid .product-meta h3').allTextContents();
