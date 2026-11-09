@@ -1,4 +1,5 @@
 'use client';
+import {useProductPageEntry} from './use-product-page-entry';
 import CategoryDiscovery from './category-discovery';
 import {orderedCategories} from '@/lib/catalog-organization';
 import {applyProductCopy} from '@/lib/i18n/apply-product-copy';
@@ -40,6 +41,7 @@ const defaultCategories=['All',...productCategories.filter(category=>category!==
 export function Modal({title,onClose,children,wide=false,className=''}:{title:string;onClose:()=>void;children:ReactNode;wide?:boolean;className?:string}){const {t}=useSiteLanguage();const ref=useRef<HTMLDialogElement>(null),titleId=useId();useEffect(()=>{const d=ref.current;d?.showModal();return()=>d?.close()},[]);return <dialog ref={ref} aria-labelledby={titleId} className={'modal '+(wide?'wide':'')+' '+className} onCancel={event=>{event.preventDefault();onClose()}} onClick={e=>{if(e.target===e.currentTarget)onClose()}}><div className="modal-heading"><h2 id={titleId}>{t(title)}</h2><button className="icon-button" onClick={onClose} aria-label={t("Close dialog")}><X size={22}/></button></div>{children}</dialog>}
 function colourLabel(product:Product){return hasAlpinTechnology(product)&&/25303102$/.test(product.code)?'Dusty Blue':catalogueColourLabel(product)}
 export default function Storefront({products:sourceProducts,mode,ready,initialCategory,initialProduct,initialColour='',initialSize='',initialSeries='',initialSavedOnly=false,categoryOptions,merchandising}:{merchandising?:Merchandising;categoryOptions?:CategoryOption[];products:Product[];mode:'demo'|'live';ready:boolean;initialCategory?:string;initialProduct?:string;initialColour?:string;initialSize?:string;initialSeries?:string;initialSavedOnly?:boolean}){
+ useProductPageEntry(Boolean(initialProduct));
  const {t,path,locale}=useSiteLanguage();
  const catalogRef=useRef<HTMLDetailsElement>(null);
  const curated=!!merchandising&&merchandising.catalogMode==='curated';

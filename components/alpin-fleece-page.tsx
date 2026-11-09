@@ -1,4 +1,5 @@
 'use client';
+import {useProductPageEntry} from './use-product-page-entry';
 import {useEffect,useRef,useState} from 'react';
 import EditableProductTechnology from './editable-product-technology';
 import CareInstructions from './care-instructions';
@@ -17,6 +18,7 @@ import styles from './product-technology.module.css';
 import pageStyles from './alpin-fleece.module.css';
 
 export default function AlpinFleecePage({products,locale,initialColour,initialSize,mode,ready,preview}:{products:Product[];locale:AlpinLocale;initialColour:string;initialSize:string;mode:'demo'|'live';ready:boolean;preview:boolean}) {
+ useProductPageEntry(true);
  const copy=alpinCopy(locale),ui=alpinUI[locale];
  const [colour,setColour]=useState(initialColour),[size,setSize]=useState(initialSize),[notice,setNotice]=useState(''),[bag,setBag]=useState<CartLine[]>([]),[bagOpen,setBagOpen]=useState(false);
  const bagDialog=useRef<HTMLDialogElement>(null);
