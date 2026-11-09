@@ -4,7 +4,7 @@ export function orderedValues<T>(values:T[],order:readonly string[],key:(value:T
  const ranks=new Map(order.map((id,index)=>[id,index]));
  return values.map((value,index)=>({value,index})).sort((a,b)=>(ranks.get(key(a.value))??Infinity)-(ranks.get(key(b.value))??Infinity)||a.index-b.index).map(item=>item.value);
 }
-export function emptyOrganization():NonNullable<Merchandising['organization']>{return {enabled:false,categoryCards:true,hideDefaultFeature:false,categoryOrder:[],productOrder:[]};}
+export function emptyOrganization():NonNullable<Merchandising['organization']>{return {enabled:false,categoryCards:true,compactCatalog:false,hideDefaultFeature:false,categoryOrder:[],productOrder:[]};}
 
 /** Clothing leads the brand; accessories and uncategorized items follow, unless explicitly reordered. */
 export const defaultCategoryOrder=['Jackets & Vests','Fleece','Long sleeves','Thermal','Pants','Sneakers','Other','Accessories'] as const;

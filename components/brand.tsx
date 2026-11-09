@@ -5,8 +5,8 @@ import NewsletterSignup from './newsletter-signup';
 import {seller} from '@/lib/seller';
 /** Artwork comes from the supplied identity manual. Padding protects the logo. */
 export function Brand({inverse=false}:{inverse?:boolean}){
- const {t}=useSiteLanguage();
- return <Link href="/" className="brand" aria-label={t('BigK home')}><img src={inverse?'/brand/bigk-wordmark-white.svg':'/brand/bigk-wordmark.svg'} alt="BigK" width={132} height={31}/></Link>;
+ const {t,path}=useSiteLanguage();
+ return <a href={path('/')} className="brand" aria-label={t('BigK home')} onClick={event=>{if(event.button===0&&!event.metaKey&&!event.ctrlKey&&!event.shiftKey&&!event.altKey)window.scrollTo({top:0,left:0,behavior:'instant'});}}><img src={inverse?'/brand/bigk-wordmark-white.svg':'/brand/bigk-wordmark.svg'} alt="BigK" width={132} height={31}/></a>;
 }
 export function Footer({newsletter=true}:{newsletter?:boolean}={}){
  const {t,locale}=useSiteLanguage();
