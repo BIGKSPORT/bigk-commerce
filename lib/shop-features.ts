@@ -2,7 +2,7 @@ import {transaction} from './db';
 import {operationsDb as db} from './operations-db';
 import {HttpError} from './security';
 import {operationAudit,ownerActor} from './operations-audit';
-export const featureNames=['staff_portal','photo_packing_slips','customer_email','invoice_printing','admin_order_batching','catalog_translation_drafts'] as const;
+export const featureNames=['staff_portal','photo_packing_slips','customer_email','invoice_printing','admin_order_batching','catalog_translation_drafts','category_management'] as const;
 export type ShopFeature=typeof featureNames[number];
 export async function shopFeatures():Promise<Record<ShopFeature,boolean>> {
  const rows=await db().prepare('SELECT name,enabled FROM shop_features').all();
