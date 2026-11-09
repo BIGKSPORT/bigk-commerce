@@ -20,10 +20,13 @@ try{
   assert.equal((await database.query(`SELECT has_table_privilege('anon','${schema}.catalog_categories','SELECT') allowed`)).rows[0].allowed,false);
   assert.equal((await database.query(`SELECT relrowsecurity FROM pg_class WHERE oid='${schema}.catalog_categories'::regclass`)).rows[0].relrowsecurity,true);
   assert.equal((await database.query(`SELECT COUNT(*)::int AS count FROM ${schema}.catalog_categories WHERE name IN ('Long sleeves','Thermal')`)).rows[0].count,2);
+  assert.equal((await database.query(`SELECT has_table_privilege('anon','${schema}.storefront_merchandising','SELECT') allowed`)).rows[0].allowed,false);
+  assert.equal((await database.query(`SELECT relrowsecurity FROM pg_class WHERE oid='${schema}.storefront_merchandising'::regclass`)).rows[0].relrowsecurity,true);
   const role=schema==='bigk'?'bigk_server':'bigk_staging_server';await database.exec(`GRANT USAGE ON SCHEMA ${schema} TO ${role};`);await database.exec(`SET ROLE ${role};`);
+  await database.query(`SELECT * FROM ${schema}.storefront_merchandising`);await assert.rejects(()=>database.exec(`DELETE FROM ${schema}.storefront_merchandising`),/permission denied/);
   await assert.rejects(()=>database.exec(`UPDATE ${schema}.operations_audit SET action='tampered'`),/permission denied/);await assert.rejects(()=>database.exec(`DELETE FROM ${schema}.order_invoices`),/permission denied/);await database.exec('RESET ROLE;');
  }
  console.log('PASS: new migration is idempotent in both schemas; seven RLS tables; browser roles denied; audit and invoices append-only.');
  server=new PGLiteSocketServer({db:database,host:'127.0.0.1',port:0});await server.start();const port=new URL('postgresql://'+server.getServerConn()).port;
- for(const testFile of ['tests/operations.test.ts','tests/categories.test.ts']){const result=await new Promise((resolve,reject)=>{const child=spawn(process.execPath,['--import','tsx',testFile],{stdio:'inherit',env:{...process.env,NODE_ENV:'test',BIGK_TEST_DATABASE_URL:`postgresql://postgres@127.0.0.1:${port}/postgres`}});child.once('error',reject);child.once('exit',resolve);});assert.equal(result,0,'PostgreSQL test failed: '+testFile);}
+ for(const testFile of ['tests/operations.test.ts','tests/categories.test.ts','tests/merchandising.test.ts']){const result=await new Promise((resolve,reject)=>{const child=spawn(process.execPath,['--import','tsx',testFile],{stdio:'inherit',env:{...process.env,NODE_ENV:'test',BIGK_TEST_DATABASE_URL:`postgresql://postgres@127.0.0.1:${port}/postgres`}});child.once('error',reject);child.once('exit',resolve);});assert.equal(result,0,'PostgreSQL test failed: '+testFile);}
 }finally{if(server)await server.stop();await database.close();}
