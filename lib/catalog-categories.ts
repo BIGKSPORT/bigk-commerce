@@ -25,9 +25,9 @@ export async function catalogCategories():Promise<CatalogCategory[]>{
 /** Called inside the product transaction; never trust the editor or an import. */
 export async function validateCategory(name:string,current?:string){
  categoryNameSchema.parse(name);if(name===current)return;
- if(!(await shopFeatures()).category_management){if(!productCategories.some(v=>v===name))throw new HttpError(400,'Choose an existing category.');return;}
+ if(!(await shopFeatures()).category_management){if(!productCategories.some(v=>v===name))throw new HttpError(400,'Product category: choose an existing category.');return;}
  const row=await db().prepare('SELECT active FROM catalog_categories WHERE name=?').get(name);
- if(!row||Number(row.active)!==1)throw new HttpError(400,'Choose an active category from Backoffice → Categories.');
+ if(!row||Number(row.active)!==1)throw new HttpError(400,'Product category: choose an active category from Backoffice → Categories.');
 }
 export async function writeCategory(data:z.infer<typeof categoryWriteSchema>){await requireFeature('category_management');return transaction(async()=>{
  const existing=await db().prepare('SELECT name,labels,active,version FROM catalog_categories WHERE name=?').get(data.name);
