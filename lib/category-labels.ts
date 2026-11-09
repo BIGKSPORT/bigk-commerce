@@ -11,5 +11,5 @@ export const defaultCategoryLabels:Record<string,CategoryLabels>={
  'Long sleeves':{en:'Long-sleeve tops',nl:'Shirts met lange mouwen',fr:'Hauts à manches longues',de:'Langarmshirts',it:'Maglie a maniche lunghe',es:'Camisetas de manga larga'},
  Thermal:{en:'Thermal layers',nl:'Thermokleding',fr:'Vêtements thermiques',de:'Thermobekleidung',it:'Abbigliamento termico',es:'Ropa térmica'},
 };
-export type CategoryOption={name:string;labels:CategoryLabels};
+export type CategoryOption={name:string;labels:CategoryLabels;active?:boolean};
 export function categoryLabel(name:string,locale:string,labels?:CategoryLabels){const source=labels??defaultCategoryLabels[name];return source?.[locale as CatalogLocale]?.trim()||source?.en?.trim()||name;}
