@@ -35,7 +35,7 @@ export function Modal({title,onClose,children,wide=false,className=''}:{title:st
 function colourLabel(product:Product){return hasAlpinTechnology(product)&&/25303102$/.test(product.code)?'Dusty Blue':catalogueColourLabel(product)}
 export default function Storefront({products:sourceProducts,mode,ready,initialCategory,initialProduct,initialColour='',initialSize='',initialSeries='',initialSavedOnly=false,categoryOptions}:{categoryOptions?:CategoryOption[];products:Product[];mode:'demo'|'live';ready:boolean;initialCategory?:string;initialProduct?:string;initialColour?:string;initialSize?:string;initialSeries?:string;initialSavedOnly?:boolean}){
  const {t,path,locale}=useSiteLanguage();
- const categories=categoryOptions?['All',...categoryOptions.filter(c=>sourceProducts.some(p=>p.category===c.name)).map(c=>c.name)]:[...new Set([...defaultCategories,...sourceProducts.map(p=>p.category).filter(c=>!productCategories.some(v=>v===c))])];
+ const categories=categoryOptions?['All',...categoryOptions.filter(c=>c.active!==false&&sourceProducts.some(p=>p.category===c.name)).map(c=>c.name)]:[...new Set([...defaultCategories,...sourceProducts.map(p=>p.category).filter(c=>!productCategories.some(v=>v===c))])];
  const categoryText=(name:string)=>categoryLabel(name,locale,categoryOptions?.find(c=>c.name===name)?.labels);
  const products=useMemo(()=>sharedProducts(sourceProducts).map(alpinPublicProduct),[sourceProducts]);
  const [chosenColour,setChosenColour]=useState(initialColour);
