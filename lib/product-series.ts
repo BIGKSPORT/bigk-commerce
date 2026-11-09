@@ -5,7 +5,7 @@ export type ProductSeries={key:SeriesKey;label:string;parents:readonly string[];
 /** Series navigation is merchandising, separate from the inventory-bearing product groups. */
 export const productSeries:readonly ProductSeries[]=[
  {key:'ALPIN',label:'ALPIN',logo:'/brand/series-alpin.jpg',logoWidth:591,logoHeight:591,parents:['P001','P006','P008','P012']},
- {key:'VELVET',label:'VELVET',logo:'/brand/series-velvet.jpg',logoWidth:591,logoHeight:213,parents:['P017','P018','P026','P027']},
+ {key:'VELVET',label:'VELVET',logo:'/brand/series-velvet.jpg',logoWidth:591,logoHeight:213,parents:['P017']},
  {key:'CORE',label:'CORE',logo:'/brand/series-core.png',logoWidth:477,logoHeight:260,parents:['P003','P015','P010']},
  {key:'NANO-DOWN',label:'NANO DOWN',logo:'/brand/series-nano-down.png',logoWidth:591,logoHeight:130,parents:['P019','P021']},
  {key:'RIBS',label:'RIBS',logo:'/brand/series-ribs.png',logoWidth:591,logoHeight:130,parents:['RIBS-LOW-WHITE','RIBS-MEDIUM-WHITE','RIBS-LONG-WHITE']},

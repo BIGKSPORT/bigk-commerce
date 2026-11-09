@@ -4,12 +4,13 @@ import {mkdtempSync,rmSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {products,db,closeDatabase} from '../lib/db';
-import {productGroups,sharedProducts,colourOptions,groupUrl,parentId} from '../lib/product-groups';
+import {productGroups,sharedProducts,colourOptions,groupUrl,parentId,singleListingCards} from '../lib/product-groups';
 import {resolveGroupSelection} from '../lib/product-group-routing';
 import {groupingPlan} from '../lib/product-group-migration';
 import {saveSharedProduct,addProductColour,archiveProductColour,groupEditSchema} from '../lib/admin-product-groups';
 import {importB10Draft} from '../lib/b10-import';
 import {publicProducts} from '../lib/catalog-view';
+import {localizedPublicProducts,sourceHashes} from '../lib/i18n/published-product-translations';
 import {updateProduct} from '../lib/admin-catalog';
 const dir=mkdtempSync(join(tmpdir(),'bigk-groups-'));
 process.env.DATABASE_SCHEMA='bigk_staging';process.env.DATABASE_PROVIDER='sqlite';process.env.DATABASE_PATH=join(dir,'test.sqlite');process.env.DATABASE_URL='';process.env.APP_URL='https://bigk.example';process.env.COMMERCE_MODE='demo';
@@ -23,7 +24,7 @@ try{
    assert.equal(plan.added.length,1);assert.equal(plan.added[0].code,'25301703');assert(plan.added[0].variants.every(v=>v.stock===0&&v.reserved===0));assert.equal(plan.added[0].images.length,0);assert.equal(plan.added[0].active,false);
    const second=groupingPlan(plan.catalog);assert.equal(second.added.length,0);assert.equal(second.updated.length,0);
    assert.notEqual(parentId(plan.catalog.find(p=>p.id==='P006')!,plan.catalog),parentId(plan.catalog.find(p=>p.id==='P012')!,plan.catalog));
-   for(const id of ['P017','P018','P026','P027'])assert.equal(parentId(plan.catalog.find(p=>p.id===id)!,plan.catalog),id);
+   for(const id of ['P017','P018','P026','P027'])assert.equal(parentId(plan.catalog.find(p=>p.id===id)!,plan.catalog),'P017');
   });
   await t.test('one parent row per reviewed style; B10 retains three independently selectable colours; no historical alias rows',()=>{
    const groups=productGroups(sharedProducts(plan.catalog));assert.equal(groups.filter(g=>g.id==='P001').length,1);assert.equal(groups.find(g=>g.id==='P003')!.colours.length,3);assert(!groups.some(g=>g.id==='P013'||g.id==='P020'));
@@ -34,6 +35,29 @@ try{
    const resolved=resolveGroupSelection(source,source,root.slug,{colourId:child.id,size:'M'})!;assert.equal(resolved.selected.product.id,child.id);assert.equal(resolved.canonical,'/products/'+root.slug);
    assert.equal(resolveGroupSelection(source,source,root.slug,{colour:'does-not-exist'}),undefined);assert.equal(resolveGroupSelection(source,source,child.slug,{})!.selected.product.id,child.id);
    const publicChildOnly=source.filter(p=>p.id===child.id);assert(new URL(groupUrl(publicChildOnly,colourOptions(publicChildOnly,child)[0]),'https://bigk.example').searchParams.get('colourId')===child.id);
+  });
+
+  await t.test('VELVET is one style with four colour records and twenty independently stocked sizes',()=>{
+   const source=sharedProducts(before),group=productGroups(source).find(g=>g.id==='P017')!;
+   assert.equal(productGroups(source).filter(g=>g.records.some(p=>['P017','P018','P026','P027'].includes(p.id))).length,1);
+   assert.equal(group.records.length,4);assert.equal(group.colours.length,4);assert.equal(group.colours.flatMap(o=>o.variants).length,20);
+   assert.equal(new Set(group.colours.map(o=>o.colour)).size,4);
+   assert.equal(singleListingCards(group.colours,source).length,1);assert.equal(singleListingCards([...group.colours].reverse(),source)[0].product.id,'P017');
+   const black=group.colours.find(o=>o.product.id==='P027')!;
+   assert.equal(singleListingCards([black],source)[0].product.id,'P027');
+   for(const id of ['P017','P018','P026','P027']){
+    const raw=before.find(p=>p.id===id)!,entry=resolveGroupSelection(before,source,raw.slug,{size:'M'})!;
+    assert.equal(entry.selected.product.id,id);assert.equal(entry.canonical,'/products/'+before.find(p=>p.id==='P017')!.slug);assert.equal(entry.size,'M');
+    assert.deepEqual(entry.selected.product.variants,raw.variants);assert.deepEqual(entry.selected.images,raw.images);
+    assert.deepEqual(entry.selected.product.content?.trade?.identifiers,raw.content?.trade?.identifiers);
+   }
+   assert.equal(resolveGroupSelection(before,source,group.parent.slug,{colourId:'P003'}),undefined);
+   const copy=structuredClone(before.filter(p=>['P017','P018','P026','P027'].includes(p.id)));copy.forEach(p=>{p.active=true;p.approved=true;});
+   const master=sharedProducts(copy).find(p=>p.id==='P017')!;
+   copy.find(p=>p.id==='P017')!.content={...master.content!,translationPublications:{nl:{copy:{description:'Goedgekeurde VELVET-producttekst'},sourceHashes:sourceHashes(master),approvedAt:new Date().toISOString()}}};
+   const translated=localizedPublicProducts(copy,'nl',true);assert.equal(translated.length,4);
+   for(const p of translated){assert.equal(p.description,'Goedgekeurde VELVET-producttekst');assert.deepEqual(p.variants,before.find(raw=>raw.id===p.id)!.variants);}
+
   });
   let root=before.find(p=>p.id==='P003')!;
   await t.test('shared edits reach all grouped colours without touching prices, photos, IDs, EANs or physical/reserved stock',async()=>{

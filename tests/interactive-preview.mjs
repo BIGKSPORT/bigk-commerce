@@ -16,7 +16,9 @@ try{
  const search=page.getByRole('textbox',{name:'Search catalogue'});
  // Catalogue hover changes the photograph; the primary link opens a real PDP.
  await search.fill('Velvet');
- const black=page.locator('.product-card[data-product-id="P027"]');
+ const black=page.locator('.product-card[data-product-id="P017"]');
+ assert.equal(await page.locator('.product-card').count(),1);assert.equal(await black.locator('.product-card-swatch').count(),4);
+ await black.locator('.product-card-swatch[data-colour="Black"]').click();
  await black.scrollIntoViewIfNeeded();const media=black.locator('.card-photo-carousel');const box=await media.boundingBox();
  await page.mouse.move(box.x+box.width*.8,box.y+box.height*.4);
  assert(Number(await media.getAttribute('data-active-photo'))>1,'Pointer position changes the catalogue photograph');
@@ -69,7 +71,7 @@ try{
  await page.getByRole('navigation',{name:'Breadcrumb'}).getByRole('link',{name:'Collection',exact:true}).click();
  const currentSearch=page.getByRole('textbox',{name:'Search catalogue'});await currentSearch.waitFor();
 
- await search.fill('Velvet');assert.equal(await page.locator('.product-card').count(),4);await black.locator('.quick-view').click();assert.equal(await page.locator('.thumbnails button').count(),5);await page.getByRole('button',{name:'Show product photo 5'}).click();await page.getByRole('button',{name:'Close dialog'}).click();
+ await search.fill('Velvet');assert.equal(await page.locator('.product-card').count(),1);await black.locator('.product-card-swatch[data-colour="Black"]').click();await black.locator('.quick-view').click();assert.equal(await page.locator('.thumbnails button').count(),5);await page.getByRole('button',{name:'Show product photo 5'}).click();await page.getByRole('button',{name:'Close dialog'}).click();
  await search.fill('Nano Down Gillet');assert.equal(await page.locator('.product-card').count(),1);await page.locator('.quick-view').click();assert.equal(await page.locator('.thumbnails button').count(),7);await page.getByRole('button',{name:'Show product photo 7'}).click();await page.getByRole('button',{name:'Close dialog'}).click();
  await search.fill('Alpin');await page.locator('.product-card').filter({hasText:'preview price'}).first().locator('.quick-view').click();await page.locator('.size-options button').first().click();await page.getByRole('button',{name:'Add to demo bag'}).click();await page.getByRole('link',{name:'Continue to demo checkout'}).click();await page.getByRole('heading',{name:'Your demo checkout.'}).waitFor();await page.locator('input[name="firstName"]').fill('Demo');await page.locator('input[name="lastName"]').fill('Customer');await page.locator('input[name="email"]').fill('demo@example.test');await page.locator('input[name="phone"]').fill('+32470123456');await page.locator('input[name="address"]').fill('Example Street 1');await page.locator('input[name="postal"]').fill('1000');await page.locator('input[name="city"]').fill('Brussels');await page.locator('input[name="consent"]').check();await page.getByRole('button',{name:'Create demo order'}).click();await page.getByRole('heading',{name:'Your demo journey is complete.'}).waitFor().catch(async e=>{console.error('Preview errors:',errors);console.error((await page.locator('body').innerText()).slice(-1800));throw e});assert((await page.evaluate(()=>sessionStorage.getItem('bigk-preview-order'))).includes('demo'));assert(!(await page.evaluate(()=>sessionStorage.getItem('bigk-preview-order'))).includes('demo@example.test'));await page.screenshot({path:artifactRoot+'/bigk-demo-receipt-preview.png'});
  await page.getByRole('link',{name:'Back to the collection'}).click();await page.getByRole('textbox',{name:'Search catalogue'}).fill('Velvet');await page.locator('#catalog').screenshot({path:artifactRoot+'/bigk-velvet-preview.png'});

@@ -1,5 +1,7 @@
 /** Interface copy only. Product names and source specifications are never translated here. */
 export const storefrontCopy:Record<string,{nl:string;fr:string}>={
+  "model": {"nl":"model","fr":"modèle"},
+  "individual model.": {"nl":"afzonderlijk model.","fr":"modèle distinct."},
   "THE EVERYDAY COLLECTION":{"nl":"DE COLLECTIE VOOR ELKE DAG","fr":"LA COLLECTION DU QUOTIDIEN"},
   "THE COLLECTION / OUTERWEAR":{"nl":"DE COLLECTIE / JASSEN","fr":"LA COLLECTION / VESTES"},
   "A LITTLE DIRECTION": {

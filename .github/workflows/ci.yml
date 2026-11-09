@@ -21,6 +21,7 @@ jobs:
       - run: node --import tsx tests/published-translations.test.ts
       - run: node --import tsx tests/store-organization.test.ts
       - run: node --import tsx tests/bag-presentation.test.ts
+      - run: node --import tsx tests/product-groups.test.ts
       - run: node --import tsx tests/operations.test.ts
       - run: node --import tsx tests/categories.test.ts
       - run: node --import tsx tests/search-visibility.test.ts
@@ -63,6 +64,7 @@ jobs:
       - run: node --import tsx tests/merchandising-browser.mjs
       - run: node --import tsx tests/published-translations-browser.mjs
       - run: node --import tsx tests/store-organization-browser.mjs
+      - run: node tests/product-groups-browser.mjs
       - run: node tests/site-language-browser.mjs
       - run: npm run preview:build
       - run: npm run test:preview
