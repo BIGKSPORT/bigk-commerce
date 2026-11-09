@@ -21,6 +21,7 @@ jobs:
       - run: node --import tsx tests/operations.test.ts
       - run: node --import tsx tests/categories.test.ts
       - run: node --import tsx tests/search-visibility.test.ts
+      - run: node --import tsx tests/merchandising.test.ts
       - run: node tests/operations-postgres.mjs
       - run: node --import tsx tests/email-job-kind.test.ts
       - run: node --import tsx tests/site-language.test.ts
@@ -55,6 +56,7 @@ jobs:
           echo "BIGK_ARTIFACT_DIR=$RUNNER_TEMP/bigk-screenshots" >> "$GITHUB_ENV"
       - run: npm run build
       - run: node --import tsx tests/operations-browser.mjs
+      - run: node --import tsx tests/merchandising-browser.mjs
       - run: node tests/site-language-browser.mjs
       - run: npm run preview:build
       - run: npm run test:preview

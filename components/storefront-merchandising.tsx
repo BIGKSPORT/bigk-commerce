@@ -1,0 +1,24 @@
+'use client';
+import Image,{getImageProps} from 'next/image';
+import Link from './site-link';
+import {useSiteLanguage} from './site-language';
+import {merchandisingCopy,merchandisingUI} from '@/lib/merchandising-copy';
+import {colourOptions,groupUrl} from '@/lib/product-groups';
+import type {Merchandising} from '@/lib/merchandising-content';
+import type {Product} from '@/lib/types';
+import {money} from '@/lib/format';
+import styles from './storefront-merchandising.module.css';
+function ProductTile({product,products,onChoose,number}:{product:Product;products:Product[];onChoose?:(p:Product)=>void;number?:number}){
+ const {locale}=useSiteLanguage();const option=colourOptions(products,product).find(c=>c.product.id===product.id);const href=option?groupUrl(products,option):'/products/'+encodeURIComponent(product.slug);
+ return <Link prefetch={false} href={href} className={styles.product} onClick={event=>{if(onChoose&&!event.ctrlKey&&!event.metaKey&&!event.shiftKey&&!event.altKey){event.preventDefault();onChoose(product);}}}>{product.images[0]&&<Image src={product.images[0]} alt={product.name} width={400} height={500} sizes="(max-width: 600px) 44vw, 23vw"/>}<span>{number!==undefined&&<small>{String(number).padStart(2,'0')} / </small>}{product.name}</span><strong>{money(product.priceCents||0)}</strong><small>{merchandisingUI[locale].choose} ↗</small></Link>;
+}
+export function CampaignAnnouncement({content}:{content:Merchandising}){const {locale}=useSiteLanguage();const a=content.announcement;if(!a.enabled)return null;const copy=merchandisingCopy(a.copy,locale);return <aside className={styles.announcement} aria-label={copy.eyebrow||'BIG K'}><Link prefetch={false} href={a.href}>{copy.title} <span aria-hidden="true">↗</span></Link></aside>;}
+export function CampaignHero({content}:{content:Merchandising}){const {locale}=useSiteLanguage();const h=content.hero;const copy=merchandisingCopy(h.copy,locale);if(!h.enabled||!h.image)return null;
+ const desktop=getImageProps({src:h.image,alt:copy.alt,width:1600,height:1200,quality:85,sizes:'(max-width: 700px) 100vw, 55vw',loading:'eager',fetchPriority:'high'}).props;
+ const mobile=h.mobileImage?getImageProps({src:h.mobileImage,alt:copy.alt,width:800,height:1000,quality:85,sizes:'100vw'}).props:undefined;
+ return <section className={styles.hero}><div className={styles.heroCopy}><span className="eyebrow">{copy.eyebrow}</span><h1>{copy.title}</h1>{copy.description&&<p>{copy.description}</p>}<Link prefetch={false} href={h.href} className="button dark">{copy.button} ↗</Link></div><picture className={styles.heroImage}>{mobile&&<source media="(max-width: 700px)" srcSet={mobile.srcSet} sizes={mobile.sizes}/>}<img {...desktop}/></picture></section>;
+}
+export function MerchandisingSections({content,products,onChoose}:{content:Merchandising;products:Product[];onChoose?:(p:Product)=>void}){const {locale}=useSiteLanguage();const byId=new Map(products.map(p=>[p.id,p]));return <>
+ {content.shelves.map(shelf=>{const copy=merchandisingCopy(shelf.copy,locale);const selected=shelf.productIds.map(id=>byId.get(id)).filter((p):p is Product=>!!p);if(!selected.length)return null;return <section className={'content-width '+styles.section} key={shelf.id}><header className={styles.heading}><div><span className="eyebrow">{copy.eyebrow}</span><h2>{copy.title}</h2>{copy.description&&<p>{copy.description}</p>}</div>{shelf.href&&<Link prefetch={false} href={shelf.href} className="text-button">{copy.button||merchandisingUI[locale].collection} ↗</Link>}</header><div className={styles.shelf}>{selected.map(p=><ProductTile key={p.id} product={p} products={products} onChoose={onChoose}/>)}</div></section>;})}
+ {content.looks.map(look=>{const copy=merchandisingCopy(look.copy,locale);const items=look.items.filter(i=>byId.has(i.productId));if(!items.length)return null;return <section className={'content-width '+styles.section} key={look.id}><header className={styles.heading}><div><span className="eyebrow">{copy.eyebrow||merchandisingUI[locale].shop}</span><h2>{copy.title}</h2>{copy.description&&<p>{copy.description}</p>}</div></header><div className={styles.look}><div className={styles.lookImage}><Image src={look.image} alt={copy.alt} fill sizes="(max-width: 700px) 100vw, 50vw"/>{items.map((item,index)=><button type="button" key={item.productId} className={styles.hotspot} style={{left:item.x+'%',top:item.y+'%'}} aria-label={merchandisingUI[locale].choose+': '+byId.get(item.productId)!.name} onClick={()=>{if(onChoose)onChoose(byId.get(item.productId)!);else document.getElementById('look-'+look.id+'-'+index)?.scrollIntoView({behavior:'smooth',block:'center'});}}>{index+1}</button>)}</div><div className={styles.lookProducts}>{items.map((item,index)=><div id={'look-'+look.id+'-'+index} key={item.productId}><ProductTile product={byId.get(item.productId)!} products={products} onChoose={onChoose} number={index+1}/></div>)}</div></div></section>;})}
+ </>;}

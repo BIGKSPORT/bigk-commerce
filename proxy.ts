@@ -9,7 +9,9 @@ export function proxy(request:NextRequest){
  }
  const h=new Headers(request.headers);h.set('x-bigk-page-language',locale);h.set('x-bigk-page-path',pathname);
  const response=NextResponse.next({request:{headers:h}});
- if(isSiteLocale(first))response.cookies.set(siteLanguageCookie,locale,{path:'/',maxAge:31536000,sameSite:'lax',secure:request.nextUrl.protocol==='https:'});
+ // Background fetches/prefetches must never overwrite an explicit language choice.
+ if(isSiteLocale(first)&&request.headers.get('sec-fetch-dest')==='document')response.cookies.set(siteLanguageCookie,locale,{path:'/',maxAge:31536000,sameSite:'lax',secure:request.nextUrl.protocol==='https:'});
  return response;
 }
 export const config={matcher:['/((?!api|admin|warehouse|_next|.*\\..*).*)']};
+
