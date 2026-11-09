@@ -38,10 +38,6 @@ export async function writeCategory(data:z.infer<typeof categoryWriteSchema>){aw
   await db().prepare('INSERT INTO catalog_categories(name,labels,active,version) VALUES(?,?,1,0)').run(data.name,JSON.stringify({...data.labels,en:data.labels.en||data.name}));
  }else{
   if(!existing)throw new HttpError(404,'Category not found.');if(Number(existing.version)!==data.version)throw new HttpError(409,'Category changed in another session. Refresh before saving.');
-  if(data.action==='archive'){
-   const count=Number((await catalogDb().prepare('SELECT COUNT(*) AS count FROM products WHERE category=?').get(data.name))?.count||0);
-   if(count)throw new HttpError(409,`${count} product records still use this category. Move them to another category before removing it.`);
-  }
   if(data.action==='save')await db().prepare('UPDATE catalog_categories SET labels=?,version=version+1 WHERE name=?').run(JSON.stringify({...data.labels,en:data.labels.en||data.name}),data.name);
   else await db().prepare('UPDATE catalog_categories SET active=?,version=version+1 WHERE name=?').run(data.action==='restore'?1:0,data.name);
  }
@@ -50,6 +46,6 @@ export async function writeCategory(data:z.infer<typeof categoryWriteSchema>){aw
 /** One server read per render; public pages never download category-admin code. */
 export async function publicCategoryOptions():Promise<CategoryOption[]|undefined>{
  if(!(await shopFeatures()).category_management)return undefined;
- const rows=await db().prepare('SELECT name,labels FROM catalog_categories WHERE active=1 ORDER BY name').all();
- return rows.map(row=>({name:String(row.name),labels:JSON.parse(String(row.labels)) as CategoryLabels}));
+ const rows=await db().prepare('SELECT name,labels,active FROM catalog_categories ORDER BY name').all();
+ return rows.map(row=>({name:String(row.name),labels:JSON.parse(String(row.labels)) as CategoryLabels,active:Number(row.active)===1}));
 }
