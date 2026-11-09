@@ -12,7 +12,7 @@ const image=z.string().max(250);
 const date=z.union([z.literal(''),z.iso.datetime()]);
 const schedule={startsAt:date,endsAt:date};
 const timing=(v:{startsAt:string;endsAt:string})=>!v.startsAt||!v.endsAt||v.endsAt>v.startsAt;
-export const organizationSchema=z.object({enabled:z.boolean(),categoryCards:z.boolean(),hideDefaultFeature:z.boolean(),categoryOrder:z.array(plain(80).min(1)).max(200),productOrder:z.array(plain(100).min(1)).max(1000)}).strict().refine(v=>new Set(v.categoryOrder).size===v.categoryOrder.length&&new Set(v.productOrder).size===v.productOrder.length,'Use each category and product once in the order.');
+export const organizationSchema=z.object({enabled:z.boolean(),categoryCards:z.boolean(),compactCatalog:z.boolean().optional(),hideDefaultFeature:z.boolean(),categoryOrder:z.array(plain(80).min(1)).max(200),productOrder:z.array(plain(100).min(1)).max(1000)}).strict().refine(v=>new Set(v.categoryOrder).size===v.categoryOrder.length&&new Set(v.productOrder).size===v.productOrder.length,'Use each category and product once in the order.');
 export const merchandisingSchema=z.object({
  organization:organizationSchema.optional(),
  enabled:z.boolean(),catalogMode:z.enum(['expanded','curated']),
