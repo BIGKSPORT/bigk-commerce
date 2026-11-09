@@ -25,7 +25,7 @@ try{
  assert.equal(new Set(previewNames).size,previewNames.length,'Homepage introduces each model once');
  assert.equal(await shop.locator('[data-catalogue-overview]').count(),1);
  const overviewCount=await shop.locator('.product-grid .product-card').count();
- await shop.getByRole('link',{name:'View all styles and colours',exact:true}).click();
+ await shop.locator('a.button').filter({hasText:'View all styles and colours'}).click();
  await shop.waitForFunction(()=>!document.querySelector('[data-catalogue-overview]'));
  assert(await shop.locator('.product-grid .product-card').count()>overviewCount,'All colours remain accessible');
  await shop.goto(origin+'/en');
