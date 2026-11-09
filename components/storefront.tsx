@@ -1,6 +1,6 @@
 'use client';
 import CategoryDiscovery from './category-discovery';
-import {orderedValues} from '@/lib/catalog-organization';
+import {orderedCategories} from '@/lib/catalog-organization';
 import {applyProductCopy} from '@/lib/i18n/apply-product-copy';
 import { useEffect, useRef, useState, useId, useMemo, type ReactNode } from 'react';
 import {alpinPublicProduct,alpinArticle,alpinVariantUrl} from '@/lib/alpin-fleece';
@@ -47,7 +47,7 @@ export default function Storefront({products:sourceProducts,mode,ready,initialCa
  useEffect(()=>{function revealHash(){if(location.hash==='#catalog'&&catalogRef.current)catalogRef.current.open=true;}revealHash();window.addEventListener('hashchange',revealHash);return()=>window.removeEventListener('hashchange',revealHash);},[]);
  const organization=merchandising?.organization?.enabled?merchandising.organization:undefined;
  const baseCategories=categoryOptions?['All',...categoryOptions.filter(c=>c.active!==false&&sourceProducts.some(p=>p.category===c.name)).map(c=>c.name)]:[...new Set([...defaultCategories,...sourceProducts.map(p=>p.category).filter(c=>!productCategories.some(v=>v===c))])];
- const categories=['All',...orderedValues(baseCategories.filter(c=>c!=='All'),organization?.categoryOrder||[],c=>c)];
+ const categories=['All',...orderedCategories(baseCategories.filter(c=>c!=='All'),organization?.categoryOrder||[],c=>c)];
  const categoryText=(name:string)=>categoryLabel(name,locale,categoryOptions?.find(c=>c.name===name)?.labels);
  const products=useMemo(()=>sharedProducts(sourceProducts).map(p=>applyProductCopy(alpinPublicProduct(p),p.content?.localizedCopy)),[sourceProducts]);
  const [chosenColour,setChosenColour]=useState(initialColour);

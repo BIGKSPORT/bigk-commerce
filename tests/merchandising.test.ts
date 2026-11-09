@@ -6,8 +6,9 @@ import {join} from 'node:path';
 import {tmpdir} from 'node:os';
 import {db,products,closeDatabase} from '../lib/db';
 import {adminSessionHash} from '../lib/admin-mfa';
-import {merchandisingState,writeMerchandising,storefrontMerchandising} from '../lib/merchandising';
+import {merchandisingState,writeMerchandising,storefrontMerchandising,applyStoreOrganization} from '../lib/merchandising';
 import {emptyMerchandising,merchandisingSchema,publicMerchandising,campaignCopy,safeCampaignLink} from '../lib/merchandising-content';
+import {emptyOrganization} from '../lib/catalog-organization';
 import {GET,POST} from '../app/api/admin/storefront/route';
 const folder=mkdtempSync(join(tmpdir(),'bigk-merch-'));
 Object.assign(process.env,{NODE_ENV:'test',DATABASE_PROVIDER:process.env.BIGK_TEST_DATABASE_URL?'postgres':'sqlite',DATABASE_SCHEMA:'bigk_staging',DATABASE_PATH:join(folder,'test.sqlite'),APP_URL:'http://localhost:3000',ADMIN_PASSWORD_HASH:'test-only',COMMERCE_MODE:'demo'});
@@ -28,7 +29,7 @@ await test('draft, publish, scheduling, curated shelves and stock-safe looks pre
  let state=await writeMerchandising('save',0,draft);assert.equal(state.version,1);assert.equal(await storefrontMerchandising(catalog),undefined);
  await assert.rejects(()=>writeMerchandising('save',0,draft),/another session/);
  state=await writeMerchandising('publish',1);let live=(await storefrontMerchandising(catalog))!;assert.equal(live.looks.length,1);assert.equal(live.shelves.length,1);assert.equal(campaignCopy(live.hero.copy,'nl').title,'Klaar voor jouw dag.');assert.equal(campaignCopy(live.hero.copy,'nl').button,'Explore the collection');
- const changed=structuredClone(draft);changed.hero.copy.en.title='PRIVATE DRAFT — MUST NOT LEAK';state=await writeMerchandising('save',state.version,changed);assert.equal((await storefrontMerchandising(catalog))!.hero.copy.en.title,draft.hero.copy.en.title);
+ const changed=structuredClone(draft);changed.hero.copy.en.title='PRIVATE DRAFT — MUST NOT LEAK';state=await writeMerchandising('save',state.version,changed);assert.equal((await storefrontMerchandising(catalog))!.hero.copy.en.title,draft.hero.copy.en.title);state=await applyStoreOrganization(state.version,{...emptyOrganization(),enabled:true,categoryOrder:['Fleece','Accessories']});assert.equal((await storefrontMerchandising(catalog))!.hero.copy.en.title,draft.hero.copy.en.title);assert.equal(state.draft.hero.copy.en.title,'PRIVATE DRAFT — MUST NOT LEAK');
  const scheduled=structuredClone(draft);scheduled.hero.startsAt='2099-01-01T00:00:00.000Z';scheduled.looks[0].endsAt='2020-01-01T00:00:00.000Z';live=publicMerchandising(scheduled,catalog,'2026-11-09T12:00:00.000Z')!;assert(!live.hero.enabled);assert.equal(live.looks.length,0);
  const soldOut=catalog.map(item=>item.id===p.id?{...item,variants:item.variants.map(v=>({...v,stock:0}))}:item);assert.equal(publicMerchandising(draft,soldOut)!.looks.length,0);assert.equal(publicMerchandising(draft,soldOut)!.shelves.length,0);
  const invalid=structuredClone(draft);invalid.hero.image='/external-missing.webp';await assert.rejects(()=>writeMerchandising('save',state.version,invalid),/image library/);
@@ -36,6 +37,7 @@ await test('draft, publish, scheduling, curated shelves and stock-safe looks pre
  const token='merch-owner-fixture';await db().prepare('INSERT INTO sessions(hash,expires_at) VALUES(?,?)').run(adminSessionHash(token),'2099-01-01');
  const request=(origin:string)=>new Request('http://localhost:3000/api/admin/storefront',{method:'POST',headers:{origin,cookie:'bigk_admin='+token,'content-type':'application/json'},body:JSON.stringify({action:'disable',version:state.version})});assert.equal((await POST(request('https://attacker.test'))).status,403);
  assert.equal((await POST(request('http://localhost:3000'))).status,200);assert.equal(await storefrontMerchandising(catalog),undefined);assert.equal((await merchandisingState()).draft.looks[0].items[0].productId,'missing');
+ const disabled=await merchandisingState();const display=await applyStoreOrganization(disabled.version,{...emptyOrganization(),enabled:true});assert.equal(display.published!.hero.enabled,false);assert.equal(display.published!.hero.copy.en.title,draft.hero.copy.en.title);assert.equal((await storefrontMerchandising(catalog))!.looks.length,0);assert.equal(display.draft.looks[0].items[0].productId,'missing');await writeMerchandising('disable',display.version);
  const after=(await products()).find(item=>item.id===p.id)!;assert.equal(after.priceCents,7900);assert.equal(after.variants[0].stock,20);
  console.log('PASS: private draft isolation, optimistic conflict, scheduled content, English fallback, curated shelves, unavailable look products hidden, owner auth/origin and rollback switch.');
  }finally{await closeDatabase();rmSync(folder,{recursive:true,force:true});}});

@@ -4,7 +4,7 @@ import {db as sqlite} from './sqlite';
 import {validProductImages} from './media';
 import {HttpError} from './security';
 import {operationAudit,ownerActor} from './operations-audit';
-import {emptyMerchandising,merchandisingSchema,merchProductAvailable,publicMerchandising,type Merchandising} from './merchandising-content';
+import {emptyMerchandising,merchandisingSchema,organizationSchema,merchProductAvailable,publicMerchandising,type Merchandising} from './merchandising-content';
 export const merchandisingTableSQL="CREATE TABLE IF NOT EXISTS storefront_merchandising(id TEXT PRIMARY KEY CHECK(id='homepage'),draft TEXT NOT NULL,published TEXT,version INTEGER NOT NULL DEFAULT 0,updated_at TEXT NOT NULL,published_at TEXT)";
 function table(){if(!isPostgres())sqlite().exec(merchandisingTableSQL);return isPostgres()?databaseSchema()+'.storefront_merchandising':'storefront_merchandising';}
 export async function merchandisingState(){const row=await db().prepare('SELECT draft,published,version,updated_at,published_at FROM '+table()+" WHERE id='homepage'").get();return {draft:row?merchandisingSchema.parse(JSON.parse(String(row.draft))):emptyMerchandising(),published:row?.published?merchandisingSchema.parse(JSON.parse(String(row.published))):null,version:Number(row?.version||0),updatedAt:row?String(row.updated_at):null,publishedAt:row?.published_at?String(row.published_at):null};}
@@ -37,6 +37,23 @@ export async function writeMerchandising(action:'save'|'publish'|'disable',versi
  const published=action==='publish'?next:action==='disable'&&state.published?{...state.published,enabled:false}:state.published;
  await db().prepare('INSERT INTO '+table()+'(id,draft,published,version,updated_at,published_at) VALUES(?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET draft=excluded.draft,published=excluded.published,version=excluded.version,updated_at=excluded.updated_at,published_at=excluded.published_at').run('homepage',JSON.stringify(next),published?JSON.stringify(published):null,version+1,now,action==='publish'?now:state.publishedAt);
  await operationAudit(ownerActor,'storefront.'+action,'homepage',{version:version+1,enabled:published?.enabled||false,looks:next.looks.length});
+ return merchandisingState();
+});}
+/** Apply only display settings; unrelated banner/look drafts never become public through this action. */
+export async function applyStoreOrganization(version:number,organization:NonNullable<Merchandising['organization']>){return transaction(async()=>{
+ const state=await merchandisingState();if(state.version!==version)throw new HttpError(409,'The storefront changed in another session. Reload before applying the order.');
+ const parsed=organizationSchema.parse(organization);
+ if(parsed.enabled){const ids=new Set((await products()).filter(p=>!p.tags.some(t=>t.startsWith('alias:'))).map(p=>p.id));if(parsed.productOrder.some(id=>!ids.has(id)))throw new HttpError(400,'A product in the display order no longer exists. Reload the organizer.');}
+ const draft={...state.draft,organization:parsed,enabled:parsed.enabled?true:state.draft.enabled};
+ let published=state.published;
+ if(parsed.enabled){
+  // Keep disabled campaign content stored, while leaving each campaign switched off.
+  const base=published?.enabled?published:published?{...published,catalogMode:'expanded' as const,hero:{...published.hero,enabled:false},announcement:{...published.announcement,enabled:false},looks:published.looks.map(l=>({...l,enabled:false})),shelves:published.shelves.map(s=>({...s,enabled:false}))}:emptyMerchandising();
+  published={...base,enabled:true,organization:parsed};
+ }else if(published)published={...published,organization:parsed};
+ const now=new Date().toISOString();
+ await db().prepare('INSERT INTO '+table()+'(id,draft,published,version,updated_at,published_at) VALUES(?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET draft=excluded.draft,published=excluded.published,version=excluded.version,updated_at=excluded.updated_at,published_at=excluded.published_at').run('homepage',JSON.stringify(draft),published?JSON.stringify(published):null,version+1,now,published?now:state.publishedAt);
+ await operationAudit(ownerActor,'storefront.organization','homepage',{version:version+1,before:state.published?.organization||null,after:parsed});
  return merchandisingState();
 });}
 export async function storefrontMerchandising(catalog:Awaited<ReturnType<typeof products>>){const row=await db().prepare('SELECT published FROM '+table()+" WHERE id='homepage'").get();return row?.published?publicMerchandising(merchandisingSchema.parse(JSON.parse(String(row.published))),catalog):undefined;}
