@@ -6,6 +6,7 @@ type Query = (text: string, values: unknown[]) => Promise<{ rows: Row[]; changes
 const context = new AsyncLocalStorage<Query>();
 let client: ReturnType<typeof postgres> | undefined;
 let sqliteQueue: Promise<unknown> = Promise.resolve();
+let localPostgresQueue:Promise<unknown>=Promise.resolve();
 export function databaseSchema(){const schema=process.env.DATABASE_SCHEMA||'bigk';if(!['bigk','bigk_staging'].includes(schema))throw new Error('DATABASE_SCHEMA must be bigk or bigk_staging.');return schema}
 export function isPostgres() {
   const provider = process.env.DATABASE_PROVIDER || 'sqlite';
@@ -14,15 +15,28 @@ export function isPostgres() {
   if(process.env.VERCEL_ENV==='preview'&&provider==='postgres'&&databaseSchema()!=='bigk_staging')throw new Error('Preview deployments require DATABASE_SCHEMA=bigk_staging.');
   return provider === 'postgres';
 }
-function postgresClient() {
+function isolatedConnections(){const mode=process.env.DATABASE_CONNECTION_MODE;if(mode&&!['isolated','pooled'].includes(mode))throw Error('DATABASE_CONNECTION_MODE must be isolated or pooled.');return mode?mode==='isolated':process.env.VERCEL==='1'||process.env.NETLIFY==='true';}
+function createPostgresClient() {
   if (!process.env.DATABASE_URL) throw new Error('DATABASE_URL must be configured on the server for Supabase PostgreSQL.');
   const localTest = process.env.NODE_ENV === 'test' && ['127.0.0.1', 'localhost', '[::1]'].includes(new URL(process.env.DATABASE_URL).hostname);
-  return client ??= postgres(process.env.DATABASE_URL, {
-    max: localTest ? 1 : 3, prepare: false, ssl: localTest ? false : { rejectUnauthorized: true, ...(process.env.DATABASE_CA_CERT ? { ca: process.env.DATABASE_CA_CERT } : {}) },
+  return postgres(process.env.DATABASE_URL, {
+    max: isolatedConnections()||localTest ? 1 : 3, prepare: false, ssl: localTest ? false : { rejectUnauthorized: true, ...(process.env.DATABASE_CA_CERT ? { ca: process.env.DATABASE_CA_CERT } : {}) },
     types: { bigint: { to: 20, from: [20], serialize: String, parse: (value: string) => { const n = Number(value); if (!Number.isSafeInteger(n)) throw new Error('Database integer exceeds safe range.'); return n; } } },
     idle_timeout: 20, connect_timeout: 10,
     connection: { search_path: databaseSchema()+',pg_catalog', statement_timeout: 15000 },
   });
+}
+function postgresClient(){return client??=createPostgresClient();}
+/** A serverless instance may resume with frozen TCP sockets. Never retain these
+ * connections across requests; Supavisor still pools the database backends.
+ * No write/transaction is automatically replayed. */
+async function withPostgresClient<T>(run:(sql:ReturnType<typeof postgres>)=>Promise<T>):Promise<T>{
+ if(!isolatedConnections())return run(postgresClient());
+ const execute=async()=>{const sql=createPostgresClient();try{return await run(sql);}finally{await sql.end({timeout:5});}};
+ // PGlite emulates one PostgreSQL backend, just as the existing local pool max=1.
+ // Serialize only the local test emulator; hosted PostgreSQL keeps concurrent reads.
+ if(process.env.NODE_ENV==='test'&&['127.0.0.1','localhost','[::1]'].includes(new URL(process.env.DATABASE_URL||'').hostname)){const result=localPostgresQueue.then(execute);localPostgresQueue=result.catch(()=>{});return result;}
+ return execute();
 }
 // Only application-owned constant SQL reaches this adapter. Values stay bound.
 export function postgresQuery(text: string) {
@@ -49,7 +63,7 @@ const execute: Query = async (text, values) => {
     sqliteQueue = operation.catch(() => {});
     return operation;
   }
-  const rows = await postgresClient().unsafe(postgresQuery(text), values as never[]);
+  const rows = await withPostgresClient(sql=>sql.unsafe(postgresQuery(text), values as never[]));
   return { rows: rows as unknown as Row[], changes: rows.count };
 };
 export function db() {
@@ -62,7 +76,7 @@ export function db() {
 export async function transaction<T>(fn: () => T | Promise<T>): Promise<T> {
   if (context.getStore()) return fn();
   if (isPostgres()) {
-    return await postgresClient().begin(async sql => {
+    return await withPostgresClient(client=>client.begin(async sql => {
       // Serialize short write transactions across instances for a small store.
       await sql`SELECT pg_advisory_xact_lock(2049351, 1)`;
       const query: Query = async (text, values) => {
@@ -70,7 +84,7 @@ export async function transaction<T>(fn: () => T | Promise<T>): Promise<T> {
         return { rows: rows as unknown as Row[], changes: rows.count };
       };
       return context.run(query, fn);
-    }) as T;
+    })) as T;
   }
   const operation = sqliteQueue.then(async () => {
     const sql = sqlite();
@@ -82,3 +96,4 @@ export async function transaction<T>(fn: () => T | Promise<T>): Promise<T> {
   return operation;
 }
 export async function closeDatabase() { if (client) { await client.end(); client = undefined; } }
+
