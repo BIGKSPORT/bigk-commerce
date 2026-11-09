@@ -8,7 +8,7 @@ for(const dir of ['brand','products/web'])for(const file of readdirSync(root+'/'
 const browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium',headless:true,args:['--no-sandbox','--disable-crashpad-for-testing']});
 try{
  const page=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[];page.on('pageerror',e=>errors.push(e.message));page.setDefaultTimeout(10000);
- await page.setContent('<html lang="en"><head></head><body><div id="root"></div></body></html>');await page.addStyleTag({content:readFileSync(root+'/app.css','utf8')});
+ await page.setContent('<!doctype html><html lang="en"><head></head><body><div id="root"></div></body></html>');assert.equal(await page.evaluate(()=>document.compatMode),'CSS1Compat');await page.addStyleTag({content:readFileSync(root+'/app.css','utf8')});
  await page.evaluate(assets=>{if(!crypto.randomUUID)Object.defineProperty(crypto,'randomUUID',{value:()=> '10000000-1000-4000-8000-100000000000'.replace(/[018]/g,c=>(Number(c)^crypto.getRandomValues(new Uint8Array(1))[0]&15>>Number(c)/4).toString(16))});new MutationObserver(()=>{for(const img of document.images){const src=img.getAttribute('src');if(assets[src])img.src=assets[src]}}).observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['src']})},assets);
  await page.addScriptTag({content:readFileSync(root+'/app.js','utf8')});
  const nav=page.getByRole('navigation',{name:'Backoffice navigation'}),go=async name=>nav.getByRole('button',{name:name==='Orders'?/^Orders/:name,exact:true}).click();

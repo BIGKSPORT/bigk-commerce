@@ -13,12 +13,13 @@ async function validatePublish(doc:Merchandising){
  if(doc.announcement.enabled&&(!doc.announcement.copy.en.title||!doc.announcement.href))throw new HttpError(400,'The announcement needs English text and a destination.');
  if(doc.hero.enabled&&(!doc.hero.image||!doc.hero.href||!doc.hero.copy.en.title||!doc.hero.copy.en.button||doc.hero.copy.en.alt.length<5))throw new HttpError(400,'The banner needs a photo, English heading, button, destination and image description.');
  const catalog=await products();
+ if(doc.organization?.enabled){const ids=new Set(catalog.filter(p=>!p.tags.some(t=>t.startsWith('alias:'))).map(p=>p.id));if(doc.organization.productOrder.some(id=>!ids.has(id)))throw new HttpError(400,'A product in the display order no longer exists. Reload the organizer.');}
  for(const shelf of doc.shelves.filter(s=>s.enabled)){
   if(!shelf.copy.en.title||!shelf.productIds.length)throw new HttpError(400,'Each enabled collection block needs an English heading and products.');
   if(new Set(shelf.productIds).size!==shelf.productIds.length)throw new HttpError(400,'Choose each product once per collection block.');
   for(const id of shelf.productIds)if(!catalog.some(p=>p.id===id&&merchProductAvailable(p)))throw new HttpError(400,'A collection product is unpublished, missing a photo or price, or has no available stock.');
  }
- if(doc.catalogMode==='curated'&&!doc.shelves.some(s=>s.enabled)&&!doc.looks.some(l=>l.enabled))throw new HttpError(400,'Add an enabled collection or look before choosing a curated homepage.');
+ if(doc.catalogMode==='curated'&&!doc.shelves.some(s=>s.enabled)&&!doc.looks.some(l=>l.enabled)&&!(doc.organization?.enabled&&doc.organization.categoryCards))throw new HttpError(400,'Add an enabled collection or look before choosing a curated homepage.');
  for(const look of doc.looks.filter(l=>l.enabled)){
   if(!look.image||!look.copy.en.title||look.copy.en.alt.length<5||!look.items.length)throw new HttpError(400,'Each enabled look needs a photo, English heading, image description and products.');
   if(new Set(look.items.map(i=>i.productId)).size!==look.items.length)throw new HttpError(400,'Choose each product once per look.');

@@ -10,7 +10,7 @@ assert.equal(report.files.length,61);assert.equal(report.colours[0].images.lengt
 const errors=[];const browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium',headless:true,args:['--no-sandbox','--disable-crashpad-for-testing']});
 try{for(const viewport of [{width:1440,height:1000},{width:390,height:844}]){
 const page=await browser.newPage({viewport});page.setDefaultTimeout(8000);page.on('pageerror',e=>errors.push(e.message));
- await page.setContent('<html><head></head><body><div id="root"></div></body></html>');
+ await page.setContent('<!doctype html><html><head></head><body><div id="root"></div></body></html>');assert.equal(await page.evaluate(()=>document.compatMode),'CSS1Compat');
  await page.addStyleTag({content:readFileSync(root+'/app.css','utf8')});
  await page.evaluate(assets=>{if(!crypto.randomUUID)Object.defineProperty(crypto,'randomUUID',{value:()=> '10000000-1000-4000-8000-100000000000'.replace(/[018]/g,c=>(Number(c)^crypto.getRandomValues(new Uint8Array(1))[0]&15>>Number(c)/4).toString(16))});for(const name of ['localStorage','sessionStorage']){const data=new Map();Object.defineProperty(window,name,{value:{getItem:k=>data.get(k)||null,setItem:(k,v)=>data.set(k,String(v)),removeItem:k=>data.delete(k)}})}history.pushState=(_state,_title,url)=>{const target=new URL(String(url),'https://bigk-preview.invalid');location.hash=target.hash};const replace=()=>{for(const img of document.images){const source=img.getAttribute('src');if(assets[source]){img.loading='eager';img.src=assets[source]}}};new MutationObserver(replace).observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['src']});},assets);
  await page.addScriptTag({content:readFileSync(root+'/app.js','utf8')});
@@ -32,11 +32,14 @@ assert.equal(await gallery.getAttribute('data-active-photo'),'3');
 assert(await page.locator('.detail-info').innerText().then(x=>x.includes('Dusty Blue')));
 await page.emulateMedia({reducedMotion:'reduce'});
 await page.evaluate(()=>scrollTo({top:200,behavior:'instant'}));
-assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
-await page.evaluate(()=>scrollTo({top:0,behavior:'instant'}));
+// Check the settled layout after image decoding below; retain the same strict width assertion.
 await page.locator('.gallery-slide').nth(2).locator('img').evaluate(im=>{im.loading='eager'});
 await page.waitForFunction(()=>{const im=document.querySelectorAll('.gallery-slide img')[2];return im?.complete&&im.naturalWidth>0});
-mkdirSync(artifactRoot,{recursive:true});await page.screenshot({path:artifactRoot+'/alpin-'+viewport.width+'.png'});
+await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+const overflow=await page.evaluate(()=>({width:innerWidth,scrollWidth:document.documentElement.scrollWidth,nodes:[...document.querySelectorAll('body *')].filter(e=>{const r=e.getBoundingClientRect();return r.width>0&&(r.right>innerWidth+1||r.left< -1)}).slice(0,30).map(e=>{const r=e.getBoundingClientRect(),s=getComputedStyle(e);return {tag:e.tagName,cls:e.className,left:r.left,right:r.right,width:r.width,overflow:s.overflow,position:s.position}})}));
+mkdirSync(artifactRoot,{recursive:true});if(overflow.scrollWidth>overflow.width){console.error('ALPIN layout overflow',JSON.stringify(overflow));await page.screenshot({path:artifactRoot+'/alpin-overflow-'+viewport.width+'.png',fullPage:true});}assert.equal(overflow.scrollWidth>overflow.width,false);
+await page.evaluate(()=>scrollTo({top:0,behavior:'instant'}));
+await page.screenshot({path:artifactRoot+'/alpin-'+viewport.width+'.png'});
 await page.close();
 }assert.deepEqual(errors,[]);console.log('PASS Alpin Fleece: desktop/mobile, 6 Black + 10 Dusty Blue images, colour switch/reset, keyboard gallery, no XS, no horizontal overflow, no browser errors.');}finally{await browser.close()}
 
