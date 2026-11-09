@@ -28,4 +28,6 @@ SQLite and PGlite tests cover authorization, dry-run isolation, exact family ver
 
 No new public database query or polling. Ordering and grouping reuse the catalogue already loaded by the page. At most six extra category images use the existing image pipeline and responsive sizes, adding some image bandwidth. Assignment lists show 50 matching styles at a time and can be narrowed by category/search; full server-side catalogue pagination is future work.
 
+For a rollback to code predating this optional JSON field, first use the current authenticated storefront API to save and publish a document with organization omitted; older strict parsers do not accept new JSON keys. Prefer the existing feature/off controls for immediate operational rollback without removing saved settings.
+
 New homepage layout settings remain a private draft until the owner publishes them through the existing MFA-protected admin. Code deployment does not move live products or overwrite the owner's existing campaign choices.

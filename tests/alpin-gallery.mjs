@@ -32,11 +32,14 @@ assert.equal(await gallery.getAttribute('data-active-photo'),'3');
 assert(await page.locator('.detail-info').innerText().then(x=>x.includes('Dusty Blue')));
 await page.emulateMedia({reducedMotion:'reduce'});
 await page.evaluate(()=>scrollTo({top:200,behavior:'instant'}));
-assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
-await page.evaluate(()=>scrollTo({top:0,behavior:'instant'}));
+// Check the settled layout after image decoding below; retain the same strict width assertion.
 await page.locator('.gallery-slide').nth(2).locator('img').evaluate(im=>{im.loading='eager'});
 await page.waitForFunction(()=>{const im=document.querySelectorAll('.gallery-slide img')[2];return im?.complete&&im.naturalWidth>0});
-mkdirSync(artifactRoot,{recursive:true});await page.screenshot({path:artifactRoot+'/alpin-'+viewport.width+'.png'});
+await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+const overflow=await page.evaluate(()=>({width:innerWidth,scrollWidth:document.documentElement.scrollWidth,nodes:[...document.querySelectorAll('body *')].filter(e=>{const r=e.getBoundingClientRect();return r.width>0&&(r.right>innerWidth+1||r.left< -1)}).slice(0,30).map(e=>{const r=e.getBoundingClientRect(),s=getComputedStyle(e);return {tag:e.tagName,cls:e.className,left:r.left,right:r.right,width:r.width,overflow:s.overflow,position:s.position}})}));
+mkdirSync(artifactRoot,{recursive:true});if(overflow.scrollWidth>overflow.width){console.error('ALPIN layout overflow',JSON.stringify(overflow));await page.screenshot({path:artifactRoot+'/alpin-overflow-'+viewport.width+'.png',fullPage:true});}assert.equal(overflow.scrollWidth>overflow.width,false);
+await page.evaluate(()=>scrollTo({top:0,behavior:'instant'}));
+await page.screenshot({path:artifactRoot+'/alpin-'+viewport.width+'.png'});
 await page.close();
 }assert.deepEqual(errors,[]);console.log('PASS Alpin Fleece: desktop/mobile, 6 Black + 10 Dusty Blue images, colour switch/reset, keyboard gallery, no XS, no horizontal overflow, no browser errors.');}finally{await browser.close()}
 
