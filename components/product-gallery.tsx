@@ -11,25 +11,72 @@ export default function ProductGallery({product,saved=false,onSave,onChooseSize,
  const {locale:siteLocale}=useSiteLanguage(),selectedLocale=locale??siteLocale,text=alpinUI[selectedLocale];
  const t=(source:string)=>selectedLocale==='en'?source:productUiCopy[source]?.[selectedLocale]??source;
  const [index,setIndex]=useState(0),[hoverZoom,setHoverZoom]=useState(false),[position,setPosition]=useState({x:50,y:50}),[expanded,setExpanded]=useState(false),[zoomed,setZoomed]=useState(false);
- const dialog=useRef<HTMLDialogElement>(null),drag=useRef<{x:number;y:number}|null>(null),suppressClick=useRef(false),rail=useRef<HTMLDivElement>(null);
+ const dialog=useRef<HTMLDialogElement>(null),drag=useRef<{x:number;y:number;pointerId:number;started:number;width:number;axis:'pending'|'x'|'y';button:HTMLButtonElement}|null>(null),suppressClick=useRef(false),rail=useRef<HTMLDivElement>(null);
  const images=product.images;
  const choose=(next:number)=>{setIndex((next+images.length)%images.length);setHoverZoom(false);setZoomed(false)};
  useEffect(()=>{const container=rail.current,thumb=container?.querySelector<HTMLElement>('[aria-current="true"]');if(!container||!thumb||!container.clientHeight)return;const frame=container.getBoundingClientRect(),item=thumb.getBoundingClientRect();if(item.top<frame.top)container.scrollTop+=item.top-frame.top;else if(item.bottom>frame.bottom)container.scrollTop+=item.bottom-frame.bottom;if(item.left<frame.left)container.scrollLeft+=item.left-frame.left;else if(item.right>frame.right)container.scrollLeft+=item.right-frame.right},[index]);
  useEffect(()=>{if(!expanded)return;const el=dialog.current;el?.showModal();const previous=document.body.style.overflow;document.body.style.overflow='hidden';return()=>{if(el?.open)el.close();document.body.style.overflow=previous}},[expanded]);
- function move(event:PointerEvent<HTMLButtonElement>){if(event.pointerType!=='mouse'||!matchMedia('(hover: hover) and (pointer: fine)').matches)return;const box=event.currentTarget.getBoundingClientRect();setPosition({x:Math.max(0,Math.min(100,(event.clientX-box.left)/box.width*100)),y:Math.max(0,Math.min(100,(event.clientY-box.top)/box.height*100))});setHoverZoom(true)}
- function down(event:PointerEvent<HTMLButtonElement>){suppressClick.current=false;if(event.pointerType==='mouse')return;drag.current={x:event.clientX,y:event.clientY};event.currentTarget.setPointerCapture(event.pointerId)}
- function up(event:PointerEvent<HTMLButtonElement>){if(!drag.current)return;const dx=event.clientX-drag.current.x,dy=event.clientY-drag.current.y;drag.current=null;if(Math.abs(dx)>45&&Math.abs(dx)>Math.abs(dy)&&images.length>1){suppressClick.current=true;choose(index+(dx<0?1:-1))}}
+ function restoreTrack(button:HTMLButtonElement,next=index){
+  button.removeAttribute('data-dragging');
+  const track=button.querySelector<HTMLElement>('.gallery-track');
+  if(track)track.style.transform=`translate3d(-${next*100}%,0,0)`;
+ }
+ function touchMove(event:PointerEvent<HTMLButtonElement>){
+  const gesture=drag.current;
+  if(!gesture||gesture.pointerId!==event.pointerId)return;
+  const dx=event.clientX-gesture.x,dy=event.clientY-gesture.y;
+  if(Math.max(Math.abs(dx),Math.abs(dy))>8)suppressClick.current=true;
+  if(gesture.axis==='pending'&&Math.max(Math.abs(dx),Math.abs(dy))>6){
+   if(Math.abs(dx)>Math.abs(dy)*1.15)gesture.axis='x';
+   else if(Math.abs(dy)>Math.abs(dx)*1.15)gesture.axis='y';
+  }
+  if(gesture.axis!=='x'||images.length<2)return;
+  const track=gesture.button.querySelector<HTMLElement>('.gallery-track');
+  if(!track)return;
+  gesture.button.setAttribute('data-dragging','true');
+  // Bound the drag to one neighbour; the browser keeps native vertical scrolling and pinch zoom.
+  const distance=Math.max(-gesture.width,Math.min(gesture.width,dx));
+  track.style.transform=`translate3d(calc(-${index*100}% + ${distance}px),0,0)`;
+ }
+ function move(event:PointerEvent<HTMLButtonElement>){
+  if(event.pointerType!=='mouse'){touchMove(event);return}
+  if(!matchMedia('(hover: hover) and (pointer: fine)').matches)return;
+  const box=event.currentTarget.getBoundingClientRect();
+  setPosition({x:Math.max(0,Math.min(100,(event.clientX-box.left)/box.width*100)),y:Math.max(0,Math.min(100,(event.clientY-box.top)/box.height*100))});setHoverZoom(true);
+ }
+ function down(event:PointerEvent<HTMLButtonElement>){
+  suppressClick.current=false;
+  if(event.pointerType==='mouse'||!event.isPrimary)return;
+  drag.current={x:event.clientX,y:event.clientY,pointerId:event.pointerId,started:performance.now(),width:event.currentTarget.clientWidth,axis:'pending',button:event.currentTarget};
+  event.currentTarget.setPointerCapture(event.pointerId);
+ }
+ function cancel(event:PointerEvent<HTMLButtonElement>){
+  const gesture=drag.current;
+  if(!gesture||gesture.pointerId!==event.pointerId)return;
+  drag.current=null;restoreTrack(gesture.button);
+ }
+ function up(event:PointerEvent<HTMLButtonElement>){
+  const gesture=drag.current;
+  if(!gesture||gesture.pointerId!==event.pointerId)return;
+  touchMove(event);
+  const dx=event.clientX-gesture.x,elapsed=Math.max(1,performance.now()-gesture.started);
+  const threshold=Math.max(18,Math.min(32,gesture.width*.065));
+  const advance=gesture.axis==='x'&&images.length>1&&(Math.abs(dx)>=threshold||(Math.abs(dx)>=12&&Math.abs(dx)/elapsed>=.45));
+  const next=advance?(index+(dx<0?1:-1)+images.length)%images.length:index;
+  drag.current=null;restoreTrack(gesture.button,next);
+  if(advance){suppressClick.current=true;choose(next)}
+ }
  if(!images.length)return <div className="gallery-pending photo-pending"><img src="/brand/bigk-symbol.svg" alt="" width={70} height={70}/><p>{t('Product photography in review')}</p></div>;
  const thumbnails=(lightbox=false)=><div className={lightbox?'lightbox-thumbs':'thumbnails gallery-thumbnails'} ref={lightbox?undefined:rail} aria-label={text.choosePhoto}>{images.map((src,i)=><button type="button" key={src} className={index===i?'selected':''} aria-current={index===i?'true':undefined} aria-label={text.showPhoto+' '+(i+1)} onClick={()=>choose(i)} onFocus={()=>choose(i)} onPointerEnter={event=>{if(event.pointerType==='mouse'&&matchMedia('(hover: hover)').matches)choose(i)}}><Image src={src} alt="" width={72} height={96} draggable={false}/></button>)}</div>;
  return <><div className="product-gallery" role="region" aria-label={text.photo} aria-roledescription={selectedLocale==='en'?'carousel':'carrousel'} data-active-photo={index+1} tabIndex={0} onKeyDown={e=>{if(images.length<2)return;if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();choose(index+(e.key==='ArrowRight'?1:-1))}if(e.key==='Home'||e.key==='End'){e.preventDefault();choose(e.key==='Home'?0:images.length-1)}}}>
  {images.length>1&&thumbnails()}
- <div className="gallery-stage"><div className="gallery-window detail-image"><button className={'gallery-enlarge '+(hoverZoom?'is-zoomed':'')} type="button" aria-label={text.enlarge} onPointerMove={move} onPointerLeave={()=>setHoverZoom(false)} onPointerDown={down} onPointerUp={up} onPointerCancel={()=>{drag.current=null}} onClick={()=>{if(suppressClick.current){suppressClick.current=false;return}setExpanded(true);setHoverZoom(false)}}>
- <div className="gallery-track" style={{transform:`translateX(-${index*100}%)`}}>{images.map((src,i)=><div className="gallery-slide" key={src} aria-hidden={i!==index}><Image src={src} alt={imageAlt?.(i) || `${product.name} · ${product.description} · ${text.view} ${i+1}`} width={1000} height={1500} sizes="(max-width: 760px) 100vw, 52vw" quality={85} priority={i===0} draggable={false} style={i===index?{transformOrigin:`${position.x}% ${position.y}%`}:undefined}/></div>)}</div>
+ <div className="gallery-stage"><div className="gallery-window detail-image"><button className={'gallery-enlarge '+(hoverZoom?'is-zoomed':'')} type="button" aria-label={text.enlarge} onPointerMove={move} onPointerLeave={()=>setHoverZoom(false)} onPointerDown={down} onPointerUp={up} onPointerCancel={cancel} onLostPointerCapture={cancel} onClick={()=>{if(suppressClick.current){suppressClick.current=false;return}setExpanded(true);setHoverZoom(false)}}>
+ <div className="gallery-track" style={{transform:`translate3d(-${index*100}%,0,0)`}}>{images.map((src,i)=><div className="gallery-slide" key={src} aria-hidden={i!==index}><Image src={src} alt={imageAlt?.(i) || `${product.name} · ${product.description} · ${text.view} ${i+1}`} width={1000} height={1500} sizes="(max-width: 760px) 100vw, 52vw" quality={85} priority={i===0} draggable={false} style={i===index?{transformOrigin:`${position.x}% ${position.y}%`}:undefined}/></div>)}</div>
  </button>
  {images.length>1&&<><button className="gallery-arrow previous" type="button" aria-label={text.previous} onClick={()=>choose(index-1)}><ChevronLeft size={23}/></button><button className="gallery-arrow next" type="button" aria-label={text.next} onClick={()=>choose(index+1)}><ChevronRight size={23}/></button></>}
  {showActions&&<><button className="gallery-help-button" aria-label={t('Open product help')} onClick={onHelp}><Sparkles size={20}/></button><div className="gallery-product-actions"><button aria-label={t(saved?'Unsave this product':'Save this product')} aria-pressed={saved} onClick={onSave}><Heart size={21} fill={saved?'currentColor':'none'}/></button><button className="gallery-bag-action" aria-label={t('Choose size for this product')} onClick={onChooseSize}><ShoppingBag size={21}/></button></div></>}
  <div className="gallery-meter" aria-hidden="true">{images.map((_,i)=><span key={i} className={index===i?'active':''}/>)}</div>
  <span className="gallery-count" aria-live="polite">{index+1} / {images.length}</span><button className="gallery-expand" aria-label={text.fullScreen} onClick={()=>setExpanded(true)}><Expand size={19}/></button>
  </div><p className="gallery-hint"><span className="gallery-desktop-hint">{text.desktopHint}</span><span className="gallery-touch-hint">{text.touchHint}</span></p>{images.length>1&&<div className="gallery-dots" aria-label={text.positions}>{images.map((_,i)=><button key={i} aria-label={text.goImage+' '+(i+1)} aria-current={index===i?'true':undefined} onClick={()=>choose(i)}/>)}</div>}</div>
- </div><dialog className="image-viewer" ref={dialog} aria-label={product.name+' '+text.viewer} onKeyDown={e=>{if(images.length>1&&(e.key==='ArrowLeft'||e.key==='ArrowRight')){e.preventDefault();choose(index+(e.key==='ArrowRight'?1:-1))}}} onCancel={()=>setExpanded(false)}>{expanded&&<><header><span>{product.name}<small>{index+1} / {images.length}</small></span><div><button aria-label={zoomed?text.zoomOut:text.zoomIn} onClick={()=>setZoomed(!zoomed)}>{zoomed?<ZoomOut/>:<ZoomIn/>}</button><button aria-label={text.close} onClick={()=>setExpanded(false)}><X/></button></div></header><div className="lightbox-stage"><button className={'lightbox-image '+(zoomed?'zoomed':'')} aria-label={zoomed?text.zoomOutArea:text.zoomInArea} onClick={()=>{if(suppressClick.current){suppressClick.current=false;return}setZoomed(!zoomed)}} onPointerMove={e=>{if(zoomed){const b=e.currentTarget.getBoundingClientRect();setPosition({x:(e.clientX-b.left)/b.width*100,y:(e.clientY-b.top)/b.height*100})}}} onPointerDown={down} onPointerUp={up} onPointerCancel={()=>{drag.current=null}}><Image src={images[index]} alt={imageAlt?.(index) || `${product.name} · ${text.view} ${index+1}`} width={1600} height={2400} sizes="100vw" quality={85} draggable={false} style={{transformOrigin:`${position.x}% ${position.y}%`}}/></button>{images.length>1&&<><button className="gallery-arrow previous" aria-label={text.previousLarge} onClick={()=>choose(index-1)}><ChevronLeft/></button><button className="gallery-arrow next" aria-label={text.nextLarge} onClick={()=>choose(index+1)}><ChevronRight/></button></>}</div>{images.length>1&&thumbnails(true)}</>}</dialog></>;
+ </div><dialog className="image-viewer" ref={dialog} aria-label={product.name+' '+text.viewer} onKeyDown={e=>{if(images.length>1&&(e.key==='ArrowLeft'||e.key==='ArrowRight')){e.preventDefault();choose(index+(e.key==='ArrowRight'?1:-1))}}} onCancel={()=>setExpanded(false)}>{expanded&&<><header><span>{product.name}<small>{index+1} / {images.length}</small></span><div><button aria-label={zoomed?text.zoomOut:text.zoomIn} onClick={()=>setZoomed(!zoomed)}>{zoomed?<ZoomOut/>:<ZoomIn/>}</button><button aria-label={text.close} onClick={()=>setExpanded(false)}><X/></button></div></header><div className="lightbox-stage"><button className={'lightbox-image '+(zoomed?'zoomed':'')} aria-label={zoomed?text.zoomOutArea:text.zoomInArea} onClick={()=>{if(suppressClick.current){suppressClick.current=false;return}setZoomed(!zoomed)}} onPointerMove={e=>{if(e.pointerType!=='mouse')touchMove(e);if(zoomed){const b=e.currentTarget.getBoundingClientRect();setPosition({x:(e.clientX-b.left)/b.width*100,y:(e.clientY-b.top)/b.height*100})}}} onPointerDown={down} onPointerUp={up} onPointerCancel={cancel} onLostPointerCapture={cancel}><Image src={images[index]} alt={imageAlt?.(index) || `${product.name} · ${text.view} ${index+1}`} width={1600} height={2400} sizes="100vw" quality={85} draggable={false} style={{transformOrigin:`${position.x}% ${position.y}%`}}/></button>{images.length>1&&<><button className="gallery-arrow previous" aria-label={text.previousLarge} onClick={()=>choose(index-1)}><ChevronLeft/></button><button className="gallery-arrow next" aria-label={text.nextLarge} onClick={()=>choose(index+1)}><ChevronRight/></button></>}</div>{images.length>1&&thumbnails(true)}</>}</dialog></>;
 }
