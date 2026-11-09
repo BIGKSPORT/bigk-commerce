@@ -32,7 +32,7 @@ try{
   assert.equal(spacing.background,'rgb(238, 236, 232)','B10 campaign background retained');
   const shoe=shop.locator('.product-card[data-product-id="B10"] .card-photo-carousel img').first();
   const presentation=await shoe.evaluate(image=>({fit:getComputedStyle(image).objectFit,padding:parseFloat(getComputedStyle(image).paddingLeft),background:getComputedStyle(image).backgroundColor}));
-  assert.equal(presentation.fit,'contain');assert(presentation.padding>=14);assert.equal(presentation.background,'rgb(255, 255, 255)');
+  assert.equal(presentation.fit,'contain');assert(presentation.padding>=14);assert.equal(presentation.background,'rgb(255, 255, 255)');await shoe.scrollIntoViewIfNeeded();await shoe.evaluate(img=>img.decode());await shop.locator('.product-card[data-product-id="B10"]').first().screenshot({path:join(process.env.BIGK_ARTIFACT_DIR||root,'contained-sneaker-card-'+width+'.png')});
   const hero=shop.locator('.hero-image');
   assert(decodeURIComponent(await hero.locator('img').getAttribute('src')).includes(before.find(p=>p.id==='P007').images[0]));
   assert.equal(await shop.locator('.section-number,.finder-number,.hero-detail strong').count(),0);
