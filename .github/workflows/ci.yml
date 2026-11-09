@@ -19,6 +19,8 @@ jobs:
       - run: npm run typecheck
       - run: node --import tsx tests/catalog-translations.test.ts
       - run: node --import tsx tests/operations.test.ts
+      - run: node --import tsx tests/categories.test.ts
+      - run: node --import tsx tests/search-visibility.test.ts
       - run: node tests/operations-postgres.mjs
       - run: node --import tsx tests/email-job-kind.test.ts
       - run: node --import tsx tests/site-language.test.ts
