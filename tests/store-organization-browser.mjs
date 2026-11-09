@@ -42,6 +42,7 @@ try{
   await shop.locator('.b10-feature').screenshot({path:join(screenshots,'clean-b10-home-'+width+'.png')});
  }
  await shop.setViewportSize({width:1280,height:844});
+ await shop.setViewportSize({width:390,height:844});
  const b10=before.find(p=>p.id==='B10'),green=b10.variants.find(v=>b10.content.trade.identifiers[v.id].colour==='Green');
  await shop.evaluate(id=>localStorage.setItem('bigk-bag-v2',JSON.stringify([{variantId:id,quantity:1}])),green.id);
  await shop.goto(origin+'/en');
@@ -49,7 +50,7 @@ try{
  const greenRow=shop.locator('[data-bag-variant="'+green.id+'"]');
  await greenRow.locator('img').evaluate(img=>img.decode());
  assert(decodeURIComponent(await greenRow.locator('img').getAttribute('src')).includes('green-'));
- assert.equal(await shop.locator('[data-bag-suggestions]').count(),1);
+ assert.equal(await shop.locator('[data-bag-suggestions]').count(),1);assert(await shop.locator('dialog[open]').evaluate(d=>d.scrollWidth<=d.clientWidth+1),'Mobile bag has no horizontal overflow');
  assert(await shop.locator('[data-bag-suggestions] a').count()<=2);
  assert(!(await shop.locator('[data-bag-suggestions]').innerHTML()).includes('/products/b10-sneakers'));
  await shop.screenshot({path:join(process.env.BIGK_ARTIFACT_DIR||root,'bag-green-shoe-with-suggestions.png')});
@@ -59,10 +60,11 @@ try{
  await shop.locator('header.simple-header>button').click();
  await shop.locator('[data-bag-variant="'+blue.variants[3].id+'"] img').evaluate(img=>img.decode());
  assert.equal(await shop.locator('[data-bag-variant]').count(),2);
- await shop.locator('[data-bag-suggestions]').waitFor();
+ await shop.locator('[data-bag-suggestions]').waitFor();assert(await shop.locator('dialog[open]').evaluate(d=>d.scrollWidth<=d.clientWidth+1),'Mobile Alpin bag has no horizontal overflow');
  assert(!(await shop.locator('[data-bag-suggestions]').innerHTML()).includes('alpin-fleece-jacket'));
  await shop.screenshot({path:join(process.env.BIGK_ARTIFACT_DIR||root,'alpin-bag-photos-and-suggestions.png')});
  await shop.evaluate(()=>localStorage.removeItem('bigk-bag-v2'));
+ await shop.setViewportSize({width:1280,height:844});
  await shop.goto(origin+'/en');
 
  assert.equal(await shop.locator('[data-catalogue-overview]').count(),0,'Full catalogue is the default');
