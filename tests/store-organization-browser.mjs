@@ -19,11 +19,34 @@ try{
  const up=page.getByRole('button',{name:'Move Pants category up',exact:true});while(!await up.isDisabled())await up.click();await page.getByLabel('Category to organize',{exact:true}).selectOption('Pants');await page.getByRole('button',{name:'Move '+fixture.pinName+' style up',exact:true}).click();
  await page.getByRole('button',{name:'Preview current draft',exact:true}).click();await page.locator('[data-category-discovery]').waitFor();assert.equal(await page.locator('[data-category-discovery] a[data-category]').first().getAttribute('data-category'),'Pants');await page.getByRole('button',{name:'Close preview',exact:true}).click();
  const banner=page.locator('details').filter({has:page.getByRole('heading',{name:'Campaign banner',exact:true})});await banner.getByLabel('Heading / announcement text',{exact:true}).fill('PRIVATE UNSAVED BANNER');
- const visitor=await browser.newContext(),shop=await visitor.newPage();await shop.goto(origin+'/en');assert.equal(await shop.locator('[data-category-discovery]').count(),0);assert.equal(await shop.locator('.catalog-category-heading').first().textContent(),'Fleece');assert.equal(await shop.locator('.catalog-category-heading').last().textContent(),'Accessories');assert.equal(await shop.locator('.site-header nav a,.site-header nav button').filter({hasText:/^Fleece$/}).count(),0);
+ const visitor=await browser.newContext({hasTouch:true}),shop=await visitor.newPage();await shop.goto(origin+'/en');assert.equal(await shop.locator('[data-category-discovery]').count(),0);assert.equal(await shop.locator('.catalog-category-heading').first().textContent(),'Fleece');assert.equal(await shop.locator('.catalog-category-heading').last().textContent(),'Accessories');assert.equal(await shop.locator('.site-header nav a,.site-header nav button').filter({hasText:/^Fleece$/}).count(),0);
  const unauthorized=await visitor.request.post(origin+'/api/admin/storefront',{headers:{Origin:origin},data:{action:'organization',version:0,organization:{}}});assert.equal(unauthorized.status(),401);await page.getByRole('button',{name:'Apply display settings to live shop',exact:true}).click();await page.getByText('Display settings applied to the live shop. Other campaign drafts remain private.',{exact:true}).first().waitFor();assert.equal(await banner.getByLabel('Heading / announcement text',{exact:true}).inputValue(),'PRIVATE UNSAVED BANNER');assert(await page.getByRole('button',{name:'Save draft',exact:true}).isEnabled());await shop.reload();assert(!(await shop.content()).includes('PRIVATE UNSAVED BANNER'));
  assert.equal(await shop.locator('[data-category-discovery] a[data-category]').first().getAttribute('data-category'),'Pants');assert.equal(await shop.locator('[data-category-discovery] a[data-category="Long sleeves"]').count(),0);assert.equal(await shop.locator('.catalog-category-heading').first().textContent(),'Pants');
  await shop.locator('[data-category-discovery] a[data-category="Pants"]').click();await shop.waitForURL(/category=Pants/);assert.equal(await shop.locator('.product-grid .product-card').first().getByRole('heading').textContent(),fixture.pinName);assert.equal((await visitor.request.post(origin+'/api/admin/catalog/organization',{headers:{Origin:origin},data:{}})).status(),401);
  const dir=process.env.BIGK_ARTIFACT_DIR||join(root,'screenshots');await mkdir(dir,{recursive:true});await page.getByRole('heading',{name:'Category and product display order',exact:true}).scrollIntoViewIfNeeded();await page.screenshot({path:join(dir,'store-organization-editor.png'),fullPage:true});await shop.goto(origin+'/nl');await shop.setViewportSize({width:390,height:844});await shop.screenshot({path:join(dir,'store-organization-mobile.png'),fullPage:true});assert(await shop.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Mobile overflow');
+
+ // Product entry from deep catalogue positions must show photos, not details/footer.
+ for(const locale of ['en','nl','fr']){
+  await shop.goto(origin+'/'+locale+'#catalog');
+  const link=shop.locator('.product-card .product-meta a').last();
+  await link.scrollIntoViewIfNeeded();
+  const destination=await link.getAttribute('href');
+  assert(await shop.evaluate(()=>scrollY>200),'Start well down the collection');
+  await link.tap();
+  await shop.waitForURL(url=>url.pathname===new URL(destination,origin).pathname);
+  await shop.locator('.pdp-detail .product-gallery,.pdp-detail .gallery-pending').waitFor();
+  await shop.waitForFunction(()=>scrollY<5&&document.querySelector('.pdp-detail .product-gallery,.pdp-detail .gallery-pending')?.getBoundingClientRect().top<200);
+  await shop.screenshot({path:join(dir,'product-photo-entry-'+locale+'.png')});
+  const size=shop.locator('.size-options button:not(:disabled)').first();
+  if(await size.count()){
+   await size.scrollIntoViewIfNeeded();await size.click();
+   assert(await shop.evaluate(()=>scrollY>200),'Size selection must stay at the size controls');
+  }
+  await shop.goBack();
+  await shop.waitForURL(url=>!url.pathname.includes('/products/'));
+  await shop.waitForFunction(()=>scrollY>200);
+ }
+
  await page.getByRole('button',{name:'Switch off custom homepage',exact:true}).click();await page.getByText('Custom storefront switched off. Your saved content is retained.',{exact:true}).waitFor();await shop.reload();assert.equal(await shop.locator('[data-category-discovery]').count(),0);
  console.log('PASS: reviewed whole-style category move, unchanged inventory/identifiers/URLs, private layout draft, ordered category discovery, pinned style order, category links, empty category hiding, mobile and off switch.');
 }catch(error){if(browser){const dir=process.env.BIGK_ARTIFACT_DIR||join(root,'screenshots');await mkdir(dir,{recursive:true});let i=0;for(const context of browser.contexts())for(const page of context.pages())await page.screenshot({path:join(dir,'store-organization-failure-'+(++i)+'.png'),fullPage:true}).catch(()=>{});}throw error;}finally{await browser?.close();server?.kill('SIGTERM');await rm(root,{recursive:true,force:true});}
