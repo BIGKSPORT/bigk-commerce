@@ -84,6 +84,12 @@ try{
  await cdp.send('Input.dispatchTouchEvent',{type:'touchCancel',touchPoints:[]});
  assert.equal(await gallery.getAttribute('data-active-photo'),'3');assert.equal(await stage.getAttribute('data-dragging'),null);
  await gallery.evaluate(async el=>{await Promise.all(el.getAnimations({subtree:true}).map(a=>a.finished.catch(()=>{})))});
+ // A tap with tiny hand movement still opens the existing full-screen viewer.
+ assert(await page.evaluate(({x,y})=>!!document.elementFromPoint(x,y)?.closest('.gallery-enlarge'),{x:from,y}),'Tap begins on the photograph');
+ await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:from,y,id:5}]});
+ await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:from-3,y:y+1,id:5}]});
+ await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+ await page.locator('dialog.image-viewer[open]').waitFor();await page.keyboard.press('Escape');
  // Vertical movement starting on the photograph remains ordinary page scrolling.
  const scrollBefore=await page.evaluate(()=>scrollY);
  await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:from,y,id:4}]});
@@ -94,11 +100,6 @@ try{
  assert.equal(await page.locator('dialog.image-viewer[open]').count(),0,'Scrolling does not open zoom');
  await page.evaluate(()=>scrollTo({top:0,behavior:'instant'}));
  await page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
- // A tap with tiny hand movement still opens the existing full-screen viewer.
- await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:from,y,id:5}]});
- await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:from-3,y:y+1,id:5}]});
- await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
- await page.locator('dialog.image-viewer[open]').waitFor();await page.keyboard.press('Escape');
  await page.emulateMedia({reducedMotion:'reduce'});
  assert.equal(await stage.locator('.gallery-track').evaluate(el=>getComputedStyle(el).transitionDuration),'0s','Reduced-motion preference remains respected');
  await page.emulateMedia({reducedMotion:'no-preference'});
