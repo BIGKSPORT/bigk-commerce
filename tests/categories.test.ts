@@ -32,12 +32,12 @@ await test('category administration preserves products and supports six sportswe
  const content={composition:'',care:'',fit:'',details:''};
  const id=await createProduct({name:'Category test top',description:'',category:'Training tops',code:'99887766',priceCents:null,images:[],sizes:['S'],tags:[],featured:false,content});
  const p=(await products()).find(p=>p.id===id)!;
- await assert.rejects(()=>writeCategory({action:'archive',name:'Training tops',version:1}),/Move them/);
+ await writeCategory({action:'archive',name:'Training tops',version:1});assert.equal((await products()).find(p=>p.id===id)!.category,'Training tops');await validateCategory('Training tops','Training tops');await assert.rejects(()=>validateCategory('Training tops'),/active category/);assert.equal((await publicCategoryOptions())!.find(c=>c.name==='Training tops')!.active,false);await writeCategory({action:'restore',name:'Training tops',version:2});
  await assert.rejects(()=>validateCategory('Unknown category'),/active category/);
  await assert.rejects(()=>supplierPlan([{productId:id,variantId:p.variants[0].id,category:'Unknown category'}],defaultImportOptions),/active category/);
  await updateProduct({id,version:p.version,category:'Other',priceCents:p.priceCents,approved:false,active:false,variants:p.variants});
- await writeCategory({action:'archive',name:'Training tops',version:1});await assert.rejects(()=>validateCategory('Training tops'),/active category/);assert(!(await publicCategoryOptions())!.some(c=>c.name==='Training tops'));
- await writeCategory({action:'restore',name:'Training tops',version:2});await validateCategory('Training tops');
+ await writeCategory({action:'archive',name:'Training tops',version:3});await assert.rejects(()=>validateCategory('Training tops'),/active category/);assert.equal((await publicCategoryOptions())!.find(c=>c.name==='Training tops')!.active,false);
+ await writeCategory({action:'restore',name:'Training tops',version:4});await validateCategory('Training tops');
  assert(Number((await db().prepare("SELECT COUNT(*) AS count FROM operations_audit WHERE action LIKE 'category.%'").get())?.count)>=4);
  await setFeature('category_management',false);assert.equal(await publicCategoryOptions(),undefined);await validateCategory('Training tops','Training tops');await assert.rejects(()=>validateCategory('Training tops'),/existing category/);
  assert((await products()).some(p=>p.id===id));
