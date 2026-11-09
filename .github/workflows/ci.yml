@@ -33,6 +33,7 @@ jobs:
       - run: npm run test:withdrawals
       - run: npm run test:staging
       - run: npm run test:postgres
+      - run: DATABASE_CONNECTION_MODE=isolated node tests/postgres.mjs
       - run: npm run build
       - run: npm run test:http
   browser:
