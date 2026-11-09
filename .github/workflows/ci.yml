@@ -18,6 +18,7 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
       - run: node --import tsx tests/catalog-translations.test.ts
+      - run: node --import tsx tests/published-translations.test.ts
       - run: node --import tsx tests/operations.test.ts
       - run: node --import tsx tests/categories.test.ts
       - run: node --import tsx tests/search-visibility.test.ts
@@ -58,6 +59,7 @@ jobs:
       - run: npm run build
       - run: node --import tsx tests/operations-browser.mjs
       - run: node --import tsx tests/merchandising-browser.mjs
+      - run: node --import tsx tests/published-translations-browser.mjs
       - run: node tests/site-language-browser.mjs
       - run: npm run preview:build
       - run: npm run test:preview

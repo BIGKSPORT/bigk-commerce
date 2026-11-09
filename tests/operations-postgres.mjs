@@ -28,5 +28,5 @@ try{
  }
  console.log('PASS: new migration is idempotent in both schemas; seven RLS tables; browser roles denied; audit and invoices append-only.');
  server=new PGLiteSocketServer({db:database,host:'127.0.0.1',port:0});await server.start();const port=new URL('postgresql://'+server.getServerConn()).port;
- for(const testFile of ['tests/operations.test.ts','tests/categories.test.ts','tests/merchandising.test.ts']){const result=await new Promise((resolve,reject)=>{const child=spawn(process.execPath,['--import','tsx',testFile],{stdio:'inherit',env:{...process.env,NODE_ENV:'test',BIGK_TEST_DATABASE_URL:`postgresql://postgres@127.0.0.1:${port}/postgres`}});child.once('error',reject);child.once('exit',resolve);});assert.equal(result,0,'PostgreSQL test failed: '+testFile);}
+ for(const testFile of ['tests/operations.test.ts','tests/categories.test.ts','tests/merchandising.test.ts','tests/published-translations.test.ts']){const result=await new Promise((resolve,reject)=>{const child=spawn(process.execPath,['--import','tsx',testFile],{stdio:'inherit',env:{...process.env,NODE_ENV:'test',BIGK_TEST_DATABASE_URL:`postgresql://postgres@127.0.0.1:${port}/postgres`}});child.once('error',reject);child.once('exit',resolve);});assert.equal(result,0,'PostgreSQL test failed: '+testFile);}
 }finally{if(server)await server.stop();await database.close();}

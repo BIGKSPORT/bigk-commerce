@@ -1,0 +1,30 @@
+import {chromium} from 'playwright';
+import {spawn} from 'node:child_process';
+import {mkdtemp,readFile,mkdir,rm} from 'node:fs/promises';
+import {tmpdir} from 'node:os';
+import {join} from 'node:path';
+import assert from 'node:assert/strict';
+const root=await mkdtemp(join(tmpdir(),'bigk-translations-browser-')),origin='http://127.0.0.1:3219';
+const env={...process.env,DATABASE_PROVIDER:'sqlite',DATABASE_PATH:join(root,'store.sqlite'),DATABASE_SCHEMA:'bigk',COMMERCE_MODE:'demo',APP_URL:origin,ADMIN_MFA_REQUIRED:'true',ADMIN_MFA_KEY:'b'.repeat(64),EMAIL_DELIVERY_ENABLED:'false',OPERATIONS_FIXTURE_PATH:join(root,'fixture.json')};delete env.VERCEL;delete env.VERCEL_ENV;delete env.ADMIN_CANONICAL_ORIGIN;
+let server,browser;
+try{
+ const seeded=await new Promise((resolve,reject)=>{const p=spawn(process.execPath,['--import','tsx','tests/fixtures/seed-published-translations.ts'],{env,stdio:'inherit'});p.once('error',reject);p.once('exit',resolve);});assert.equal(seeded,0);
+ const fixture=JSON.parse(await readFile(env.OPERATIONS_FIXTURE_PATH,'utf8'));
+ server=spawn(process.execPath,['node_modules/next/dist/bin/next','start','--hostname','127.0.0.1','--port','3219'],{env,stdio:'inherit'});
+ let ready=false;for(let i=0;i<80;i++){try{if((await fetch(origin+'/admin')).ok){ready=true;break;}}catch{}await new Promise(r=>setTimeout(r,250));}assert(ready);
+ browser=await chromium.launch({headless:true,...(process.env.CHROMIUM_PATH?{executablePath:process.env.CHROMIUM_PATH}:{})});
+ const owner=await browser.newContext();await owner.addCookies([{name:'bigk_admin',value:'operations-browser-owner',url:origin,httpOnly:true,sameSite:'Strict'}]);const page=await owner.newPage();await page.goto(origin+'/admin');await page.getByRole('button',{name:'Products',exact:true}).click();
+ const row=page.locator('tr[data-product-group="'+fixture.id+'"]');const open=async()=>{await row.getByRole('button',{name:'Edit shared product',exact:true}).click();await page.getByRole('dialog').waitFor();await page.getByRole('button',{name:'Nederlands',exact:true}).click();await page.getByRole('heading',{name:'Review Nederlands translation',exact:true}).waitFor();};
+ await open();for(const language of ['English','Nederlands','Français','Deutsch','Italiano','Español'])assert(await page.getByRole('dialog').getByRole('button',{name:language,exact:true}).isVisible());
+ const visitor=await browser.newContext(),shop=await visitor.newPage();const url=origin+'/nl/products/'+fixture.slug;await shop.goto(url);assert(!(await shop.content()).includes('Nederlandse sportkleding, klaar voor jouw dag.'));
+ await page.getByRole('button',{name:'Enable translation publishing',exact:true}).click();await page.getByRole('button',{name:'Approve saved translation',exact:true}).click();await page.getByRole('dialog').waitFor({state:'detached'});
+ await shop.reload();await shop.locator('.detail-description').filter({hasText:'Nederlandse sportkleding, klaar voor jouw dag.'}).waitFor();assert((await shop.title()).includes('Nederlandse fixturetitel'));assert(!(await shop.content()).includes('sourceHashes'));assert(!(await shop.content()).includes('translationPublications'));
+ const json=JSON.parse(await shop.locator('script[type="application/ld+json"]').innerText());assert.equal(json.name,fixture.name);assert.equal(json.description,'Nederlandse productdetails voor de browsertest.');
+ await open();await page.getByLabel('Nederlands description',{exact:true}).fill('NIEUW PRIVÉCONCEPT, NOG NIET GOEDGEKEURD');assert(await page.getByRole('button',{name:'Approve saved translation',exact:true}).isDisabled());await page.getByRole('button',{name:'Save shared content',exact:true}).click();await page.getByRole('dialog').waitFor({state:'detached'});
+ await shop.reload();assert(!(await shop.content()).includes('NIEUW PRIVÉCONCEPT'));await shop.locator('.detail-description').filter({hasText:'Nederlandse sportkleding, klaar voor jouw dag.'}).waitFor();
+ await open();await page.getByRole('button',{name:'English',exact:true}).click();await page.getByLabel('Shared composition',{exact:true}).fill('Changed verified fixture composition');await page.getByRole('button',{name:'Save shared content',exact:true}).click();await page.getByRole('dialog').waitFor({state:'detached'});
+ await shop.reload();assert((await shop.content()).includes('Changed verified fixture composition'));await shop.locator('.detail-description').filter({hasText:'Nederlandse sportkleding, klaar voor jouw dag.'}).waitFor();
+ await open();await page.getByRole('status').filter({hasText:'Source changed: composition'}).waitFor();const dir=process.env.BIGK_ARTIFACT_DIR||join(root,'screenshots');await mkdir(dir,{recursive:true});await page.screenshot({path:join(dir,'translation-review-editor.png'),fullPage:true});await shop.setViewportSize({width:390,height:844});await shop.screenshot({path:join(dir,'translation-public-mobile.png'),fullPage:true});assert(await shop.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+ await page.getByRole('button',{name:'Withdraw translation approval',exact:true}).click();await page.getByRole('dialog').waitFor({state:'detached'});await shop.reload();assert(!(await shop.content()).includes('Nederlandse sportkleding, klaar voor jouw dag.'));assert.equal((await visitor.request.get(origin+'/api/admin/product-translations?id='+fixture.id+'&locale=nl')).status(),401);
+ console.log('PASS: six-language editing; explicit owner enable/review; localized description/metadata/JSON-LD; no private draft/approval leaks; source-change fallback; mobile; withdraw; protected API.');
+}catch(error){if(browser){const dir=process.env.BIGK_ARTIFACT_DIR||join(root,'screenshots');await mkdir(dir,{recursive:true});let i=0;for(const context of browser.contexts())for(const page of context.pages())await page.screenshot({path:join(dir,'translation-failure-'+(++i)+'.png'),fullPage:true}).catch(()=>{});}throw error;}finally{await browser?.close();server?.kill('SIGTERM');await rm(root,{recursive:true,force:true});}

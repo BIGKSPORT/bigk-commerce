@@ -1,3 +1,4 @@
+import {localizedPublicCatalog} from '@/lib/localized-public-catalog';
 import {publicIndexingEnabled} from '@/lib/search-visibility';
 import {publicCategoryOptions} from '@/lib/catalog-categories';
 import {getSiteLanguage} from '@/lib/i18n/site-server';
@@ -13,7 +14,7 @@ import {isLive,liveReady} from '@/lib/commerce';
 import Storefront from '@/components/storefront';
 export const dynamic='force-dynamic';
 type Props={params:Promise<{slug:string}>;searchParams:Promise<{colour?:string;colourId?:string;size?:string}>};
-async function selection(props:Props){const {slug}=await props.params,query=await props.searchParams,{catalog:raw,preview}=await storefrontContext(),catalog=preview?visibleProducts(raw):publicProducts(raw);return {raw,catalog,preview,slug,query,resolved:resolveGroupSelection(raw,catalog,slug,query)}}
+async function selection(props:Props){const {slug}=await props.params,query=await props.searchParams,{catalog:raw,preview}=await storefrontContext(),catalog=preview?visibleProducts(raw):await localizedPublicCatalog(raw);const resolved=resolveGroupSelection(raw,catalog,slug,query);if(resolved){const copy=catalog.find(p=>p.id===resolved.root.id)||resolved.selected.product;resolved.root={...resolved.root,description:copy.description,content:copy.content};}return {raw,catalog,preview,slug,query,resolved}}
 export async function generateMetadata(props:Props){const {path,locale}=await getSiteLanguage();const {resolved,preview}=await selection(props),p=resolved?.root,colour=resolved?.selected;const description=(p?.content?.trade?.seoDescription||p?.content?.details||p?.description||'').slice(0,320);return {title:p?.content?.trade?.seoTitle||p?.name||'Product not found',description,alternates:resolved?{canonical:path(resolved.canonical),languages:Object.fromEntries(['en','nl','fr'].map(l=>[l,'/'+l+resolved.canonical]))}:undefined,robots:{index:!preview&&Boolean(colour?.product.approved&&colour?.product.active&&colour?.images.length)&&publicIndexingEnabled(),follow:true},openGraph:p&&resolved?{title:p.content?.trade?.seoTitle||p.name,description,url:path(resolved.canonical),images:colour?.images.length?[{url:colour.images[0]}]:[]}:undefined}}
 export default async function ProductPage(props:Props){
  const {path}=await getSiteLanguage();const {raw,catalog,preview,slug,query,resolved}=await selection(props);const requested=resolveProduct(raw,slug);
