@@ -37,7 +37,7 @@ try{
   assert(decodeURIComponent(await hero.locator('img').getAttribute('src')).includes(before.find(p=>p.id==='P007').images[0]));
   assert.equal(await shop.locator('.section-number,.finder-number,.hero-detail strong').count(),0);
   if(width===390){await shop.evaluate(()=>window.scrollTo({top:0,left:0,behavior:'instant'}));const layout=await shop.evaluate(()=>({hero:document.querySelector('.hero-image').getBoundingClientRect().top,header:document.querySelector('.site-header').getBoundingClientRect().bottom,title:document.querySelector('.hero-title').getBoundingClientRect().height}));assert(layout.hero<=layout.header+60,'Mobile starts at the hero image');assert(layout.title<=2,'Slogan does not consume mobile space');}
-  assert.equal(spacing.overflow,false);
+  if(spacing.overflow)console.error('Mobile overflow diagnostics',await shop.evaluate(()=>[...document.querySelectorAll('body *')].map(e=>({tag:e.tagName,cls:typeof e.className==='string'?e.className:'',left:e.getBoundingClientRect().left,right:e.getBoundingClientRect().right})).filter(e=>e.right>innerWidth+1||e.left < -1).slice(0,25)));assert.equal(spacing.overflow,false);
   const screenshots=process.env.BIGK_ARTIFACT_DIR||root;
   await shop.locator('.b10-feature').screenshot({path:join(screenshots,'clean-b10-home-'+width+'.png')});
  }
