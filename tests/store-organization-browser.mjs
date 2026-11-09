@@ -20,6 +20,19 @@ try{
  await page.getByRole('button',{name:'Preview current draft',exact:true}).click();await page.locator('[data-category-discovery]').waitFor();assert.equal(await page.locator('[data-category-discovery] a[data-category]').first().getAttribute('data-category'),'Pants');await page.getByRole('button',{name:'Close preview',exact:true}).click();
  const banner=page.locator('details').filter({has:page.getByRole('heading',{name:'Campaign banner',exact:true})});await banner.getByLabel('Heading / announcement text',{exact:true}).fill('PRIVATE UNSAVED BANNER');
  const visitor=await browser.newContext({hasTouch:true}),shop=await visitor.newPage();await shop.goto(origin+'/en');assert.equal(await shop.locator('[data-category-discovery]').count(),0);assert.equal(await shop.locator('.catalog-category-heading').first().textContent(),'Fleece');assert.equal(await shop.locator('.catalog-category-heading').last().textContent(),'Accessories');assert.equal(await shop.locator('.site-header nav a,.site-header nav button').filter({hasText:/^Fleece$/}).count(),0);
+
+ const previewNames=await shop.locator('.product-grid .product-meta h3').allTextContents();
+ assert.equal(new Set(previewNames).size,previewNames.length,'Homepage introduces each model once');
+ assert.equal(await shop.locator('[data-catalogue-overview]').count(),1);
+ const overviewCount=await shop.locator('.product-grid .product-card').count();
+ await shop.getByRole('link',{name:'View all styles and colours',exact:true}).click();
+ await shop.waitForFunction(()=>!document.querySelector('[data-catalogue-overview]'));
+ assert(await shop.locator('.product-grid .product-card').count()>overviewCount,'All colours remain accessible');
+ await shop.goto(origin+'/en');
+ await shop.getByRole('link',{name:'View category · Pants',exact:true}).click();
+ await shop.waitForURL(/category=Pants/);
+ assert.equal(await shop.locator('[data-catalogue-overview]').count(),0);
+ await shop.goto(origin+'/en');
  const unauthorized=await visitor.request.post(origin+'/api/admin/storefront',{headers:{Origin:origin},data:{action:'organization',version:0,organization:{}}});assert.equal(unauthorized.status(),401);await page.getByRole('button',{name:'Apply display settings to live shop',exact:true}).click();await page.getByText('Display settings applied to the live shop. Other campaign drafts remain private.',{exact:true}).first().waitFor();assert.equal(await banner.getByLabel('Heading / announcement text',{exact:true}).inputValue(),'PRIVATE UNSAVED BANNER');assert(await page.getByRole('button',{name:'Save draft',exact:true}).isEnabled());await shop.reload();assert(!(await shop.content()).includes('PRIVATE UNSAVED BANNER'));
  assert.equal(await shop.locator('[data-category-discovery] a[data-category]').first().getAttribute('data-category'),'Pants');assert.equal(await shop.locator('[data-category-discovery] a[data-category="Long sleeves"]').count(),0);assert.equal(await shop.locator('.catalog-category-heading').first().textContent(),'Pants');
  await shop.locator('[data-category-discovery] a[data-category="Pants"]').click();await shop.waitForURL(/category=Pants/);assert.equal(await shop.locator('.product-grid .product-card').first().getByRole('heading').textContent(),fixture.pinName);assert.equal((await visitor.request.post(origin+'/api/admin/catalog/organization',{headers:{Origin:origin},data:{}})).status(),401);
@@ -47,6 +60,14 @@ try{
   await shop.waitForFunction(()=>scrollY>200);
  }
 
+
+ await page.getByLabel('Keep the homepage compact: up to four styles per category',{exact:true}).uncheck();
+ await page.getByRole('button',{name:'Apply display settings to live shop',exact:true}).click();
+ await page.getByText('Display settings applied to the live shop. Other campaign drafts remain private.',{exact:true}).first().waitFor();
+ await shop.goto(origin+'/en');
+ assert.equal(await shop.locator('[data-catalogue-overview]').count(),0,'Owner can restore full grid');
+ assert(await shop.locator('.product-grid .product-card').count()>overviewCount);
+ assert(!(await shop.content()).includes('PRIVATE UNSAVED BANNER'));
  await page.getByRole('button',{name:'Switch off custom homepage',exact:true}).click();await page.getByText('Custom storefront switched off. Your saved content is retained.',{exact:true}).waitFor();await shop.reload();assert.equal(await shop.locator('[data-category-discovery]').count(),0);
  console.log('PASS: reviewed whole-style category move, unchanged inventory/identifiers/URLs, private layout draft, ordered category discovery, pinned style order, category links, empty category hiding, mobile and off switch.');
 }catch(error){if(browser){const dir=process.env.BIGK_ARTIFACT_DIR||join(root,'screenshots');await mkdir(dir,{recursive:true});let i=0;for(const context of browser.contexts())for(const page of context.pages())await page.screenshot({path:join(dir,'store-organization-failure-'+(++i)+'.png'),fullPage:true}).catch(()=>{});}throw error;}finally{await browser?.close();server?.kill('SIGTERM');await rm(root,{recursive:true,force:true});}
