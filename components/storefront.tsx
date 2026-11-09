@@ -76,7 +76,7 @@ export default function Storefront({products:sourceProducts,mode,ready,initialCa
  const productRanks=new Map((organization?.productOrder||[]).map((id,index)=>[id,index]));
  const items=allColourCards.filter(option=>{const p=option.product;return inSeries(products,p,series)&&(category==='All'||p.category===category)&&(!savedOnly||saved.includes(p.id))&&(!photos||option.images.length)&&(!size||option.variants.some(v=>normalizedSize(v.size)===normalizedSize(size)))&&(!colourFilter||option.colour===colourFilter)&&(p.name+' '+p.description+' '+option.article+' '+option.colour+' '+p.tags.join(' ')).toLowerCase().includes(query.toLowerCase().trim())}).sort((a,b)=>sort==='name'?a.product.name.localeCompare(b.product.name):sort==='low'?(a.product.priceCents??Infinity)-(b.product.priceCents??Infinity):sort==='high'?(b.product.priceCents??-1)-(a.product.priceCents??-1):(productRanks.get(parentId(a.product,products))??Infinity)-(productRanks.get(parentId(b.product,products))??Infinity)||Number(b.images.length>0)-Number(a.images.length>0)||Number(b.product.featured)-Number(a.product.featured));
  const grouped=category==='All'&&!series&&!query&&!size&&!colourFilter&&!savedOnly&&sort==='featured';
- const compact=grouped&&!photos&&!fullCatalog&&organization?.compactCatalog!==false;
+ const compact=grouped&&!photos&&!fullCatalog&&organization?.compactCatalog===true;
  function categoryCards(group:ColourOption[]){
   if(!compact)return group;
   const seen=new Set<string>();
