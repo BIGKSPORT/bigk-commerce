@@ -1,3 +1,4 @@
+import {publicIndexingEnabled} from '@/lib/search-visibility';
 import {publicProductData} from '@/lib/public-product';
 import GenericProductPage,{generateMetadata as genericMetadata} from '@/app/products/[slug]/page';
 import {cache} from 'react';
@@ -13,7 +14,7 @@ import AlpinFleecePage from '@/components/alpin-fleece-page';
 export const dynamic='force-dynamic';
 const load=cache(async()=>{const [catalog,preview]=await Promise.all([products(),isStagingStorePreview()]);return {family:sharedProducts(catalog).filter(hasAlpinTechnology),preview}});
 type Props={params:Promise<{locale:string;slug:string}>;searchParams:Promise<{colour?:string;size?:string}>};
-function indexable(preview:boolean){return !preview&&process.env.INDEXING_ENABLED==='true'&&isLive()&&process.env.LIVE_COMMERCE_APPROVED==='true'}
+function indexable(preview:boolean){return !preview&&publicIndexingEnabled()}
 function canonicalSlug(locale:AlpinLocale){return alpinPaths[locale].split('/').at(-1)}
 export async function generateMetadata({params}:Props){const {locale,slug}=await params;if(!isAlpinLocale(locale))return {robots:{index:false,follow:false}};const {family,preview}=await load();if(!['alpin-fleece-jacket','alpin-fleecejas','veste-polaire-alpin',...family.flatMap(p=>[p.slug,...p.content?.trade?.previousSlugs||[]])].includes(slug))return genericMetadata({params:Promise.resolve({slug}),searchParams:Promise.resolve({})});const visible=family.filter(p=>preview||p.active&&p.approved);return alpinMetadata(locale,visible,indexable(preview)&&visible.length>0&&visible.every(p=>p.images.length))}
 export default async function Page({params,searchParams}:Props){
