@@ -1,17 +1,20 @@
 import {z} from 'zod';
+import {reviewLocale,reviewProductTranslation} from './review-product-translation';
 import {products,db,transaction,audit} from './db';
 import {updateProduct,createProduct,contentSchema} from './admin-catalog';
 import {family,parentId,colourOptions,normalizedSize} from './product-groups';
 import {HttpError} from './security';
 import {categoryNameSchema} from './catalog-categories';
-export const groupEditSchema=z.object({id:z.string().max(100),versions:z.record(z.string(),z.number().int().min(0)),name:z.string().min(2).max(150).refine(value=>!/[\u3400-\u9fff]/u.test(value),'Use a customer-facing product name.'),description:z.string().max(5000).refine(value=>!/[\u3400-\u9fff]/u.test(value),'Use customer-facing text without Chinese characters.'),category:categoryNameSchema,content:contentSchema}).strict();
+export const groupEditSchema=z.object({id:z.string().max(100),versions:z.record(z.string(),z.number().int().min(0)),name:z.string().min(2).max(150).refine(value=>!/[\u3400-\u9fff]/u.test(value),'Use a customer-facing product name.'),description:z.string().max(5000).refine(value=>!/[\u3400-\u9fff]/u.test(value),'Use customer-facing text without Chinese characters.'),category:categoryNameSchema,content:contentSchema,publishLocale:reviewLocale.optional()}).strict();
 export async function saveSharedProduct(data:z.infer<typeof groupEditSchema>){return transaction(async()=>{
  const catalog=await products(),p=catalog.find(p=>p.id===data.id);if(!p||parentId(p,catalog)!==p.id)throw new HttpError(404,'Parent product not found.');
  const members=family(catalog,p);if(members.some(member=>data.versions[member.id]!==member.version)||Object.keys(data.versions).length!==members.length)throw new HttpError(409,'This product group changed in another session. Refresh before saving shared content.');
  const incoming=data.content;
  // Colour/inventory metadata belongs to the original record and is never changed by shared editing.
  const content={...p.content,composition:incoming.composition,care:incoming.care,fit:incoming.fit,details:incoming.details,presentation:incoming.presentation,translations:{...incoming.translations,en:{...incoming.translations?.en,description:data.description,composition:incoming.composition,fit:incoming.fit,details:incoming.details,seoTitle:incoming.trade?.seoTitle,seoDescription:incoming.trade?.seoDescription}},trade:{...p.content?.trade,seoTitle:incoming.trade?.seoTitle,seoDescription:incoming.trade?.seoDescription}};
- return updateProduct({id:p.id,version:p.version,name:data.name,description:data.description,category:data.category,content,priceCents:p.priceCents,approved:p.approved,active:p.active,variants:p.variants.map(v=>({id:v.id,size:v.size,stock:v.stock}))});
+ const savedId=await updateProduct({id:p.id,version:p.version,name:data.name,description:data.description,category:data.category,content,priceCents:p.priceCents,approved:p.approved,active:p.active,variants:p.variants.map(v=>({id:v.id,size:v.size,stock:v.stock}))});
+ if(data.publishLocale){const saved=(await products()).find(product=>product.id===savedId)!;await reviewProductTranslation({id:saved.id,version:saved.version,locale:data.publishLocale,action:'approve'});}
+ return savedId;
 })}
 export const newColourSchema=z.object({parentId:z.string().max(100),version:z.number().int().min(0),colour:z.string().trim().min(1).max(80).refine(value=>!/[\u3400-\u9fff]/u.test(value),'Use a customer-facing colour name.'),article:z.string().max(100),sizes:z.array(z.string().trim().min(1).max(15)).min(1).max(100),images:z.array(z.string().max(250)).max(30),priceCents:z.number().int().min(1).max(1000000).nullable()}).strict();
 export async function addProductColour(data:z.infer<typeof newColourSchema>){return transaction(async()=>{

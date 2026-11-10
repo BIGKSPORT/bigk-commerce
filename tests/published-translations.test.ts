@@ -11,6 +11,7 @@ import {localizedPublicProducts,usableTranslation,publicationStatus,sourceHashes
 import {publicProductData} from '../lib/public-product';
 import {adminSessionHash} from '../lib/admin-mfa';
 import {GET,POST} from '../app/api/admin/product-translations/route';
+import {PATCH as saveAndPublish} from '../app/api/admin/product-groups/route';
 import {GET as publicCatalogue} from '../app/api/catalog/route';
 import {sharedProducts} from '../lib/product-groups';
 const folder=mkdtempSync(join(tmpdir(),'bigk-published-translations-'));
@@ -45,5 +46,24 @@ await test('reviewed translation snapshots keep drafts private and preserve comm
  await setFeature('catalog_translation_drafts',false);assert.notEqual(localizedPublicProducts(await products(),'nl',false).find(v=>v.id===p.id)!.description,content.translations.nl.description);
  await reviewProductTranslation({id:p.id,version:p.version,locale:'nl',action:'withdraw'});p=(await products()).find(v=>v.id===initial.id)!;assert.equal(p.content?.translationPublications?.nl,undefined);assert.equal(p.content?.translations?.nl?.description,'NIEUW PRIVÉCONCEPT');
  assert.equal((await translationReviewState(p.id,'it')).routeActive,false);assert.equal(publicProductData(p).content?.translationPublications,undefined);
+
+ const groupPayload={id:p.id,versions:{[p.id]:p.version},name:p.name,description:p.description,category:p.category,content:{...p.content!,translations:{...p.content?.translations,nl:{description:'Samen opgeslagen en gepubliceerd.'}}},publishLocale:'nl'};
+ const combinedRequest=(auth='',payload:unknown=groupPayload,origin='http://localhost:3000')=>new Request('http://localhost:3000/api/admin/product-groups',{method:'PATCH',headers:{cookie:auth,origin,'content-type':'application/json'},body:JSON.stringify(payload)});
+ assert.equal((await saveAndPublish(combinedRequest())).status,401);
+ assert.equal((await saveAndPublish(combinedRequest(cookie,groupPayload,'https://attacker.test'))).status,403);
+ assert.equal((await saveAndPublish(combinedRequest(cookie))).status,409,'Disabled publication rolls back the draft save too');
+ let after=(await products()).find(v=>v.id===p.id)!;assert.equal(after.version,p.version);assert.deepEqual(after.content,p.content);
+ await setFeature('catalog_translation_drafts',true);
+ assert.equal((await saveAndPublish(combinedRequest(cookie,{...groupPayload,publishLocale:'en'}))).status,400);
+ assert.equal((await saveAndPublish(combinedRequest(cookie))).status,200);
+ after=(await products()).find(v=>v.id===p.id)!;
+ assert.equal(after.content?.translations?.nl?.description,'Samen opgeslagen en gepubliceerd.');
+ assert.equal(after.content?.translationPublications?.nl?.copy.description,'Samen opgeslagen en gepubliceerd.');
+ const combinedView=localizedPublicProducts(await products(),'nl',true).find(v=>v.id===p.id)!;
+ assert.equal(combinedView.description,'Samen opgeslagen en gepubliceerd.');
+ assert.equal(combinedView.content?.care,p.content?.care,'Missing care does not block description publication');
+ assert.equal(combinedView.priceCents,p.priceCents);assert.deepEqual(combinedView.variants,p.variants);
+ assert.equal((await saveAndPublish(combinedRequest(cookie))).status,409,'Stale combined saves are rejected');
+
  console.log('PASS: owner/origin/version checks; approval only; draft isolation; per-field source invalidation; no approval forgery; feature switch; withdrawal retains drafts; identifiers/prices/stock unchanged.');
 }finally{await closeDatabase();rmSync(folder,{recursive:true,force:true});}});
