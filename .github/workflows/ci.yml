@@ -17,6 +17,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run typecheck
+      - run: node --import tsx --test tests/revolut-preparation.test.ts
       - run: node --import tsx tests/catalog-translations.test.ts
       - run: node --import tsx tests/published-translations.test.ts
       - run: node --import tsx tests/store-organization.test.ts
@@ -60,6 +61,7 @@ jobs:
           echo "CLUB_REVIEW_OUTPUT=$RUNNER_TEMP/bigk-club" >> "$GITHUB_ENV"
           echo "BIGK_ARTIFACT_DIR=$RUNNER_TEMP/bigk-screenshots" >> "$GITHUB_ENV"
       - run: npm run build
+      - run: node tests/payment-methods-browser.mjs
       - run: node --import tsx tests/operations-browser.mjs
       - run: node --import tsx tests/merchandising-browser.mjs
       - run: node --import tsx tests/published-translations-browser.mjs
