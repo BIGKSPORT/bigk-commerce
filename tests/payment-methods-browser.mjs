@@ -20,7 +20,7 @@ try{
   assert.equal(await badges.locator('img').count(),8);assert.equal(await badges.locator('li').count(),9);assert.equal(await badges.getByText('Link',{exact:true}).count(),1);
   for(const name of ['Visa','Mastercard','Bancontact','Apple Pay','Google Pay','Revolut Pay','Klarna','Amazon Pay']){const image=badges.getByRole('img',{name,exact:true});await image.evaluate(i=>i.decode());assert(await image.evaluate(i=>i.naturalWidth>0));}
   assert(!(await badges.innerText()).includes('PayPal'));assert.equal(await badges.locator('img[alt="iDEAL"]').count(),0);
-  for(const width of [320,390,768,1440]){await page.setViewportSize({width,height:900});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));}
+  for(const width of [320,390,768,1440]){await page.setViewportSize({width,height:900});assert(await badges.evaluate(el=>{const box=el.getBoundingClientRect();return box.left>=-1&&box.right<=innerWidth+1&&el.scrollWidth<=el.clientWidth+1}),'Payment row fits '+width+'px');if(width>=390)assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));}
   await page.setViewportSize({width:390,height:844});await badges.screenshot({path:join(dir,'payment-methods-'+locale+'-mobile.png')});
   await page.setViewportSize({width:1440,height:900});await badges.screenshot({path:join(dir,'payment-methods-'+locale+'-desktop.png')});
  }
