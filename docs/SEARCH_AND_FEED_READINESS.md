@@ -4,7 +4,7 @@
 Extend the existing shop, shared/colour editors, strict trade schema, public-catalogue projection, grouping, stock/reservations and owner MFA. Preserve the mobile native gallery and overlapping information sheet. No new dependency, paid service, database table, tracking or CSP change.
 
 ## Audit: value versus effort
-1. High value / small effort: product metadata was missing Twitter cards and x-default; localized metadata discarded colour selection; product/blog sitemap entries lacked language alternates. Corrected in this release.
+1. High value / small effort: product metadata was missing Twitter cards and x-default; localized metadata discarded colour selection; product/blog sitemap entries lacked language alternates. Corrected in this release. The existing blanket /api/ robots exclusion also blocked original product images; allow only public media and bearer-protected feed paths, retaining all other private exclusions and HTTP authentication.
 2. High value / medium effort: add a protected catalogue readiness report and exact public variant exports. Report missing/duplicate GTINs, price, photos, colour, size, gender, age and condition. New editor attributes remain blank until confirmed.
 3. High value / large effort: six complete public language journeys. EN/NL/FR are public; DE/IT/ES are editor drafts only. No false activation.
 4. High value / medium-to-large effort: checkout accepts only BE/NL/FR/DE/LU. IT/ES require verified shipping/carrier configuration, checkout UI/server/email work and end-to-end tests.
