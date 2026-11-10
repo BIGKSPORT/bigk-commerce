@@ -26,7 +26,7 @@ export function verifyRevolutSignature(raw:string,timestamp:string|null,signatur
  const valid=secrets.some(secret=>{const expected=createHmac('sha256',secret).update('v1.'+timestamp+'.'+raw).digest();return candidates.some(candidate=>timingSafeEqual(candidate,expected));});
  if(!valid)throw new HttpError(400,'Invalid payment notification.');
 }
-const payment=z.object({id:z.uuid(),state:z.string(),amount:z.number().int().min(1),currency:z.string(),outstanding_amount:z.number().int().min(0),merchant_order_data:z.object({reference:z.string()})});
+const payment=z.object({id:z.string().regex(/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i),state:z.string(),amount:z.number().int().min(1),currency:z.string(),outstanding_amount:z.number().int().min(0),merchant_order_data:z.object({reference:z.string()})});
 /** A verified payment alone is not permission to fulfil: tax, binding, stock and duplicate checks must also pass. */
 export function verifyCompletedRevolutOrder(value:unknown,expected:{providerOrderId:string;orderId:string;total:number}){
  const parsed=payment.safeParse(value);

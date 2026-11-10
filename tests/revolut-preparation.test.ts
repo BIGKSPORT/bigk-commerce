@@ -27,5 +27,6 @@ test('raw webhook authentication rejects tampering, stale/future timestamps and 
 test('only exact completed EUR evidence is accepted, never merely authorised',()=>{
  const expected={providerOrderId:provider,orderId:id,total:14690},evidence={id:provider,state:'completed',amount:14690,currency:'EUR',outstanding_amount:0,merchant_order_data:{reference:id}};
  assert.equal(verifyCompletedRevolutOrder(evidence,expected).total,14690);
+ const providerOpaque='6516e61c-d279-a454-a837-bc52ce55ed49';assert.equal(verifyCompletedRevolutOrder({...evidence,id:providerOpaque},{...expected,providerOrderId:providerOpaque}).providerOrderId,providerOpaque,'Revolut identifiers are opaque UUID-shaped IDs, not necessarily RFC UUID versions');
  for(const patch of [{state:'authorised'},{state:'pending'},{amount:1},{currency:'GBP'},{outstanding_amount:1},{id},{merchant_order_data:{reference:'unbound'}}])assert.throws(()=>verifyCompletedRevolutOrder({...evidence,...patch},expected));
 });
