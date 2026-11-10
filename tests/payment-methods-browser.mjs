@@ -32,4 +32,4 @@ try{
  await page.setViewportSize({width:390,height:844});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));await checkout.screenshot({path:join(dir,'payment-methods-checkout-mobile.png')});
  assert.equal(external.length,0,'Payment badges must not contact external services');assert.equal((await fetch(origin+'/api/admin/payments/readiness')).status,401);
  console.log('PASS: verified payment badges, local artwork, EN/NL/FR, 320–1440px layout, off switch, checkout display and protected preparation status. No payment created.');
-}finally{await browser?.close();server?.kill('SIGTERM');await rm(root,{recursive:true,force:true});}
+}catch(error){if(browser){let i=0;const output=process.env.BIGK_ARTIFACT_DIR||join(root,'screenshots');await mkdir(output,{recursive:true});for(const context of browser.contexts())for(const page of context.pages())await page.screenshot({path:join(output,'payment-methods-failure-'+(++i)+'.png'),fullPage:true}).catch(()=>{});}throw error;}finally{await browser?.close();server?.kill('SIGTERM');await rm(root,{recursive:true,force:true});}

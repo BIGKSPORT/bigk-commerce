@@ -1,6 +1,6 @@
 .methods{min-width:0}
 :global(html[data-payment-methods="off"]) .methods{display:none}
-.footer{padding:24px max(30px,5vw);border-top:1px solid rgba(255,255,255,.16);color:#fff}
+.footer{padding:24px 0;border-top:1px solid rgba(255,255,255,.16);color:#fff}
 .checkout{padding:16px 0}
 .heading{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin:0 0 12px}
 .logos{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0;margin:0}
@@ -8,4 +8,4 @@
 .logos img{display:block;width:100%;height:100%;object-fit:contain}
 .link{font:750 15px Arial,sans-serif;letter-spacing:-.5px;color:#005e46}
 .note{font-size:11px;line-height:1.55;max-width:680px;margin:12px 0 0;opacity:.78}
-@media(max-width:600px){.footer{padding:22px 20px}.logos{gap:7px}.logos li{flex-basis:47px;width:47px;height:30px}}
+@media(max-width:600px){.footer{padding:22px 0}.logos{gap:7px}.logos li{flex-basis:47px;width:47px;height:30px}}
