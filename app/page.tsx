@@ -1,3 +1,5 @@
+import {storeStructuredData} from '@/lib/store-structured-data';
+import {seoEnabled} from '@/lib/product-seo';
 import {localizedPublicCatalog} from '@/lib/localized-public-catalog';
 import {storefrontMerchandising} from '@/lib/merchandising';
 import {publicCategoryOptions} from '@/lib/catalog-categories';
@@ -12,5 +14,5 @@ export default async function Home({ searchParams }: {
         series?: string;
         saved?: string;
     }>;
-}) { const { category,saved,series } = await searchParams; const {preview,catalog:raw}=await storefrontContext();return <>{preview&&<div className="info-message" role="status">PRIVATE STORE PREVIEW · Draft products visible · Purchasing disabled · <a href="/admin">Back to backoffice</a></div>}<Storefront merchandising={await storefrontMerchandising(raw)} categoryOptions={await publicCategoryOptions()} products={(preview?visibleProducts(raw):await localizedPublicCatalog(raw)).map(p => ({ ...p, variants: p.variants.filter(v=>!p.content?.trade?.identifiers?.[v.id]?.archived).map(v => ({ ...v, stock: Math.max(0, v.stock - v.reserved), reserved: 0, reported: null })) }))} mode={preview?'live':isLive() ? 'live' : 'demo'} ready={preview?false:liveReady()} initialCategory={category} initialSavedOnly={saved==='1'} initialSeries={series}/></>; }
+}) { const { category,saved,series } = await searchParams; const {preview,catalog:raw}=await storefrontContext();return <>{!preview&&seoEnabled()&&<script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(storeStructuredData()).replace(/</g,'\\u003c')}}/>}{preview&&<div className="info-message" role="status">PRIVATE STORE PREVIEW · Draft products visible · Purchasing disabled · <a href="/admin">Back to backoffice</a></div>}<Storefront merchandising={await storefrontMerchandising(raw)} categoryOptions={await publicCategoryOptions()} products={(preview?visibleProducts(raw):await localizedPublicCatalog(raw)).map(p => ({ ...p, variants: p.variants.filter(v=>!p.content?.trade?.identifiers?.[v.id]?.archived).map(v => ({ ...v, stock: Math.max(0, v.stock - v.reserved), reserved: 0, reported: null })) }))} mode={preview?'live':isLive() ? 'live' : 'demo'} ready={preview?false:liveReady()} initialCategory={category} initialSavedOnly={saved==='1'} initialSeries={series}/></>; }
 

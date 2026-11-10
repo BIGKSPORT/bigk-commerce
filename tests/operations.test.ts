@@ -16,6 +16,9 @@ import {ownerActor} from '../lib/operations-audit';
 import {customerDetail} from '../lib/customer-management';
 import {sendCustomerMessage} from '../lib/customer-messages';
 import {invoiceData,issueInvoice,savedInvoice} from '../lib/order-invoices';
+import {GET as readinessGET} from '../app/api/admin/catalogue-readiness/route';
+import {GET as feedGET} from '../app/api/product-feeds/[vendor]/route';
+import {feedAccessToken} from '../lib/product-feed-access';
 import {GET as stockGET,PATCH as stockPATCH} from '../app/api/staff/stock/route';
 import {GET as queueGET} from '../app/api/staff/orders/route';
 import {GET as operationsGET,POST as operationsPOST} from '../app/api/admin/operations/route';
@@ -49,6 +52,22 @@ await test('operations foundation protects roles, stock, billing and customer em
   assert.equal((await queueGET(req('/api/staff/orders',stockCookie))).status,403);
   assert.equal((await stockGET(req('/api/staff/stock',stockCookie))).status,200);
   assert.equal((await queueGET(req('/api/staff/orders',warehouseCookie))).status,200);
+ });
+ await t.test('readiness and bearer feeds protect admin data and never alter catalogue stock',async()=>{
+  assert.equal((await readinessGET(req('/api/admin/catalogue-readiness'))).status,401);
+  assert.equal((await readinessGET(req('/api/admin/catalogue-readiness',stockCookie))).status,401);
+  const before=JSON.stringify(await products()),response=await readinessGET(req('/api/admin/catalogue-readiness',owner)),data=await response.json();
+  assert.equal(response.status,200);assert(Array.isArray(data.issues));assert(data.issues.length<=25);assert(data.pages>=1);assert.equal((await readinessGET(req('/api/admin/catalogue-readiness?page=0',owner))).status,400);assert.equal(data.links,null);assert.deepEqual(data.checkoutCountries,['BE','NL','FR','DE','LU']);
+  const keys=['VERCEL_ENV','INDEXING_ENABLED','COMMERCE_MODE','LIVE_COMMERCE_APPROVED','PRODUCT_FEEDS_ENABLED'] as const,previous=Object.fromEntries(keys.map(key=>[key,process.env[key]]));
+  try{
+   delete process.env.VERCEL_ENV;process.env.INDEXING_ENABLED='true';process.env.COMMERCE_MODE='live';process.env.LIVE_COMMERCE_APPROVED='true';delete process.env.PRODUCT_FEEDS_ENABLED;
+   assert.equal((await feedGET(req('/api/product-feeds/google?token=wrong'),{params:Promise.resolve({vendor:'google'})})).status,404);
+   const path='/api/product-feeds/google?token='+feedAccessToken('google'),feed=await feedGET(req(path),{params:Promise.resolve({vendor:'google'})});
+   if(testSchema==='bigk'){assert.equal(feed.status,200);assert((await feed.text()).startsWith('<?xml'));assert.equal(feed.headers.get('X-Robots-Tag'),'noindex, nofollow');assert.equal(feed.headers.get('Cache-Control'),'private, max-age=300')}
+   else assert.equal(feed.status,404,'Staging stays private even with live flags');
+   process.env.PRODUCT_FEEDS_ENABLED='false';assert.equal((await feedGET(req(path),{params:Promise.resolve({vendor:'google'})})).status,404);
+  }finally{for(const key of keys){if(previous[key]===undefined)delete process.env[key];else process.env[key]=previous[key]}}
+  assert.equal(JSON.stringify(await products()),before);
  });
  await t.test('stock is paginated, preserves reservations and rejects stale counts or price fields',async()=>{
   const list=await stockPage('',1);assert(list.items.length<=25);assert(list.total>25);const item=list.items[0];

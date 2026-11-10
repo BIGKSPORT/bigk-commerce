@@ -1,3 +1,4 @@
+import {sitemapLanguages,seoEnabled} from '@/lib/product-seo';
 import {publicIndexingEnabled} from '@/lib/search-visibility';
 import {siteLocales,localizePath} from '@/lib/i18n/site-routing';
 import {blogPosts} from '@/lib/blog';
@@ -16,16 +17,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   if (!publicIndexing) return [];
   const catalog = await products();
   const seen = new Set<string>();
-  const entries: MetadataRoute.Sitemap = siteLocales.map(locale=>({url:seller.origin+'/'+locale,changeFrequency:'weekly',priority:1,alternates:{languages:Object.fromEntries(siteLocales.map(l=>[l,seller.origin+'/'+l]))}}));
+  const entries: MetadataRoute.Sitemap = siteLocales.map(locale=>({url:seller.origin+'/'+locale,changeFrequency:'weekly',priority:1,alternates:{languages:seoEnabled()?sitemapLanguages('/'):Object.fromEntries(siteLocales.map(l=>[l,seller.origin+'/'+l]))}}));
   const alpin=catalog.filter(hasAlpinTechnology);
-  if(alpin.length===2&&alpin.every(p=>p.active&&p.approved&&p.images.length)){for(const path of Object.values(alpinPaths))entries.push({url:seller.origin+path,changeFrequency:'weekly',priority:0.8});}
+  if(alpin.length===2&&alpin.every(p=>p.active&&p.approved&&p.images.length)){for(const path of Object.values(alpinPaths))entries.push({url:seller.origin+path,changeFrequency:'weekly',priority:0.8,...(seoEnabled()?{alternates:{languages:sitemapLanguages('/products/alpin-fleece-jacket')}}:{})});}
   for (const group of productGroups(publicProducts(sharedProducts(catalog)))) {
     const p=group.parent;
     if(hasAlpinTechnology(p)||!group.colours.some(option=>option.images.length)||seen.has(p.group?.slug||p.slug))continue;
     const slug=p.group?.slug||p.slug;seen.add(slug);
-    for(const locale of siteLocales)entries.push({url:seller.origin+localizePath('/products/'+encodeURIComponent(slug),locale),changeFrequency:'weekly',priority:0.8});
+    for(const locale of siteLocales)entries.push({url:seller.origin+localizePath('/products/'+encodeURIComponent(slug),locale),changeFrequency:'weekly',priority:0.8,...(seoEnabled()?{alternates:{languages:sitemapLanguages('/products/'+encodeURIComponent(slug))}}:{})});
   }
-  const posts=await blogPosts();for(const locale of siteLocales){entries.push({url:seller.origin+'/'+locale+'/blog',changeFrequency:'weekly',priority:0.6});for(const p of posts)entries.push({url:seller.origin+'/'+locale+'/blog/'+p.slug,lastModified:new Date(p.updatedAt),priority:0.6});}
+  const posts=await blogPosts();for(const locale of siteLocales){entries.push({url:seller.origin+'/'+locale+'/blog',changeFrequency:'weekly',priority:0.6,...(seoEnabled()?{alternates:{languages:sitemapLanguages('/blog')}}:{})});for(const p of posts)entries.push({url:seller.origin+'/'+locale+'/blog/'+p.slug,lastModified:new Date(p.updatedAt),priority:0.6,...(seoEnabled()?{alternates:{languages:sitemapLanguages('/blog/'+p.slug)}}:{})});}
   return entries;
 }
 
