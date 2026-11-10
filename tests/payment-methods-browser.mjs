@@ -9,6 +9,7 @@ const env={...process.env,APP_URL:origin,DATABASE_PROVIDER:'sqlite',DATABASE_PAT
 for(const key of ['VERCEL','VERCEL_ENV','VERCEL_URL','VERCEL_BRANCH_URL','ADMIN_CANONICAL_ORIGIN','DATABASE_URL'])delete env[key];
 let server,browser;
 try{
+ await new Promise((resolve,reject)=>{const seed=spawn(process.execPath,['--import','tsx','--input-type=module','-e',"import {db,closeDatabase} from './lib/db.ts';await db().prepare('UPDATE products SET active=1,approved=1,price_cents=14690 WHERE id=?').run('P001');await closeDatabase();"],{env,stdio:'inherit'});seed.once('error',reject);seed.once('exit',code=>code===0?resolve():reject(Error('Payment display fixture failed')))});
  server=spawn(process.execPath,['node_modules/next/dist/bin/next','start','--hostname','127.0.0.1','--port','3221'],{env,stdio:'inherit'});
  let ready=false;for(let i=0;i<100;i++){try{if((await fetch(origin+'/api/catalog')).ok){ready=true;break;}}catch{}await new Promise(r=>setTimeout(r,250));}assert(ready);
  browser=await chromium.launch({headless:true,...(process.env.CHROMIUM_PATH?{executablePath:process.env.CHROMIUM_PATH}:{})});
