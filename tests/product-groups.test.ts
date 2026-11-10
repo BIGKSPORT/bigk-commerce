@@ -80,6 +80,13 @@ try{
    await importB10Draft();let p=(await products()).find(p=>p.id==='B10')!;await updateProduct({id:p.id,version:p.version,priceCents:p.priceCents,approved:true,active:true,variants:p.variants});p=(await products()).find(p=>p.id==='B10')!;const identifiers=structuredClone(p.content?.trade?.identifiers);
    const id=await addProductColour({parentId:p.id,version:p.version,colour:'Reviewed fourth colour',article:'99998888',sizes:['40','41'],images:[],priceCents:12999});const catalog=await products(),added=catalog.find(p=>p.id===id)!;assert.equal(added.active,false);assert.equal(added.approved,false);assert.equal(added.priceCents,12999);assert(added.variants.every(v=>v.stock===0));assert(!publicProducts(catalog).some(p=>p.id===id));assert.equal(catalog.find(p=>p.id==='B10')!.variants.length,33);assert.deepEqual(catalog.find(p=>p.id==='B10')!.content?.trade?.identifiers,identifiers);
   });
+  await t.test('merchant attributes save through the existing shared editor without changing commercial records',async()=>{
+   const catalog=await products(),group=productGroups(sharedProducts(catalog)).find(g=>g.id==='P017')!,p=group.parent;
+   const snapshot=JSON.stringify(catalog.map(p=>[p.id,p.priceCents,p.images,p.variants,p.content?.trade?.identifiers]));
+   await saveSharedProduct(groupEditSchema.parse({id:p.id,versions:Object.fromEntries(group.records.map(p=>[p.id,p.version])),name:p.name,description:p.description,category:p.category,content:{...p.content,trade:{...p.content?.trade,gender:'female',ageGroup:'adult',condition:'new'}}}));
+   const saved=(await products()).find(p=>p.id==='P017')!;assert.equal(saved.content?.trade?.gender,'female');assert.equal(saved.content?.trade?.ageGroup,'adult');assert.equal(saved.content?.trade?.condition,'new');
+   assert.equal(JSON.stringify((await products()).map(p=>[p.id,p.priceCents,p.images,p.variants,p.content?.trade?.identifiers])),snapshot);
+  });
   await t.test('translation schema rejects translated names or commercial data',()=>{const payload={id:root.id,versions:{},name:root.name,description:root.description,category:root.category,content:{...root.content,translations:{nl:{name:'Translated name',priceCents:1}}}};assert.equal(groupEditSchema.safeParse(payload).success,false)});
  });
 }finally{await closeDatabase();rmSync(dir,{recursive:true,force:true})}
