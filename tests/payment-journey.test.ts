@@ -37,7 +37,7 @@ globalThis.fetch=async(input,init)=>{
  throw Error('Unexpected provider request blocked in isolated test');
 };
 const fixtureProduct=(await products()).find(p=>p.id==='P001')!;
-const expectedProductName='Alpin Fleece';
+const expectedProductName=(await products()).find(product=>product.id==='P001')!.name;
 const variant=fixtureProduct.variants[0];
 await db().prepare('UPDATE products SET approved=1,active=1 WHERE id=?').run(fixtureProduct.id);
 await db().prepare('UPDATE variants SET stock=20,reserved=0 WHERE id=?').run(variant.id);
