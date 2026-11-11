@@ -19,7 +19,7 @@ try{
   await context.addInitScript(value=>{if(localStorage.getItem('bigk-bag-v2')===null)localStorage.setItem('bigk-bag-v2',value);},normalBag);
   page.on('request',r=>{if(/\/api\//.test(r.url()))calls.push(r.url());});page.on('pageerror',e=>errors.push(e.message));page.setDefaultTimeout(15000);
   await page.goto(origin+'/en/experience');await page.locator('[data-enhanced=true]').waitFor();
-  const product=page.getByRole('button',{name:/^VELVET WMS HOOD ·/});await product.scrollIntoViewIfNeeded();await product.click();
+  const product=page.getByRole('button',{name:/^VELVET WMS HOOD ·/});await product.scrollIntoViewIfNeeded();if(name==='desktop')await product.click();else await product.tap();
   let dialog=page.getByRole('dialog');await dialog.getByRole('button',{name:'Cream',exact:true}).click();assert(await dialog.getByRole('button',{name:'2XL · Out of stock',exact:true}).isDisabled());
   await dialog.getByRole('button',{name:'M',exact:true}).click();await dialog.getByRole('button',{name:'Add to your bag',exact:true}).click();await dialog.waitFor({state:'detached'});
   await page.getByRole('status').filter({hasText:'VELVET WMS HOOD added'}).waitFor();
@@ -37,7 +37,7 @@ try{
   await bag.getByRole('button',{name:'Review preview bag',exact:false}).click();dialog=page.getByRole('dialog');await dialog.getByText('These are sample prices and stock.',{exact:false}).waitFor();await dialog.getByRole('button',{name:'Keep exploring',exact:true}).click();
   await page.reload();await page.locator('[data-enhanced=true]').waitFor();assert((await bag.innerText()).includes('Cream · M'));
   await page.getByRole('combobox',{name:'Language',exact:true}).selectOption('nl');await page.getByRole('heading',{name:'Pak je volgende avontuur.',exact:true}).waitFor();
-  await page.getByRole('combobox',{name:'Taal',exact:true}).selectOption('fr');await page.getByRole('heading',{name:'Préparez votre prochaine aventure.',exact:true}).waitFor();
+  await page.getByRole('combobox').first().selectOption('fr');await page.getByRole('heading',{name:'Préparez votre prochaine aventure.',exact:true}).waitFor();
   await page.getByRole('combobox').first().selectOption('it');await page.getByRole('heading',{name:'Pack your next move.',exact:true}).waitFor();
   await page.emulateMedia({reducedMotion:'reduce'});assert.equal(await product.evaluate(e=>getComputedStyle(e).transitionDuration),'0s');
   assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
