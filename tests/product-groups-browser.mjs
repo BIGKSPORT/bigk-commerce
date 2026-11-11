@@ -34,9 +34,35 @@ try{
   await page.goto(origin+'/admin');await page.getByRole('navigation',{name:'Backoffice navigation'}).getByRole('button',{name:'Products',exact:true}).click();
   await page.getByRole('searchbox',{name:'Search products'}).fill('Velvet');
   const velvetRow=page.locator('tr[data-product-group="P017"]');assert.equal(await velvetRow.count(),1);
-  await velvetRow.getByRole('button',{expanded:false}).click();
+  if(await velvetRow.getByRole('button',{expanded:false}).count())await velvetRow.getByRole('button',{expanded:false}).click();
   for(const id of ['P017','P018','P026','P027'])assert.equal(await page.locator('tr[data-colour-id="'+id+'"]').count(),1);
   assert.deepEqual(inventory(await catalog()),inventory(before));
+  await velvetRow.getByRole('button',{name:'Edit shared product',exact:true}).click();
+  const sharedDialog=page.getByRole('dialog');
+  assert.equal(await sharedDialog.locator('.bo-group-variants section').count(),4);
+  const sharedDescription=sharedDialog.getByLabel('Shared description',{exact:true});
+  await sharedDescription.fill('');await sharedDescription.pressSequentially('Keep my unfinished product edit.',{delay:40});
+  await sharedDialog.getByLabel('Shared product name',{exact:true}).press('Enter');
+  await sharedDialog.dispatchEvent('click');
+  assert.equal(await sharedDescription.inputValue(),'Keep my unfinished product edit.');
+  assert.deepEqual(inventory(await catalog()),inventory(before));
+  page.once('dialog',dialog=>dialog.dismiss());
+  await sharedDialog.getByRole('button',{name:'Close dialog',exact:true}).click();
+  assert.equal(await sharedDescription.inputValue(),'Keep my unfinished product edit.');
+  page.once('dialog',dialog=>dialog.accept());
+  await sharedDialog.getByRole('button',{name:'Cancel',exact:true}).click();
+  await sharedDialog.waitFor({state:'detached'});
+  await velvetRow.getByRole('button',{name:'Edit shared product',exact:true}).click();
+  await page.getByRole('dialog').getByRole('button',{name:'Edit Black sizes and stock',exact:true}).click();
+  const colourDialog=page.getByRole('dialog');
+  assert.equal(await colourDialog.getByRole('heading',{name:'Edit '+velvet.name,exact:true}).count(),1);
+  assert.equal(await colourDialog.getByRole('heading',{name:'Inventory by size',exact:true}).count(),1);
+  assert.equal(await colourDialog.getByLabel('Stock S',{exact:true}).count(),1);
+  await colourDialog.getByRole('button',{name:'Cancel',exact:true}).click();
+  await page.goto(origin+'/products/'+velvet.slug);
+  assert.equal(await page.locator('.detail-info > .detail-description').count(),0);
+  assert.equal(await page.locator('.product-colour-options a span').count(),4);
+  assert.equal(await page.locator('.detail-info details').first().getByText('Details',{exact:true}).count(),1);
   const core=before.find(p=>p.id==='P003'),blue=before.find(p=>p.id==='P004');await page.goto(origin+'/products/'+blue.slug+'?size=M');await page.getByRole('heading',{name:core.name,exact:true}).waitFor();assert(new URL(page.url()).pathname.endsWith(core.slug));assert.equal(new URL(page.url()).searchParams.get('colourId'),'P004');assert.equal(await page.locator('.size-options button[aria-pressed="true"]').innerText(),'M');await page.getByRole('link',{name:'Choose Black',exact:true}).click();await page.waitForURL(url=>!url.searchParams.has('colourId'));assert.equal(await page.locator('.size-options button[aria-pressed="true"]').innerText(),'M');await page.goBack();await page.waitForURL(url=>url.searchParams.get('colourId')==='P004');assert.equal(await page.locator('.size-options button[aria-pressed="true"]').innerText(),'M');await page.reload();assert.equal(await page.locator('.size-options button[aria-pressed="true"]').innerText(),'M');await page.screenshot({path:join(artifacts,'shared-core-product-'+width+'.png'),fullPage:true});
   assert(!/[\u3400-\u9fff]/u.test(await page.locator('body').innerText()));
  }
@@ -53,3 +79,4 @@ try{
  const blue=(await catalog()).find(p=>p.id==='P004');const publish=await page.request.patch(origin+'/api/admin/catalog',{headers:{Origin:origin},data:{id:blue.id,version:blue.version,priceCents:blue.priceCents,approved:true,active:true,variants:blue.variants.map(v=>({id:v.id,size:v.size,stock:v.stock}))}});assert.equal(publish.status(),200,await publish.text());const anonymous=await browser.newContext(),publicPage=await anonymous.newPage();const root=before.find(p=>p.id==='P003');await publicPage.goto(origin+'/products/'+root.slug+'?colourId=P004');await publicPage.getByRole('heading',{name:root.name,exact:true}).waitFor();const json=JSON.parse(await publicPage.locator('script[type="application/ld+json"]').innerText());assert.equal(json.productGroupID,'P003');assert.equal(json.hasVariant.length,blue.variants.length);assert.equal((await publicPage.request.get(origin+'/products/'+root.slug+'?colourId=P005')).status(),404);assert.equal((await publicPage.request.get(origin+'/products/'+root.slug+'?colour=Nonexistent')).status(),404);await anonymous.close();
  assert.deepEqual(errors,[]);await context.close();console.log('PASS grouped backoffice, shared save with unchanged stock, add/archive colour, RIBS 3 styles / 9 colour cards, responsive swatches, canonical redirects, size persistence, Back/reload and anonymous draft isolation.');
 }catch(error){console.error(output.slice(-3000));throw error}finally{await browser?.close();if(server&&server.exitCode===null){const stopped=new Promise(r=>server.once('exit',r));server.kill();await stopped}await rm(dir,{recursive:true,force:true})}
+
