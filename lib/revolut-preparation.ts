@@ -11,7 +11,7 @@ const orderInput=z.object({id:z.uuid(),total:z.number().int().min(1).max(1000000
 export function preparedRevolutOrder(value:unknown,appOrigin:string){
  const order=orderInput.parse(value),redirect=new URL(order.receiptUrl),origin=new URL(appOrigin);
  if(origin.protocol!=='https:'&&origin.hostname!=='localhost'&&origin.hostname!=='127.0.0.1')throw new HttpError(400,'Use the configured secure storefront origin.');
- if(redirect.origin!==origin.origin||redirect.username||redirect.password||!/^\/(en|nl|fr)\/order$/.test(redirect.pathname))throw new HttpError(400,'Invalid payment return address.');
+ if(redirect.origin!==origin.origin||redirect.username||redirect.password||!/^\/(en|nl|fr|es|it)\/order$/.test(redirect.pathname))throw new HttpError(400,'Invalid payment return address.');
  return {amount:order.total,currency:'EUR',capture_mode:'automatic',description:'BIGK order '+order.id,customer:{email:order.email},merchant_order_data:{reference:order.id},redirect_url:redirect.href};
 }
 export function trustedRevolutCheckoutUrl(value:string,mode:'sandbox'|'live'){
@@ -35,3 +35,4 @@ export function verifyCompletedRevolutOrder(value:unknown,expected:{providerOrde
  if(p.id!==expected.providerOrderId||p.merchant_order_data.reference!==expected.orderId||p.state!=='completed'||p.currency!=='EUR'||p.amount!==expected.total||p.outstanding_amount!==0)throw new HttpError(409,'Payment evidence does not match the order.');
  return {providerOrderId:p.id,orderId:expected.orderId,total:p.amount,currency:'EUR' as const};
 }
+
