@@ -1,0 +1,46 @@
+name: Shipping label checks
+on:
+  push:
+    branches: [main, fix/myparcel-order-labels]
+    paths:
+      - 'lib/myparcel-orders.ts'
+      - 'components/admin-myparcel-label.tsx'
+      - 'components/admin-orders.tsx'
+      - 'app/api/admin/shipping/myparcel/**'
+      - 'tests/myparcel-orders*'
+      - '.github/workflows/shipping-labels.yml'
+  pull_request:
+    paths:
+      - 'lib/myparcel-orders.ts'
+      - 'components/admin-myparcel-label.tsx'
+      - 'components/admin-orders.tsx'
+      - 'app/api/admin/shipping/myparcel/**'
+      - 'tests/myparcel-orders*'
+      - '.github/workflows/shipping-labels.yml'
+permissions:
+  contents: read
+jobs:
+  shipping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      CHROMIUM_PATH: /usr/bin/google-chrome
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: node --import tsx tests/myparcel-orders.test.ts
+      - run: node --import tsx tests/myparcel-costs.test.ts
+      - run: node tests/myparcel-orders-browser.mjs
+        env:
+          BIGK_ARTIFACT_DIR: ${{ runner.temp }}/shipping-review
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: shipping-review
+          path: ${{ runner.temp }}/shipping-review
+          if-no-files-found: ignore
