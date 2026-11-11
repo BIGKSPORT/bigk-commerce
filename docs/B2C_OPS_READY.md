@@ -38,6 +38,11 @@
 - Shipment email on fulfilled
 - Staging protection in place
 
+### Stock status (owner confirmed)
+- **Physical stock is present** in the warehouse.
+- System rule: reported / workbook quantities do **not** become sellable automatically.
+- Sellable stock must still be entered per size in Admin, then products set to Approved + Active.
+
 ---
 
 ## Still required from owner (Nicky)
@@ -66,13 +71,15 @@ EMAIL_DELIVERY_ENABLED=true
 - Domain `bigk.be` verified
 - Sender address matches `EMAIL_FROM`
 
-### 3. Products
-In `/admin` → Products:
-- Set real stock per size
-- Confirm price + photos
-- Set **Approved** = yes
-- Set **Active** = yes
-- Start with a small reliable set only
+### 3. Make stock sellable + activate products
+In `/admin` → Products (for each product to sell tomorrow):
+1. Enter real stock numbers per size
+2. Confirm price + photos
+3. Set **Approved** = yes
+4. Set **Active** = yes
+5. Save
+
+Start with a small reliable set. Physical stock is already there — this step only publishes it for sale.
 
 ### 4. One full test order
 Before opening fully:
@@ -121,10 +128,10 @@ These can be added after the first real orders work smoothly.
 | Packing slip | Ready |
 | Warehouse process | Documented |
 | Email code | Ready |
-| Product activation rules | Documented |
+| Physical stock | Confirmed by owner |
+| Sellable stock + Active products | Owner action in Admin |
 | Vercel live config | Owner action |
 | Resend config | Owner action |
-| Activate real stock products | Owner action |
 | First test order | Owner action |
 
-Once the four owner actions above are done, B2C can open.
+Once the owner actions above are done, B2C can open.
