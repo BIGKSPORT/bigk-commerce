@@ -45,6 +45,10 @@ jobs:
           NEXT_PUBLIC_SHOP_EXPERIENCE_ENABLED: 'true'
       - run: node tests/experience-browser.mjs
       - run: node scripts/experience-audit.mjs
+      - name: Existing normal cart regression (disposable local database)
+        run: node tests/cart-sessions-browser.mjs
+      - name: Existing checkout regression (demo only, no payment keys)
+        run: node tests/checkout-browser.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
