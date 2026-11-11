@@ -1,0 +1,47 @@
+name: Experience isolation and performance
+on:
+  push:
+    branches: [feat/shop-the-experience]
+  pull_request:
+    paths:
+      - 'app/**/experience/**'
+      - 'components/experience/**'
+      - 'components/saved-cart-sync.tsx'
+      - 'components/brand.tsx'
+      - 'lib/experience/**'
+      - 'public/experience/**'
+      - 'tests/experience*'
+      - 'scripts/*experience*'
+      - '.github/workflows/experience-preview.yml'
+permissions:
+  contents: read
+jobs:
+  experience:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Test-only audit tools and output paths
+        run: |
+          npm install --prefix "$RUNNER_TEMP/bigk-lighthouse" --no-audit --no-fund lighthouse@12.8.2
+          echo "LIGHTHOUSE_CLI=$RUNNER_TEMP/bigk-lighthouse/node_modules/lighthouse/cli/index.js" >> "$GITHUB_ENV"
+          echo "CHROMIUM_PATH=$(node -e 'console.log(require("playwright").chromium.executablePath())')" >> "$GITHUB_ENV"
+          echo "BIGK_ARTIFACT_DIR=$RUNNER_TEMP/bigk-experience-review" >> "$GITHUB_ENV"
+      - run: node --import tsx --test tests/experience.test.ts
+      - name: Build isolated preview with feature enabled
+        run: npm run build
+        env:
+          NEXT_PUBLIC_SHOP_EXPERIENCE_ENABLED: 'true'
+      - run: node tests/experience-browser.mjs
+      - run: node scripts/experience-audit.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: experience-review
+          path: ${{ runner.temp }}/bigk-experience-review
