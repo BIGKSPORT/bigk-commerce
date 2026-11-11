@@ -8,7 +8,7 @@ const data=JSON.parse(readFileSync('docs/catalog-review/alpin-fleece-pro-review.
 const family:Product[]=data.colours.map((colour:any)=>({id:colour.productId,code:colour.code,name:'Alpin Fleece Pro',slug:colour.productId,version:1,description:colour.colour,active:true,approved:true,featured:false,category:'Fleece',priceCents:14690,images:colour.images.map((i:any)=>i.webPath),tags:[],variants:colour.variants.map((v:any,i:number)=>({id:colour.productId+'-'+i,size:alpinSize(v.size),stock:v.receivedMaster,reserved:i===0?1:0,reported:null}))}));
 test('owner GTIN mapping matches twelve source size rows without changing stock, IDs or prices',()=>{
  assert.deepEqual(alpinMappingIssues(family),[]);const mappings=family.flatMap(alpinVariantMapping);assert.equal(mappings.length,12);assert.equal(new Set(mappings.map(v=>v.gtin)).size,12);assert.equal(new Set(mappings.map(v=>v.sku)).size,12);
- const original=structuredClone(family);for(const p of family){const result=alpinPublicProduct(p);assert.equal(result.name,'Alpin Fleece');assert.deepEqual(result.variants,p.variants);assert.equal(result.priceCents,p.priceCents);assert.equal(result.images,p.images);assert.equal(result.id,p.id);}
+ const original=structuredClone(family);for(const p of family){const result=alpinPublicProduct(p);assert.equal(result.name,p.name);assert.deepEqual(result.variants,p.variants);assert.equal(result.priceCents,p.priceCents);assert.equal(result.images,p.images);assert.equal(result.id,p.id);}
  assert.deepEqual(family,original);
 });
 test('public XS exclusion preserves historical source records and accepts backend 3XL',()=>{
@@ -19,7 +19,7 @@ test('conflicts block page validation instead of changing transactional pricing 
  source[0].content={composition:'',care:'',fit:'',details:'',trade:{identifiers:{'P001-0':{sku:'existing-sku',gtin:'6957919564823'}}}};assert(alpinMappingIssues(source).some(issue=>issue.includes('Conflicting stored GTIN')));assert.equal(alpinPublicProduct(source[0]).content?.trade?.identifiers?.['P001-0'].gtin,'6957919564823');
 });
 test('all languages share product identity and twelve live stock-based offers, canonical and reciprocal alternates',()=>{
- for(const locale of alpinLocales){const json=alpinStructuredData(locale,family),group=json['@graph'][0] as any;assert.equal(group.name,'Alpin Fleece');assert.equal(group.productGroupID,'ALPIN-FLEECE');assert.equal(group.hasVariant.length,12);for(const v of group.hasVariant){assert.equal(v.name,'Alpin Fleece');assert.equal(v.offers.price,'146.90');assert.equal(v.offers.priceCurrency,'EUR');assert(v.url.startsWith('https://bigk.be'+alpinPaths[locale]));assert(v.url.includes('size='));assert.equal(typeof v.gtin13,'string')}
+ for(const locale of alpinLocales){const json=alpinStructuredData(locale,family),group=json['@graph'][0] as any;assert.equal(group.name,family[0].name);assert.equal(group.productGroupID,'ALPIN-FLEECE');assert.equal(group.hasVariant.length,12);for(const v of group.hasVariant){assert.equal(v.name,family[0].name);assert.equal(v.offers.price,'146.90');assert.equal(v.offers.priceCurrency,'EUR');assert(v.url.startsWith('https://bigk.be'+alpinPaths[locale]));assert(v.url.includes('size='));assert.equal(typeof v.gtin13,'string')}
  const metadata=alpinMetadata(locale,family,false);assert.equal(metadata.alternates?.canonical,'https://bigk.be'+alpinPaths[locale]);assert.equal(Object.keys(metadata.alternates?.languages||{}).length,alpinLocales.length+1);assert.equal((metadata.robots as any).index,false);assert(!/[\u3400-\u9fff]|2025|Alpin Fleece Pro/.test(JSON.stringify(alpinCopy(locale))));assert(!/"XS"/.test(JSON.stringify(json)));}
  const out=structuredClone(family);out[0].variants[0].reserved=out[0].variants[0].stock;assert.equal((alpinStructuredData('en',out)['@graph'][0] as any).hasVariant[0].offers.availability,'https://schema.org/OutOfStock');
 });
@@ -27,3 +27,20 @@ test('vest and other garments stay untouched',()=>{const vest={...family[0],id:'
 
 test('editable fleece size charts exclude historical XS in either orientation without changing other garments or stored source',()=>{const source='Size\tXS\tS\tM\nChest\t94\t100\t106';assert.equal(alpinPublicSizeTable(source),'Size\tS\tM\nChest\t100\t106');assert.equal(source.includes('XS'),true);assert.equal(alpinPublicSizeTable('Size\tChest\nXS\t94\nS\t100'),'Size\tChest\nS\t100')});
 
+
+test('owner catalogue renames reach public products and search metadata in every language',()=>{
+ for(const name of ['alpin fleece pro','ALPIN Expedition','My new product name']){
+  const renamed=family.map(product=>({...product,name}));
+  for(const locale of alpinLocales){
+   assert.equal(alpinPublicProduct(renamed[0]).name,name);
+   const metadata=alpinMetadata(locale,renamed,true);
+   assert.deepEqual(metadata.title,{absolute:name+' | BIG K'});
+   assert.equal(metadata.openGraph?.title,name+' | BIG K');
+   const graph=alpinStructuredData(locale,renamed)['@graph'] as any[];
+   assert.equal(graph[0].name,name);
+   assert(graph[0].hasVariant.every((variant:any)=>variant.name===name));
+   assert.equal(graph[1].itemListElement[1].name,name);
+   assert.equal(metadata.alternates?.canonical,'https://bigk.be'+alpinPaths[locale]);
+  }
+ }
+});
