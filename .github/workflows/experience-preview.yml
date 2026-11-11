@@ -29,12 +29,14 @@ jobs:
           node-version: '24'
           cache: npm
       - run: npm ci
-      - run: npx playwright install --with-deps chromium
       - name: Test-only audit tools and output paths
         run: |
           npm install --prefix "$RUNNER_TEMP/bigk-lighthouse" --no-audit --no-fund lighthouse@12.8.2
           echo "LIGHTHOUSE_CLI=$RUNNER_TEMP/bigk-lighthouse/node_modules/lighthouse/cli/index.js" >> "$GITHUB_ENV"
-          echo "CHROMIUM_PATH=$(node -e 'console.log(require("playwright").chromium.executablePath())')" >> "$GITHUB_ENV"
+          CHROME_BINARY=$(command -v google-chrome || command -v chromium || true)
+          if [ -z "$CHROME_BINARY" ]; then npx playwright install chromium; CHROME_BINARY=$(node -e 'console.log(require("playwright").chromium.executablePath())'); fi
+          "$CHROME_BINARY" --version
+          echo "CHROMIUM_PATH=$CHROME_BINARY" >> "$GITHUB_ENV"
           echo "BIGK_ARTIFACT_DIR=$RUNNER_TEMP/bigk-experience-review" >> "$GITHUB_ENV"
       - run: node --import tsx --test tests/experience.test.ts
       - name: Build isolated preview with feature enabled
