@@ -31,7 +31,7 @@ Edit only `lib/experience/placements.json`:
 - `slots`: stable product ID, percentage centre `x/y`, percentage `width/height`, and `zIndex`. Percentages are relative to the uncropped 16:9 scene, so mobile panning preserves alignment.
 - `bag`: percentage drop-target rectangle over the physical duffel.
 - `images`: optional image overrides. Keys can be a variant ID, `productId:Colour`, or a product ID. The more specific key wins. Example: `"P017:Black": "/experience/cutouts/velvet-black.webp"`. Place the approved image at that public path; no component change is needed. A product-level override applies to every colour, so prefer colour-specific keys when swapping cutouts.
-- `desktop/mobile`: scene asset paths and dimensions.
+- `desktop/tablet/mobile`: scene asset paths and dimensions.
 
 Normal photos remain `object-fit: contain`, with a soft shadow. Product photos are never generated or altered using AI.
 
@@ -49,7 +49,7 @@ Normal photos remain `object-fit: contain`, with a soft shadow. Product photos a
 
 ## Responsive images and motion
 
-- Scene: desktop **1600×900**, mobile **1120×630**, each AVIF with WebP fallback. Mobile uses the complete scene at a lower resolution, rather than cropping away lockers.
+- Scene: desktop **1600×900**, tablet/smaller desktop **1360×765**, mobile **1120×630**, each AVIF with WebP fallback. Desktop uses a responsive srcset. Mobile uses the complete scene at a lower resolution, rather than cropping away lockers.
 - Rebuild from an approved scene: `node scripts/optimise-experience-scene.mjs /path/to/scene.png`.
 - Scene products use Next Image with lazy loading and responsive `sizes` calculated from their slot width and the phone canvas height. Picker/bag thumbnails request only their displayed dimensions.
 - At phone widths the room pans horizontally and the bag stays fixed above the bottom safe area. At very small widths (320px and below), the simple product grid is available instead. The server-rendered grid also remains available if JS is disabled or hydration fails.

@@ -31,6 +31,7 @@ try{
    assert((await bag.innerText()).includes('Free delivery unlocked'));
   }else{
    assert.equal(await bag.evaluate(e=>getComputedStyle(e).position),'fixed');assert(await page.locator('[class*=viewport]').evaluate(e=>e.scrollWidth>e.clientWidth));
+   const heading=await page.getByRole('heading',{name:'Pack your next move.',exact:true}).boundingBox();assert(heading.x>=0&&heading.x+heading.width<=page.viewportSize().width+1,'Phone headline stays visible while the room pans');
    const bottom=await bag.boundingBox();assert(bottom.y+bottom.height<=page.viewportSize().height+1);
   }
   assert.equal(await page.evaluate(()=>localStorage.getItem('bigk-bag-v2')),normalBag);
