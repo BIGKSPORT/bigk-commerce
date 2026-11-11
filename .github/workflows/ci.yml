@@ -62,13 +62,13 @@ jobs:
           echo "CLUB_REVIEW_OUTPUT=$RUNNER_TEMP/bigk-club" >> "$GITHUB_ENV"
           echo "BIGK_ARTIFACT_DIR=$RUNNER_TEMP/bigk-screenshots" >> "$GITHUB_ENV"
       - run: npm run build
+      - run: node tests/site-language-browser.mjs
       - run: node tests/payment-methods-browser.mjs
       - run: node --import tsx tests/operations-browser.mjs
       - run: node --import tsx tests/merchandising-browser.mjs
       - run: node --import tsx tests/published-translations-browser.mjs
       - run: node --import tsx tests/store-organization-browser.mjs
       - run: node tests/product-groups-browser.mjs
-      - run: node tests/site-language-browser.mjs
       - run: npm run preview:build
       - run: npm run test:preview
       - run: node tests/alpin-gallery.mjs

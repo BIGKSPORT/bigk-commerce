@@ -434,11 +434,8 @@
 
 .category-bar>a{color:inherit;text-decoration:none}.category-bar>a:hover{text-decoration:underline}.category-bar>a:focus-visible{outline:3px solid #e4002b;outline-offset:-3px}
 
-/* Longer translated newsletter labels must fit tablet columns. */
-.newsletter-signup{grid-template-columns:minmax(0,1fr) minmax(0,1.1fr)}
-.newsletter-signup>*,.newsletter-input{min-width:0}
-@media(max-width:1000px){.newsletter-input{flex-direction:column}}
-@media(max-width:760px){.newsletter-signup{grid-template-columns:minmax(0,1fr)}}
+/* Translated category filters scroll within the page at every width. */
+.collection-tabs{max-width:100%;overflow-x:auto;scrollbar-width:thin}
 
 /* Mobile PDP: larger photos, with the existing sticky gallery and overlapping sheet retained. */
 @media(max-width:760px){
