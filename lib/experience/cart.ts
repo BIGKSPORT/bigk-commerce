@@ -6,7 +6,7 @@ export function readExperienceCart(raw:string|null):CartLine[]{
  try{const rows:unknown=JSON.parse(raw||'[]');if(!Array.isArray(rows))return [];
   const merged=new Map<string,number>();
   for(const row of rows)if(row&&typeof row.variantId==='string'&&Number.isInteger(row.quantity)&&row.quantity>0&&row.quantity<=5)merged.set(row.variantId,Math.min(5,(merged.get(row.variantId)||0)+row.quantity));
-  return [...merged].slice(0,30).map(([variantId,quantity])=>({variantId,quantity}));
+  return [...merged].map(([variantId,quantity])=>({variantId,quantity}));
  }catch{return [];}
 }
 export function availableQuantity(product:Product,variantId:string){const v=product.variants.find(v=>v.id===variantId);return !v||!product.active||!product.approved||product.priceCents===null||product.content?.trade?.identifiers?.[variantId]?.archived?0:Math.max(0,Math.min(5,v.stock-v.reserved));}

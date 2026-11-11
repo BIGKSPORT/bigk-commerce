@@ -16,6 +16,7 @@ await test('fixture cart cannot overwrite the established cart; quantities, stoc
  assert.notEqual(experienceCartKey('fixture'),'bigk-bag-v2');assert.equal(experienceCartKey('staging'),'bigk-bag-v2');
  const p=products[2],v=p.variants[0];let lines=addExperienceLine([],p,v.id);lines=addExperienceLine(lines,p,v.id);assert.equal(lines[0].quantity,2);assert.equal(experienceTotal(lines,products),p.priceCents!*2);
  assert.throws(()=>addExperienceLine(lines,p,p.variants.at(-1)!.id));lines=addExperienceLine(lines,p,v.id);assert.throws(()=>addExperienceLine(lines,p,v.id));assert.equal(availableQuantity(p,v.id),3);
+ assert.equal(readExperienceCart(JSON.stringify(Array.from({length:35},(_,i)=>({variantId:'saved-'+i,quantity:1})))).length,35,'Existing cart lines must not be silently discarded');
  assert.deepEqual(readExperienceCart('broken'),[]);assert.deepEqual(readExperienceCart('[{"variantId":"x","quantity":999}]'),[]);assert.deepEqual(readExperienceCart('[{"variantId":"x","quantity":2},{"variantId":"x","quantity":2}]'),[{variantId:'x',quantity:4}]);
 });
 await test('sync isolation matches only fixture experience pages',()=>{
