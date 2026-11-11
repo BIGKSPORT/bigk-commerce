@@ -5,11 +5,11 @@ import type {Locale} from './i18n/config';
 import copy from './i18n/alpin-fleece.json';
 import {hasAlpinTechnology} from './alpin-technology';
 import {validGtin} from './product-identifiers';
-export const alpinLocales = ['en', 'nl', 'fr'] as const;
+export const alpinLocales = ['en', 'nl', 'fr', 'es', 'it'] as const;
 export type AlpinLocale = typeof alpinLocales[number];
 export function isAlpinLocale(value: string): value is AlpinLocale {return alpinLocales.some(locale => locale === value)}
 export const alpinPaths: Record<AlpinLocale,string> = {
-  en:'/en/products/alpin-fleece-jacket', nl:'/nl/products/alpin-fleecejas', fr:'/fr/products/veste-polaire-alpin',
+  en:'/en/products/alpin-fleece-jacket', nl:'/nl/products/alpin-fleecejas', fr:'/fr/products/veste-polaire-alpin', es:'/es/products/alpin-fleece-jacket', it:'/it/products/alpin-fleece-jacket',
 };
 export const alpinName = 'Alpin Fleece';
 export const alpinGroupId = 'ALPIN-FLEECE';
@@ -22,7 +22,7 @@ const gtins = {
 export function alpinArticle(product:Pick<Product,'code'>){return product.code.endsWith('25303101')?'25303101':product.code.endsWith('25303102')?'25303102':product.code.match(/\d{8}$/)?.[0]}
 export function alpinColour(article:string,locale:Locale='en') {
   const black=article==='25303101';
-  return locale==='nl'?(black?'Zwart':'Vergrijsd blauw'):locale==='fr'?(black?'Noir':'Bleu grisé'):black?'Black':'Dusty Blue';
+  return locale==='es'?(black?'Negro':'Azul apagado'):locale==='it'?(black?'Nero':'Blu polvere'):locale==='nl'?(black?'Zwart':'Vergrijsd blauw'):locale==='fr'?(black?'Noir':'Bleu grisé'):black?'Black':'Dusty Blue';
 }
 export function alpinProductColour(product:Product,locale:Locale='en'){const article=alpinArticle(product)!;return article in gtins?alpinColour(article,locale):product.content?.trade?.colour||'Colour to confirm'}
 export function alpinProductUrl(locale:AlpinLocale,product:Product,size?:string){const params=new URLSearchParams({colour:alpinProductColour(product)});if(size)params.set('size',alpinSize(size));return alpinPaths[locale]+'?'+params}
@@ -60,3 +60,4 @@ export function alpinVariantUrl(locale:AlpinLocale,article:string,size?:string) 
   const params=new URLSearchParams({colour:alpinColour(article)});if(size)params.set('size',alpinSize(size));
   return alpinPaths[locale]+'?'+params;
 }
+

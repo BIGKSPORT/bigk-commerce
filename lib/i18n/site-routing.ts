@@ -1,4 +1,4 @@
-export const siteLocales=['en','nl','fr'] as const;
+export const siteLocales=['en','nl','fr','es','it'] as const;
 export type SiteLocale=typeof siteLocales[number];
 export const siteLanguageCookie='bigk_language';
 export function isSiteLocale(value:unknown):value is SiteLocale{return typeof value==='string'&&(siteLocales as readonly string[]).includes(value)}
@@ -11,7 +11,8 @@ export function localizePath(href:string,locale:SiteLocale){
  if(/\.[a-z0-9]+$/i.test(path)&&!path.startsWith('/products/'))return href;
  // The source-reviewed ALPIN pages retain their established localized slugs.
  const alpin=['/products/alpin-fleece-jacket','/products/alpin-fleecejas','/products/veste-polaire-alpin'];
- const target=alpin.includes(path)?alpin[siteLocales.indexOf(locale)]:path;
+ const target=alpin.includes(path)?({en:alpin[0],nl:alpin[1],fr:alpin[2],es:alpin[0],it:alpin[0]})[locale]:path;
  return '/'+locale+(target==='/'?'':target)+suffix.join('');
 }
+
 

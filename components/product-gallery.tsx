@@ -4,12 +4,12 @@ import Image from 'next/image';
 import {ChevronLeft,ChevronRight,Expand,ZoomIn,ZoomOut,X,Heart,ShoppingBag,Sparkles} from 'lucide-react';
 import type {Product} from '@/lib/types';
 import {useSiteLanguage} from './site-language';
-import {productUiCopy} from '@/lib/i18n/product-ui-copy';
+import {translateSite} from '@/lib/i18n/site-copy';
 import {alpinUI} from '@/lib/i18n/alpin-ui';
 import type {AlpinLocale} from '@/lib/alpin-fleece';
 export default function ProductGallery({product,saved=false,onSave,onChooseSize,onHelp,showActions=false,locale,imageAlt}:{product:Product;locale?:AlpinLocale;imageAlt?:(index:number)=>string;saved?:boolean;onSave?:()=>void;onChooseSize?:()=>void;onHelp?:()=>void;showActions?:boolean}){
  const {locale:siteLocale}=useSiteLanguage(),selectedLocale=locale??siteLocale,text=alpinUI[selectedLocale];
- const t=(source:string)=>selectedLocale==='en'?source:productUiCopy[source]?.[selectedLocale]??source;
+ const t=(source:string)=>translateSite(selectedLocale,source);
  const [index,setIndex]=useState(0),[hoverZoom,setHoverZoom]=useState(false),[position,setPosition]=useState({x:50,y:50}),[expanded,setExpanded]=useState(false),[zoomed,setZoomed]=useState(false);
  const viewport=useRef<HTMLDivElement>(null),currentIndex=useRef(0);
  const [inlineOnly,setInlineOnly]=useState(false);
@@ -53,3 +53,4 @@ export default function ProductGallery({product,saved=false,onSave,onChooseSize,
  </div><p className="gallery-hint"><span className="gallery-desktop-hint">{text.desktopHint}</span><span className="gallery-touch-hint">{text.touchHint}</span></p>{images.length>1&&<div className="gallery-dots" aria-label={text.positions}>{images.map((_,i)=><button key={i} aria-label={text.goImage+' '+(i+1)} aria-current={index===i?'true':undefined} onClick={()=>choose(i)}/>)}</div>}</div>
  </div><dialog className="image-viewer" ref={dialog} aria-label={product.name+' '+text.viewer} onKeyDown={e=>{if(images.length>1&&(e.key==='ArrowLeft'||e.key==='ArrowRight')){e.preventDefault();choose(index+(e.key==='ArrowRight'?1:-1))}}} onCancel={()=>setExpanded(false)}>{expanded&&<><header><span>{product.name}<small>{index+1} / {images.length}</small></span><div><button aria-label={zoomed?text.zoomOut:text.zoomIn} onClick={()=>setZoomed(!zoomed)}>{zoomed?<ZoomOut/>:<ZoomIn/>}</button><button aria-label={text.close} onClick={()=>setExpanded(false)}><X/></button></div></header><div className="lightbox-stage"><button className={'lightbox-image '+(zoomed?'zoomed':'')} aria-label={zoomed?text.zoomOutArea:text.zoomInArea} onClick={()=>{if(suppressClick.current){suppressClick.current=false;return}setZoomed(!zoomed)}} onPointerMove={e=>{if(zoomed){const b=e.currentTarget.getBoundingClientRect();setPosition({x:(e.clientX-b.left)/b.width*100,y:(e.clientY-b.top)/b.height*100})}}} onPointerDown={down} onPointerUp={up} onPointerCancel={()=>{drag.current=null}}><Image src={images[index]} alt={imageAlt?.(index) || `${product.name} · ${text.view} ${index+1}`} width={1600} height={2400} sizes="100vw" quality={85} draggable={false} style={{transformOrigin:`${position.x}% ${position.y}%`}}/></button>{images.length>1&&<><button className="gallery-arrow previous" aria-label={text.previousLarge} onClick={()=>choose(index-1)}><ChevronLeft/></button><button className="gallery-arrow next" aria-label={text.nextLarge} onClick={()=>choose(index+1)}><ChevronRight/></button></>}</div>{images.length>1&&thumbnails(true)}</>}</dialog></>;
 }
+

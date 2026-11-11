@@ -1,0 +1,2402 @@
+{
+  "BigK home": {
+    "es": "Inicio de BigK",
+    "it": "Home BigK"
+  },
+  "Explore": {
+    "es": "Explorar",
+    "it": "Esplora"
+  },
+  "All products": {
+    "es": "Todos los productos",
+    "it": "Tutti i prodotti"
+  },
+  "Jackets & vests": {
+    "es": "Chaquetas y chalecos",
+    "it": "Giacche e gilet"
+  },
+  "Pants": {
+    "es": "Pantalones",
+    "it": "Pantaloni"
+  },
+  "Accessories": {
+    "es": "Accesorios",
+    "it": "Accessori"
+  },
+  "Your BigK": {
+    "es": "Tu BigK",
+    "it": "Il tuo BigK"
+  },
+  "Account & orders": {
+    "es": "Cuenta y pedidos",
+    "it": "Account e ordini"
+  },
+  "Delivery & returns": {
+    "es": "Envíos y devoluciones",
+    "it": "Consegne e resi"
+  },
+  "Contact": {
+    "es": "Contacto",
+    "it": "Contatti"
+  },
+  "Good to know": {
+    "es": "Información útil",
+    "it": "Informazioni utili"
+  },
+  "Blog": {
+    "es": "Blog",
+    "it": "Blog"
+  },
+  "Privacy": {
+    "es": "Privacidad",
+    "it": "Privacy"
+  },
+  "Terms": {
+    "es": "Condiciones",
+    "it": "Condizioni"
+  },
+  "Our approach": {
+    "es": "Nuestro enfoque",
+    "it": "Il nostro approccio"
+  },
+  "VAT / enterprise number:": {
+    "es": "IVA / número de empresa:",
+    "it": "Partita IVA / numero d’impresa:"
+  },
+  "Back to collection": {
+    "es": "Volver a la colección",
+    "it": "Torna alla collezione"
+  },
+  "THE BIG K LETTER": {
+    "es": "EL BOLETÍN DE BIG K",
+    "it": "LA NEWSLETTER BIG K"
+  },
+  "Join our newsletter.": {
+    "es": "Suscríbete a nuestro boletín.",
+    "it": "Iscriviti alla nostra newsletter."
+  },
+  "New arrivals, collection stories and updates from BIG K.": {
+    "es": "Novedades, historias de las colecciones y noticias de BIG K.",
+    "it": "Nuovi arrivi, storie delle collezioni e aggiornamenti da BIG K."
+  },
+  "Check your inbox and confirm your email to join.": {
+    "es": "Revisa tu bandeja de entrada y confirma tu correo para suscribirte.",
+    "it": "Controlla la posta e conferma il tuo indirizzo email per iscriverti."
+  },
+  "Newsletter email address": {
+    "es": "Correo electrónico para el boletín",
+    "it": "Indirizzo email per la newsletter"
+  },
+  "Your email address": {
+    "es": "Tu correo electrónico",
+    "it": "Il tuo indirizzo email"
+  },
+  "Sending…": {
+    "es": "Enviando…",
+    "it": "Invio in corso…"
+  },
+  "Join the newsletter": {
+    "es": "Suscribirme al boletín",
+    "it": "Iscriviti alla newsletter"
+  },
+  "Website": {
+    "es": "Sitio web",
+    "it": "Sito web"
+  },
+  "I agree to receive product news and updates by email. I can unsubscribe at any time.": {
+    "es": "Acepto recibir novedades de productos y noticias por correo electrónico. Puedo darme de baja en cualquier momento.",
+    "it": "Acconsento a ricevere novità sui prodotti e aggiornamenti via email. Posso annullare l’iscrizione in qualsiasi momento."
+  },
+  "Privacy information": {
+    "es": "Información de privacidad",
+    "it": "Informativa sulla privacy"
+  },
+  "Please confirm using the link we email you.": {
+    "es": "Confirma tu suscripción con el enlace que te enviamos por correo.",
+    "it": "Conferma l’iscrizione tramite il link che ti inviamo via email."
+  },
+  "Welcome back.": {
+    "es": "Te damos la bienvenida de nuevo.",
+    "it": "Bentornato."
+  },
+  "Use your saved BIG K details to fill empty fields.": {
+    "es": "Usa tus datos guardados de BIG K para completar los campos vacíos.",
+    "it": "Usa i tuoi dati BIG K salvati per compilare i campi vuoti."
+  },
+  "Use saved details": {
+    "es": "Usar datos guardados",
+    "it": "Usa i dati salvati"
+  },
+  "Saved details filled in. Check your address before continuing.": {
+    "es": "Hemos completado tus datos guardados. Comprueba tu dirección antes de continuar.",
+    "it": "I dati salvati sono stati inseriti. Controlla l’indirizzo prima di continuare."
+  },
+  "Your existing entries were kept.": {
+    "es": "Hemos conservado los datos que ya habías introducido.",
+    "it": "I dati già inseriti sono stati mantenuti."
+  },
+  "YOUR BIGK / MEMBERSHIP": {
+    "es": "TU BIGK / MEMBRESÍA",
+    "it": "IL TUO BIGK / ISCRIZIONE"
+  },
+  "Good to see you,": {
+    "es": "Qué alegría verte,",
+    "it": "Che piacere rivederti,"
+  },
+  "BigK member": {
+    "es": "Miembro de BigK",
+    "it": "Membro BigK"
+  },
+  "More from every move.": {
+    "es": "Más con cada movimiento.",
+    "it": "Di più da ogni movimento."
+  },
+  "Free membership": {
+    "es": "Membresía gratuita",
+    "it": "Iscrizione gratuita"
+  },
+  "Review demo": {
+    "es": "Demo de prueba",
+    "it": "Demo di valutazione"
+  },
+  "Your points": {
+    "es": "Tus puntos",
+    "it": "I tuoi punti"
+  },
+  "Available points": {
+    "es": "Puntos disponibles",
+    "it": "Punti disponibili"
+  },
+  "{count} × €3 rewards available": {
+    "es": "{count} recompensas de 3 € disponibles",
+    "it": "{count} premi da 3 € disponibili"
+  },
+  "100 points = €3 · Up to 10% of eligible products": {
+    "es": "100 puntos = 3 € · Hasta el 10% de los productos elegibles",
+    "it": "100 punti = 3 € · Fino al 10% dei prodotti idonei"
+  },
+  "Pending points": {
+    "es": "Puntos pendientes",
+    "it": "Punti in attesa"
+  },
+  "configured": {
+    "es": "configurado",
+    "it": "configurato"
+  },
+  "Released after the {days}-day wait following full receipt, once open returns are resolved.": {
+    "es": "Disponibles tras la espera de {days} días desde la recepción completa, una vez resueltas las devoluciones abiertas.",
+    "it": "Disponibili dopo l’attesa di {days} giorni dalla ricezione completa, una volta risolti i resi aperti."
+  },
+  "Next expiry": {
+    "es": "Próximo vencimiento",
+    "it": "Prossima scadenza"
+  },
+  "No points expiring": {
+    "es": "No hay puntos próximos a vencer",
+    "it": "Nessun punto in scadenza"
+  },
+  "Use your oldest points first.": {
+    "es": "Usa primero tus puntos más antiguos.",
+    "it": "Usa prima i punti più vecchi."
+  },
+  "Your available points last 12 months.": {
+    "es": "Tus puntos disponibles tienen una validez de 12 meses.",
+    "it": "I tuoi punti disponibili sono validi per 12 mesi."
+  },
+  "Your next reward is ready.": {
+    "es": "Tu próxima recompensa está lista.",
+    "it": "Il tuo prossimo premio è pronto."
+  },
+  "Your next reward starts here.": {
+    "es": "Tu próxima recompensa empieza aquí.",
+    "it": "Il tuo prossimo premio inizia qui."
+  },
+  "Redeem in steps of 100 points at checkout.": {
+    "es": "Canjea tus puntos en bloques de 100 al pagar.",
+    "it": "Riscatta i punti in blocchi da 100 al pagamento."
+  },
+  "Collect {points} more points to unlock €3 off.": {
+    "es": "Consigue {points} puntos más para obtener 3 € de descuento.",
+    "it": "Raccogli altri {points} punti per ottenere 3 € di sconto."
+  },
+  "{points} / 100 points towards your next €3": {
+    "es": "{points} / 100 puntos para tus próximos 3 €",
+    "it": "{points} / 100 punti per i tuoi prossimi 3 €"
+  },
+  "Progress towards the next 100 points": {
+    "es": "Progreso hacia los próximos 100 puntos",
+    "it": "Progresso verso i prossimi 100 punti"
+  },
+  "Explore the collection": {
+    "es": "Explora la colección",
+    "it": "Esplora la collezione"
+  },
+  "{points} points from returned purchases have already been used. Future earnings offset this adjustment before becoming spendable.": {
+    "es": "Ya se han utilizado {points} puntos de compras devueltas. Los puntos que ganes en el futuro compensarán este ajuste antes de poder usarse.",
+    "it": "Sono già stati utilizzati {points} punti da acquisti restituiti. I punti guadagnati in futuro compenseranno questo adeguamento prima di diventare utilizzabili."
+  },
+  "Your benefits": {
+    "es": "Tus ventajas",
+    "it": "I tuoi vantaggi"
+  },
+  "All programme rules": {
+    "es": "Todas las condiciones del programa",
+    "it": "Tutte le regole del programma"
+  },
+  "Make your points count.": {
+    "es": "Haz que tus puntos cuenten.",
+    "it": "Dai valore ai tuoi punti."
+  },
+  "Earn 1 point per €1 of eligible products after discounts, including VAT. Redeem 100 points for €3, up to 10% of your eligible subtotal.": {
+    "es": "Gana 1 punto por cada 1 € en productos elegibles después de descuentos, IVA incluido. Canjea 100 puntos por 3 €, hasta el 10% del subtotal elegible.",
+    "it": "Guadagna 1 punto per ogni 1 € di prodotti idonei dopo gli sconti, IVA inclusa. Riscatta 100 punti per 3 €, fino al 10% del subtotale idoneo."
+  },
+  "Find your next layer": {
+    "es": "Encuentra tu próxima prenda",
+    "it": "Trova il tuo prossimo capo"
+  },
+  "A welcome after your first order.": {
+    "es": "Una bienvenida tras tu primer pedido.",
+    "it": "Un benvenuto dopo il tuo primo ordine."
+  },
+  "One-time welcome points after your first qualifying order clears the waiting period. Pending points cannot be spent.": {
+    "es": "Puntos de bienvenida únicos cuando tu primer pedido elegible supere el plazo de espera. Los puntos pendientes no se pueden usar.",
+    "it": "Punti di benvenuto una tantum dopo il periodo di attesa del primo ordine idoneo. I punti in attesa non possono essere utilizzati."
+  },
+  "See how it works": {
+    "es": "Descubre cómo funciona",
+    "it": "Scopri come funziona"
+  },
+  "Your next move, together.": {
+    "es": "Tu próximo paso, juntos.",
+    "it": "Il tuo prossimo passo, insieme."
+  },
+  "Something to look forward to.": {
+    "es": "Algo que esperar con ilusión.",
+    "it": "Qualcosa da aspettare con piacere."
+  },
+  "No events are planned yet. When registration opens, the dates and conditions will appear here.": {
+    "es": "Aún no hay eventos previstos. Las fechas y condiciones aparecerán aquí cuando se abran las inscripciones.",
+    "it": "Non sono ancora previsti eventi. Date e condizioni appariranno qui all’apertura delle iscrizioni."
+  },
+  "Free": {
+    "es": "Gratis",
+    "it": "Gratis"
+  },
+  "Maximum {count} tickets per account": {
+    "es": "Máximo {count} entradas por cuenta",
+    "it": "Massimo {count} biglietti per account"
+  },
+  "Members get early access": {
+    "es": "Los miembros tienen acceso anticipado",
+    "it": "I membri hanno accesso anticipato"
+  },
+  "Registration opens on {date} at {time} (Brussels).": {
+    "es": "Las inscripciones se abren el {date} a las {time} (Bruselas).",
+    "it": "Le iscrizioni aprono il {date} alle {time} (Bruxelles)."
+  },
+  "{count} ticket(s)": {
+    "es": "{count} entrada(s)",
+    "it": "{count} biglietto/i"
+  },
+  "A place is not guaranteed.": {
+    "es": "No se garantiza una plaza.",
+    "it": "Il posto non è garantito."
+  },
+  "Registration confirmed.": {
+    "es": "Inscripción confirmada.",
+    "it": "Iscrizione confermata."
+  },
+  "Tickets": {
+    "es": "Entradas",
+    "it": "Biglietti"
+  },
+  "Tickets for": {
+    "es": "Entradas para",
+    "it": "Biglietti per"
+  },
+  "Updating…": {
+    "es": "Actualizando…",
+    "it": "Aggiornamento…"
+  },
+  "Join waiting list": {
+    "es": "Unirme a la lista de espera",
+    "it": "Iscriviti alla lista d’attesa"
+  },
+  "Register": {
+    "es": "Inscribirme",
+    "it": "Iscriviti"
+  },
+  "Cancel registration": {
+    "es": "Cancelar inscripción",
+    "it": "Annulla iscrizione"
+  },
+  "Membership does not guarantee a place. Event tickets earn no points and cannot be paid with points.": {
+    "es": "La membresía no garantiza una plaza. Las entradas para eventos no generan puntos ni se pueden pagar con puntos.",
+    "it": "L’iscrizione non garantisce un posto. I biglietti degli eventi non generano punti e non possono essere pagati con punti."
+  },
+  "Your points activity": {
+    "es": "Tu actividad de puntos",
+    "it": "La tua attività punti"
+  },
+  "Every point, accounted for.": {
+    "es": "Cada punto, en su sitio.",
+    "it": "Ogni punto, sotto controllo."
+  },
+  "Points transaction history": {
+    "es": "Historial de movimientos de puntos",
+    "it": "Cronologia delle transazioni punti"
+  },
+  "Order": {
+    "es": "Pedido",
+    "it": "Ordine"
+  },
+  "points": {
+    "es": "puntos",
+    "it": "punti"
+  },
+  "Your points story starts with your first qualifying purchase.": {
+    "es": "Tu historial de puntos empieza con tu primera compra elegible.",
+    "it": "La tua storia punti inizia con il primo acquisto idoneo."
+  },
+  "All point expiry dates": {
+    "es": "Todas las fechas de vencimiento de puntos",
+    "it": "Tutte le scadenze dei punti"
+  },
+  "{points} points · expires {date}": {
+    "es": "{points} puntos · vencen el {date}",
+    "it": "{points} punti · scadono il {date}"
+  },
+  "Free to join. No VIP tiers.": {
+    "es": "Inscripción gratuita. Sin niveles VIP.",
+    "it": "Iscrizione gratuita. Nessun livello VIP."
+  },
+  "Read the full BigK Club rules →": {
+    "es": "Lee todas las condiciones de BigK Club →",
+    "it": "Leggi tutte le regole del BigK Club →"
+  },
+  "Registration opens later": {
+    "es": "Las inscripciones se abrirán más adelante",
+    "it": "Le iscrizioni apriranno più avanti"
+  },
+  "You’re registered": {
+    "es": "Ya estás inscrito",
+    "it": "Sei iscritto"
+  },
+  "Full — join the waiting list": {
+    "es": "Completo — únete a la lista de espera",
+    "it": "Completo — iscriviti alla lista d’attesa"
+  },
+  "You’re on the waiting list": {
+    "es": "Estás en la lista de espera",
+    "it": "Sei nella lista d’attesa"
+  },
+  "Event ended": {
+    "es": "Evento finalizado",
+    "it": "Evento concluso"
+  },
+  "Paid registration is not yet available": {
+    "es": "Las inscripciones de pago aún no están disponibles",
+    "it": "Le iscrizioni a pagamento non sono ancora disponibili"
+  },
+  "Welcome to BigK Club": {
+    "es": "Te damos la bienvenida a BigK Club",
+    "it": "Benvenuto nel BigK Club"
+  },
+  "Points reserved for checkout": {
+    "es": "Puntos reservados para el pago",
+    "it": "Punti riservati per il pagamento"
+  },
+  "Checkout points restored": {
+    "es": "Puntos del pago restituidos",
+    "it": "Punti del pagamento ripristinati"
+  },
+  "Purchase points pending": {
+    "es": "Puntos de compra pendientes",
+    "it": "Punti acquisto in attesa"
+  },
+  "Purchase points available": {
+    "es": "Puntos de compra disponibles",
+    "it": "Punti acquisto disponibili"
+  },
+  "Welcome reward": {
+    "es": "Recompensa de bienvenida",
+    "it": "Premio di benvenuto"
+  },
+  "Points expired": {
+    "es": "Puntos vencidos",
+    "it": "Punti scaduti"
+  },
+  "Returned item · points restored": {
+    "es": "Artículo devuelto · puntos restituidos",
+    "it": "Articolo restituito · punti ripristinati"
+  },
+  "Returned item · earned points adjusted": {
+    "es": "Artículo devuelto · puntos ganados ajustados",
+    "it": "Articolo restituito · punti guadagnati adeguati"
+  },
+  "Pending points adjusted": {
+    "es": "Puntos pendientes ajustados",
+    "it": "Punti in attesa adeguati"
+  },
+  "Restored points passed original expiry": {
+    "es": "Los puntos restituidos han superado su vencimiento original",
+    "it": "I punti ripristinati hanno superato la scadenza originale"
+  },
+  "Previous return adjustment": {
+    "es": "Ajuste de devolución anterior",
+    "it": "Adeguamento per un reso precedente"
+  },
+  "Full delivery confirmed": {
+    "es": "Entrega completa confirmada",
+    "it": "Consegna completa confermata"
+  },
+  "Refund recorded": {
+    "es": "Reembolso registrado",
+    "it": "Rimborso registrato"
+  },
+  "Return review opened": {
+    "es": "Revisión de devolución abierta",
+    "it": "Verifica del reso aperta"
+  },
+  "Return review resolved": {
+    "es": "Revisión de devolución resuelta",
+    "it": "Verifica del reso conclusa"
+  },
+  "Manual release approved": {
+    "es": "Liberación manual aprobada",
+    "it": "Sblocco manuale approvato"
+  },
+  "Returns & withdrawal": {
+    "es": "Devoluciones y desistimiento",
+    "it": "Resi e recesso"
+  },
+  "You may exercise your 14-day right of withdrawal for an ordinary online product purchase, starting the day after receipt of the final item. Submitting a request does not immediately issue a refund or limit other statutory rights.": {
+    "es": "Puedes ejercer tu derecho de desistimiento de 14 días para una compra ordinaria de productos en línea, a partir del día siguiente a la recepción del último artículo. Enviar una solicitud no genera un reembolso inmediato ni limita otros derechos legales.",
+    "it": "Puoi esercitare il diritto di recesso di 14 giorni per un normale acquisto online di prodotti, a partire dal giorno successivo alla ricezione dell’ultimo articolo. L’invio della richiesta non genera un rimborso immediato né limita altri diritti previsti dalla legge."
+  },
+  "Withdrawal reference": {
+    "es": "Referencia de desistimiento",
+    "it": "Riferimento del recesso"
+  },
+  "Requested": {
+    "es": "Solicitado",
+    "it": "Richiesto"
+  },
+  "Resolved": {
+    "es": "Resuelto",
+    "it": "Risolto"
+  },
+  "Your withdrawal was received on {date}. Reference: {reference}. Confirmation is queued to your order email. Keep this receipt for your records.": {
+    "es": "Recibimos tu desistimiento el {date}. Referencia: {reference}. La confirmación está en cola para enviarse al correo de tu pedido. Conserva este recibo.",
+    "it": "Abbiamo ricevuto il tuo recesso il {date}. Riferimento: {reference}. La conferma è in coda per l’invio all’email dell’ordine. Conserva questa ricevuta."
+  },
+  "I hereby give notice that I withdraw from the contract of sale for the goods in order": {
+    "es": "Por la presente comunico que desisto del contrato de venta de los bienes del pedido",
+    "it": "Con la presente comunico il recesso dal contratto di vendita dei beni dell’ordine"
+  },
+  "This button submits a withdrawal for the entire order. For a partial return, contact customer service using the details on our contact page.": {
+    "es": "Este botón solicita el desistimiento del pedido completo. Para una devolución parcial, contacta con atención al cliente mediante los datos de nuestra página de contacto.",
+    "it": "Questo pulsante invia il recesso per l’intero ordine. Per un reso parziale, contatta il servizio clienti usando i recapiti della pagina contatti."
+  },
+  "Keep my order": {
+    "es": "Conservar mi pedido",
+    "it": "Mantieni il mio ordine"
+  },
+  "Submitting…": {
+    "es": "Enviando solicitud…",
+    "it": "Invio della richiesta…"
+  },
+  "Confirm withdrawal": {
+    "es": "Confirmar desistimiento",
+    "it": "Conferma recesso"
+  },
+  "Withdraw from this order": {
+    "es": "Desistir de este pedido",
+    "it": "Recedi da questo ordine"
+  },
+  "Unable to submit your withdrawal.": {
+    "es": "No se ha podido enviar tu solicitud de desistimiento.",
+    "it": "Impossibile inviare la richiesta di recesso."
+  },
+  "BigK Events": {
+    "es": "Eventos BigK",
+    "it": "Eventi BigK"
+  },
+  "Released after the configured wait following full receipt, once open returns are resolved.": {
+    "es": "Disponibles tras el plazo de espera configurado desde la recepción completa, una vez resueltas las devoluciones abiertas.",
+    "it": "Disponibili dopo il periodo di attesa configurato dalla ricezione completa, una volta risolti i resi aperti."
+  },
+  "BIGK CLUB / THE RULES": {
+    "es": "BIGK CLUB / LAS CONDICIONES",
+    "it": "BIGK CLUB / LE REGOLE"
+  },
+  "Every point counts.": {
+    "es": "Cada punto cuenta.",
+    "it": "Ogni punto conta."
+  },
+  "Free membership through your signed-in BigK customer account. No VIP levels or paid membership.": {
+    "es": "Membresía gratuita a través de tu cuenta de cliente BigK con sesión iniciada. Sin niveles VIP ni membresía de pago.",
+    "it": "Iscrizione gratuita tramite il tuo account cliente BigK con accesso effettuato. Nessun livello VIP né iscrizione a pagamento."
+  },
+  "Earn & redeem": {
+    "es": "Ganar y canjear",
+    "it": "Guadagna e riscatta"
+  },
+  "Earn 1 point per complete €1 of eligible products after all discounts, including VAT. Delivery, gift-card purchases and event tickets do not qualify. Where gift-card payments are offered, eligible products paid for using a gift card qualify; buying the card itself never earns points.": {
+    "es": "Gana 1 punto por cada euro completo en productos elegibles después de todos los descuentos, IVA incluido. Los gastos de envío, la compra de tarjetas regalo y las entradas para eventos no cuentan. Cuando se admitan pagos con tarjetas regalo, los productos elegibles pagados con ellas sí cuentan; comprar la tarjeta en sí nunca genera puntos.",
+    "it": "Guadagna 1 punto per ogni euro intero di prodotti idonei dopo tutti gli sconti, IVA inclusa. Consegne, acquisti di carte regalo e biglietti per eventi non sono idonei. Quando è possibile pagare con carte regalo, i prodotti idonei pagati con esse generano punti; l’acquisto della carta stessa non genera mai punti."
+  },
+  "Redeem at least 100 points, in steps of 100. Each 100 points gives €3 off. The points discount cannot exceed 10% of the eligible product subtotal and cannot be combined with promotional coupons. New points are calculated after the points discount. No points can be spent on event tickets.": {
+    "es": "Canjea al menos 100 puntos, en bloques de 100. Cada 100 puntos equivalen a 3 € de descuento. El descuento con puntos no puede superar el 10% del subtotal de productos elegibles ni combinarse con cupones promocionales. Los nuevos puntos se calculan después del descuento con puntos. No se pueden usar puntos para entradas de eventos.",
+    "it": "Riscatta almeno 100 punti, in blocchi da 100. Ogni 100 punti danno 3 € di sconto. Lo sconto punti non può superare il 10% del subtotale dei prodotti idonei né essere combinato con coupon promozionali. I nuovi punti vengono calcolati dopo lo sconto punti. I punti non possono essere usati per biglietti di eventi."
+  },
+  "Pending first, available later": {
+    "es": "Primero pendientes, después disponibles",
+    "it": "Prima in attesa, poi disponibili"
+  },
+  "a manually confirmed waiting period": {
+    "es": "un plazo de espera confirmado manualmente",
+    "it": "un periodo di attesa confermato manualmente"
+  },
+  "{days} days": {
+    "es": "{days} días",
+    "it": "{days} giorni"
+  },
+  "Purchase points remain pending until {wait} after confirmed receipt of the complete order and until any open withdrawal, return, cancellation or refund has been resolved. The wait is configurable; your order’s confirmed waiting period is recorded. Release also requires a completed return review after the waiting period. Without reliable delivery evidence, points remain pending for manual review.": {
+    "es": "Los puntos de compra permanecen pendientes hasta {wait} después de la recepción confirmada del pedido completo y hasta que se resuelva cualquier desistimiento, devolución, cancelación o reembolso abierto. La espera es configurable; se registra el plazo confirmado de tu pedido. La liberación también requiere una revisión de devoluciones completada tras la espera. Sin prueba fiable de entrega, los puntos quedan pendientes de revisión manual.",
+    "it": "I punti acquisto restano in attesa fino a {wait} dopo la ricezione confermata dell’intero ordine e finché ogni recesso, reso, annullamento o rimborso aperto non sia risolto. L’attesa è configurabile; il periodo confermato del tuo ordine viene registrato. Lo sblocco richiede anche una verifica dei resi completata dopo l’attesa. Senza prove affidabili di consegna, i punti restano in attesa di verifica manuale."
+  },
+  "For ordinary online product purchases, BigK’s stated starting policy is 14 calendar days to exercise withdrawal, beginning the day after receipt of the final item. This loyalty waiting period does not limit statutory withdrawal or guarantee rights. Product return rules are not automatically applied to event tickets.": {
+    "es": "Para compras ordinarias de productos en línea, la política inicial declarada de BigK es de 14 días naturales para ejercer el desistimiento, a partir del día siguiente a la recepción del último artículo. Este plazo de espera del programa no limita los derechos legales de desistimiento ni de garantía. Las normas de devolución de productos no se aplican automáticamente a entradas de eventos.",
+    "it": "Per i normali acquisti online di prodotti, la politica iniziale dichiarata da BigK prevede 14 giorni di calendario per esercitare il recesso, dal giorno successivo alla ricezione dell’ultimo articolo. Questo periodo di attesa del programma non limita i diritti legali di recesso o garanzia. Le regole sui resi dei prodotti non si applicano automaticamente ai biglietti degli eventi."
+  },
+  "Your first qualifying order": {
+    "es": "Tu primer pedido elegible",
+    "it": "Il tuo primo ordine idoneo"
+  },
+  "Receive 25 one-time welcome points after your first qualifying order clears the wait. A fully refunded purchase does not qualify. If welcome points were already issued and that purchase is fully refunded, they are reversed; the one-time reward is not issued again.": {
+    "es": "Recibe 25 puntos de bienvenida una sola vez cuando tu primer pedido elegible supere la espera. Una compra totalmente reembolsada no cuenta. Si ya se concedieron los puntos de bienvenida y esa compra se reembolsa por completo, se anulan; la recompensa única no se vuelve a conceder.",
+    "it": "Ricevi 25 punti di benvenuto una tantum dopo l’attesa del primo ordine idoneo. Un acquisto interamente rimborsato non è idoneo. Se i punti di benvenuto sono già stati assegnati e quell’acquisto viene interamente rimborsato, vengono stornati; il premio una tantum non viene assegnato nuovamente."
+  },
+  "Expiry & reminders": {
+    "es": "Vencimiento y recordatorios",
+    "it": "Scadenze e promemoria"
+  },
+  "Points expire 12 calendar months after becoming available. Oldest available points are used first. An expiry reminder is queued 14 days beforehand through the store’s email service. Your account always shows current expiry dates.": {
+    "es": "Los puntos vencen 12 meses naturales después de estar disponibles. Se usan primero los puntos disponibles más antiguos. Se programa un recordatorio de vencimiento 14 días antes mediante el servicio de correo de la tienda. Tu cuenta muestra siempre las fechas de vencimiento actuales.",
+    "it": "I punti scadono 12 mesi di calendario dopo essere diventati disponibili. Vengono usati prima i punti disponibili più vecchi. Un promemoria viene messo in coda 14 giorni prima tramite il servizio email del negozio. Il tuo account mostra sempre le scadenze attuali."
+  },
+  "Returns & cancelled checkouts": {
+    "es": "Devoluciones y pagos cancelados",
+    "it": "Resi e pagamenti annullati"
+  },
+  "Partial refunds reduce earned points according to the remaining eligible product amount. Used points are restored proportionally to the returned items’ original eligible value. Restored points keep their original expiry date; an expired point is not renewed. If already-spent earned points are reversed, future earnings offset that adjustment. Cancelling or expiring an unpaid checkout releases reserved points with the same original expiry rule.": {
+    "es": "Los reembolsos parciales reducen los puntos ganados según el importe restante de productos elegibles. Los puntos usados se restituyen proporcionalmente al valor elegible original de los artículos devueltos. Los puntos restituidos conservan su vencimiento original; un punto vencido no se renueva. Si se anulan puntos ganados ya utilizados, los puntos futuros compensan ese ajuste. Cancelar o dejar vencer un pago pendiente libera los puntos reservados con la misma regla de vencimiento original.",
+    "it": "I rimborsi parziali riducono i punti guadagnati in base all’importo residuo dei prodotti idonei. I punti usati vengono ripristinati in proporzione al valore idoneo originale degli articoli restituiti. I punti ripristinati mantengono la scadenza originale; un punto scaduto non viene rinnovato. Se vengono stornati punti guadagnati già spesi, i guadagni futuri compensano l’adeguamento. Annullare o lasciar scadere un pagamento non completato libera i punti riservati con la stessa regola sulla scadenza originale."
+  },
+  "Each event lists its access rules, registration times in Brussels time, location, capacity, ticket limit and price. Membership or an invitation does not guarantee a place. A waiting-list place is not a ticket. Waiting-list promotion is reviewed manually. Paid event registration is not yet available. Event tickets earn no points and cannot be paid with points.": {
+    "es": "Cada evento indica sus normas de acceso, horarios de inscripción en hora de Bruselas, ubicación, aforo, límite de entradas y precio. La membresía o una invitación no garantizan una plaza. Una plaza en lista de espera no es una entrada. El paso desde la lista de espera se revisa manualmente. Las inscripciones de pago aún no están disponibles. Las entradas no generan puntos ni se pueden pagar con puntos.",
+    "it": "Ogni evento indica regole di accesso, orari di iscrizione nell’ora di Bruxelles, luogo, capienza, limite di biglietti e prezzo. L’iscrizione o un invito non garantiscono un posto. Un posto in lista d’attesa non è un biglietto. Il passaggio dalla lista d’attesa viene valutato manualmente. Le iscrizioni a pagamento non sono ancora disponibili. I biglietti non generano punti e non possono essere pagati con punti."
+  },
+  "Back to your BigK Club →": {
+    "es": "Volver a tu BigK Club →",
+    "it": "Torna al tuo BigK Club →"
+  },
+  "model": {
+    "es": "modelo",
+    "it": "modello"
+  },
+  "individual model.": {
+    "es": "modelo individual.",
+    "it": "modello singolo."
+  },
+  "THE EVERYDAY COLLECTION": {
+    "es": "LA COLECCIÓN PARA CADA DÍA",
+    "it": "LA COLLEZIONE DI OGNI GIORNO"
+  },
+  "THE COLLECTION / OUTERWEAR": {
+    "es": "LA COLECCIÓN / PRENDAS DE ABRIGO",
+    "it": "LA COLLEZIONE / CAPISPALLA"
+  },
+  "A LITTLE DIRECTION": {
+    "es": "UN POCO DE INSPIRACIÓN",
+    "it": "UN PO’ DI ISPIRAZIONE"
+  },
+  "A closer look": {
+    "es": "Más de cerca",
+    "it": "Da vicino"
+  },
+  "A little more room to explore.": {
+    "es": "Un poco más por descubrir.",
+    "it": "Ancora qualcosa da scoprire."
+  },
+  "About BIG K ®": {
+    "es": "Acerca de BIG K ®",
+    "it": "Informazioni su BIG K ®"
+  },
+  "Account": {
+    "es": "Cuenta",
+    "it": "Account"
+  },
+  "Active": {
+    "es": "Activo",
+    "it": "Attivo"
+  },
+  "Add to bag": {
+    "es": "Añadir a la bolsa",
+    "it": "Aggiungi alla borsa"
+  },
+  "Add to demo bag": {
+    "es": "Añadir a la bolsa demo",
+    "it": "Aggiungi alla borsa demo"
+  },
+  "All colours": {
+    "es": "Todos los colores",
+    "it": "Tutti i colori"
+  },
+  "All sizes": {
+    "es": "Todas las tallas",
+    "it": "Tutte le taglie"
+  },
+  "Availability verified again at checkout": {
+    "es": "La disponibilidad se comprueba de nuevo al pagar",
+    "it": "Disponibilità verificata nuovamente al pagamento"
+  },
+  "Available colours for": {
+    "es": "Colores disponibles para",
+    "it": "Colori disponibili per"
+  },
+  "BIGK / PERFORMANCE APPAREL": {
+    "es": "BIGK / ROPA TÉCNICA",
+    "it": "BIGK / ABBIGLIAMENTO TECNICO"
+  },
+  "BIGK / THE COLLECTION": {
+    "es": "BIGK / LA COLECCIÓN",
+    "it": "BIGK / LA COLLEZIONE"
+  },
+  "Bag": {
+    "es": "Bolsa",
+    "it": "Borsa"
+  },
+  "Breadcrumb": {
+    "es": "Ruta de navegación",
+    "it": "Percorso di navigazione"
+  },
+  "Checkout is temporarily unavailable while the store is configured.": {
+    "es": "El pago no está disponible temporalmente mientras se configura la tienda.",
+    "it": "Il pagamento è temporaneamente non disponibile durante la configurazione del negozio."
+  },
+  "Choose": {
+    "es": "Elegir",
+    "it": "Scegli"
+  },
+  "Choose colour": {
+    "es": "Elegir color",
+    "it": "Scegli il colore"
+  },
+  "Choose your focus. We match the product categories and tags in the current catalogue.": {
+    "es": "Elige lo que buscas. Usamos las categorías y etiquetas del catálogo actual.",
+    "it": "Scegli ciò che cerchi. Usiamo le categorie e i tag del catalogo attuale."
+  },
+  "Choose your size": {
+    "es": "Elige tu talla",
+    "it": "Scegli la tua taglia"
+  },
+  "City days or a little extra warmth? Tell us what you need.": {
+    "es": "¿Un día en la ciudad o un poco más de abrigo? Dinos qué necesitas.",
+    "it": "Una giornata in città o un po’ di calore in più? Dicci cosa ti serve."
+  },
+  "Clear comparison": {
+    "es": "Borrar comparación",
+    "it": "Cancella confronto"
+  },
+  "Clear search": {
+    "es": "Borrar búsqueda",
+    "it": "Cancella ricerca"
+  },
+  "Close dialog": {
+    "es": "Cerrar ventana",
+    "it": "Chiudi finestra"
+  },
+  "Collection": {
+    "es": "Colección",
+    "it": "Collezione"
+  },
+  "Colour:": {
+    "es": "Color:",
+    "it": "Colore:"
+  },
+  "Compare": {
+    "es": "Comparar",
+    "it": "Confronta"
+  },
+  "Compare products": {
+    "es": "Comparar productos",
+    "it": "Confronta prodotti"
+  },
+  "Compare the details": {
+    "es": "Compara los detalles",
+    "it": "Confronta i dettagli"
+  },
+  "Compare this product": {
+    "es": "Comparar este producto",
+    "it": "Confronta questo prodotto"
+  },
+  "Continue to demo checkout": {
+    "es": "Continuar al pago demo",
+    "it": "Continua al pagamento demo"
+  },
+  "Decrease quantity:": {
+    "es": "Reducir cantidad:",
+    "it": "Riduci quantità:"
+  },
+  "Delivery estimate": {
+    "es": "Estimación de envío",
+    "it": "Stima della consegna"
+  },
+  "Demo total": {
+    "es": "Total demo",
+    "it": "Totale demo"
+  },
+  "Details": {
+    "es": "Detalles",
+    "it": "Dettagli"
+  },
+  "Discover outerwear": {
+    "es": "Descubre nuestras prendas de abrigo",
+    "it": "Scopri i capispalla"
+  },
+  "Estimated total": {
+    "es": "Total estimado",
+    "it": "Totale stimato"
+  },
+  "European delivery · free from €100": {
+    "es": "Envío en Europa · gratis desde 100 €",
+    "it": "Consegna in Europa · gratuita da 100 €"
+  },
+  "Explore all": {
+    "es": "Explorar todo",
+    "it": "Esplora tutto"
+  },
+  "Explore categories": {
+    "es": "Explorar categorías",
+    "it": "Esplora le categorie"
+  },
+  "Explore products": {
+    "es": "Explorar productos",
+    "it": "Esplora i prodotti"
+  },
+  "Explore the BIG K ® collection.": {
+    "es": "Explora la colección BIG K ®.",
+    "it": "Esplora la collezione BIG K ®."
+  },
+  "Explore the style finder": {
+    "es": "Explora el buscador de estilo",
+    "it": "Esplora la guida allo stile"
+  },
+  "Featured first": {
+    "es": "Destacados primero",
+    "it": "Prima gli articoli in evidenza"
+  },
+  "Filter by colour": {
+    "es": "Filtrar por color",
+    "it": "Filtra per colore"
+  },
+  "Filter by size": {
+    "es": "Filtrar por talla",
+    "it": "Filtra per taglia"
+  },
+  "Final totals and availability confirmed securely.": {
+    "es": "Totales finales y disponibilidad confirmados de forma segura.",
+    "it": "Totali finali e disponibilità confermati in sicurezza."
+  },
+  "Find your fit": {
+    "es": "Encuentra tu ajuste",
+    "it": "Trova la tua vestibilità"
+  },
+  "Find your layers.": {
+    "es": "Encuentra tu estilo.",
+    "it": "Trova il tuo stile."
+  },
+  "Find your next everyday layer": {
+    "es": "Encuentra tu próxima prenda para cada día",
+    "it": "Trova il tuo prossimo capo per ogni giorno"
+  },
+  "Free European delivery from €100": {
+    "es": "Envío gratis en Europa desde 100 €",
+    "it": "Consegna gratuita in Europa da 100 €"
+  },
+  "Increase quantity:": {
+    "es": "Aumentar cantidad:",
+    "it": "Aumenta quantità:"
+  },
+  "Jackets, layers, pants and accessories.": {
+    "es": "Chaquetas, prendas de abrigo, pantalones y accesorios.",
+    "it": "Giacche, capi da abbinare, pantaloni e accessori."
+  },
+  "LESS GUESSWORK. MORE YOU.": {
+    "es": "MENOS DUDAS. MÁS TÚ.",
+    "it": "MENO DUBBI. PIÙ TE."
+  },
+  "Listed sizes:": {
+    "es": "Tallas indicadas:",
+    "it": "Taglie indicate:"
+  },
+  "Material & care": {
+    "es": "Material y cuidado",
+    "it": "Materiale e cura"
+  },
+  "Mobile shopping navigation": {
+    "es": "Navegación móvil de la tienda",
+    "it": "Navigazione mobile del negozio"
+  },
+  "More from BIG K ®": {
+    "es": "Más de BIG K ®",
+    "it": "Altro da BIG K ®"
+  },
+  "Name: A–Z": {
+    "es": "Nombre: A–Z",
+    "it": "Nome: A–Z"
+  },
+  "No charge or stock reservation in preview mode.": {
+    "es": "Sin cargos ni reservas de stock en modo de vista previa.",
+    "it": "Nessun addebito né prenotazione di scorte in modalità anteprima."
+  },
+  "No payment details collected in demo mode.": {
+    "es": "No se recopilan datos de pago en modo demo.",
+    "it": "Non vengono raccolti dati di pagamento in modalità demo."
+  },
+  "No products match your selection. Try another search or clear your filters.": {
+    "es": "Ningún producto coincide con tu selección. Prueba otra búsqueda o borra los filtros.",
+    "it": "Nessun prodotto corrisponde alla tua selezione. Prova un’altra ricerca o cancella i filtri."
+  },
+  "No real payments. Use fictional details.": {
+    "es": "Sin pagos reales. Usa datos ficticios.",
+    "it": "Nessun pagamento reale. Usa dati fittizi."
+  },
+  "Open bag,": {
+    "es": "Abrir bolsa,",
+    "it": "Apri borsa,"
+  },
+  "Original BIG K ® products and photography.": {
+    "es": "Productos y fotografías originales de BIG K ®.",
+    "it": "Prodotti e fotografie originali BIG K ®."
+  },
+  "Otherwise €6.95 in supported countries.": {
+    "es": "En caso contrario, 6,95 € en los países admitidos.",
+    "it": "Altrimenti 6,95 € nei paesi serviti."
+  },
+  "PRIVATE COLLECTION PREVIEW": {
+    "es": "VISTA PREVIA PRIVADA DE LA COLECCIÓN",
+    "it": "ANTEPRIMA PRIVATA DELLA COLLEZIONE"
+  },
+  "Pending": {
+    "es": "Pendiente",
+    "it": "In attesa"
+  },
+  "Performance apparel. An unmistakable identity.": {
+    "es": "Ropa técnica. Una identidad inconfundible.",
+    "it": "Abbigliamento tecnico. Un’identità inconfondibile."
+  },
+  "Performance in every layer.": {
+    "es": "Rendimiento en cada prenda.",
+    "it": "Prestazioni in ogni capo."
+  },
+  "Preview": {
+    "es": "Vista previa",
+    "it": "Anteprima"
+  },
+  "Preview price · No real purchase": {
+    "es": "Precio de vista previa · Sin compra real",
+    "it": "Prezzo di anteprima · Nessun acquisto reale"
+  },
+  "Preview · awaiting verification": {
+    "es": "Vista previa · pendiente de verificación",
+    "it": "Anteprima · in attesa di verifica"
+  },
+  "Price pending": {
+    "es": "Precio pendiente",
+    "it": "Prezzo da confermare"
+  },
+  "Price: high to low": {
+    "es": "Precio: de mayor a menor",
+    "it": "Prezzo: dal più alto al più basso"
+  },
+  "Price: low to high": {
+    "es": "Precio: de menor a mayor",
+    "it": "Prezzo: dal più basso al più alto"
+  },
+  "Prices & availability subject to verification": {
+    "es": "Precios y disponibilidad sujetos a verificación",
+    "it": "Prezzi e disponibilità soggetti a verifica"
+  },
+  "Product categories": {
+    "es": "Categorías de productos",
+    "it": "Categorie di prodotti"
+  },
+  "Product code:": {
+    "es": "Código de producto:",
+    "it": "Codice prodotto:"
+  },
+  "Product data remains subject to approval.": {
+    "es": "Los datos del producto siguen sujetos a aprobación.",
+    "it": "I dati del prodotto restano soggetti ad approvazione."
+  },
+  "Product details": {
+    "es": "Detalles del producto",
+    "it": "Dettagli del prodotto"
+  },
+  "Product help": {
+    "es": "Ayuda sobre el producto",
+    "it": "Assistenza sul prodotto"
+  },
+  "QUICK VIEW": {
+    "es": "VISTA RÁPIDA",
+    "it": "VISTA RAPIDA"
+  },
+  "Remove from comparison": {
+    "es": "Quitar de la comparación",
+    "it": "Rimuovi dal confronto"
+  },
+  "Reset filters": {
+    "es": "Restablecer filtros",
+    "it": "Reimposta filtri"
+  },
+  "Room for your next favourite.": {
+    "es": "Un lugar para tu próximo favorito.",
+    "it": "Spazio per il tuo prossimo preferito."
+  },
+  "SAVED PRODUCTS": {
+    "es": "PRODUCTOS GUARDADOS",
+    "it": "PRODOTTI SALVATI"
+  },
+  "Save": {
+    "es": "Guardar",
+    "it": "Salva"
+  },
+  "Save product": {
+    "es": "Guardar producto",
+    "it": "Salva prodotto"
+  },
+  "Save this product": {
+    "es": "Guardar este producto",
+    "it": "Salva questo prodotto"
+  },
+  "Saved": {
+    "es": "Guardados",
+    "it": "Salvati"
+  },
+  "Saved (": {
+    "es": "Guardados (",
+    "it": "Salvati ("
+  },
+  "Search": {
+    "es": "Buscar",
+    "it": "Cerca"
+  },
+  "Search a product, style or code": {
+    "es": "Busca un producto, estilo o código",
+    "it": "Cerca un prodotto, uno stile o un codice"
+  },
+  "Search catalogue": {
+    "es": "Buscar en el catálogo",
+    "it": "Cerca nel catalogo"
+  },
+  "Search products": {
+    "es": "Buscar productos",
+    "it": "Cerca prodotti"
+  },
+  "Secure checkout": {
+    "es": "Pago seguro",
+    "it": "Pagamento sicuro"
+  },
+  "See delivery and returns information.": {
+    "es": "Consulta la información de envíos y devoluciones.",
+    "it": "Consulta le informazioni su consegne e resi."
+  },
+  "Select one": {
+    "es": "Selecciona una opción",
+    "it": "Seleziona un’opzione"
+  },
+  "Share product": {
+    "es": "Compartir producto",
+    "it": "Condividi prodotto"
+  },
+  "Shop": {
+    "es": "Tienda",
+    "it": "Negozio"
+  },
+  "Show my selection": {
+    "es": "Mostrar mi selección",
+    "it": "Mostra la mia selezione"
+  },
+  "Show saved products": {
+    "es": "Mostrar productos guardados",
+    "it": "Mostra prodotti salvati"
+  },
+  "Size & fit": {
+    "es": "Talla y ajuste",
+    "it": "Taglia e vestibilità"
+  },
+  "Size:": {
+    "es": "Talla:",
+    "it": "Taglia:"
+  },
+  "Sort products": {
+    "es": "Ordenar productos",
+    "it": "Ordina prodotti"
+  },
+  "Stock checked securely at checkout.": {
+    "es": "El stock se comprueba de forma segura al pagar.",
+    "it": "Le scorte vengono verificate in sicurezza al pagamento."
+  },
+  "Subtotal": {
+    "es": "Subtotal",
+    "it": "Subtotale"
+  },
+  "Supported countries: Belgium, Netherlands, France, Germany and Luxembourg.": {
+    "es": "Países admitidos: Bélgica, Países Bajos, Francia, Alemania y Luxemburgo.",
+    "it": "Paesi serviti: Belgio, Paesi Bassi, Francia, Germania e Lussemburgo."
+  },
+  "THE COLLECTION": {
+    "es": "LA COLECCIÓN",
+    "it": "LA COLLEZIONE"
+  },
+  "This product is not yet available.": {
+    "es": "Este producto aún no está disponible.",
+    "it": "Questo prodotto non è ancora disponibile."
+  },
+  "Toggle menu": {
+    "es": "Abrir o cerrar menú",
+    "it": "Apri o chiudi menu"
+  },
+  "Unsave": {
+    "es": "Quitar de guardados",
+    "it": "Rimuovi dai salvati"
+  },
+  "View": {
+    "es": "Ver",
+    "it": "Vedi"
+  },
+  "View product": {
+    "es": "Ver producto",
+    "it": "Vedi prodotto"
+  },
+  "We’ll narrow the collection to your next everyday companion.": {
+    "es": "Te ayudaremos a encontrar tu próximo compañero para cada día.",
+    "it": "Ti aiuteremo a trovare il tuo prossimo compagno di ogni giorno."
+  },
+  "What does your day call for?": {
+    "es": "¿Qué necesitas hoy?",
+    "it": "Di cosa hai bisogno oggi?"
+  },
+  "With photos": {
+    "es": "Con fotos",
+    "it": "Con foto"
+  },
+  "YOUR DAY.": {
+    "es": "TU DÍA.",
+    "it": "LA TUA GIORNATA."
+  },
+  "YOUR LAYERS.": {
+    "es": "TU ESTILO.",
+    "it": "IL TUO STILE."
+  },
+  "Your account": {
+    "es": "Tu cuenta",
+    "it": "Il tuo account"
+  },
+  "Your bag": {
+    "es": "Tu bolsa",
+    "it": "La tua borsa"
+  },
+  "Your bag is empty. Discover the collection.": {
+    "es": "Tu bolsa está vacía. Descubre la colección.",
+    "it": "La tua borsa è vuota. Scopri la collezione."
+  },
+  "Your bag qualifies for free shipping.": {
+    "es": "Tu bolsa reúne los requisitos para envío gratis.",
+    "it": "La tua borsa ha diritto alla spedizione gratuita."
+  },
+  "Your demo bag qualifies for free shipping.": {
+    "es": "Tu bolsa demo reúne los requisitos para envío gratis.",
+    "it": "La tua borsa demo ha diritto alla spedizione gratuita."
+  },
+  "away from free European shipping": {
+    "es": "para el envío gratis en Europa",
+    "it": "alla spedizione gratuita in Europa"
+  },
+  "colours": {
+    "es": "colores",
+    "it": "colori"
+  },
+  "in": {
+    "es": "en",
+    "it": "in"
+  },
+  "items": {
+    "es": "artículos",
+    "it": "articoli"
+  },
+  "preview price": {
+    "es": "precio de vista previa",
+    "it": "prezzo di anteprima"
+  },
+  "selected": {
+    "es": "seleccionados",
+    "it": "selezionati"
+  },
+  "styles ·": {
+    "es": "modelos ·",
+    "it": "modelli ·"
+  },
+  "Jackets & Vests": {
+    "es": "Chaquetas y chalecos",
+    "it": "Giacche e gilet"
+  },
+  "Fleece": {
+    "es": "Forros polares",
+    "it": "Pile"
+  },
+  "Sneakers": {
+    "es": "Zapatillas",
+    "it": "Sneakers"
+  },
+  "Other": {
+    "es": "Otros",
+    "it": "Altro"
+  },
+  "Category": {
+    "es": "Categoría",
+    "it": "Categoria"
+  },
+  "Description": {
+    "es": "Descripción",
+    "it": "Descrizione"
+  },
+  "Price": {
+    "es": "Precio",
+    "it": "Prezzo"
+  },
+  "Sizes": {
+    "es": "Tallas",
+    "it": "Taglie"
+  },
+  "Availability": {
+    "es": "Disponibilidad",
+    "it": "Disponibilità"
+  },
+  "Everyday": {
+    "es": "Cada día",
+    "it": "Ogni giorno"
+  },
+  "Layering": {
+    "es": "Combinaciones",
+    "it": "Abbinamenti"
+  },
+  "Movement": {
+    "es": "Movimiento",
+    "it": "Movimento"
+  },
+  "Easy layers for your daily rhythm": {
+    "es": "Prendas cómodas para tu ritmo diario",
+    "it": "Capi comodi per il tuo ritmo quotidiano"
+  },
+  "An extra layer for cooler moments": {
+    "es": "Un poco más de abrigo para los momentos frescos",
+    "it": "Un capo in più per i momenti più freschi"
+  },
+  "Room to move, wherever you go": {
+    "es": "Libertad de movimiento, vayas donde vayas",
+    "it": "Libertà di movimento, ovunque tu vada"
+  },
+  "The detail that brings it together": {
+    "es": "El detalle que lo une todo",
+    "it": "Il dettaglio che completa il tutto"
+  },
+  "Please choose a size for this colour.": {
+    "es": "Elige una talla para este color.",
+    "it": "Scegli una taglia per questo colore."
+  },
+  "Browser storage is unavailable. Your bag will last for this visit.": {
+    "es": "El almacenamiento del navegador no está disponible. Tu bolsa durará solo esta visita.",
+    "it": "Lo spazio di archiviazione del browser non è disponibile. La tua borsa resterà disponibile solo per questa visita."
+  },
+  "Removed from saved products": {
+    "es": "Eliminado de los productos guardados",
+    "it": "Rimosso dai prodotti salvati"
+  },
+  "Added to your saved products": {
+    "es": "Añadido a tus productos guardados",
+    "it": "Aggiunto ai prodotti salvati"
+  },
+  "Compare up to three products at a time.": {
+    "es": "Compara hasta tres productos a la vez.",
+    "it": "Confronta fino a tre prodotti alla volta."
+  },
+  "Choose a size to add this product.": {
+    "es": "Elige una talla para añadir este producto.",
+    "it": "Scegli una taglia per aggiungere questo prodotto."
+  },
+  "Pricing is awaiting approval.": {
+    "es": "El precio está pendiente de aprobación.",
+    "it": "Il prezzo è in attesa di approvazione."
+  },
+  "This product is not available for purchase yet.": {
+    "es": "Este producto aún no se puede comprar.",
+    "it": "Questo prodotto non è ancora acquistabile."
+  },
+  "The maximum available quantity is already in your bag.": {
+    "es": "Ya tienes en tu bolsa la cantidad máxima disponible.",
+    "it": "Nella tua borsa è già presente la quantità massima disponibile."
+  },
+  "Added to your bag": {
+    "es": "Añadido a tu bolsa",
+    "it": "Aggiunto alla tua borsa"
+  },
+  "Pricing is awaiting approval. You can explore sizes and save this product.": {
+    "es": "El precio está pendiente de aprobación. Puedes consultar las tallas y guardar este producto.",
+    "it": "Il prezzo è in attesa di approvazione. Puoi consultare le taglie e salvare questo prodotto."
+  },
+  "Product link copied": {
+    "es": "Enlace del producto copiado",
+    "it": "Link del prodotto copiato"
+  },
+  "Use your browser’s share menu to copy this product link.": {
+    "es": "Usa el menú de compartir de tu navegador para copiar el enlace del producto.",
+    "it": "Usa il menu di condivisione del browser per copiare il link del prodotto."
+  },
+  "Use your browser’s share menu to share this product.": {
+    "es": "Usa el menú de compartir de tu navegador para compartir este producto.",
+    "it": "Usa il menu di condivisione del browser per condividere questo prodotto."
+  },
+  "demo": {
+    "es": "demo",
+    "it": "demo"
+  },
+  "BIG K / CHECKOUT": {
+    "es": "BIG K / PAGO",
+    "it": "BIG K / PAGAMENTO"
+  },
+  "Your demo checkout.": {
+    "es": "Tu compra demo.",
+    "it": "Il tuo acquisto demo."
+  },
+  "Your test checkout.": {
+    "es": "Tu compra de prueba.",
+    "it": "Il tuo acquisto di prova."
+  },
+  "One step closer.": {
+    "es": "Un paso más cerca.",
+    "it": "Un passo più vicino."
+  },
+  "Explore the complete order journey. Use fictional details; no payment will be taken.": {
+    "es": "Explora todo el proceso de compra. Usa datos ficticios; no se realizará ningún pago.",
+    "it": "Esplora l’intero percorso dell’ordine. Usa dati fittizi; non verrà effettuato alcun pagamento."
+  },
+  "Stripe test mode: use test payment details only. No real money will be charged.": {
+    "es": "Modo de prueba de Stripe: usa solo datos de pago de prueba. No se cobrará dinero real.",
+    "it": "Modalità test Stripe: usa solo dati di pagamento di prova. Non verrà addebitato denaro reale."
+  },
+  "Your next move starts here. Complete your details, then pay securely with Stripe.": {
+    "es": "Tu próximo paso empieza aquí. Completa tus datos y paga de forma segura con Stripe.",
+    "it": "Il tuo prossimo passo inizia qui. Completa i tuoi dati, poi paga in sicurezza con Stripe."
+  },
+  "Checkout steps": {
+    "es": "Pasos de compra",
+    "it": "Passaggi dell’acquisto"
+  },
+  "Delivery details": {
+    "es": "Datos de entrega",
+    "it": "Dati di consegna"
+  },
+  "Secure payment": {
+    "es": "Pago seguro",
+    "it": "Pagamento sicuro"
+  },
+  "Loading your bag…": {
+    "es": "Cargando tu bolsa…",
+    "it": "Caricamento della borsa…"
+  },
+  "Your bag is empty.": {
+    "es": "Tu bolsa está vacía.",
+    "it": "La tua borsa è vuota."
+  },
+  "Your details": {
+    "es": "Tus datos",
+    "it": "I tuoi dati"
+  },
+  "We’ll use these to keep you updated about your order.": {
+    "es": "Los usaremos para informarte sobre tu pedido.",
+    "it": "Li useremo per aggiornarti sul tuo ordine."
+  },
+  "First name": {
+    "es": "Nombre",
+    "it": "Nome"
+  },
+  "Last name": {
+    "es": "Apellidos",
+    "it": "Cognome"
+  },
+  "Email address": {
+    "es": "Correo electrónico",
+    "it": "Indirizzo email"
+  },
+  "Mobile phone": {
+    "es": "Teléfono móvil",
+    "it": "Cellulare"
+  },
+  "Use + followed by 8 to 15 digits, without spaces.": {
+    "es": "Usa + seguido de entre 8 y 15 dígitos, sin espacios.",
+    "it": "Usa + seguito da 8 a 15 cifre, senza spazi."
+  },
+  "International format, including country code.": {
+    "es": "Formato internacional, incluido el prefijo del país.",
+    "it": "Formato internazionale, incluso il prefisso del paese."
+  },
+  "Delivery address": {
+    "es": "Dirección de entrega",
+    "it": "Indirizzo di consegna"
+  },
+  "Where should we send your selection?": {
+    "es": "¿Dónde enviamos tu selección?",
+    "it": "Dove inviamo la tua selezione?"
+  },
+  "Country": {
+    "es": "País",
+    "it": "Paese"
+  },
+  "Belgium": {
+    "es": "Bélgica",
+    "it": "Belgio"
+  },
+  "Netherlands": {
+    "es": "Países Bajos",
+    "it": "Paesi Bassi"
+  },
+  "France": {
+    "es": "Francia",
+    "it": "Francia"
+  },
+  "Germany": {
+    "es": "Alemania",
+    "it": "Germania"
+  },
+  "Luxembourg": {
+    "es": "Luxemburgo",
+    "it": "Lussemburgo"
+  },
+  "Street and house number": {
+    "es": "Calle y número",
+    "it": "Via e numero civico"
+  },
+  "Postal code": {
+    "es": "Código postal",
+    "it": "Codice postale"
+  },
+  "City": {
+    "es": "Ciudad",
+    "it": "Città"
+  },
+  "Ready for your next move?": {
+    "es": "¿Listo para tu próximo paso?",
+    "it": "Pronto per il tuo prossimo passo?"
+  },
+  "Pay faster with your saved wallet": {
+    "es": "Paga más rápido con tu monedero guardado",
+    "it": "Paga più velocemente con il tuo portafoglio salvato"
+  },
+  "Apple Pay, Google Pay or Link can appear on the next page when supported by your device and account.": {
+    "es": "Apple Pay, Google Pay o Link pueden aparecer en la siguiente página si tu dispositivo y tu cuenta los admiten.",
+    "it": "Apple Pay, Google Pay o Link possono apparire nella pagina successiva se supportati dal tuo dispositivo e dal tuo account."
+  },
+  "Checkout is being prepared. Payment is not available yet.": {
+    "es": "Estamos preparando el pago. Aún no está disponible.",
+    "it": "Stiamo preparando il pagamento. Non è ancora disponibile."
+  },
+  "I understand this is a demo order, I am using fictional information, and no payment or shipment will take place.": {
+    "es": "Entiendo que es un pedido demo, que uso datos ficticios y que no habrá ningún pago ni envío.",
+    "it": "Comprendo che si tratta di un ordine demo, che uso dati fittizi e che non verrà effettuato alcun pagamento né spedizione."
+  },
+  "I agree to the": {
+    "es": "Acepto las",
+    "it": "Accetto le"
+  },
+  "terms": {
+    "es": "condiciones",
+    "it": "condizioni"
+  },
+  "and have read the": {
+    "es": "y he leído el",
+    "it": "e ho letto l’"
+  },
+  "privacy notice": {
+    "es": "aviso de privacidad",
+    "it": "informativa sulla privacy"
+  },
+  "Preparing your order…": {
+    "es": "Preparando tu pedido…",
+    "it": "Preparazione dell’ordine…"
+  },
+  "Create demo order": {
+    "es": "Crear pedido demo",
+    "it": "Crea ordine demo"
+  },
+  "Continue to test payment": {
+    "es": "Continuar al pago de prueba",
+    "it": "Continua al pagamento di prova"
+  },
+  "Continue to secure payment": {
+    "es": "Continuar al pago seguro",
+    "it": "Continua al pagamento sicuro"
+  },
+  "No card details are requested.": {
+    "es": "No se solicitan datos de tarjeta.",
+    "it": "Non vengono richiesti dati della carta."
+  },
+  "Payment details are collected by Stripe on its hosted checkout page. Delivery details are confirmed there.": {
+    "es": "Stripe recopila los datos de pago en su página de pago alojada. Los datos de entrega se confirman allí.",
+    "it": "Stripe raccoglie i dati di pagamento sulla sua pagina di pagamento ospitata. I dati di consegna vengono confermati lì."
+  },
+  "No payment in demo mode": {
+    "es": "Sin pago en modo demo",
+    "it": "Nessun pagamento in modalità demo"
+  },
+  "Secure payment through Stripe": {
+    "es": "Pago seguro a través de Stripe",
+    "it": "Pagamento sicuro tramite Stripe"
+  },
+  "Your selection": {
+    "es": "Tu selección",
+    "it": "La tua selezione"
+  },
+  "Continue shopping": {
+    "es": "Seguir comprando",
+    "it": "Continua gli acquisti"
+  },
+  "Qty": {
+    "es": "Cant.",
+    "it": "Qtà"
+  },
+  "Your order qualifies for free delivery.": {
+    "es": "Tu pedido reúne los requisitos para envío gratis.",
+    "it": "Il tuo ordine ha diritto alla consegna gratuita."
+  },
+  "Free delivery from €100.": {
+    "es": "Envío gratis desde 100 €.",
+    "it": "Consegna gratuita da 100 €."
+  },
+  "Delivery": {
+    "es": "Envío",
+    "it": "Consegna"
+  },
+  "BigK Club discount": {
+    "es": "Descuento BigK Club",
+    "it": "Sconto BigK Club"
+  },
+  "Preview only. Product prices are loaded from the owner’s master; no payment will be taken.": {
+    "es": "Solo vista previa. Los precios se cargan desde el catálogo maestro del propietario; no se realizará ningún pago.",
+    "it": "Solo anteprima. I prezzi dei prodotti vengono caricati dal catalogo principale del proprietario; non verrà effettuato alcun pagamento."
+  },
+  "Prices include applicable taxes; final tax calculation is performed by the payment provider.": {
+    "es": "Los precios incluyen los impuestos aplicables; el proveedor de pagos realiza el cálculo fiscal final.",
+    "it": "I prezzi includono le imposte applicabili; il calcolo fiscale finale viene effettuato dal fornitore dei pagamenti."
+  },
+  "Preview only. Stock is not reserved and no real order is sent for fulfillment.": {
+    "es": "Solo vista previa. No se reserva stock ni se envían pedidos reales para su preparación.",
+    "it": "Solo anteprima. Le scorte non vengono riservate e non viene inviato alcun ordine reale per l’evasione."
+  },
+  "Items are reserved for a limited time while you complete payment. Avoid opening multiple checkout sessions.": {
+    "es": "Los artículos se reservan por tiempo limitado mientras completas el pago. Evita abrir varias sesiones de pago.",
+    "it": "Gli articoli vengono riservati per un periodo limitato mentre completi il pagamento. Evita di aprire più sessioni di pagamento."
+  },
+  "Unable to load the collection.": {
+    "es": "No se ha podido cargar la colección.",
+    "it": "Impossibile caricare la collezione."
+  },
+  "Checkout failed.": {
+    "es": "No se ha podido completar la compra.",
+    "it": "Acquisto non riuscito."
+  },
+  "Please try again.": {
+    "es": "Inténtalo de nuevo.",
+    "it": "Riprova."
+  },
+  "Open the private receipt link provided after checkout.": {
+    "es": "Abre el enlace privado del recibo proporcionado tras la compra.",
+    "it": "Apri il link privato della ricevuta fornito dopo l’acquisto."
+  },
+  "Unable to load order.": {
+    "es": "No se ha podido cargar el pedido.",
+    "it": "Impossibile caricare l’ordine."
+  },
+  "Your demo journey is complete.": {
+    "es": "Tu recorrido demo ha terminado.",
+    "it": "Il tuo percorso demo è completo."
+  },
+  "Confirming your payment.": {
+    "es": "Confirmando tu pago.",
+    "it": "Conferma del pagamento."
+  },
+  "You’re all set.": {
+    "es": "Todo listo.",
+    "it": "È tutto pronto."
+  },
+  "Your order is on its way.": {
+    "es": "Tu pedido está en camino.",
+    "it": "Il tuo ordine è in viaggio."
+  },
+  "Your checkout session expired.": {
+    "es": "Tu sesión de pago ha caducado.",
+    "it": "La tua sessione di pagamento è scaduta."
+  },
+  "This checkout was cancelled.": {
+    "es": "Esta compra se ha cancelado.",
+    "it": "Questo acquisto è stato annullato."
+  },
+  "Your payment needs a review.": {
+    "es": "Tu pago necesita una revisión.",
+    "it": "Il tuo pagamento richiede una verifica."
+  },
+  "Loading your order…": {
+    "es": "Cargando tu pedido…",
+    "it": "Caricamento dell’ordine…"
+  },
+  "No payment was taken. No shipment will be created.": {
+    "es": "No se ha realizado ningún pago. No se creará ningún envío.",
+    "it": "Non è stato effettuato alcun pagamento. Non verrà creata alcuna spedizione."
+  },
+  "We are waiting for secure confirmation from the payment provider. This page refreshes automatically.": {
+    "es": "Esperamos la confirmación segura del proveedor de pagos. Esta página se actualiza automáticamente.",
+    "it": "Attendiamo la conferma sicura del fornitore dei pagamenti. Questa pagina si aggiorna automaticamente."
+  },
+  "Payment was received outside the normal checkout flow or the amount did not match. Do not pay again; the store must review it before fulfillment.": {
+    "es": "El pago se recibió fuera del proceso habitual o el importe no coincidía. No vuelvas a pagar; la tienda debe revisarlo antes de preparar el pedido.",
+    "it": "Il pagamento è stato ricevuto al di fuori del normale flusso o l’importo non corrispondeva. Non pagare di nuovo; il negozio deve verificarlo prima dell’evasione."
+  },
+  "Keep this private receipt link to check your order’s progress.": {
+    "es": "Conserva este enlace privado del recibo para consultar el progreso de tu pedido.",
+    "it": "Conserva questo link privato della ricevuta per controllare lo stato dell’ordine."
+  },
+  "Total": {
+    "es": "Total",
+    "it": "Totale"
+  },
+  "Tracking reference:": {
+    "es": "Referencia de seguimiento:",
+    "it": "Riferimento di tracciamento:"
+  },
+  "Track your parcel ↗": {
+    "es": "Seguir tu paquete ↗",
+    "it": "Traccia il tuo pacco ↗"
+  },
+  "This receipt link grants access to this order summary. Keep it private.": {
+    "es": "Este enlace del recibo da acceso al resumen del pedido. No lo compartas.",
+    "it": "Questo link della ricevuta dà accesso al riepilogo dell’ordine. Mantienilo privato."
+  },
+  "Back to the collection": {
+    "es": "Volver a la colección",
+    "it": "Torna alla collezione"
+  },
+  "pending": {
+    "es": "pendiente",
+    "it": "in attesa"
+  },
+  "paid": {
+    "es": "pagado",
+    "it": "pagato"
+  },
+  "fulfilled": {
+    "es": "enviado",
+    "it": "spedito"
+  },
+  "expired": {
+    "es": "caducado",
+    "it": "scaduto"
+  },
+  "cancelled": {
+    "es": "cancelado",
+    "it": "annullato"
+  },
+  "payment review": {
+    "es": "pago en revisión",
+    "it": "pagamento in verifica"
+  },
+  "Check your contact details, international phone number, address and bag.": {
+    "es": "Comprueba tus datos de contacto, número de teléfono internacional, dirección y bolsa.",
+    "it": "Controlla i tuoi recapiti, il numero di telefono internazionale, l’indirizzo e la borsa."
+  },
+  "Live checkout is not configured and approved.": {
+    "es": "El pago real no está configurado ni aprobado.",
+    "it": "Il pagamento reale non è configurato e approvato."
+  },
+  "This payment session is no longer open. Check your order status before trying again.": {
+    "es": "Esta sesión de pago ya no está abierta. Comprueba el estado del pedido antes de volver a intentarlo.",
+    "it": "Questa sessione di pagamento non è più aperta. Controlla lo stato dell’ordine prima di riprovare."
+  },
+  "Payment provider did not return a checkout URL.": {
+    "es": "El proveedor de pagos no ha devuelto una URL de pago.",
+    "it": "Il fornitore dei pagamenti non ha restituito un URL di pagamento."
+  },
+  "Sign in to manage your account.": {
+    "es": "Inicia sesión para gestionar tu cuenta.",
+    "it": "Accedi per gestire il tuo account."
+  },
+  "Check your contact details and address.": {
+    "es": "Comprueba tus datos de contacto y dirección.",
+    "it": "Controlla i tuoi recapiti e l’indirizzo."
+  },
+  "Customer sign-in is not available until the store email service is connected.": {
+    "es": "El acceso de clientes no está disponible hasta que se conecte el servicio de correo de la tienda.",
+    "it": "L’accesso clienti non è disponibile finché non viene collegato il servizio email del negozio."
+  },
+  "YOUR BIGK": {
+    "es": "TU BIGK",
+    "it": "IL TUO BIGK"
+  },
+  "Good to have you back.": {
+    "es": "Qué alegría tenerte de vuelta.",
+    "it": "È bello riaverti qui."
+  },
+  "Your collection. Your account.": {
+    "es": "Tu colección. Tu cuenta.",
+    "it": "La tua collezione. Il tuo account."
+  },
+  "Checking your session…": {
+    "es": "Comprobando tu sesión…",
+    "it": "Verifica della sessione…"
+  },
+  "Signed in as": {
+    "es": "Sesión iniciada como",
+    "it": "Accesso effettuato come"
+  },
+  "Sign out": {
+    "es": "Cerrar sesión",
+    "it": "Esci"
+  },
+  "Unable to sign out. Please try again.": {
+    "es": "No se ha podido cerrar la sesión. Inténtalo de nuevo.",
+    "it": "Impossibile uscire. Riprova."
+  },
+  "Your points, rewards and BigK events in one place.": {
+    "es": "Tus puntos, recompensas y eventos BigK en un solo lugar.",
+    "it": "I tuoi punti, premi ed eventi BigK in un unico posto."
+  },
+  "Open your Club →": {
+    "es": "Abrir tu Club →",
+    "it": "Apri il tuo Club →"
+  },
+  "Your orders": {
+    "es": "Tus pedidos",
+    "it": "I tuoi ordini"
+  },
+  "product lines": {
+    "es": "líneas de producto",
+    "it": "righe prodotto"
+  },
+  "Tracking:": {
+    "es": "Seguimiento:",
+    "it": "Tracciamento:"
+  },
+  "No orders for this email yet.": {
+    "es": "Aún no hay pedidos para este correo.",
+    "it": "Nessun ordine per questa email."
+  },
+  "A simpler way to sign in.": {
+    "es": "Una forma más sencilla de iniciar sesión.",
+    "it": "Un modo più semplice per accedere."
+  },
+  "We’ll email you a secure, single-use link. No password to remember. The link expires after 15 minutes.": {
+    "es": "Te enviaremos un enlace seguro de un solo uso. Sin contraseñas que recordar. El enlace caduca a los 15 minutos.",
+    "it": "Ti invieremo un link sicuro monouso via email. Nessuna password da ricordare. Il link scade dopo 15 minuti."
+  },
+  "Check your inbox for your BigK sign-in link.": {
+    "es": "Revisa tu correo para encontrar el enlace de acceso a BigK.",
+    "it": "Controlla la posta per il link di accesso a BigK."
+  },
+  "Email me a sign-in link": {
+    "es": "Enviarme un enlace de acceso",
+    "it": "Inviami un link di accesso"
+  },
+  "That sign-in link has expired or was already used. Request a new link.": {
+    "es": "Ese enlace ha caducado o ya se ha usado. Solicita uno nuevo.",
+    "it": "Quel link di accesso è scaduto o è già stato usato. Richiedine uno nuovo."
+  },
+  "Unable to connect. Please try again.": {
+    "es": "No se ha podido conectar. Inténtalo de nuevo.",
+    "it": "Impossibile connettersi. Riprova."
+  },
+  "Try again later.": {
+    "es": "Inténtalo más tarde.",
+    "it": "Riprova più tardi."
+  },
+  "Confirm sign-in": {
+    "es": "Confirmar acceso",
+    "it": "Conferma accesso"
+  },
+  "Confirm your sign-in.": {
+    "es": "Confirma tu acceso.",
+    "it": "Conferma il tuo accesso."
+  },
+  "Press the button below to sign in to your BIG K account. Your link is used only after you confirm.": {
+    "es": "Pulsa el botón de abajo para acceder a tu cuenta BIG K. Tu enlace solo se utiliza después de confirmar.",
+    "it": "Premi il pulsante qui sotto per accedere al tuo account BIG K. Il link viene usato solo dopo la conferma."
+  },
+  "Sign in to my account": {
+    "es": "Acceder a mi cuenta",
+    "it": "Accedi al mio account"
+  },
+  "This link is invalid.": {
+    "es": "Este enlace no es válido.",
+    "it": "Questo link non è valido."
+  },
+  "Request a new sign-in link.": {
+    "es": "Solicita un nuevo enlace de acceso.",
+    "it": "Richiedi un nuovo link di accesso."
+  },
+  "Your details & preferences": {
+    "es": "Tus datos y preferencias",
+    "it": "I tuoi dati e le tue preferenze"
+  },
+  "Manage your contact details and addresses. To change your sign-in email, contact customer service.": {
+    "es": "Gestiona tus datos de contacto y direcciones. Para cambiar tu correo de acceso, contacta con atención al cliente.",
+    "it": "Gestisci i tuoi recapiti e indirizzi. Per cambiare l’email di accesso, contatta il servizio clienti."
+  },
+  "Phone number": {
+    "es": "Número de teléfono",
+    "it": "Numero di telefono"
+  },
+  "Company": {
+    "es": "Empresa",
+    "it": "Azienda"
+  },
+  "VAT number": {
+    "es": "Número de IVA",
+    "it": "Partita IVA"
+  },
+  "Preferred language": {
+    "es": "Idioma preferido",
+    "it": "Lingua preferita"
+  },
+  "Shipping address": {
+    "es": "Dirección de envío",
+    "it": "Indirizzo di spedizione"
+  },
+  "Billing address": {
+    "es": "Dirección de facturación",
+    "it": "Indirizzo di fatturazione"
+  },
+  "Your details and preferences have been saved. Existing orders remain unchanged.": {
+    "es": "Tus datos y preferencias se han guardado. Los pedidos existentes no cambian.",
+    "it": "I tuoi dati e le tue preferenze sono stati salvati. Gli ordini esistenti restano invariati."
+  },
+  "Email me BIG K news and offers. I can unsubscribe at any time.": {
+    "es": "Quiero recibir noticias y ofertas de BIG K por correo. Puedo darme de baja en cualquier momento.",
+    "it": "Desidero ricevere novità e offerte BIG K via email. Posso annullare l’iscrizione in qualsiasi momento."
+  },
+  "Order and account emails are separate from marketing.": {
+    "es": "Los correos de pedidos y de cuenta son independientes del marketing.",
+    "it": "Le email relative a ordini e account sono separate dal marketing."
+  },
+  "Saving…": {
+    "es": "Guardando…",
+    "it": "Salvataggio…"
+  },
+  "Save account details": {
+    "es": "Guardar datos de la cuenta",
+    "it": "Salva i dati dell’account"
+  },
+  "Loading your details…": {
+    "es": "Cargando tus datos…",
+    "it": "Caricamento dei tuoi dati…"
+  },
+  "The BIG K Journal": {
+    "es": "El Journal de BIG K",
+    "it": "Il Journal di BIG K"
+  },
+  "THE BIG K JOURNAL": {
+    "es": "EL JOURNAL DE BIG K",
+    "it": "IL JOURNAL DI BIG K"
+  },
+  "Stories in motion.": {
+    "es": "Historias en movimiento.",
+    "it": "Storie in movimento."
+  },
+  "Collection stories, considered details and a closer look at BIG K.": {
+    "es": "Historias de las colecciones, detalles cuidados y una mirada más cercana a BIG K.",
+    "it": "Storie delle collezioni, dettagli curati e uno sguardo più da vicino a BIG K."
+  },
+  "Collection stories, product guides and a closer look at BIG K.": {
+    "es": "Historias de las colecciones, guías de productos y una mirada más cercana a BIG K.",
+    "it": "Storie delle collezioni, guide ai prodotti e uno sguardo più da vicino a BIG K."
+  },
+  "Read story ↗": {
+    "es": "Leer historia ↗",
+    "it": "Leggi la storia ↗"
+  },
+  "Our first stories are on their way.": {
+    "es": "Nuestras primeras historias están en camino.",
+    "it": "Le nostre prime storie stanno arrivando."
+  },
+  "This article is currently available in English.": {
+    "es": "Este artículo está disponible actualmente en inglés.",
+    "it": "Questo articolo è attualmente disponibile in inglese."
+  },
+  "Articles are currently available in English.": {
+    "es": "Los artículos están disponibles actualmente en inglés.",
+    "it": "Gli articoli sono attualmente disponibili in inglese."
+  },
+  "Article not found": {
+    "es": "Artículo no encontrado",
+    "it": "Articolo non trovato"
+  },
+  "Join the BIG K newsletter": {
+    "es": "Suscríbete al boletín de BIG K",
+    "it": "Iscriviti alla newsletter BIG K"
+  },
+  "Collection stories, product news and updates from BIG K. Confirm your email to join.": {
+    "es": "Historias de las colecciones, novedades de productos y noticias de BIG K. Confirma tu correo para suscribirte.",
+    "it": "Storie delle collezioni, novità sui prodotti e aggiornamenti da BIG K. Conferma la tua email per iscriverti."
+  },
+  "Newsletter preferences": {
+    "es": "Preferencias del boletín",
+    "it": "Preferenze della newsletter"
+  },
+  "You’re on the list.": {
+    "es": "Ya estás en la lista.",
+    "it": "Sei nella lista."
+  },
+  "You’re unsubscribed.": {
+    "es": "Te has dado de baja.",
+    "it": "La tua iscrizione è stata annullata."
+  },
+  "Confirm your newsletter signup.": {
+    "es": "Confirma tu suscripción al boletín.",
+    "it": "Conferma l’iscrizione alla newsletter."
+  },
+  "Leave the newsletter.": {
+    "es": "Darse de baja del boletín.",
+    "it": "Lascia la newsletter."
+  },
+  "Your email is confirmed. You can unsubscribe at any time.": {
+    "es": "Tu correo está confirmado. Puedes darte de baja en cualquier momento.",
+    "it": "La tua email è confermata. Puoi annullare l’iscrizione in qualsiasi momento."
+  },
+  "Your newsletter permission has been withdrawn.": {
+    "es": "Se ha retirado tu consentimiento para el boletín.",
+    "it": "Il tuo consenso alla newsletter è stato revocato."
+  },
+  "Press the button to confirm that you want product news and updates from BIG K.": {
+    "es": "Pulsa el botón para confirmar que quieres recibir novedades y noticias de BIG K.",
+    "it": "Premi il pulsante per confermare che desideri ricevere novità e aggiornamenti da BIG K."
+  },
+  "Press the button to stop newsletter emails. This does not change order or account emails.": {
+    "es": "Pulsa el botón para dejar de recibir el boletín. Esto no cambia los correos de pedidos ni de cuenta.",
+    "it": "Premi il pulsante per interrompere la newsletter. Questo non modifica le email relative a ordini o account."
+  },
+  "Confirm my subscription": {
+    "es": "Confirmar mi suscripción",
+    "it": "Conferma la mia iscrizione"
+  },
+  "Unsubscribe me": {
+    "es": "Darme de baja",
+    "it": "Annulla la mia iscrizione"
+  },
+  "Open the private link from your email, or": {
+    "es": "Abre el enlace privado de tu correo, o",
+    "it": "Apri il link privato dalla tua email, oppure"
+  },
+  "request a new confirmation": {
+    "es": "solicita una nueva confirmación",
+    "it": "richiedi una nuova conferma"
+  },
+  "Back to BIG K": {
+    "es": "Volver a BIG K",
+    "it": "Torna a BIG K"
+  },
+  "Information": {
+    "es": "Información",
+    "it": "Informazioni"
+  },
+  "BIGK / GOOD TO KNOW": {
+    "es": "BIGK / INFORMACIÓN ÚTIL",
+    "it": "BIGK / INFORMAZIONI UTILI"
+  },
+  "Back to the collection →": {
+    "es": "Volver a la colección →",
+    "it": "Torna alla collezione →"
+  },
+  "Looking good. Moving fast.": {
+    "es": "Buen estilo. En movimiento.",
+    "it": "Stile che si vede. Energia che si muove."
+  },
+  "BigK brings everyday layers and movement together. This collection uses original source products and photography, with room for you to build your own everyday.": {
+    "es": "BigK une las prendas de cada día y el movimiento. Esta colección utiliza productos y fotografías originales, para que puedas crear tu propio estilo cotidiano.",
+    "it": "BigK unisce capi quotidiani e movimento. Questa collezione utilizza prodotti e fotografie originali, lasciandoti lo spazio per creare il tuo stile di ogni giorno."
+  },
+  "The collection": {
+    "es": "La colección",
+    "it": "La collezione"
+  },
+  "Explore jackets, vests, pants and accessories. Product-specific material, care and size information will be published after approval.": {
+    "es": "Explora chaquetas, chalecos, pantalones y accesorios. La información de materiales, cuidado y tallas de cada producto se publicará tras su aprobación.",
+    "it": "Esplora giacche, gilet, pantaloni e accessori. Le informazioni specifiche su materiali, cura e taglie verranno pubblicate dopo l’approvazione."
+  },
+  "An honest preview": {
+    "es": "Una vista previa honesta",
+    "it": "Un’anteprima trasparente"
+  },
+  "This application is under development. Illustrative prices and unverified inventory are clearly identified. A product appearing in the catalogue does not mean it is ready for sale.": {
+    "es": "Esta aplicación está en desarrollo. Los precios ilustrativos y el inventario sin verificar se identifican claramente. Que un producto aparezca en el catálogo no significa que esté listo para la venta.",
+    "it": "Questa applicazione è in fase di sviluppo. I prezzi indicativi e le scorte non verificate sono chiaramente identificati. La presenza di un prodotto nel catalogo non significa che sia pronto per la vendita."
+  },
+  "Delivery & returns.": {
+    "es": "Envíos y devoluciones.",
+    "it": "Consegne e resi."
+  },
+  "The current checkout supports Belgium, Netherlands, France, Germany and Luxembourg.": {
+    "es": "El pago actual admite Bélgica, Países Bajos, Francia, Alemania y Luxemburgo.",
+    "it": "Il pagamento attuale supporta Belgio, Paesi Bassi, Francia, Germania e Lussemburgo."
+  },
+  "Delivery costs": {
+    "es": "Gastos de envío",
+    "it": "Costi di consegna"
+  },
+  "Configured standard delivery is €6.95 for orders below €100, and free from €100. Carrier choice, service times and coverage must be approved before launch.": {
+    "es": "El envío estándar configurado cuesta 6,95 € para pedidos inferiores a 100 € y es gratis desde 100 €. La elección de transportista, los plazos y la cobertura deben aprobarse antes del lanzamiento.",
+    "it": "La consegna standard configurata costa 6,95 € per ordini inferiori a 100 € ed è gratuita da 100 €. La scelta del corriere, i tempi di servizio e la copertura devono essere approvati prima del lancio."
+  },
+  "Returns and refunds": {
+    "es": "Devoluciones y reembolsos",
+    "it": "Resi e rimborsi"
+  },
+  "Demo orders do not involve shipment or payment. The legal seller must publish the applicable cancellation rights, return window, return address, return costs and refund process before live orders are accepted.": {
+    "es": "Los pedidos demo no implican envíos ni pagos. El vendedor legal debe publicar los derechos de cancelación aplicables, el plazo y dirección de devolución, los gastos y el proceso de reembolso antes de aceptar pedidos reales.",
+    "it": "Gli ordini demo non comportano spedizioni né pagamenti. Il venditore legale deve pubblicare i diritti di annullamento applicabili, il termine e l’indirizzo per i resi, i costi e la procedura di rimborso prima di accettare ordini reali."
+  },
+  "Your privacy matters.": {
+    "es": "Tu privacidad importa.",
+    "it": "La tua privacy conta."
+  },
+  "This is a development privacy notice. The legal seller’s final policy must be reviewed and published before launch.": {
+    "es": "Este es un aviso de privacidad de desarrollo. La política final del vendedor legal debe revisarse y publicarse antes del lanzamiento.",
+    "it": "Questa è un’informativa sulla privacy di sviluppo. La politica finale del venditore legale deve essere verificata e pubblicata prima del lancio."
+  },
+  "Newsletter": {
+    "es": "Boletín",
+    "it": "Newsletter"
+  },
+  "Newsletter signup requires an explicit checkbox and email confirmation. We keep your email address and consent history to manage your preferences. Confirmation emails use our configured email provider. You can withdraw newsletter permission using your private unsubscribe link or account preferences. Unconfirmed requests that have never been subscribed or unsubscribed are removed after 30 days by the scheduled maintenance job.": {
+    "es": "La suscripción al boletín requiere marcar una casilla de consentimiento y confirmar el correo. Conservamos tu dirección de correo y el historial de consentimiento para gestionar tus preferencias. Los correos de confirmación usan nuestro proveedor configurado. Puedes retirar tu consentimiento mediante tu enlace privado de baja o las preferencias de tu cuenta. Las solicitudes sin confirmar que nunca se hayan suscrito ni dado de baja se eliminan a los 30 días mediante la tarea de mantenimiento programada.",
+    "it": "L’iscrizione alla newsletter richiede una casella di consenso esplicito e la conferma via email. Conserviamo il tuo indirizzo email e la cronologia del consenso per gestire le preferenze. Le email di conferma usano il fornitore configurato. Puoi revocare il consenso tramite il link privato di disiscrizione o le preferenze dell’account. Le richieste non confermate che non risultano mai iscritte o disiscritte vengono eliminate dopo 30 giorni dalla manutenzione programmata."
+  },
+  "Browser storage": {
+    "es": "Almacenamiento del navegador",
+    "it": "Archiviazione del browser"
+  },
+  "Your shopping bag and saved product IDs are kept in localStorage until you remove them or clear this site’s browser data. A checkout retry key and request digest are kept in sessionStorage; raw contact details are not stored there. Sign-in uses necessary session cookies: customer access lasts up to seven days, admin access eight hours and warehouse access two hours. These cookies are HttpOnly, SameSite=Strict and Secure in production. Your language choice is saved for up to one year in the bigk_language preference cookie. No analytics or advertising trackers are included.": {
+    "es": "Tu bolsa y los identificadores de productos guardados se conservan en localStorage hasta que los elimines o borres los datos de este sitio. Una clave de reintento de pago y un resumen de solicitud se guardan en sessionStorage; los datos de contacto sin procesar no se almacenan allí. El acceso utiliza cookies de sesión necesarias: hasta siete días para clientes, ocho horas para administración y dos horas para almacén. Estas cookies son HttpOnly, SameSite=Strict y Secure en producción. Tu idioma se guarda hasta un año en la cookie de preferencias bigk_language. No se incluyen rastreadores de analítica ni publicidad.",
+    "it": "La borsa e gli ID dei prodotti salvati sono conservati in localStorage finché non li rimuovi o cancelli i dati di questo sito. Una chiave per riprovare il pagamento e un riepilogo della richiesta sono conservati in sessionStorage; i dati di contatto grezzi non vengono memorizzati lì. L’accesso usa cookie di sessione necessari: fino a sette giorni per i clienti, otto ore per gli amministratori e due ore per il magazzino. Questi cookie sono HttpOnly, SameSite=Strict e Secure in produzione. La tua lingua viene salvata fino a un anno nel cookie di preferenza bigk_language. Non sono inclusi strumenti di tracciamento analitico o pubblicitario."
+  },
+  "Orders and accounts": {
+    "es": "Pedidos y cuentas",
+    "it": "Ordini e account"
+  },
+  "Checkout contact and delivery details, including the required phone number, are stored in the store database to manage orders and delivery. The phone field does not enroll you in SMS marketing. In preview mode, use fictional information only. Customer sign-in uses a single-use email link; session cookies are HttpOnly. Private order receipt links should not be shared.": {
+    "es": "Los datos de contacto y entrega del pago, incluido el teléfono obligatorio, se guardan en la base de datos de la tienda para gestionar pedidos y entregas. El campo de teléfono no te suscribe a marketing por SMS. En modo de vista previa, usa solo datos ficticios. El acceso de clientes usa un enlace de correo de un solo uso; las cookies de sesión son HttpOnly. No compartas los enlaces privados de recibos de pedidos.",
+    "it": "I recapiti e i dati di consegna del pagamento, incluso il telefono obbligatorio, vengono conservati nel database del negozio per gestire ordini e consegne. Il campo telefono non ti iscrive al marketing via SMS. In modalità anteprima usa solo dati fittizi. L’accesso clienti usa un link email monouso; i cookie di sessione sono HttpOnly. I link privati delle ricevute non devono essere condivisi."
+  },
+  "External providers": {
+    "es": "Proveedores externos",
+    "it": "Fornitori esterni"
+  },
+  "When configured, Stripe processes hosted checkout and Resend delivers account sign-in links. The final policy must identify the legal controller, processing purposes, legal bases, retention periods, provider terms, international transfers and your data rights.": {
+    "es": "Cuando está configurado, Stripe procesa el pago alojado y Resend entrega los enlaces de acceso a la cuenta. La política final debe identificar al responsable legal, las finalidades y bases jurídicas del tratamiento, los plazos de conservación, las condiciones de los proveedores, las transferencias internacionales y tus derechos sobre los datos.",
+    "it": "Quando configurato, Stripe elabora il pagamento ospitato e Resend consegna i link di accesso all’account. La politica finale deve identificare il titolare legale, le finalità e basi giuridiche del trattamento, i periodi di conservazione, le condizioni dei fornitori, i trasferimenti internazionali e i tuoi diritti sui dati."
+  },
+  "Terms of this preview.": {
+    "es": "Condiciones de esta vista previa.",
+    "it": "Condizioni di questa anteprima."
+  },
+  "This development version is available for evaluation. It is not an invitation to place real orders while in demo mode.": {
+    "es": "Esta versión de desarrollo está disponible para evaluación. No invita a realizar pedidos reales mientras esté en modo demo.",
+    "it": "Questa versione di sviluppo è disponibile per valutazione. Non è un invito a effettuare ordini reali mentre è in modalità demo."
+  },
+  "Demo use": {
+    "es": "Uso demo",
+    "it": "Uso demo"
+  },
+  "Use fictional details only. Demo orders do not create a payment, stock reservation, purchase contract or shipment. Listed example prices and availability are subject to verification.": {
+    "es": "Usa solo datos ficticios. Los pedidos demo no generan pagos, reservas de stock, contratos de compra ni envíos. Los precios de ejemplo y la disponibilidad indicados están sujetos a verificación.",
+    "it": "Usa solo dati fittizi. Gli ordini demo non creano pagamenti, prenotazioni di scorte, contratti di acquisto né spedizioni. I prezzi di esempio e la disponibilità indicati sono soggetti a verifica."
+  },
+  "Before live sales": {
+    "es": "Antes de las ventas reales",
+    "it": "Prima delle vendite reali"
+  },
+  "The legal seller must publish its company information, total pricing and tax policy, payment terms, delivery commitments, consumer withdrawal rights, guarantees, complaints process and applicable terms before enabling commerce.": {
+    "es": "El vendedor legal debe publicar sus datos de empresa, precios totales y política fiscal, condiciones de pago, compromisos de entrega, derechos de desistimiento de consumidores, garantías, proceso de reclamaciones y condiciones aplicables antes de activar las ventas.",
+    "it": "Il venditore legale deve pubblicare le informazioni aziendali, i prezzi totali e la politica fiscale, le condizioni di pagamento, gli impegni di consegna, i diritti di recesso dei consumatori, le garanzie, la procedura di reclamo e le condizioni applicabili prima di attivare il commercio."
+  },
+  "Let’s keep in touch.": {
+    "es": "Sigamos en contacto.",
+    "it": "Restiamo in contatto."
+  },
+  "Contact BIG K about your order or account at team@bigk.be.": {
+    "es": "Contacta con BIG K sobre tu pedido o cuenta en team@bigk.be.",
+    "it": "Contatta BIG K per il tuo ordine o account a team@bigk.be."
+  },
+  "Preview assistance": {
+    "es": "Ayuda con la vista previa",
+    "it": "Assistenza per l’anteprima"
+  },
+  "Email team@bigk.be for order and account assistance. Include your order reference where relevant, but never send payment card details, passwords or authenticator codes. Support hours and response commitments have not yet been published.": {
+    "es": "Escribe a team@bigk.be para recibir ayuda con pedidos y cuentas. Incluye la referencia del pedido cuando corresponda, pero nunca envíes datos de tarjeta, contraseñas ni códigos de autenticación. Aún no se han publicado horarios de atención ni compromisos de respuesta.",
+    "it": "Scrivi a team@bigk.be per assistenza su ordini e account. Includi il riferimento dell’ordine quando pertinente, ma non inviare mai dati della carta, password o codici di autenticazione. Orari di assistenza e tempi di risposta non sono ancora stati pubblicati."
+  },
+  "For an existing demo order, use your private receipt link to view its status. You can sign in to your account using a single-use link sent by email.": {
+    "es": "Para un pedido demo existente, usa tu enlace privado del recibo para consultar su estado. Puedes acceder a tu cuenta mediante un enlace de un solo uso enviado por correo.",
+    "it": "Per un ordine demo esistente, usa il link privato della ricevuta per consultarne lo stato. Puoi accedere al tuo account tramite un link monouso inviato via email."
+  },
+  "Private article preview": {
+    "es": "Vista previa privada del artículo",
+    "it": "Anteprima privata dell’articolo"
+  },
+  "Draft": {
+    "es": "Borrador",
+    "it": "Bozza"
+  },
+  "Explore BIG K": {
+    "es": "Explora BIG K",
+    "it": "Esplora BIG K"
+  },
+  "← The BIG K Journal": {
+    "es": "← El Journal de BIG K",
+    "it": "← Il Journal di BIG K"
+  },
+  "Explore jackets, fleece, vests, pants and accessories. Find product details, available colours and sizes on each product page.": {
+    "es": "Explora chaquetas, forros polares, chalecos, pantalones y accesorios. Encuentra detalles, colores disponibles y tallas en cada página de producto.",
+    "it": "Esplora giacche, pile, gilet, pantaloni e accessori. Trova dettagli, colori disponibili e taglie in ogni pagina prodotto."
+  },
+  "Find your everyday fit": {
+    "es": "Encuentra tu estilo para cada día",
+    "it": "Trova il tuo stile di ogni giorno"
+  },
+  "Browse the collection by style, colour or size. Save your favourites, compare products and find the pieces that suit your day.": {
+    "es": "Explora la colección por estilo, color o talla. Guarda tus favoritos, compara productos y encuentra las prendas que van con tu día.",
+    "it": "Sfoglia la collezione per stile, colore o taglia. Salva i preferiti, confronta i prodotti e trova i capi adatti alla tua giornata."
+  },
+  "Customer service": {
+    "es": "Atención al cliente",
+    "it": "Servizio clienti"
+  },
+  "Email team@bigk.be for help with products, your order or your account. Include your order reference if you have one. Never send payment card details, passwords or authenticator codes.": {
+    "es": "Escribe a team@bigk.be para recibir ayuda con productos, tu pedido o tu cuenta. Incluye tu referencia de pedido si la tienes. Nunca envíes datos de tarjeta, contraseñas ni códigos de autenticación.",
+    "it": "Scrivi a team@bigk.be per assistenza su prodotti, ordine o account. Includi il riferimento dell’ordine se lo hai. Non inviare mai dati della carta, password o codici di autenticazione."
+  },
+  "Use the private receipt link from your order to view its status. You can also sign in to your account using a single-use link sent by email.": {
+    "es": "Usa el enlace privado del recibo de tu pedido para consultar su estado. También puedes acceder a tu cuenta mediante un enlace de un solo uso enviado por correo.",
+    "it": "Usa il link privato della ricevuta dell’ordine per consultarne lo stato. Puoi anche accedere al tuo account tramite un link monouso inviato via email."
+  },
+  "Order online for delivery to Belgium, the Netherlands, Germany, France and Luxembourg. For other European destinations, contact team@bigk.be to arrange delivery before ordering.": {
+    "es": "Compra en línea con entrega en Bélgica, Países Bajos, Alemania, Francia y Luxemburgo. Para otros destinos europeos, contacta con team@bigk.be para acordar la entrega antes de comprar.",
+    "it": "Ordina online con consegna in Belgio, Paesi Bassi, Germania, Francia e Lussemburgo. Per altre destinazioni europee, contatta team@bigk.be per concordare la consegna prima di ordinare."
+  },
+  "Standard delivery costs €6.95 for orders below €100 and is free from €100 in supported countries. The delivery charge is shown at checkout.": {
+    "es": "El envío estándar cuesta 6,95 € para pedidos inferiores a 100 € y es gratis desde 100 € en los países admitidos. Los gastos de envío se muestran al pagar.",
+    "it": "La consegna standard costa 6,95 € per ordini inferiori a 100 € ed è gratuita da 100 € nei paesi serviti. Il costo viene mostrato al pagamento."
+  },
+  "Delivery times": {
+    "es": "Plazos de entrega",
+    "it": "Tempi di consegna"
+  },
+  "Belgium: delivery within 24 hours for orders placed before 12:00. The Netherlands: 48 hours. Germany and France: 3 days. Other European destinations, including Luxembourg: 3–5 days.": {
+    "es": "Bélgica: entrega en 24 horas para pedidos realizados antes de las 12:00. Países Bajos: 48 horas. Alemania y Francia: 3 días. Otros destinos europeos, incluido Luxemburgo: 3–5 días.",
+    "it": "Belgio: consegna entro 24 ore per ordini effettuati prima delle 12:00. Paesi Bassi: 48 ore. Germania e Francia: 3 giorni. Altre destinazioni europee, incluso il Lussemburgo: 3–5 giorni."
+  },
+  "Return shipping costs": {
+    "es": "Gastos de devolución",
+    "it": "Costi di spedizione del reso"
+  },
+  "For a change-of-mind return, you pay the direct cost of return shipping. BIG K does not offer free return shipping for these returns. For return questions, contact team@bigk.be and include your order reference.": {
+    "es": "Si devuelves un producto porque has cambiado de opinión, pagas el coste directo del envío de devolución. BIG K no ofrece envío de devolución gratuito para estos casos. Para consultas sobre devoluciones, contacta con team@bigk.be e incluye tu referencia de pedido.",
+    "it": "Per un reso dovuto a un ripensamento, paghi il costo diretto della spedizione di reso. BIG K non offre spedizioni di reso gratuite in questi casi. Per domande sui resi, contatta team@bigk.be e includi il riferimento dell’ordine."
+  },
+  "Return address": {
+    "es": "Dirección de devolución",
+    "it": "Indirizzo per i resi"
+  },
+  "BIGK BV, Theo Verellenlaan 27, 2990 Wuustwezel, Belgium.": {
+    "es": "BIGK BV, Theo Verellenlaan 27, 2990 Wuustwezel, Bélgica.",
+    "it": "BIGK BV, Theo Verellenlaan 27, 2990 Wuustwezel, Belgio."
+  },
+  "Wrong or faulty items": {
+    "es": "Artículos incorrectos o defectuosos",
+    "it": "Articoli errati o difettosi"
+  },
+  "Received the wrong item or a faulty product? Contact team@bigk.be so we can arrange the appropriate solution. Necessary return shipping costs for a legal guarantee remedy are not charged to you.": {
+    "es": "¿Has recibido un artículo incorrecto o defectuoso? Contacta con team@bigk.be para que podamos organizar una solución adecuada. No se te cobrarán los gastos de devolución necesarios para una solución amparada por la garantía legal.",
+    "it": "Hai ricevuto un articolo errato o difettoso? Contatta team@bigk.be per concordare una soluzione adeguata. I costi di reso necessari per un rimedio previsto dalla garanzia legale non ti vengono addebitati."
+  },
+  "Your shopping bag is saved in your browser and backed up on our server using the bigk_cart cookie, so it can be restored on the same browser if local cart data is lost. The cookie contains a random cart token, not your name or email. Cart contents, quantities, estimated item value, checkout stage and last change time are available only to authorised store staff and are kept for up to seven days after the last cart change. A submitted checkout can link the cart to its order. Saved products remain in localStorage until you remove them or clear site data. Checkout retry data does not contain raw contact details. Sign-in uses necessary HttpOnly session cookies. Your language choice is saved for up to one year. No advertising or cross-site tracking is included.": {
+    "es": "Tu bolsa se guarda en el navegador y se respalda en nuestro servidor mediante la cookie bigk_cart, para poder restaurarla en el mismo navegador si se pierden los datos locales. La cookie contiene un token aleatorio de bolsa, no tu nombre ni correo. El contenido, las cantidades, el valor estimado de los artículos, la fase de pago y la última modificación solo están disponibles para el personal autorizado de la tienda y se conservan hasta siete días desde el último cambio. Un pago enviado puede vincular la bolsa a su pedido. Los productos guardados permanecen en localStorage hasta que los elimines o borres los datos del sitio. Los datos de reintento de pago no contienen datos de contacto sin procesar. El acceso usa cookies de sesión HttpOnly necesarias. Tu idioma se guarda hasta un año. No se incluye seguimiento publicitario ni entre sitios.",
+    "it": "La borsa viene salvata nel browser e sul nostro server tramite il cookie bigk_cart, per poterla ripristinare nello stesso browser in caso di perdita dei dati locali. Il cookie contiene un token casuale della borsa, non il tuo nome o email. Contenuto, quantità, valore stimato degli articoli, fase del pagamento e ultima modifica sono accessibili solo al personale autorizzato del negozio e conservati fino a sette giorni dall’ultima modifica. Un pagamento inviato può collegare la borsa al relativo ordine. I prodotti salvati restano in localStorage finché non li rimuovi o cancelli i dati del sito. I dati per riprovare il pagamento non contengono recapiti grezzi. L’accesso usa cookie di sessione HttpOnly necessari. La tua lingua è salvata fino a un anno. Non è incluso tracciamento pubblicitario o tra siti."
+  },
+  "Product photography in review": {
+    "es": "Fotografías del producto en revisión",
+    "it": "Fotografie del prodotto in verifica"
+  },
+  "Open product help": {
+    "es": "Abrir ayuda sobre el producto",
+    "it": "Apri assistenza sul prodotto"
+  },
+  "Unsave this product": {
+    "es": "Quitar este producto de guardados",
+    "it": "Rimuovi questo prodotto dai salvati"
+  },
+  "Choose size for this product": {
+    "es": "Elegir talla para este producto",
+    "it": "Scegli la taglia per questo prodotto"
+  },
+  "THE BIG K COLLECTIONS": {
+    "es": "LAS COLECCIONES BIG K",
+    "it": "LE COLLEZIONI BIG K"
+  },
+  "Find your series.": {
+    "es": "Encuentra tu serie.",
+    "it": "Trova la tua serie."
+  },
+  "Explore all products": {
+    "es": "Explorar todos los productos",
+    "it": "Esplora tutti i prodotti"
+  },
+  "Product series": {
+    "es": "Series de productos",
+    "it": "Serie di prodotti"
+  },
+  "series": {
+    "es": "serie",
+    "it": "serie"
+  },
+  "SERIES": {
+    "es": "SERIES",
+    "it": "SERIE"
+  },
+  "models": {
+    "es": "modelos",
+    "it": "modelli"
+  },
+  "Explore the range.": {
+    "es": "Explora la gama.",
+    "it": "Esplora la gamma."
+  },
+  "individual models.": {
+    "es": "modelos individuales.",
+    "it": "modelli singoli."
+  },
+  "Choose your colour on the product page.": {
+    "es": "Elige tu color en la página del producto.",
+    "it": "Scegli il colore nella pagina prodotto."
+  },
+  "100 points = €3": {
+    "es": "100 puntos = 3 €",
+    "it": "100 punti = 3 €"
+  },
+  "expected points": {
+    "es": "puntos previstos",
+    "it": "punti previsti"
+  },
+  "after points discount": {
+    "es": "tras el descuento con puntos",
+    "it": "dopo lo sconto punti"
+  },
+  "Eligible products incl. VAT, excluding delivery.": {
+    "es": "Productos elegibles con IVA, sin gastos de envío.",
+    "it": "Prodotti idonei IVA inclusa, consegna esclusa."
+  },
+  "available": {
+    "es": "disponibles",
+    "it": "disponibili"
+  },
+  "Use your points": {
+    "es": "Usa tus puntos",
+    "it": "Usa i tuoi punti"
+  },
+  "off": {
+    "es": "de descuento",
+    "it": "di sconto"
+  },
+  "Keep my points": {
+    "es": "Conservar mis puntos",
+    "it": "Conserva i miei punti"
+  },
+  "Free with a customer account. Preview orders do not earn or spend points.": {
+    "es": "Gratis con una cuenta de cliente. Los pedidos de vista previa no generan ni usan puntos.",
+    "it": "Gratis con un account cliente. Gli ordini di anteprima non generano né utilizzano punti."
+  },
+  "Up to 10% of eligible products. No promotional coupon combinations.": {
+    "es": "Hasta el 10% de los productos elegibles. No combinable con cupones promocionales.",
+    "it": "Fino al 10% dei prodotti idonei. Non cumulabile con coupon promozionali."
+  },
+  "Product guide": {
+    "es": "Guía de producto",
+    "it": "Guida al prodotto"
+  },
+  "Reset": {
+    "es": "Reiniciar",
+    "it": "Reimposta"
+  },
+  "Other colours": {
+    "es": "Otros colores",
+    "it": "Altri colori"
+  },
+  "Listed sizes": {
+    "es": "Tallas indicadas",
+    "it": "Taglie indicate"
+  },
+  "Choose size": {
+    "es": "Elegir talla",
+    "it": "Scegli la taglia"
+  },
+  "Ask about this product": {
+    "es": "Preguntar sobre este producto",
+    "it": "Chiedi informazioni su questo prodotto"
+  },
+  "Ask about colours, sizes or delivery": {
+    "es": "Pregunta por colores, tallas o envíos",
+    "it": "Chiedi informazioni su colori, taglie o consegna"
+  },
+  "Send product question": {
+    "es": "Enviar pregunta sobre el producto",
+    "it": "Invia domanda sul prodotto"
+  },
+  "Answers use the current catalogue. Unconfirmed specifications stay unconfirmed.": {
+    "es": "Las respuestas usan el catálogo actual. Las especificaciones sin confirmar siguen sin confirmarse.",
+    "it": "Le risposte usano il catalogo attuale. Le specifiche non confermate restano tali."
+  },
+  "Explore {product}. I can help with the colours, listed sizes, price and delivery setup for this product.": {
+    "es": "Explora {product}. Puedo ayudarte con los colores, las tallas indicadas, el precio y las opciones de envío de este producto.",
+    "it": "Esplora {product}. Posso aiutarti con colori, taglie indicate, prezzo e modalità di consegna di questo prodotto."
+  },
+  "I can help with this product’s listed colours, sizes, price and delivery. Materials, care and fit measurements are awaiting confirmation.": {
+    "es": "Puedo ayudarte con los colores, tallas, precio y envío indicados para este producto. Los materiales, el cuidado y las medidas de ajuste están pendientes de confirmación.",
+    "it": "Posso aiutarti con colori, taglie, prezzo e consegna indicati per questo prodotto. Materiali, cura e misure di vestibilità sono in attesa di conferma."
+  },
+  "The listed colourways are:": {
+    "es": "Los colores indicados son:",
+    "it": "I colori indicati sono:"
+  },
+  "Choose a photo below to view that colour.": {
+    "es": "Elige una foto abajo para ver ese color.",
+    "it": "Scegli una foto qui sotto per vedere quel colore."
+  },
+  "No other colourways are currently listed for this product.": {
+    "es": "Actualmente no se indican otros colores para este producto.",
+    "it": "Al momento non sono indicati altri colori per questo prodotto."
+  },
+  "A waterproof or windproof rating has not been supplied. Water-repellent fabric is not the same as waterproof. I cannot verify performance from photos.": {
+    "es": "No se ha proporcionado una clasificación de impermeabilidad ni de protección contra el viento. Un tejido repelente al agua no es lo mismo que uno impermeable. No puedo verificar el rendimiento a partir de fotos.",
+    "it": "Non è stata fornita una classificazione di impermeabilità o protezione dal vento. Un tessuto idrorepellente non equivale a un tessuto impermeabile. Non posso verificare le prestazioni dalle foto."
+  },
+  "Care instructions have not been supplied for this product.": {
+    "es": "No se han proporcionado instrucciones de cuidado para este producto.",
+    "it": "Non sono state fornite istruzioni di cura per questo prodotto."
+  },
+  "Material composition has not been supplied for this product.": {
+    "es": "No se ha proporcionado la composición de materiales de este producto.",
+    "it": "Non è stata fornita la composizione dei materiali di questo prodotto."
+  },
+  "Technical performance information has not been supplied for this product.": {
+    "es": "No se ha proporcionado información sobre el rendimiento técnico de este producto.",
+    "it": "Non sono state fornite informazioni sulle prestazioni tecniche di questo prodotto."
+  },
+  "Stock is awaiting verification.": {
+    "es": "El stock está pendiente de verificación.",
+    "it": "Le scorte sono in attesa di verifica."
+  },
+  "Availability is checked again at checkout.": {
+    "es": "La disponibilidad se comprueba de nuevo al pagar.",
+    "it": "La disponibilità viene verificata nuovamente al pagamento."
+  },
+  "Fit measurements and a size recommendation are not confirmed yet.": {
+    "es": "Las medidas de ajuste y la recomendación de talla aún no están confirmadas.",
+    "it": "Le misure di vestibilità e il consiglio sulla taglia non sono ancora confermati."
+  },
+  "The price is awaiting approval. You can explore the photos now; purchasing will become available after pricing and stock are confirmed.": {
+    "es": "El precio está pendiente de aprobación. Ya puedes ver las fotos; la compra estará disponible cuando se confirmen el precio y el stock.",
+    "it": "Il prezzo è in attesa di approvazione. Puoi già vedere le foto; l’acquisto sarà disponibile dopo la conferma del prezzo e delle scorte."
+  },
+  "The price is {price}.": {
+    "es": "El precio es {price}.",
+    "it": "Il prezzo è {price}."
+  },
+  "The illustrative price is {price}.": {
+    "es": "El precio ilustrativo es {price}.",
+    "it": "Il prezzo indicativo è {price}."
+  },
+  "This preview does not take payments.": {
+    "es": "Esta vista previa no acepta pagos.",
+    "it": "Questa anteprima non accetta pagamenti."
+  },
+  "The current delivery setup covers Belgium, the Netherlands, France, Germany and Luxembourg: free from €100, otherwise €6.95. Final delivery and return terms still need approval.": {
+    "es": "La configuración actual de envíos cubre Bélgica, Países Bajos, Francia, Alemania y Luxemburgo: gratis desde 100 €; en caso contrario, 6,95 €. Las condiciones finales de envío y devolución aún necesitan aprobación.",
+    "it": "La configurazione attuale delle consegne copre Belgio, Paesi Bassi, Francia, Germania e Lussemburgo: gratuita da 100 €, altrimenti 6,95 €. Le condizioni finali di consegna e reso richiedono ancora approvazione."
+  },
+  "Demo checkout creates no shipment.": {
+    "es": "Una compra demo no genera ningún envío.",
+    "it": "Un acquisto demo non crea alcuna spedizione."
+  },
+  "Use Compare below to add this product to your comparison. You can compare up to three catalogue products.": {
+    "es": "Usa Comparar abajo para añadir este producto a tu comparación. Puedes comparar hasta tres productos del catálogo.",
+    "it": "Usa Confronta qui sotto per aggiungere questo prodotto al confronto. Puoi confrontare fino a tre prodotti del catalogo."
+  },
+  "Pricing is awaiting approval for this product. You can save it or explore other colours in the meantime.": {
+    "es": "El precio de este producto está pendiente de aprobación. Mientras tanto, puedes guardarlo o explorar otros colores.",
+    "it": "Il prezzo di questo prodotto è in attesa di approvazione. Nel frattempo puoi salvarlo o esplorare altri colori."
+  },
+  "Use Choose size below to pick a size before adding this product to your bag.": {
+    "es": "Usa Elegir talla abajo para seleccionar una talla antes de añadir este producto a tu bolsa.",
+    "it": "Usa Scegli la taglia qui sotto prima di aggiungere questo prodotto alla borsa."
+  },
+  "Use Choose size below to pick a size before adding this product to your demo bag. No payment is taken.": {
+    "es": "Usa Elegir talla abajo para seleccionar una talla antes de añadir este producto a tu bolsa demo. No se realizará ningún pago.",
+    "it": "Usa Scegli la taglia qui sotto prima di aggiungere questo prodotto alla borsa demo. Non verrà effettuato alcun pagamento."
+  },
+  "Skip to content": {
+    "es": "Saltar al contenido",
+    "it": "Vai al contenuto"
+  },
+  "Language": {
+    "es": "Idioma",
+    "it": "Lingua"
+  },
+  "Your collection.": {
+    "es": "Tu colección.",
+    "it": "La tua collezione."
+  },
+  "Close bag": {
+    "es": "Cerrar bolsa",
+    "it": "Chiudi borsa"
+  },
+  "Technology & Construction": {
+    "es": "Tecnología y construcción",
+    "it": "Tecnologia e costruzione"
+  },
+  "Materials & Fit": {
+    "es": "Materiales y ajuste",
+    "it": "Materiali e vestibilità"
+  },
+  "Size guide": {
+    "es": "Guía de tallas",
+    "it": "Guida alle taglie"
+  },
+  "Product size measurements": {
+    "es": "Medidas de la prenda",
+    "it": "Misure del capo"
+  },
+  "BIG K ® / BUILT INTO EVERY DETAIL": {
+    "es": "BIG K ® / CADA DETALLE CUENTA",
+    "it": "BIG K ® / CURA IN OGNI DETTAGLIO"
+  }
+}

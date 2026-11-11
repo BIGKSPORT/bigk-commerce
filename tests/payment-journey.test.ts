@@ -112,7 +112,8 @@ await test('isolated complete checkout → webhook → inventory → backoffice 
   assert.equal((await db().prepare('SELECT COUNT(*) AS n FROM email_outbox WHERE order_id=?').get(a.id))!.n,0);
  });
  await t.test('checkout language is snapshotted independently of country and passed to Stripe and return links',async()=>{
-  for(const locale of ['nl','fr'] as const){const r=await checkout(req('/api/checkout',{...payload(),email:locale+'.fixture@example.test',country:'BE',locale}));assert.equal(r.status,200);const created=await r.json(),record=(await getOrder(created.id))!,params=payloads.at(-1)!;assert.equal(record.language,locale);assert.equal(record.items[0].name,expectedProductName);assert.equal(params.get('locale'),locale);assert.equal(params.get('success_url'),origin+'/'+locale+'/order#'+created.id+'.'+created.receiptToken);assert.equal(params.get('cancel_url'),origin+'/'+locale+'/checkout?cancelled=1');assert.equal((await event('evt_locale_cancel_'+locale,record,'checkout.session.async_payment_failed')).status,200)}
+  for(const locale of ['nl','fr','es','it'] as const){const r=await checkout(req('/api/checkout',{...payload(),email:locale+'.fixture@example.test',country:'BE',locale}));assert.equal(r.status,200);const created=await r.json(),record=(await getOrder(created.id))!,params=payloads.at(-1)!;assert.equal(record.language,locale);assert.equal(record.items[0].name,expectedProductName);assert.equal(params.get('locale'),locale);assert.equal(params.get('success_url'),origin+'/'+locale+'/order#'+created.id+'.'+created.receiptToken);assert.equal(params.get('cancel_url'),origin+'/'+locale+'/checkout?cancelled=1');assert.equal((await event('evt_locale_cancel_'+locale,record,'checkout.session.async_payment_failed')).status,200)}
  });
 });
 globalThis.fetch=originalFetch;await closeDatabase();
+

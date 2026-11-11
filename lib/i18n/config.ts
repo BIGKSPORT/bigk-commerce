@@ -1,12 +1,12 @@
 /** Draft configuration. A language must pass the complete journey before activation. */
-export const locales = ['en', 'nl', 'fr', 'de'] as const;
+export const locales = ['en', 'nl', 'fr', 'de', 'es', 'it'] as const;
 export type Locale = (typeof locales)[number];
 export const defaultLocale: Locale = 'en';
 export const languageNames: Record<Locale, string> = {
-  en: 'English', nl: 'Nederlands', fr: 'Français', de: 'Deutsch',
+  en: 'English', nl: 'Nederlands', fr: 'Français', de: 'Deutsch', es: 'Español', it: 'Italiano',
 };
 export const regionalLocales: Record<Locale, string> = {
-  en: 'en-BE', nl: 'nl-BE', fr: 'fr-BE', de: 'de-DE',
+  en: 'en-BE', nl: 'nl-BE', fr: 'fr-BE', de: 'de-DE', es: 'es-ES', it: 'it-IT',
 };
 export function isLocale(value: unknown): value is Locale {
   return typeof value === 'string' && locales.some(locale => locale === value);
@@ -29,3 +29,4 @@ export function localizedMoney(cents: number, locale: Locale): string {
     style: 'currency', currency: 'EUR', maximumFractionDigits: 2,
   }).format(cents / 100);
 }
+

@@ -2,6 +2,8 @@
 import {useSiteLanguage} from './site-language';
 import styles from './payment-methods.module.css';
 const labels={
+ es:{title:'Opciones de pago',note:'Los métodos disponibles dependen de tu país, dispositivo y pedido. Stripe procesa el pago de forma segura.'},
+ it:{title:'Opzioni di pagamento',note:'I metodi disponibili dipendono dal paese, dal dispositivo e dall’ordine. Stripe elabora il pagamento in sicurezza.'},
  en:{title:'Payment options',note:'Available methods depend on your country, device and order. Payment is processed securely by Stripe.'},
  nl:{title:'Betaalmogelijkheden',note:'De beschikbare betaalmethoden hangen af van je land, apparaat en bestelling. Stripe verwerkt je betaling veilig.'},
  fr:{title:'Moyens de paiement',note:'Les moyens disponibles dépendent de votre pays, appareil et commande. Stripe traite votre paiement en toute sécurité.'},
@@ -26,3 +28,4 @@ export default function PaymentMethods({placement='footer'}:{placement?:'footer'
  <p className={styles.note}>{copy.note}</p>
  </section>;
 }
+

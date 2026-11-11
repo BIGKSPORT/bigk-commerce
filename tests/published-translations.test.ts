@@ -45,7 +45,7 @@ await test('reviewed translation snapshots keep drafts private and preserve comm
  const grouped=sharedProducts(await products()).find(v=>v.id===p.id)!;assert(usableTranslation(grouped,'nl')?.description);
  await setFeature('catalog_translation_drafts',false);assert.notEqual(localizedPublicProducts(await products(),'nl',false).find(v=>v.id===p.id)!.description,content.translations.nl.description);
  await reviewProductTranslation({id:p.id,version:p.version,locale:'nl',action:'withdraw'});p=(await products()).find(v=>v.id===initial.id)!;assert.equal(p.content?.translationPublications?.nl,undefined);assert.equal(p.content?.translations?.nl?.description,'NIEUW PRIVÉCONCEPT');
- assert.equal((await translationReviewState(p.id,'it')).routeActive,false);assert.equal(publicProductData(p).content?.translationPublications,undefined);
+ assert.equal((await translationReviewState(p.id,'it')).routeActive,true);assert.equal(publicProductData(p).content?.translationPublications,undefined);
 
  const groupPayload={id:p.id,versions:{[p.id]:p.version},name:p.name,description:p.description,category:p.category,content:{...p.content!,translations:{...p.content?.translations,nl:{description:'Samen opgeslagen en gepubliceerd.'}}},publishLocale:'nl'};
  const combinedRequest=(auth='',payload:unknown=groupPayload,origin='http://localhost:3000')=>new Request('http://localhost:3000/api/admin/product-groups',{method:'PATCH',headers:{cookie:auth,origin,'content-type':'application/json'},body:JSON.stringify(payload)});
@@ -67,3 +67,4 @@ await test('reviewed translation snapshots keep drafts private and preserve comm
 
  console.log('PASS: owner/origin/version checks; approval only; draft isolation; per-field source invalidation; no approval forgery; feature switch; withdrawal retains drafts; identifiers/prices/stock unchanged.');
 }finally{await closeDatabase();rmSync(folder,{recursive:true,force:true});}});
+

@@ -1,6 +1,6 @@
 # Site languages and editing Dutch copy
 
-Public interface languages are English (`/en`), Dutch (`/nl`) and French (`/fr`). On an unprefixed public URL, the saved `bigk_language` choice wins; otherwise quality-weighted browser language is used, falling back to English. IP country does not select a language. A visitor in Belgium can prefer Dutch, French or English. The language selector persists an explicit choice for up to one year. Invalid locale routes are not published.
+Public interface languages are English (`/en`), Dutch (`/nl`), French (`/fr`), Spanish (`/es`) and Italian (`/it`). On an unprefixed public URL, the saved `bigk_language` choice wins; otherwise quality-weighted browser language is used, falling back to English. IP country does not select a language. A visitor in Belgium can prefer Dutch, French or English. The language selector persists an explicit choice for up to one year. Invalid locale routes are not published.
 
 Navigation, HTML lang, catalogue filters, cart, checkout, account, Club, static information pages, newsletter screens and receipt interface use this choice. Stripe receives the snapshotted checkout language; success/cancellation, confirmation and shipment messages preserve it. Customer magic links carry language without consuming the login token on GET. Private routes stay noindex and APIs stay under `/api`.
 
@@ -17,6 +17,7 @@ Public copy is currently edited in the repository, not in Backoffice:
 - Blog/static information pages: `lib/i18n/content-copy.ts`
 - Gallery/product help: `lib/i18n/product-ui-copy.ts`
 - Order emails: `lib/i18n/order-email-copy.ts`
+- Spanish and Italian interface copy: `lib/i18n/es-it-copy.json`
 
 For each exact English source key, edit **only** its `nl` value to change Dutch wording. Preserve placeholders, IDs and English keys. Example: `Find your layers.` now displays **Vind jouw outfit.** and `YOUR LAYERS.` displays **JOUW STIJL.** Dutch marketing is adapted naturally rather than word-for-word: jackets/fleece/outfit/style replace awkward literal “lagen”. Technical construction language still follows product evidence.
 

@@ -5,7 +5,7 @@ import {alpinArticle,alpinColour,alpinProductColour,alpinProductUrl,alpinCopy,al
 import {alpinUI} from './i18n/alpin-ui';
 export function alpinMetadata(locale:AlpinLocale,products:Product[],indexable:boolean):Metadata {
  const copy=alpinCopy(locale),url=seller.origin+alpinPaths[locale],image=products[0]?.images[0],translation=products[0]?.content?.localizedCopy,seoTitle=translation?.seoTitle||copy.seoTitle,seoDescription=translation?.seoDescription||copy.seoDescription;
- return {title:{absolute:seoTitle},description:seoDescription,alternates:{canonical:url,languages:{en:seller.origin+alpinPaths.en,nl:seller.origin+alpinPaths.nl,fr:seller.origin+alpinPaths.fr,'x-default':seller.origin+alpinPaths.en}},robots:{index:indexable,follow:indexable},openGraph:{type:'website',title:seoTitle,description:seoDescription,url,siteName:'Big K',locale:locale==='en'?'en_GB':locale==='nl'?'nl_NL':'fr_FR',alternateLocale:['en_GB','nl_NL','fr_FR'].filter(value=>value!==(locale==='en'?'en_GB':locale==='nl'?'nl_NL':'fr_FR')),images:image?[{url:seller.origin+image,alt:alpinName}]:[]},twitter:{card:'summary_large_image',title:seoTitle,description:seoDescription,images:image?[seller.origin+image]:[]}};
+ return {title:{absolute:seoTitle},description:seoDescription,alternates:{canonical:url,languages:{en:seller.origin+alpinPaths.en,nl:seller.origin+alpinPaths.nl,fr:seller.origin+alpinPaths.fr,es:seller.origin+alpinPaths.es,it:seller.origin+alpinPaths.it,'x-default':seller.origin+alpinPaths.en}},robots:{index:indexable,follow:indexable},openGraph:{type:'website',title:seoTitle,description:seoDescription,url,siteName:'Big K',locale:({en:'en_GB',nl:'nl_NL',fr:'fr_FR',es:'es_ES',it:'it_IT'})[locale],alternateLocale:['en_GB','nl_NL','fr_FR','es_ES','it_IT'].filter(value=>value!==(({en:'en_GB',nl:'nl_NL',fr:'fr_FR',es:'es_ES',it:'it_IT'})[locale])),images:image?[{url:seller.origin+image,alt:alpinName}]:[]},twitter:{card:'summary_large_image',title:seoTitle,description:seoDescription,images:image?[seller.origin+image]:[]}};
 }
 export function alpinStructuredData(locale:AlpinLocale,products:Product[]) {
  const copy=alpinCopy(locale),url=seller.origin+alpinPaths[locale];
@@ -17,4 +17,5 @@ export function alpinStructuredData(locale:AlpinLocale,products:Product[]) {
   {'@type':'BreadcrumbList',itemListElement:[{'@type':'ListItem',position:1,name:alpinUI[locale].collection,item:seller.origin+'/#catalog'},{'@type':'ListItem',position:2,name:alpinName,item:url}]},
  ]};
 }
+
 
