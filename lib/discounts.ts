@@ -1,0 +1,173 @@
+import { z } from 'zod';
+import { db, transaction } from './db';
+import { HttpError } from './security';
+
+export const discountCodeSchema = z
+  .object({
+    code: z
+      .string()
+      .trim()
+      .min(3)
+      .max(32)
+      .regex(/^[A-Z0-9_-]+$/i, 'Use letters, numbers, - or _ only.'),
+    type: z.enum(['percent', 'fixed']),
+    /** percent: 1–100; fixed: cents off product subtotal */
+    value: z.number().int().positive().max(1000000),
+    minSubtotalCents: z.number().int().min(0).max(10000000).default(0),
+    maxRedemptions: z.number().int().min(0).max(1000000).nullable().default(null),
+    perCustomerLimit: z.number().int().min(0).max(100).nullable().default(null),
+    startsAt: z.string().datetime().nullable().default(null),
+    endsAt: z.string().datetime().nullable().default(null),
+    active: z.boolean().default(true),
+    note: z.string().trim().max(200).optional().default(''),
+  })
+  .strict()
+  .superRefine((v, ctx) => {
+    if (v.type === 'percent' && v.value > 100) {
+      ctx.addIssue({ code: 'custom', message: 'Percent discount cannot exceed 100.', path: ['value'] });
+    }
+  });
+
+export type DiscountCodeInput = z.infer<typeof discountCodeSchema>;
+
+export type DiscountRow = {
+  code: string;
+  type: 'percent' | 'fixed';
+  value: number;
+  min_subtotal_cents: number;
+  max_redemptions: number | null;
+  per_customer_limit: number | null;
+  starts_at: string | null;
+  ends_at: string | null;
+  active: number;
+  redemption_count: number;
+  note: string;
+  created_at: string;
+};
+
+export function normalizePromoCode(raw: string) {
+  return raw.trim().toUpperCase();
+}
+
+/** Product-only subtotal → discount cents (never exceeds subtotal). */
+export function computeDiscountCents(type: 'percent' | 'fixed', value: number, productSubtotalCents: number) {
+  if (productSubtotalCents <= 0) return 0;
+  const raw = type === 'percent' ? Math.floor((productSubtotalCents * value) / 100) : value;
+  return Math.max(0, Math.min(productSubtotalCents, raw));
+}
+
+export async function listDiscountCodes(): Promise<DiscountRow[]> {
+  return (await db().prepare('SELECT * FROM discount_codes ORDER BY created_at DESC').all()) as DiscountRow[];
+}
+
+export async function upsertDiscountCode(input: DiscountCodeInput) {
+  const parsed = discountCodeSchema.parse(input);
+  const code = normalizePromoCode(parsed.code);
+  const now = new Date().toISOString();
+  await db()
+    .prepare(
+      `INSERT INTO discount_codes(code,type,value,min_subtotal_cents,max_redemptions,per_customer_limit,starts_at,ends_at,active,redemption_count,note,created_at)
+       VALUES(?,?,?,?,?,?,?,?,?,0,?,?)
+       ON CONFLICT(code) DO UPDATE SET
+         type=excluded.type,
+         value=excluded.value,
+         min_subtotal_cents=excluded.min_subtotal_cents,
+         max_redemptions=excluded.max_redemptions,
+         per_customer_limit=excluded.per_customer_limit,
+         starts_at=excluded.starts_at,
+         ends_at=excluded.ends_at,
+         active=excluded.active,
+         note=excluded.note`,
+    )
+    .run(
+      code,
+      parsed.type,
+      parsed.value,
+      parsed.minSubtotalCents,
+      parsed.maxRedemptions,
+      parsed.perCustomerLimit,
+      parsed.startsAt,
+      parsed.endsAt,
+      parsed.active ? 1 : 0,
+      parsed.note || '',
+      now,
+    );
+  return code;
+}
+
+export async function setDiscountActive(code: string, active: boolean) {
+  const n = normalizePromoCode(code);
+  const r = await db().prepare('UPDATE discount_codes SET active=? WHERE code=?').run(active ? 1 : 0, n);
+  if (!r.changes) throw new HttpError(404, 'Discount code not found.');
+}
+
+/**
+ * Validate a code for a checkout. Does not increment usage (that happens on paid settlement).
+ * Returns discount applied to product subtotal only.
+ */
+export async function quotePromoCode(opts: {
+  code: string;
+  productSubtotalCents: number;
+  email: string;
+  now?: string;
+}) {
+  const code = normalizePromoCode(opts.code);
+  const now = opts.now || new Date().toISOString();
+  const row = (await db().prepare('SELECT * FROM discount_codes WHERE code=?').get(code)) as DiscountRow | undefined;
+  if (!row || !row.active) throw new HttpError(400, 'This promo code is not valid.');
+  if (row.starts_at && row.starts_at > now) throw new HttpError(400, 'This promo code is not active yet.');
+  if (row.ends_at && row.ends_at < now) throw new HttpError(400, 'This promo code has expired.');
+  if (row.max_redemptions != null && row.redemption_count >= row.max_redemptions) {
+    throw new HttpError(400, 'This promo code has reached its usage limit.');
+  }
+  if (opts.productSubtotalCents < row.min_subtotal_cents) {
+    throw new HttpError(
+      400,
+      `This code requires a product subtotal of at least €${(row.min_subtotal_cents / 100).toFixed(2)}.`,
+    );
+  }
+  if (row.per_customer_limit != null && row.per_customer_limit > 0) {
+    const used = (await db()
+      .prepare(
+        `SELECT COUNT(*) AS n FROM discount_redemptions WHERE code=? AND email=? AND status='applied'`,
+      )
+      .get(code, opts.email.toLowerCase())) as { n: number };
+    if (Number(used?.n || 0) >= row.per_customer_limit) {
+      throw new HttpError(400, 'You have already used this promo code the maximum number of times.');
+    }
+  }
+  const discountCents = computeDiscountCents(row.type, row.value, opts.productSubtotalCents);
+  if (discountCents <= 0) throw new HttpError(400, 'This promo code does not apply to this order.');
+  return { code, discountCents, type: row.type, value: row.value };
+}
+
+/** Reserve a redemption row while checkout is pending (idempotent per order). */
+export async function reservePromoForOrder(orderId: string, code: string, email: string, discountCents: number) {
+  const normalized = normalizePromoCode(code);
+  await db()
+    .prepare(
+      `INSERT INTO discount_redemptions(id,code,order_id,email,discount_cents,status,created_at)
+       VALUES(?,?,?,?,?,'reserved',?)
+       ON CONFLICT(order_id) DO UPDATE SET code=excluded.code,discount_cents=excluded.discount_cents,status='reserved'`,
+    )
+    .run(crypto.randomUUID(), normalized, orderId, email.toLowerCase(), discountCents, new Date().toISOString());
+}
+
+export async function finalizePromoOnPaid(orderId: string) {
+  return transaction(async () => {
+    const row = (await db().prepare('SELECT * FROM discount_redemptions WHERE order_id=?').get(orderId)) as
+      | { code: string; status: string }
+      | undefined;
+    if (!row || row.status === 'applied') return;
+    if (row.status === 'reserved') {
+      await db().prepare(`UPDATE discount_redemptions SET status='applied' WHERE order_id=?`).run(orderId);
+      await db().prepare(`UPDATE discount_codes SET redemption_count=redemption_count+1 WHERE code=?`).run(row.code);
+    }
+  });
+}
+
+export async function releasePromoOnCancel(orderId: string) {
+  await db()
+    .prepare(`UPDATE discount_redemptions SET status='released' WHERE order_id=? AND status='reserved'`)
+    .run(orderId);
+}
