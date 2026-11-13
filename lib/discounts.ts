@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { db, transaction } from './db';
+import { db } from './db';
 import { HttpError } from './security';
 
 export const discountCodeSchema = z
