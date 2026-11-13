@@ -1,48 +1,691 @@
 'use client';
-import AdminMyParcelLabel,{MyParcelConnection} from './admin-myparcel-label';
-import {useState,type FormEvent} from 'react';
-import {ArrowUpRight,Package,Search,RotateCcw} from 'lucide-react';
+import AdminMyParcelLabel, {MyParcelConnection} from './admin-myparcel-label';
+import {useState, type FormEvent} from 'react';
+import {ArrowUpRight, Package, Search, RotateCcw} from 'lucide-react';
 import {Modal} from './storefront';
 import {money} from '@/lib/format';
 import type {Order} from '@/lib/types';
-import {dateTime,type AdminTransport,type ClubAdmin} from './admin-types';
+import {dateTime, type AdminTransport, type ClubAdmin} from './admin-types';
 
-export function AdminOrders({orders,transport,onSaved,club}:{orders:Order[];transport:AdminTransport;onSaved:()=>Promise<void>;club:ClubAdmin|null}){
- const [invoicePath,setInvoicePath]=useState('');
- const [shippingDraft,setShippingDraft]=useState<Record<string,{tracking:string;url:string;carrier:string}>>({});
- const [query,setQuery]=useState('');
- const [status,setStatus]=useState('paid');
- const [selected,setSelected]=useState<Order|null>(null);
- const [error,setError]=useState('');
- const [message,setMessage]=useState('');
- const [busy,setBusy]=useState(false);
- const [refund,setRefund]=useState<{lines:{variantId:string;name:string;size:string;quantity:number;netCents:number}[];history:any[]}|null>(null);
+export function AdminOrders({
+  orders,
+  transport,
+  onSaved,
+  club,
+}: {
+  orders: Order[];
+  transport: AdminTransport;
+  onSaved: () => Promise<void>;
+  club: ClubAdmin | null;
+}) {
+  const [invoicePath, setInvoicePath] = useState('');
+  const [shippingDraft, setShippingDraft] = useState<
+    Record<string, {tracking: string; url: string; carrier: string}>
+  >({});
+  const [query, setQuery] = useState('');
+  const [status, setStatus] = useState('paid');
+  const [selected, setSelected] = useState<Order | null>(null);
+  const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [refund, setRefund] = useState<{
+    lines: {variantId: string; name: string; size: string; quantity: number; netCents: number}[];
+    history: any[];
+  } | null>(null);
 
- const paidCount=orders.filter(o=>o.status==='paid').length;
- const fulfilledCount=orders.filter(o=>o.status==='fulfilled').length;
- const reviewCount=orders.filter(o=>o.status==='payment_review').length;
- const unpaidCount=orders.filter(o=>o.status==='pending'||o.status==='expired'||o.status==='cancelled').length;
- const filtered=orders.filter(o=>(status==='All'||(status==='Unpaid checkouts'?(o.status==='pending'||o.status==='expired'||o.status==='cancelled'):o.status===status))&&(o.id+' '+o.email+' '+o.deliveryAddress.name).toLowerCase().includes(query.toLowerCase()));
+  const paidCount = orders.filter((o) => o.status === 'paid').length;
+  const fulfilledCount = orders.filter((o) => o.status === 'fulfilled').length;
+  const reviewCount = orders.filter((o) => o.status === 'payment_review').length;
+  const unpaidCount = orders.filter(
+    (o) => o.status === 'pending' || o.status === 'expired' || o.status === 'cancelled',
+  ).length;
 
- async function fulfil(e:FormEvent<HTMLFormElement>){e.preventDefault();if(!selected)return;const f=new FormData(e.currentTarget),tracking=String(f.get('tracking')),carrier=String(f.get('carrier')),trackingUrl=String(f.get('trackingUrl')||'');setBusy(true);setError('');try{await transport.request('/api/admin/orders',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:selected.id,tracking,carrier,trackingUrl,packingConfirmed:f.get('packed')==='yes'})});await onSaved();setSelected({...selected,status:'fulfilled',tracking,carrier,trackingUrl});setMessage('Order marked fulfilled. Shipment email queued, subject to the email connection.')}catch(e){setError((e as Error).message)}finally{setBusy(false)}}
- async function resolveRequest(e:FormEvent<HTMLFormElement>,id:string){e.preventDefault();setBusy(true);setError('');try{await transport.request('/api/admin/withdrawals',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,reason:new FormData(e.currentTarget).get('reason')})});await onSaved();setSelected(previous=>previous?{...previous,withdrawals:previous.withdrawals?.map(w=>w.id===id?{...w,status:'resolved'}:w)}:previous);setMessage('Withdrawal review recorded. Any payment refund and Club hold must be reconciled separately.')}catch(e){setError((e as Error).message)}finally{setBusy(false)}}
- async function openRefund(){if(!selected)return;setError('');try{setRefund(await transport.request('/api/admin/returns?orderId='+encodeURIComponent(selected.id)))}catch(e){setError((e as Error).message)}}
- async function recordRefund(e:FormEvent<HTMLFormElement>){e.preventDefault();if(!selected||!refund)return;setBusy(true);setError('');const f=new FormData(e.currentTarget);try{await transport.request('/api/admin/returns',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({orderId:selected.id,reference:f.get('reference'),reason:f.get('reason'),confirmation:f.get('confirmation'),shippingRefundCents:Math.round(Number(f.get('shippingRefund'))*100),lines:refund.lines.map(l=>({variantId:l.variantId,cumulativeCents:Math.round(Number(f.get(l.variantId))*100)}))})});await onSaved();await openRefund();setMessage('Completed refund recorded. No money was moved and stock was not changed. Any Club return review remains open until resolved.')}catch(e){setError((e as Error).message)}finally{setBusy(false)}}
- async function invoice(){if(!selected)return;setBusy(true);setError('');try{const d=await transport.request('/api/admin/invoices',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({orderId:selected.id})});setMessage('Invoice '+d.number+' is ready.');setInvoicePath(d.path);}catch(e){setError((e as Error).message);}finally{setBusy(false);}}
- function priorRefund(variantId:string){return Math.max(0,...(refund?.history||[]).map(h=>JSON.parse(h.snapshot).lines.find((l:any)=>l.variantId===variantId)?.cumulativeCents||0))}
+  const filtered = orders.filter(
+    (o) =>
+      (status === 'All' ||
+        (status === 'Unpaid checkouts'
+          ? o.status === 'pending' || o.status === 'expired' || o.status === 'cancelled'
+          : o.status === status)) &&
+      (o.id + ' ' + o.email + ' ' + o.deliveryAddress.name).toLowerCase().includes(query.toLowerCase()),
+  );
 
- return <>
-  <MyParcelConnection transport={transport}/>
-  <div className="bo-filters" style={{marginBottom:12,display:'flex',flexWrap:'wrap',gap:8}}>
-   <button type="button" className={status==='paid'?'button dark':'button outline'} onClick={()=>setStatus('paid')}>Ready to ship ({paidCount})</button>
-   <button type="button" className={status==='fulfilled'?'button dark':'button outline'} onClick={()=>setStatus('fulfilled')}>Fulfilled ({fulfilledCount})</button>
-   <button type="button" className={status==='payment_review'?'button dark':'button outline'} onClick={()=>setStatus('payment_review')}>Needs review ({reviewCount})</button>
-   <button type="button" className={status==='Unpaid checkouts'?'button dark':'button outline'} onClick={()=>setStatus('Unpaid checkouts')}>Unpaid ({unpaidCount})</button>
-   <button type="button" className={status==='All'?'button dark':'button outline'} onClick={()=>setStatus('All')}>All ({orders.length})</button>
-  </div>
-  <section className="bo-panel"><div className="bo-panel-heading"><h2>{status==='paid'?'Ready to ship':status==='fulfilled'?'Fulfilled orders':status==='payment_review'?'Needs review':'Orders'}</h2></div><p className="bo-hint">{status==='paid'?'Warehouse path: packing slip → pack → tracking → Mark fulfilled.':'Filter orders with the buttons above. Default is Ready to ship.'}</p></section>
-  <div className="bo-filters"><label className="bo-search"><Search size={17}/><input aria-label="Search orders" type="search" placeholder="Search order or customer" value={query} onChange={e=>setQuery(e.target.value)}/></label></div>
-  {filtered.length?<div className="table-scroll bo-table-card"><table className="admin-table"><thead><tr><th>Order</th><th>Customer</th><th>Status</th><th>Total</th><th>Action</th></tr></thead><tbody>{filtered.map(o=><tr key={o.id}><td><strong>#{o.id.slice(0,8).toUpperCase()}</strong><small>{dateTime(o.createdAt)}</small></td><td>{o.deliveryAddress.name||o.email}<small>{o.email}</small></td><td><span className={'bo-status '+o.status}>{o.status.replaceAll('_',' ')}</span></td><td>{money(o.total)}</td><td><button className="text-button" onClick={()=>{setSelected(o);setInvoicePath('');setRefund(null);setError('');setMessage('')}}>Manage order <ArrowUpRight size={14}/></button></td></tr>)}</tbody></table></div>:<div className="bo-empty"><Package size={30}/><h3>{orders.length?'No matching orders':'Your orders will appear here.'}</h3><p>{orders.length?'Try another name, order number or status.':'Demo and paid orders are clearly separated. No test order is shown as revenue.'}</p></div>}
-  {selected&&<Modal wide className="bo-order-modal" title={'Order #'+selected.id.slice(0,8).toUpperCase()} onClose={()=>{if(!busy)setSelected(null)}}><div className="bo-order-content">{selected.status==='payment_review'&&<div className="error-message" role="status">{selected.paymentReviewReason==='stock_unavailable'?'Payment received, but stock is unavailable. Review a refund in Stripe; do not dispatch this order.':selected.paymentReviewReason==='club_points_released'?'Late payment received after Club points were released. Review the payment and any refund before dispatch.':'This payment needs manual verification before dispatch.'}</div>}<div className="bo-inline-actions"><span className={'bo-status '+selected.status}>{selected.status.replaceAll('_',' ')}</span><span>{dateTime(selected.createdAt)}</span></div>{message&&<p role="status" className="info-message">{message}</p>}{error&&<p className="error-message" role="alert">{error}</p>}<section className="bo-panel"><h3>Customer withdrawal requests</h3>{selected.withdrawals?.length?selected.withdrawals.map(w=><div key={w.id}><p>#{w.id.slice(0,8).toUpperCase()} · {dateTime(w.createdAt)} · {w.status}</p><p>{w.items.map(l=>l.name+' / '+l.size+' × '+l.quantity).join(', ')}</p>{w.status==='requested'&&<form onSubmit={e=>resolveRequest(e,w.id)}><label className="field">Resolution evidence / reason<textarea name="reason" required minLength={10} maxLength={1000}/></label><button className="button outline" disabled={busy}>Record resolution</button></form>}</div>):<p className="bo-hint">No online withdrawal request for this order.</p>}</section><div className="bo-order-columns"><section className="bo-panel"><h3>Items & payment</h3>{selected.items.map((l,i)=><div className="order-line" key={i}><span>{l.name}<small>{l.size} · Quantity {l.quantity}</small></span><strong>{money(l.quantity*l.unitPrice)}</strong></div>)}<div className="bag-totals"><p><span>Products</span><strong>{money(selected.subtotal)}</strong></p>{!!selected.pointsDiscount&&<p><span>Club points discount</span><strong>−{money(selected.pointsDiscount)}</strong></p>}<p><span>Delivery</span><strong>{money(selected.shipping)}</strong></p><p className="total"><span>Total paid / due</span><strong>{money(selected.total)}</strong></p></div>{['paid','fulfilled'].includes(selected.status)&&<button className="button outline full" onClick={openRefund}><RotateCcw size={15}/>Record a completed refund</button>}{selected.status==='payment_review'&&<p className="error-message">Check this payment in Stripe before fulfillment or refund. Payment and order values need review.</p>}</section><aside><section className="bo-panel"><h3>Customer & delivery</h3>{['paid','fulfilled'].includes(selected.status)&&<div className="bo-inline-actions"><button className="text-button" disabled={busy} onClick={invoice}>Prepare / open invoice</button>{invoicePath&&<a href={invoicePath} target="_blank" rel="noreferrer">Print invoice / save PDF ↗</a>}<a href={'/admin/orders/'+selected.id+'/packing-slip'} target="_blank" rel="noreferrer">Print packing slip ↗</a></div>}<p>{selected.deliveryAddress.name}<br/>{selected.deliveryAddress.address}<br/>{selected.deliveryAddress.postal} {selected.deliveryAddress.city}<br/>{selected.deliveryAddress.country}</p><p>{selected.email}<br/>{selected.phone}</p>{selected.tracking&&<p>{selected.carrier?selected.carrier+' · ':''}Tracking: <strong>{selected.tracking}</strong>{selected.trackingUrl&&<> · <a href={selected.trackingUrl} target="_blank" rel="noreferrer">Track parcel ↗</a></>}</p></section>{['paid','fulfilled'].includes(selected.status)&&<AdminMyParcelLabel key={selected.id} order={selected} transport={transport} onTracking={(tracking,url)=>setShippingDraft(old=>({...old,[selected.id]:{tracking,url,carrier:'DPD'}}))}/>}{selected.status==='paid'&&<form className="bo-panel" onSubmit={fulfil}><h3>Prepare & dispatch</h3><p className="bo-hint">1. Open packing slip → 2. Pack the items → 3. Create the DPD label above (or in your carrier portal) → 4. Enter tracking below → 5. Mark fulfilled only after the parcel is ready.</p><p><a href={'/admin/orders/'+selected.id+'/packing-slip'} target="_blank" rel="noreferrer">Open packing slip ↗</a></p><label className="field">Carrier<input value={shippingDraft[selected.id]?.carrier||''} onChange={e=>setShippingDraft(old=>({...old,[selected.id]:{tracking:old[selected.id]?.tracking||'',url:old[selected.id]?.url||'',carrier:e.target.value}}))} name="carrier" minLength={2} maxLength={80} required placeholder="e.g. DPD, bpost, MyParcel"/></label><label className="field">HTTPS tracking link (optional)<input value={shippingDraft[selected.id]?.url||''} onChange={e=>setShippingDraft(old=>({...old,[selected.id]:{tracking:old[selected.id]?.tracking||'',carrier:old[selected.id]?.carrier||'',url:e.target.value}}))} name="trackingUrl" type="url" pattern="https://.*" maxLength={1000} placeholder="https://..."/></label><label className="newsletter-consent"><input type="checkbox" name="packed" value="yes" required/>I checked sizes and quantities and the parcel is ready to hand over.</label><label className="field">Tracking reference<input value={shippingDraft[selected.id]?.tracking||''} onChange={e=>setShippingDraft(old=>({...old,[selected.id]:{url:old[selected.id]?.url||'',carrier:old[selected.id]?.carrier||'',tracking:e.target.value}}))} name="tracking" minLength={3} maxLength={200} required placeholder="Tracking number from the label"/></label><button type="submit" className="button dark full" disabled={busy}>Mark fulfilled</button><p className="bo-hint">This records the shipment and queues the customer tracking email. It does not release Club points.</p></form>}{club?.orders.some(o=>o.orderId===selected.id)&&<p className="info-message">Delivery evidence and return review for this order can be managed under BigK Club → Orders.</p>}</aside></div>{refund&&<section className="bo-panel bo-refund-panel"><h3>Record a refund already completed in your payment provider</h3><p>This records the refund and adjusts Club points. It does not send a refund, restock products or change the paid order total. Enter cumulative refunded product amounts after discounts, excluding delivery.</p><form onSubmit={recordRefund}>{refund.lines.map(l=><label className="field" key={l.variantId}>{l.name} / {l.size} · Net paid {money(l.netCents)}<input name={l.variantId} type="number" min={(priorRefund(l.variantId)/100).toFixed(2)} max={(l.netCents/100).toFixed(2)} step="0.01" required defaultValue={(priorRefund(l.variantId)/100).toFixed(2)}/></label>)}<label className="field">Cumulative delivery refund (€)<input name="shippingRefund" type="number" min="0" max={(selected.shipping/100).toFixed(2)} step="0.01" defaultValue={(Math.max(0,...refund.history.map(h=>JSON.parse(h.snapshot).shippingRefundCents||0))/100).toFixed(2)}/></label><label className="field">Payment provider refund reference<input name="reference" minLength={3} maxLength={150} required placeholder="Reference for the completed refund"/></label><label className="field">Reason<textarea name="reason" required minLength={10} maxLength={1000}/></label><label className="field">Type REFUND ALREADY COMPLETED to confirm<input name="confirmation" required pattern="REFUND ALREADY COMPLETED" autoComplete="off"/></label><button className="button dark" disabled={busy}>Record completed refund</button></form>{refund.history.length>0&&<details><summary>Recorded refund history ({refund.history.length})</summary>{refund.history.map(h=><p key={h.id}>{h.reference} · {dateTime(h.created_at)} · {money(JSON.parse(h.snapshot).increaseCents)}</p>)}</details>}</section>}</div></Modal>}
- </>;
+  async function fulfil(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (!selected) return;
+    const f = new FormData(e.currentTarget);
+    const tracking = String(f.get('tracking'));
+    const carrier = String(f.get('carrier'));
+    const trackingUrl = String(f.get('trackingUrl') || '');
+    setBusy(true);
+    setError('');
+    try {
+      await transport.request('/api/admin/orders', {
+        method: 'PATCH',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          id: selected.id,
+          tracking,
+          carrier,
+          trackingUrl,
+          packingConfirmed: f.get('packed') === 'yes',
+        }),
+      });
+      await onSaved();
+      setSelected({...selected, status: 'fulfilled', tracking, carrier, trackingUrl});
+      setMessage('Order marked fulfilled. Shipment email queued, subject to the email connection.');
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function resolveRequest(e: FormEvent<HTMLFormElement>, id: string) {
+    e.preventDefault();
+    setBusy(true);
+    setError('');
+    try {
+      await transport.request('/api/admin/withdrawals', {
+        method: 'PATCH',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({id, reason: new FormData(e.currentTarget).get('reason')}),
+      });
+      await onSaved();
+      setSelected((previous) =>
+        previous
+          ? {
+              ...previous,
+              withdrawals: previous.withdrawals?.map((w) =>
+                w.id === id ? {...w, status: 'resolved'} : w,
+              ),
+            }
+          : previous,
+      );
+      setMessage(
+        'Withdrawal review recorded. Any payment refund and Club hold must be reconciled separately.',
+      );
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function openRefund() {
+    if (!selected) return;
+    setError('');
+    try {
+      setRefund(
+        await transport.request('/api/admin/returns?orderId=' + encodeURIComponent(selected.id)),
+      );
+    } catch (err) {
+      setError((err as Error).message);
+    }
+  }
+
+  async function recordRefund(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (!selected || !refund) return;
+    setBusy(true);
+    setError('');
+    const f = new FormData(e.currentTarget);
+    try {
+      await transport.request('/api/admin/returns', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          orderId: selected.id,
+          reference: f.get('reference'),
+          reason: f.get('reason'),
+          confirmation: f.get('confirmation'),
+          shippingRefundCents: Math.round(Number(f.get('shippingRefund')) * 100),
+          lines: refund.lines.map((l) => ({
+            variantId: l.variantId,
+            cumulativeCents: Math.round(Number(f.get(l.variantId)) * 100),
+          })),
+        }),
+      });
+      await onSaved();
+      await openRefund();
+      setMessage(
+        'Completed refund recorded. No money was moved and stock was not changed. Any Club return review remains open until resolved.',
+      );
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function invoice() {
+    if (!selected) return;
+    setBusy(true);
+    setError('');
+    try {
+      const d = await transport.request('/api/admin/invoices', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({orderId: selected.id}),
+      });
+      setMessage('Invoice ' + d.number + ' is ready.');
+      setInvoicePath(d.path);
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  function priorRefund(variantId: string) {
+    return Math.max(
+      0,
+      ...(refund?.history || []).map(
+        (h) =>
+          JSON.parse(h.snapshot).lines.find((l: any) => l.variantId === variantId)?.cumulativeCents ||
+          0,
+      ),
+    );
+  }
+
+  const heading =
+    status === 'paid'
+      ? 'Ready to ship'
+      : status === 'fulfilled'
+        ? 'Fulfilled orders'
+        : status === 'payment_review'
+          ? 'Needs review'
+          : 'Orders';
+
+  return (
+    <>
+      <MyParcelConnection transport={transport} />
+
+      <div className="bo-filters" style={{marginBottom: 12, display: 'flex', flexWrap: 'wrap', gap: 8}}>
+        <button
+          type="button"
+          className={status === 'paid' ? 'button dark' : 'button outline'}
+          onClick={() => setStatus('paid')}
+        >
+          Ready to ship ({paidCount})
+        </button>
+        <button
+          type="button"
+          className={status === 'fulfilled' ? 'button dark' : 'button outline'}
+          onClick={() => setStatus('fulfilled')}
+        >
+          Fulfilled ({fulfilledCount})
+        </button>
+        <button
+          type="button"
+          className={status === 'payment_review' ? 'button dark' : 'button outline'}
+          onClick={() => setStatus('payment_review')}
+        >
+          Needs review ({reviewCount})
+        </button>
+        <button
+          type="button"
+          className={status === 'Unpaid checkouts' ? 'button dark' : 'button outline'}
+          onClick={() => setStatus('Unpaid checkouts')}
+        >
+          Unpaid ({unpaidCount})
+        </button>
+        <button
+          type="button"
+          className={status === 'All' ? 'button dark' : 'button outline'}
+          onClick={() => setStatus('All')}
+        >
+          All ({orders.length})
+        </button>
+      </div>
+
+      <section className="bo-panel">
+        <div className="bo-panel-heading">
+          <h2>{heading}</h2>
+        </div>
+        <p className="bo-hint">
+          {status === 'paid'
+            ? 'Warehouse path: packing slip → pack → tracking → Mark fulfilled.'
+            : 'Filter orders with the buttons above. Default is Ready to ship.'}
+        </p>
+      </section>
+
+      <div className="bo-filters">
+        <label className="bo-search">
+          <Search size={17} />
+          <input
+            aria-label="Search orders"
+            type="search"
+            placeholder="Search order or customer"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+        </label>
+      </div>
+
+      {filtered.length ? (
+        <div className="table-scroll bo-table-card">
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>Order</th>
+                <th>Customer</th>
+                <th>Status</th>
+                <th>Total</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((o) => (
+                <tr key={o.id}>
+                  <td>
+                    <strong>#{o.id.slice(0, 8).toUpperCase()}</strong>
+                    <small>{dateTime(o.createdAt)}</small>
+                  </td>
+                  <td>
+                    {o.deliveryAddress.name || o.email}
+                    <small>{o.email}</small>
+                  </td>
+                  <td>
+                    <span className={'bo-status ' + o.status}>{o.status.replaceAll('_', ' ')}</span>
+                  </td>
+                  <td>{money(o.total)}</td>
+                  <td>
+                    <button
+                      className="text-button"
+                      onClick={() => {
+                        setSelected(o);
+                        setInvoicePath('');
+                        setRefund(null);
+                        setError('');
+                        setMessage('');
+                      }}
+                    >
+                      Manage order <ArrowUpRight size={14} />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <div className="bo-empty">
+          <Package size={30} />
+          <h3>{orders.length ? 'No matching orders' : 'Your orders will appear here.'}</h3>
+          <p>
+            {orders.length
+              ? 'Try another name, order number or status.'
+              : 'Demo and paid orders are clearly separated. No test order is shown as revenue.'}
+          </p>
+        </div>
+      )}
+
+      {selected && (
+        <Modal
+          wide
+          className="bo-order-modal"
+          title={'Order #' + selected.id.slice(0, 8).toUpperCase()}
+          onClose={() => {
+            if (!busy) setSelected(null);
+          }}
+        >
+          <div className="bo-order-content">
+            {selected.status === 'payment_review' && (
+              <div className="error-message" role="status">
+                {selected.paymentReviewReason === 'stock_unavailable'
+                  ? 'Payment received, but stock is unavailable. Review a refund in Stripe; do not dispatch this order.'
+                  : selected.paymentReviewReason === 'club_points_released'
+                    ? 'Late payment received after Club points were released. Review the payment and any refund before dispatch.'
+                    : 'This payment needs manual verification before dispatch.'}
+              </div>
+            )}
+
+            <div className="bo-inline-actions">
+              <span className={'bo-status ' + selected.status}>
+                {selected.status.replaceAll('_', ' ')}
+              </span>
+              <span>{dateTime(selected.createdAt)}</span>
+            </div>
+
+            {message && (
+              <p role="status" className="info-message">
+                {message}
+              </p>
+            )}
+            {error && (
+              <p className="error-message" role="alert">
+                {error}
+              </p>
+            )}
+
+            <section className="bo-panel">
+              <h3>Customer withdrawal requests</h3>
+              {selected.withdrawals?.length ? (
+                selected.withdrawals.map((w) => (
+                  <div key={w.id}>
+                    <p>
+                      #{w.id.slice(0, 8).toUpperCase()} · {dateTime(w.createdAt)} · {w.status}
+                    </p>
+                    <p>{w.items.map((l) => l.name + ' / ' + l.size + ' × ' + l.quantity).join(', ')}</p>
+                    {w.status === 'requested' && (
+                      <form onSubmit={(e) => resolveRequest(e, w.id)}>
+                        <label className="field">
+                          Resolution evidence / reason
+                          <textarea name="reason" required minLength={10} maxLength={1000} />
+                        </label>
+                        <button className="button outline" disabled={busy}>
+                          Record resolution
+                        </button>
+                      </form>
+                    )}
+                  </div>
+                ))
+              ) : (
+                <p className="bo-hint">No online withdrawal request for this order.</p>
+              )}
+            </section>
+
+            <div className="bo-order-columns">
+              <section className="bo-panel">
+                <h3>Items & payment</h3>
+                {selected.items.map((l, i) => (
+                  <div className="order-line" key={i}>
+                    <span>
+                      {l.name}
+                      <small>
+                        {l.size} · Quantity {l.quantity}
+                      </small>
+                    </span>
+                    <strong>{money(l.quantity * l.unitPrice)}</strong>
+                  </div>
+                ))}
+                <div className="bag-totals">
+                  <p>
+                    <span>Products</span>
+                    <strong>{money(selected.subtotal)}</strong>
+                  </p>
+                  {!!selected.pointsDiscount && (
+                    <p>
+                      <span>Club points discount</span>
+                      <strong>−{money(selected.pointsDiscount)}</strong>
+                    </p>
+                  )}
+                  <p>
+                    <span>Delivery</span>
+                    <strong>{money(selected.shipping)}</strong>
+                  </p>
+                  <p className="total">
+                    <span>Total paid / due</span>
+                    <strong>{money(selected.total)}</strong>
+                  </p>
+                </div>
+                {['paid', 'fulfilled'].includes(selected.status) && (
+                  <button className="button outline full" onClick={openRefund}>
+                    <RotateCcw size={15} />
+                    Record a completed refund
+                  </button>
+                )}
+                {selected.status === 'payment_review' && (
+                  <p className="error-message">
+                    Check this payment in Stripe before fulfillment or refund. Payment and order
+                    values need review.
+                  </p>
+                )}
+              </section>
+
+              <aside>
+                <section className="bo-panel">
+                  <h3>Customer & delivery</h3>
+                  {['paid', 'fulfilled'].includes(selected.status) && (
+                    <div className="bo-inline-actions">
+                      <button className="text-button" disabled={busy} onClick={invoice}>
+                        Prepare / open invoice
+                      </button>
+                      {invoicePath && (
+                        <a href={invoicePath} target="_blank" rel="noreferrer">
+                          Print invoice / save PDF ↗
+                        </a>
+                      )}
+                      <a
+                        href={'/admin/orders/' + selected.id + '/packing-slip'}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        Print packing slip ↗
+                      </a>
+                    </div>
+                  )}
+                  <p>
+                    {selected.deliveryAddress.name}
+                    <br />
+                    {selected.deliveryAddress.address}
+                    <br />
+                    {selected.deliveryAddress.postal} {selected.deliveryAddress.city}
+                    <br />
+                    {selected.deliveryAddress.country}
+                  </p>
+                  <p>
+                    {selected.email}
+                    <br />
+                    {selected.phone}
+                  </p>
+                  {selected.tracking && (
+                    <p>
+                      {selected.carrier ? selected.carrier + ' · ' : ''}
+                      Tracking: <strong>{selected.tracking}</strong>
+                      {selected.trackingUrl && (
+                        <>
+                          {' · '}
+                          <a href={selected.trackingUrl} target="_blank" rel="noreferrer">
+                            Track parcel ↗
+                          </a>
+                        </>
+                      )}
+                    </p>
+                  )}
+                </section>
+
+                {['paid', 'fulfilled'].includes(selected.status) && (
+                  <AdminMyParcelLabel
+                    key={selected.id}
+                    order={selected}
+                    transport={transport}
+                    onTracking={(tracking, url) =>
+                      setShippingDraft((old) => ({
+                        ...old,
+                        [selected.id]: {tracking, url, carrier: 'DPD'},
+                      }))
+                    }
+                  />
+                )}
+
+                {selected.status === 'paid' && (
+                  <form className="bo-panel" onSubmit={fulfil}>
+                    <h3>Prepare & dispatch</h3>
+                    <p className="bo-hint">
+                      1. Open packing slip → 2. Pack the items → 3. Create the DPD label above (or in
+                      your carrier portal) → 4. Enter tracking below → 5. Mark fulfilled only after
+                      the parcel is ready.
+                    </p>
+                    <p>
+                      <a
+                        href={'/admin/orders/' + selected.id + '/packing-slip'}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        Open packing slip ↗
+                      </a>
+                    </p>
+                    <label className="field">
+                      Carrier
+                      <input
+                        value={shippingDraft[selected.id]?.carrier || ''}
+                        onChange={(e) =>
+                          setShippingDraft((old) => ({
+                            ...old,
+                            [selected.id]: {
+                              tracking: old[selected.id]?.tracking || '',
+                              url: old[selected.id]?.url || '',
+                              carrier: e.target.value,
+                            },
+                          }))
+                        }
+                        name="carrier"
+                        minLength={2}
+                        maxLength={80}
+                        required
+                        placeholder="e.g. DPD, bpost, MyParcel"
+                      />
+                    </label>
+                    <label className="field">
+                      HTTPS tracking link (optional)
+                      <input
+                        value={shippingDraft[selected.id]?.url || ''}
+                        onChange={(e) =>
+                          setShippingDraft((old) => ({
+                            ...old,
+                            [selected.id]: {
+                              tracking: old[selected.id]?.tracking || '',
+                              carrier: old[selected.id]?.carrier || '',
+                              url: e.target.value,
+                            },
+                          }))
+                        }
+                        name="trackingUrl"
+                        type="url"
+                        pattern="https://.*"
+                        maxLength={1000}
+                        placeholder="https://..."
+                      />
+                    </label>
+                    <label className="newsletter-consent">
+                      <input type="checkbox" name="packed" value="yes" required />
+                      I checked sizes and quantities and the parcel is ready to hand over.
+                    </label>
+                    <label className="field">
+                      Tracking reference
+                      <input
+                        value={shippingDraft[selected.id]?.tracking || ''}
+                        onChange={(e) =>
+                          setShippingDraft((old) => ({
+                            ...old,
+                            [selected.id]: {
+                              url: old[selected.id]?.url || '',
+                              carrier: old[selected.id]?.carrier || '',
+                              tracking: e.target.value,
+                            },
+                          }))
+                        }
+                        name="tracking"
+                        minLength={3}
+                        maxLength={200}
+                        required
+                        placeholder="Tracking number from the label"
+                      />
+                    </label>
+                    <button type="submit" className="button dark full" disabled={busy}>
+                      Mark fulfilled
+                    </button>
+                    <p className="bo-hint">
+                      This records the shipment and queues the customer tracking email. It does not
+                      release Club points.
+                    </p>
+                  </form>
+                )}
+
+                {club?.orders.some((o) => o.orderId === selected.id) && (
+                  <p className="info-message">
+                    Delivery evidence and return review for this order can be managed under BigK Club
+                    → Orders.
+                  </p>
+                )}
+              </aside>
+            </div>
+
+            {refund && (
+              <section className="bo-panel bo-refund-panel">
+                <h3>Record a refund already completed in your payment provider</h3>
+                <p>
+                  This records the refund and adjusts Club points. It does not send a refund, restock
+                  products or change the paid order total. Enter cumulative refunded product amounts
+                  after discounts, excluding delivery.
+                </p>
+                <form onSubmit={recordRefund}>
+                  {refund.lines.map((l) => (
+                    <label className="field" key={l.variantId}>
+                      {l.name} / {l.size} · Net paid {money(l.netCents)}
+                      <input
+                        name={l.variantId}
+                        type="number"
+                        min={(priorRefund(l.variantId) / 100).toFixed(2)}
+                        max={(l.netCents / 100).toFixed(2)}
+                        step="0.01"
+                        required
+                        defaultValue={(priorRefund(l.variantId) / 100).toFixed(2)}
+                      />
+                    </label>
+                  ))}
+                  <label className="field">
+                    Cumulative delivery refund (€)
+                    <input
+                      name="shippingRefund"
+                      type="number"
+                      min="0"
+                      max={(selected.shipping / 100).toFixed(2)}
+                      step="0.01"
+                      defaultValue={(
+                        Math.max(
+                          0,
+                          ...refund.history.map(
+                            (h) => JSON.parse(h.snapshot).shippingRefundCents || 0,
+                          ),
+                        ) / 100
+                      ).toFixed(2)}
+                    />
+                  </label>
+                  <label className="field">
+                    Payment provider refund reference
+                    <input
+                      name="reference"
+                      minLength={3}
+                      maxLength={150}
+                      required
+                      placeholder="Reference for the completed refund"
+                    />
+                  </label>
+                  <label className="field">
+                    Reason
+                    <textarea name="reason" required minLength={10} maxLength={1000} />
+                  </label>
+                  <label className="field">
+                    Type REFUND ALREADY COMPLETED to confirm
+                    <input
+                      name="confirmation"
+                      required
+                      pattern="REFUND ALREADY COMPLETED"
+                      autoComplete="off"
+                    />
+                  </label>
+                  <button className="button dark" disabled={busy}>
+                    Record completed refund
+                  </button>
+                </form>
+                {refund.history.length > 0 && (
+                  <details>
+                    <summary>Recorded refund history ({refund.history.length})</summary>
+                    {refund.history.map((h) => (
+                      <p key={h.id}>
+                        {h.reference} · {dateTime(h.created_at)} ·{' '}
+                        {money(JSON.parse(h.snapshot).increaseCents)}
+                      </p>
+                    ))}
+                  </details>
+                )}
+              </section>
+            )}
+          </div>
+        </Modal>
+      )}
+    </>
+  );
 }
