@@ -1,0 +1,342 @@
+/* Soft modern layer on top of BigK identity — easier scanning, less “old admin form”. */
+
+body {
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 15px;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Header: quieter, clearer */
+.site-header {
+  backdrop-filter: saturate(1.1) blur(8px);
+  background: rgba(255, 255, 255, 0.92);
+}
+.site-header nav button,
+.site-header nav > a {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  opacity: 0.88;
+}
+.site-header nav button:hover,
+.site-header nav > a:hover {
+  opacity: 1;
+}
+.bag-button {
+  text-transform: none;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* Buttons: less harsh clip, still on-brand */
+.button {
+  border-radius: 999px;
+  text-transform: none;
+  letter-spacing: 0.01em;
+  font-weight: 650;
+  font-size: 13px;
+  min-height: 46px;
+  padding: 12px 22px;
+  gap: 10px;
+}
+.button.dark,
+.button.accent {
+  clip-path: none;
+}
+.button.outline {
+  border-color: #d9d4d0;
+  background: #fff;
+}
+.button.outline:hover:not(:disabled) {
+  border-color: #2d2926;
+}
+.text-button {
+  font-size: 13px;
+  font-weight: 600;
+  border-bottom-width: 1.5px;
+}
+
+/* Product cards */
+.product-grid {
+  gap: 28px 18px;
+}
+.product-visual {
+  border-radius: 14px;
+  overflow: hidden;
+  background: #f3f2f0;
+}
+.product-visual img {
+  mix-blend-mode: normal;
+}
+.product-meta {
+  margin-top: 12px;
+  gap: 8px;
+}
+.product-meta h3 {
+  font-size: 13px;
+  font-weight: 650;
+  text-transform: none;
+  letter-spacing: -0.01em;
+  line-height: 1.35;
+}
+.product-meta p {
+  font-size: 11px;
+  letter-spacing: 0.04em;
+}
+.product-meta > strong {
+  font-size: 13px;
+  font-weight: 650;
+  margin-top: 2px;
+}
+.save-button {
+  border-radius: 999px;
+  width: 34px;
+  height: 34px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+.quick-view {
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+}
+.product-flags span {
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 650;
+}
+
+/* Catalog tools — easier to use */
+.catalog-tools {
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 12px 14px;
+  background: #faf9f8;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+.search-field {
+  border-radius: 999px;
+  padding: 11px 16px;
+  border-color: #e8e4e0;
+  background: #fff;
+  max-width: 420px;
+}
+.search-field input {
+  font-size: 14px;
+}
+.filter-select select,
+.sort-select select {
+  font-size: 13px;
+  padding: 8px 6px;
+}
+.collection-tabs {
+  gap: 8px;
+  border-bottom: none;
+  margin: 24px 0 16px;
+  flex-wrap: wrap;
+}
+.collection-tabs button {
+  text-transform: none;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0;
+  padding: 9px 14px;
+  border-radius: 999px;
+  color: #6d6662;
+  background: transparent;
+  box-shadow: none !important;
+}
+.collection-tabs button.active {
+  background: #2d2926;
+  color: #fff;
+}
+.results-note {
+  font-size: 12px;
+  margin: 14px 0;
+}
+
+/* Section titles less shouty */
+.section-heading .title-lockup h2 {
+  font-size: 28px;
+  font-weight: 750;
+  letter-spacing: -0.03em;
+  text-transform: none;
+}
+.section-subtitle {
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: var(--muted);
+}
+.section-number {
+  font-size: 48px;
+  opacity: 0.9;
+}
+
+/* Category bar */
+.category-bar > :is(button, a) {
+  text-transform: none;
+  font-weight: 650;
+  font-size: 13px;
+  letter-spacing: 0;
+  padding: 22px 18px;
+}
+
+/* Product detail */
+.pdp-detail .detail-info h1 {
+  font-size: 32px;
+  letter-spacing: -0.03em;
+  font-weight: 750;
+  text-transform: none;
+}
+.size-options button {
+  border-radius: 10px;
+  min-width: 48px;
+  font-weight: 600;
+}
+.size-options button.selected {
+  background: var(--brand-black);
+  color: #fff;
+}
+.gallery-window.detail-image {
+  border-radius: 16px;
+}
+.product-colour-options a {
+  border-radius: 10px;
+}
+
+/* Checkout & account panels */
+.page-container h1 {
+  text-transform: none;
+  letter-spacing: -0.03em;
+  font-weight: 750;
+  font-size: clamp(28px, 4vw, 40px);
+}
+.panel {
+  border-radius: 16px;
+  padding: 22px 22px;
+  border-color: #ebe7e3;
+  box-shadow: 0 1px 2px rgba(45, 41, 38, 0.03);
+}
+.panel h2 {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.field {
+  text-transform: none;
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0;
+  color: #4a4542;
+}
+.field input,
+.field select,
+.field textarea {
+  border-radius: 12px;
+  padding: 13px 14px;
+  border-color: #e5e1dd;
+  font-size: 15px;
+  background: #fff;
+}
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: var(--brand-red);
+  box-shadow: 0 0 0 3px rgba(228, 0, 43, 0.12);
+  outline: none;
+}
+.check-field {
+  font-size: 13px;
+  line-height: 1.5;
+}
+.checkout-progress {
+  display: flex;
+  gap: 10px;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 28px;
+  flex-wrap: wrap;
+}
+.checkout-progress li {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: #f5f3f1;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6d6662;
+}
+.checkout-progress li[aria-current="step"] {
+  background: #2d2926;
+  color: #fff;
+}
+.checkout-summary .panel {
+  position: sticky;
+  top: 110px;
+}
+.order-line {
+  align-items: center;
+}
+.error-message,
+.info-message {
+  border-radius: 12px;
+}
+
+/* Bag modal */
+.modal {
+  border-radius: 18px;
+  overflow: hidden;
+}
+.modal-heading h2 {
+  text-transform: none;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  font-size: 15px;
+}
+.bag-line h3 {
+  text-transform: none;
+  font-weight: 650;
+}
+.quantity {
+  border-radius: 999px;
+  padding: 6px 10px;
+}
+
+/* Mobile product grid breathing room */
+@media (max-width: 800px) {
+  .product-grid {
+    gap: 22px 12px;
+  }
+  .catalog-tools {
+    border-radius: 12px;
+  }
+  .site-header nav button,
+  .site-header nav > a {
+    font-size: 15px;
+    text-transform: none;
+  }
+  .category-bar > :is(button, a) {
+    font-size: 12px;
+    padding: 16px 12px;
+  }
+}
+
+@media (max-width: 580px) {
+  .button {
+    font-size: 13px;
+  }
+  .pdp-detail .detail-info h1 {
+    font-size: 26px;
+    text-transform: none;
+  }
+  .collection-tabs button {
+    font-size: 12px;
+    padding: 8px 12px;
+  }
+}
