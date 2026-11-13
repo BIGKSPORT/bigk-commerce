@@ -1,7 +1,6 @@
 'use client';
 
 import React, {useMemo, useState} from 'react';
-import Image from 'next/image';
 import {ChevronLeft, ChevronRight, Check, Plus, ShoppingBag} from 'lucide-react';
 import type {Merchandising} from '@/lib/merchandising-content';
 import type {Product} from '@/lib/types';
@@ -95,7 +94,7 @@ export function buildsFromMerchandising(content: Merchandising | undefined, prod
 
 export default function CatwalkLookbook({
   looks: looksProp,
-  emptyHint = 'Publish looks in Admin → Storefront → Shop the look. Upload your model photos and link products — they will appear here as a runway.',
+  emptyHint = 'No runway looks published yet. In Admin open Storefront → Shop the look, upload your model photo, link products, place the pins, then Publish.',
 }: {
   looks?: RunwayLook[];
   emptyHint?: string;
@@ -133,6 +132,11 @@ export default function CatwalkLookbook({
         <div className="catwalk-head">
           <h2>Wear the whole look</h2>
           <p>{emptyHint}</p>
+          <p style={{marginTop: 12, fontSize: 13}}>
+            <a href="/admin" style={{fontWeight: 700, color: '#111'}}>
+              Open Admin → Storefront
+            </a>
+          </p>
         </div>
       </section>
     );
@@ -180,7 +184,6 @@ export default function CatwalkLookbook({
 
       <div className="catwalk-stage">
         <div className="catwalk-model">
-          {/* Admin-uploaded model / runway photo */}
           <img src={look.modelImage} alt={look.alt} />
           {look.pieces.map((piece, i) => (
             <button
