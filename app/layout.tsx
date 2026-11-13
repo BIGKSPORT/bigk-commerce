@@ -9,6 +9,7 @@ import type { Metadata, Viewport } from 'next';
 import {seller} from '@/lib/seller';
 import './globals.css';
 import './identity.css';
+import './storefront-polish.css';
 const publicIndexing = publicIndexingEnabled();
 export const metadata:Metadata={metadataBase:new URL(process.env.APP_URL||seller.origin),title:{default:'BIG K ® — Looking good. Moving fast.',template:'%s | BIG K ®'},description:'Discover BIG K ® performance sportswear and lifestyle apparel. Designed for movement, available to customers across Europe where delivery is supported.',robots:{index:publicIndexing,follow:publicIndexing},manifest:'/manifest.webmanifest',icons:{icon:'/icon.svg'}};
 export const viewport:Viewport={themeColor:'#E4002B',colorScheme:'light'};
