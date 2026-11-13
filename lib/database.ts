@@ -27,23 +27,17 @@ function createPostgresClient() {
   });
 }
 function postgresClient(){return client??=createPostgresClient();}
-/** A serverless instance may resume with frozen TCP sockets. Never retain these
- * connections across requests; Supavisor still pools the database backends.
- * No write/transaction is automatically replayed. */
 async function withPostgresClient<T>(run:(sql:ReturnType<typeof postgres>)=>Promise<T>):Promise<T>{
  if(!isolatedConnections())return run(postgresClient());
  const execute=async()=>{const sql=createPostgresClient();try{return await run(sql);}finally{await sql.end({timeout:5});}};
- // PGlite emulates one PostgreSQL backend, just as the existing local pool max=1.
- // Serialize only the local test emulator; hosted PostgreSQL keeps concurrent reads.
  if(process.env.NODE_ENV==='test'&&['127.0.0.1','localhost','[::1]'].includes(new URL(process.env.DATABASE_URL||'').hostname)){const result=localPostgresQueue.then(execute);localPostgresQueue=result.catch(()=>{});return result;}
  return execute();
 }
-// Only application-owned constant SQL reaches this adapter. Values stay bound.
 export function postgresQuery(text: string) {
   let index = 0;
   let result = text.replace(/\?/g, () => '$' + (++index));
   result = result.replace(/\browid\b/g, 'position');
-  result = result.replace(/\b(FROM|INTO|UPDATE|JOIN)\s+(cart_sessions|newsletter_subscribers|blog_posts|admin_mfa|products|variants|orders|order_lines|webhook_events|sessions|rate_limits|audit|login_tokens|customer_sessions|email_outbox|club_members|club_orders|club_ledger|club_events|club_bookings|product_content|crm_customers|marketing_consents|marketing_campaigns|product_revisions|admin_credentials|admin_returns|media_assets|withdrawal_requests|warehouse_return_receipts|shipping_test_attempts)\b/g, '$1 '+databaseSchema()+'.$2');
+  result = result.replace(/\b(FROM|INTO|UPDATE|JOIN)\s+(cart_sessions|newsletter_subscribers|blog_posts|admin_mfa|products|variants|orders|order_lines|webhook_events|sessions|rate_limits|audit|login_tokens|customer_sessions|email_outbox|club_members|club_orders|club_ledger|club_events|club_bookings|product_content|crm_customers|marketing_consents|marketing_campaigns|product_revisions|admin_credentials|admin_returns|media_assets|withdrawal_requests|warehouse_return_receipts|shipping_test_attempts|discount_codes|discount_redemptions)\b/g, '$1 '+databaseSchema()+'.$2');
   result = result.replace(/AS unitPrice\b/g, 'AS "unitPrice"').replace(/AS variantId\b/g, 'AS "variantId"');
   result = result.replace(/SET hits=hits\+1/g, 'SET hits=rate_limits.hits+1');
   if (/INSERT OR IGNORE INTO/.test(result)) result = result.replace('INSERT OR IGNORE INTO', 'INSERT INTO') + ' ON CONFLICT DO NOTHING';
@@ -77,7 +71,6 @@ export async function transaction<T>(fn: () => T | Promise<T>): Promise<T> {
   if (context.getStore()) return fn();
   if (isPostgres()) {
     return await withPostgresClient(client=>client.begin(async sql => {
-      // Serialize short write transactions across instances for a small store.
       await sql`SELECT pg_advisory_xact_lock(2049351, 1)`;
       const query: Query = async (text, values) => {
         const rows = await sql.unsafe(postgresQuery(text), values as never[]);
@@ -96,4 +89,3 @@ export async function transaction<T>(fn: () => T | Promise<T>): Promise<T> {
   return operation;
 }
 export async function closeDatabase() { if (client) { await client.end(); client = undefined; } }
-
