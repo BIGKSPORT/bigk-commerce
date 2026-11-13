@@ -11,7 +11,6 @@ export const discountCodeSchema = z
       .max(32)
       .regex(/^[A-Z0-9_-]+$/i, 'Use letters, numbers, - or _ only.'),
     type: z.enum(['percent', 'fixed']),
-    /** percent: 1–100; fixed: cents off product subtotal */
     value: z.number().int().positive().max(1000000),
     minSubtotalCents: z.number().int().min(0).max(10000000).optional(),
     maxRedemptions: z.number().int().min(1).max(1000000).nullable().optional(),
@@ -45,6 +44,45 @@ export type DiscountRow = {
   created_at: string;
 };
 
+let tablesReady = false;
+
+/** Idempotent table ensure (SQLite boot + Postgres search_path). */
+export async function ensureDiscountTables() {
+  if (tablesReady) return;
+  await db()
+    .prepare(
+      `CREATE TABLE IF NOT EXISTS discount_codes(
+        code TEXT PRIMARY KEY,
+        type TEXT NOT NULL,
+        value INTEGER NOT NULL,
+        min_subtotal_cents INTEGER NOT NULL DEFAULT 0,
+        max_redemptions INTEGER,
+        per_customer_limit INTEGER,
+        starts_at TEXT,
+        ends_at TEXT,
+        active INTEGER NOT NULL DEFAULT 1,
+        redemption_count INTEGER NOT NULL DEFAULT 0,
+        note TEXT NOT NULL DEFAULT '',
+        created_at TEXT NOT NULL
+      )`,
+    )
+    .run();
+  await db()
+    .prepare(
+      `CREATE TABLE IF NOT EXISTS discount_redemptions(
+        id TEXT PRIMARY KEY,
+        code TEXT NOT NULL,
+        order_id TEXT NOT NULL UNIQUE,
+        email TEXT NOT NULL,
+        discount_cents INTEGER NOT NULL,
+        status TEXT NOT NULL,
+        created_at TEXT NOT NULL
+      )`,
+    )
+    .run();
+  tablesReady = true;
+}
+
 export function normalizePromoCode(raw: string) {
   return raw.trim().toUpperCase();
 }
@@ -56,6 +94,7 @@ export function computeDiscountCents(type: 'percent' | 'fixed', value: number, p
 }
 
 export async function listDiscountCodes(): Promise<DiscountRow[]> {
+  await ensureDiscountTables();
   try {
     return (await db().prepare('SELECT * FROM discount_codes ORDER BY created_at DESC').all()) as DiscountRow[];
   } catch {
@@ -64,6 +103,7 @@ export async function listDiscountCodes(): Promise<DiscountRow[]> {
 }
 
 export async function upsertDiscountCode(input: DiscountCodeInput) {
+  await ensureDiscountTables();
   const parsed = discountCodeSchema.parse(input);
   const code = normalizePromoCode(parsed.code);
   const now = new Date().toISOString();
@@ -94,6 +134,7 @@ export async function upsertDiscountCode(input: DiscountCodeInput) {
 }
 
 export async function setDiscountActive(code: string, active: boolean) {
+  await ensureDiscountTables();
   const n = normalizePromoCode(code);
   const r = await db().prepare('UPDATE discount_codes SET active=? WHERE code=?').run(active ? 1 : 0, n);
   if (!r.changes) throw new HttpError(404, 'Discount code not found.');
@@ -105,6 +146,7 @@ export async function quotePromoCode(opts: {
   email: string;
   now?: string;
 }) {
+  await ensureDiscountTables();
   const code = normalizePromoCode(opts.code);
   const now = opts.now || new Date().toISOString();
   const row = (await db().prepare('SELECT * FROM discount_codes WHERE code=?').get(code)) as DiscountRow | undefined;
@@ -134,6 +176,7 @@ export async function quotePromoCode(opts: {
 }
 
 export async function reservePromoForOrder(orderId: string, code: string, email: string, discountCents: number) {
+  await ensureDiscountTables();
   const normalized = normalizePromoCode(code);
   const existing = await db().prepare('SELECT id FROM discount_redemptions WHERE order_id=?').get(orderId);
   if (existing) {
@@ -151,6 +194,7 @@ export async function reservePromoForOrder(orderId: string, code: string, email:
 }
 
 export async function finalizePromoOnPaid(orderId: string) {
+  await ensureDiscountTables();
   const row = (await db().prepare('SELECT * FROM discount_redemptions WHERE order_id=?').get(orderId)) as
     | { code: string; status: string }
     | undefined;
@@ -162,6 +206,7 @@ export async function finalizePromoOnPaid(orderId: string) {
 }
 
 export async function releasePromoOnCancel(orderId: string) {
+  await ensureDiscountTables();
   await db()
     .prepare(`UPDATE discount_redemptions SET status='released' WHERE order_id=? AND status='reserved'`)
     .run(orderId);
