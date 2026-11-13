@@ -10,6 +10,7 @@ import {shippingTestSchema} from './shipping-test-schema';
 import {withdrawalSchema} from './withdrawal-schema';
 import {warehouseReceiptSchema} from './warehouse-receipt-schema';
 import {mediaSchema} from './media-schema';
+import {discountSchema} from './discount-schema';
 import {backofficeSchema,productHistorySchema,adminCredentialSchema,adminMfaSchema} from './backoffice-schema';
 import {clubSchema} from './club-schema';
 import type { Product } from './types';
@@ -32,6 +33,7 @@ export function db(){
  PRAGMA user_version=1;`);
  sql.exec(cartSessionSchema);sql.exec(shippingTestSchema);
  sql.exec(clubSchema);
+ sql.exec(discountSchema);
  sql.exec(backofficeSchema);sql.exec(crmSchema);sql.exec(growthSchema);sql.exec(productHistorySchema);sql.exec(adminCredentialSchema);sql.exec(adminMfaSchema);
  sql.exec(mediaSchema);
  sql.exec(withdrawalSchema);
