@@ -13,7 +13,14 @@ import {POST as admin} from '../app/api/sales/admin/route';
 import {POST as setup} from '../app/api/sales/setup/route';
 import {POST as login,DELETE as logout} from '../app/api/sales/auth/route';
 import {salesCatalogue} from '../lib/sales-service';
-const dir=mkdtempSync(join(tmpdir(),'bigk-sales-'));Object.assign(process.env,{DATABASE_PROVIDER:'sqlite',DATABASE_PATH:join(dir,'store.sqlite'),DATABASE_SCHEMA:'bigk',NODE_ENV:'test',APP_URL:'https://bigk.example',ADMIN_MFA_KEY:'a'.repeat(64),SELLER_PORTAL_ENABLED:'true',ADMIN_MFA_REQUIRED:'false'});delete process.env.VERCEL;delete process.env.VERCEL_ENV;
+import {PATCH as editGroup} from '../app/api/admin/product-groups/route';
+import {PATCH as editProduct} from '../app/api/admin/catalog/route';
+import {POST as editCategory} from '../app/api/admin/categories/route';
+import {POST as uploadMedia} from '../app/api/admin/media/route';
+import {setFeature} from '../lib/shop-features';
+import {family} from '../lib/product-groups';
+import sharp from 'sharp';
+const dir=mkdtempSync(join(tmpdir(),'bigk-sales-'));Object.assign(process.env,{DATABASE_PROVIDER:'sqlite',DATABASE_PATH:join(dir,'store.sqlite'),MEDIA_PATH:join(dir,'media'),DATABASE_SCHEMA:'bigk',NODE_ENV:'test',APP_URL:'https://bigk.example',ADMIN_MFA_KEY:'a'.repeat(64),SELLER_PORTAL_ENABLED:'true',ADMIN_MFA_REQUIRED:'false'});delete process.env.VERCEL;delete process.env.VERCEL_ENV;
 const owner='bigk_admin=owner-sales',first='bigk_seller=seller-one',second='bigk_seller=seller-two';
 function req(path:string,cookie='',data?:unknown,origin='https://bigk.example'){return new Request('https://bigk.example'+path,{method:data===undefined?'GET':'POST',headers:{cookie,origin,'Content-Type':'application/json'},...(data===undefined?{}:{body:JSON.stringify(data)})});}
 const write=(cookie:string,action:string,data:unknown)=>POST(req('/api/sales',cookie,{action,data}));
@@ -91,4 +98,26 @@ await test('seller portal integration',async t=>{try{
  });
  await t.test('disable revokes seller sessions immediately and owner-only account list stays private',async()=>{assert.equal((await admin(req('/api/sales/admin',owner,{action:'disable',id:sellerId}))).status,200);assert.equal((await GET(req('/api/sales',first))).status,401);assert.equal((await (await GET(req('/api/sales',owner))).json()).accounts.length,2);});
  await t.test('pure pricing handles threshold, footwear and commission rounding',()=>{const base={id:'x',name:'Core',code:'25301801',image:'',colour:'Black',size:'M',available:10000,retailCents:10000,footwear:false,core:true};let q=salesQuote([base],[{variantId:'x',quantity:50}],2.7,'proforma',true);assert.equal(q.factor,2.7);assert.equal(q.subtotal,Math.round(10000/2.7)*50);assert.equal(q.commission,Math.round(q.subtotal*0.12)+10000);q=salesQuote([{...base,footwear:true}],[{variantId:'x',quantity:1}],2.7,'net30',false);assert.equal(q.factor,2.5);assert.equal(q.subtotal,4545);assert.equal(q.bonus,0);});
+
+ await t.test('backoffice edits are the shared source for model groups, categories, descriptions, photos, colours, sizes, prices and stock',async()=>{
+  const savedOrder=await salesDb().prepare('SELECT quote FROM seller_orders WHERE id=?').get(orderId);
+  await setFeature('category_management',true);
+  let r=await editCategory(req('/api/admin/categories',owner,{action:'create',name:'Seller test collection',labels:{en:'Test collection',nl:'Testcollectie'}}));assert.equal(r.status,200);
+  const catalog=await products(),p=catalog.find(p=>p.id==='P001')!;
+  const patch=(path:string,data:unknown)=>new Request('https://bigk.example'+path,{method:'PATCH',headers:{cookie:owner,origin:'https://bigk.example','Content-Type':'application/json'},body:JSON.stringify(data)});
+  r=await editGroup(patch('/api/admin/product-groups',{id:p.id,versions:Object.fromEntries(family(catalog,p).map(p=>[p.id,p.version])),name:'BACKOFFICE ALPINE TEST',description:'Verified sales description from the product editor.',category:'Seller test collection',content:{composition:'Test composition',care:'Test care',fit:'Test fit',details:'Test product details',presentation:{enabled:false,introduction:'',detailCaption:'',sizeGuide:'',sizeTable:'',features:[]}}}));assert.equal(r.status,200);
+  const bytes=await sharp({create:{width:80,height:100,channels:3,background:'#e4002b'}}).png().toBuffer(),form=new FormData();form.set('file',new File([new Uint8Array(bytes)],'seller-photo.png',{type:'image/png'}));
+  r=await uploadMedia(new Request('https://bigk.example/api/admin/media',{method:'POST',headers:{cookie:owner,origin:'https://bigk.example'},body:form}));assert.equal(r.status,200);const uploaded=await r.json();
+  const current=(await products()).find(p=>p.id==='P001')!,identifiers=Object.fromEntries(current.variants.map(v=>[v.id,{...current.content?.trade?.identifiers?.[v.id],sku:current.content?.trade?.identifiers?.[v.id]?.sku||'TEST-'+v.id,gtin:current.content?.trade?.identifiers?.[v.id]?.gtin||'',colour:'Test Black',colourId:'test-black',images:[uploaded.url]}]));
+  r=await editProduct(patch('/api/admin/catalog',{id:current.id,version:current.version,priceCents:15990,approved:false,active:false,images:[uploaded.url],content:{...current.content,trade:{...current.content?.trade,colour:'Test Black',identifiers}},variants:current.variants.map((v,i)=>({id:v.id,size:v.size,stock:i===0?7:v.stock}))}));assert.equal(r.status,200);
+  const child=(await products()).find(p=>p.id==='P002')!;r=await editProduct(patch('/api/admin/catalog',{id:child.id,version:child.version,priceCents:15990,approved:false,active:false,variants:child.variants.map(v=>({id:v.id,size:v.size,stock:v.stock}))}));assert.equal(r.status,200);
+  r=await editCategory(req('/api/admin/categories',owner,{action:'save',name:'Seller test collection',version:0,labels:{en:'Test collection',nl:'Nieuwe categorienaam'}}));assert.equal(r.status,200);
+  const workspace=await (await GET(req('/api/sales',second))).json(),model=workspace.models.find((m:any)=>m.id==='P001');
+  assert.equal(workspace.models.filter((m:any)=>m.id==='P001').length,1);assert.equal(model.name,'BACKOFFICE ALPINE TEST');assert.equal(model.description,'Verified sales description from the product editor.');assert.equal(model.categoryLabel,'Nieuwe categorienaam');assert.equal(model.composition,'Test composition');assert.equal(model.fit,'Test fit');assert.equal(model.care,'Test care');assert.equal(model.details,'Test product details');assert.equal(model.colours.length,2);
+  const black=model.colours.find((c:any)=>c.variantIds.includes(current.variants[0].id));assert.equal(black.name,'Test Black');assert.equal(black.images[0],uploaded.url);
+  const row=workspace.catalogue.find((v:any)=>v.id===current.variants[0].id);assert.equal(row.modelId,'P001');assert.equal(row.retailCents,15990);assert.equal(row.available,7);assert.equal(row.colour,'Test Black');assert.equal(row.image,uploaded.url);
+  const childRow=workspace.catalogue.find((v:any)=>v.id===child.variants[0].id);assert.equal(childRow.modelId,'P001');assert.equal(childRow.name,model.name);assert.equal(new Set(workspace.catalogue.map((v:any)=>v.id)).size,workspace.catalogue.length);
+  assert.equal((await salesDb().prepare('SELECT quote FROM seller_orders WHERE id=?').get(orderId))!.quote,savedOrder!.quote);
+  r=await editCategory(req('/api/admin/categories',owner,{action:'archive',name:'Seller test collection',version:1}));assert.equal(r.status,200);const archived=await (await GET(req('/api/sales',second))).json();assert.equal(archived.models.find((m:any)=>m.id==='P001').categoryActive,false);assert.ok(archived.catalogue.some((v:any)=>v.id===current.variants[0].id));
+ });
  }finally{await closeDatabase();rmSync(dir,{recursive:true,force:true});}});

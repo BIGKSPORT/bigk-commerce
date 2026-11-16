@@ -4,23 +4,43 @@ import {salesDb as db} from './sales-db';
 import {salesEvent} from './sales-auth';
 import {HttpError,hash} from './security';
 import {salesQuote} from './sales-pricing';
-import type {SalesActor,SalesCustomer,SalesOrder,SalesProduct,SalesQuote,SalesWorkspace} from './sales-types';
+import {sharedProducts,productGroups} from './product-groups';
+import {catalogCategories} from './catalog-categories';
+import {categoryLabel} from './category-labels';
+import type {SalesActor,SalesCustomer,SalesOrder,SalesModel,SalesProduct,SalesQuote,SalesWorkspace} from './sales-types';
 const coreCodes=new Set(['25302101','25000701','25000702','25000703','25000704','25303001','25302901','25303101','25303102','25303201','25303202','25301601','25301603','25301701','25301702','25301801','25301802','25301803','25301902','25301903','25302701','25300801']);
 export const customerInput=z.object({name:z.string().trim().min(2).max(150),vat:z.string().trim().regex(/^(?:BE)?[01][0-9]{9}$/i).transform(v=>v.toUpperCase().replace(/^BE/,'')).refine(v=>97-Number(v.slice(0,8))%97===Number(v.slice(8)),'Ongeldig Belgisch btw-nummer.'),contact:z.string().trim().min(2).max(100),email:z.email().max(254),phone:z.string().trim().min(6).max(50),address:z.string().trim().min(8).max(500)}).strict();
 export const orderInput=z.object({customerId:z.string().uuid(),items:z.array(z.object({variantId:z.string().min(1).max(100),quantity:z.number().int().min(1).max(10000)}).strict()).min(1).max(250),factor:z.union([z.literal(2.5),z.literal(2.7)]),terms:z.enum(['proforma','net30']),submit:z.boolean(),requestKey:z.string().uuid(),draftId:z.string().uuid().optional(),version:z.number().int().positive().optional()}).strict();
-export async function salesCatalogue():Promise<SalesProduct[]>{return (await products()).flatMap(p=>{
- if(!p.priceCents)return [];const trade=p.content?.trade,article=trade?.supplierArticle||p.code;
- return p.variants.filter(v=>!trade?.identifiers?.[v.id]?.archived).map(v=>{
- const identity=trade?.identifiers?.[v.id],image=identity?.images?.[0]||p.images[0]||'';
- return {id:v.id,name:p.name,code:identity?.supplierArticle||article,image,colour:identity?.colour||trade?.colour||'',size:v.size,available:Math.max(0,v.stock-v.reserved),retailCents:p.priceCents!,footwear:/footwear|shoe|sneaker/i.test(p.category)||/^B10/i.test(article),core:coreCodes.has(article.match(/\d{8}$/)?.[0]||article)};
- });
- });}
+
+export async function salesCatalogueData():Promise<{catalogue:SalesProduct[];models:SalesModel[]}>{
+ const [raw,categories]=await Promise.all([products(),catalogCategories()]);
+ const catalog=sharedProducts(raw),catalogue:SalesProduct[]=[],models:SalesModel[]=[];
+ for(const group of productGroups(catalog)){
+  const p=group.parent,category=categories.find(c=>c.name===p.category),presentation=p.content?.presentation;
+  const colours:SalesModel['colours']=[];
+  for(const option of group.colours){
+   const record=option.product;if(!record.priceCents)continue;
+   const variantIds:string[]=[];
+   for(const v of option.variants){
+    const identity=record.content?.trade?.identifiers?.[v.id];if(identity?.archived)continue;
+    const article=identity?.supplierArticle||option.article;
+    catalogue.push({id:v.id,modelId:group.id,name:p.name,code:article,image:option.images[0]||'',colour:option.colour,size:v.size,available:Math.max(0,v.stock-v.reserved),retailCents:record.priceCents,footwear:/footwear|shoe|sneaker/i.test(record.category)||/\bB10\b/i.test(article),core:coreCodes.has(article.match(/\d{8}$/)?.[0]||article)});
+    variantIds.push(v.id);
+   }
+   if(variantIds.length)colours.push({id:option.id,name:option.colour,article:option.article,images:option.images,variantIds});
+  }
+  if(!colours.length)continue;
+  models.push({id:group.id,productId:p.id,name:p.name,category:p.category,categoryLabel:categoryLabel(p.category,'nl',category?.labels),categoryActive:category?.active!==false,description:presentation?.enabled&&presentation.introduction?presentation.introduction:p.description,composition:p.content?.composition||'',fit:p.content?.fit||'',care:p.content?.care||'',details:p.content?.details||'',sizeGuide:presentation?.enabled?presentation.sizeGuide:'',sizeTable:presentation?.enabled?presentation.sizeTable:'',features:presentation?.enabled?presentation.features.map(f=>({id:f.id,heading:f.heading||f.name,description:f.description,image:f.image,alt:f.alt})):[],colours});
+ }
+ return {catalogue,models};
+}
+export async function salesCatalogue():Promise<SalesProduct[]>{return (await salesCatalogueData()).catalogue;}
 function customerRow(r:Record<string,unknown>):SalesCustomer{return {id:String(r.id),name:String(r.name),vat:'BE'+r.vat,contact:String(r.contact),email:String(r.email),phone:String(r.phone),address:String(r.address),creditApproved:!!Number(r.credit_approved),hasPaidOrder:Number(r.has_paid_order)>0};}
 function orderRow(r:Record<string,unknown>):SalesOrder{return {id:String(r.id),version:Number(r.version),customerId:String(r.customer_id),customerName:String(r.customer_name),sellerId:String(r.seller_id),sellerName:String(r.seller_name),status:r.status as SalesOrder['status'],terms:r.terms as SalesOrder['terms'],quote:JSON.parse(String(r.quote)),earnedCents:Number(r.earned_cents),createdAt:String(r.created_at),paymentReference:String(r.payment_reference)};}
 export async function salesWorkspace(actor:SalesActor):Promise<SalesWorkspace>{
  const filter=actor.role==='owner'?'':' WHERE seller_id=?',params=actor.role==='owner'?[]:[actor.id];
- const [catalogue,customers,orders,accounts]=await Promise.all([salesCatalogue(),db().prepare('SELECT c.*,(SELECT COUNT(*) FROM seller_orders o WHERE o.customer_id=c.id AND o.status=\'paid\') AS has_paid_order FROM seller_customers c'+(actor.role==='owner'?'':' WHERE c.seller_id=?')+' ORDER BY c.name').all(...params),db().prepare('SELECT o.*,c.name AS customer_name,a.name AS seller_name FROM seller_orders o JOIN seller_customers c ON c.id=o.customer_id JOIN seller_accounts a ON a.id=o.seller_id'+(actor.role==='owner'?'':' WHERE o.seller_id=?')+' ORDER BY o.created_at DESC LIMIT 200').all(...params),actor.role==='owner'?db().prepare('SELECT id,name,email,active FROM seller_accounts ORDER BY name').all():Promise.resolve(undefined)]);
- return {actor,catalogue,customers:customers.map(customerRow),orders:orders.map(orderRow),accounts:accounts?.map(r=>({id:String(r.id),name:String(r.name),email:String(r.email),active:Number(r.active)}))};
+ const [catalogueData,customers,orders,accounts]=await Promise.all([salesCatalogueData(),db().prepare('SELECT c.*,(SELECT COUNT(*) FROM seller_orders o WHERE o.customer_id=c.id AND o.status=\'paid\') AS has_paid_order FROM seller_customers c'+(actor.role==='owner'?'':' WHERE c.seller_id=?')+' ORDER BY c.name').all(...params),db().prepare('SELECT o.*,c.name AS customer_name,a.name AS seller_name FROM seller_orders o JOIN seller_customers c ON c.id=o.customer_id JOIN seller_accounts a ON a.id=o.seller_id'+(actor.role==='owner'?'':' WHERE o.seller_id=?')+' ORDER BY o.created_at DESC LIMIT 200').all(...params),actor.role==='owner'?db().prepare('SELECT id,name,email,active FROM seller_accounts ORDER BY name').all():Promise.resolve(undefined)]);
+ return {actor,catalogue:catalogueData.catalogue,models:catalogueData.models,customers:customers.map(customerRow),orders:orders.map(orderRow),accounts:accounts?.map(r=>({id:String(r.id),name:String(r.name),email:String(r.email),active:Number(r.active)}))};
 }
 export async function createSalesCustomer(actor:SalesActor,input:z.infer<typeof customerInput>){if(actor.role!=='seller')throw new HttpError(403,'Klanten worden aangemaakt vanuit een verkopersaccount.');return transaction(async()=>{
  if(await db().prepare('SELECT id FROM seller_customers WHERE vat=?').get(input.vat))throw new HttpError(409,'Dit btw-nummer is al geregistreerd. Vraag BIG K om de klanttoewijzing te controleren.');
