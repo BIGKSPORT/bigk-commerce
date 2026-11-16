@@ -61,7 +61,7 @@ try{
   await page.setContent('<html lang="nl"><head><meta name="viewport" content="width=device-width,initial-scale=1"/></head><body><div id="root"></div></body></html>');
   await page.addScriptTag({content:"window.fetch=async(path,init)=>new Response(JSON.stringify(await window.__catalogueFixture(path,init)),{status:200,headers:{'Content-Type':'application/json'}})"});
   await page.addStyleTag({content:readFileSync('app/globals.css','utf8')+'\n'+readFileSync('app/identity.css','utf8')+'\n'+workspaceBundle.outputFiles.find(f=>f.path.endsWith('.css')).text});await page.addScriptTag({content:workspaceBundle.outputFiles.find(f=>f.path.endsWith('.js')).text});
-  await page.getByRole('heading',{name:'ALPINE FLEECE',exact:true}).waitFor();assert.equal(await page.getByRole('heading',{name:'ALPINE FLEECE',exact:true}).count(),1);
+  await page.getByRole('heading',{name:'ALPINE FLEECE',exact:true}).waitFor({timeout:10000}).catch(async e=>{console.log('CATALOGUE_RENDER_DEBUG '+JSON.stringify({width,errors,body:(await page.locator('body').innerText()).slice(0,5000)}));throw e;});assert.equal(await page.getByRole('heading',{name:'ALPINE FLEECE',exact:true}).count(),1);
   const categories=page.getByRole('navigation',{name:'Productcategorieën'});
   await categories.getByRole('button',{name:/Broeken/}).click();assert.equal(await page.getByRole('heading',{name:'ALPINE FLEECE',exact:true}).count(),0);
   await categories.getByRole('button',{name:/Alle producten/}).click();
