@@ -60,6 +60,23 @@ try{
  await ownerPage.getByRole('button',{name:'Uitloggen',exact:true}).click();
  await ownerPage.getByRole('button',{name:'Inloggen',exact:true}).waitFor();assert.equal(ownerLogouts,1);await ownerPage.close();
 
+
+ const previewPage=await browser.newPage();let previewWrites=0;
+ await previewPage.exposeFunction('__sellerPreviewFixture',async(path,init)=>{
+ if(init.method!=='GET'){previewWrites++;throw Error('Preview must not write');}
+ assert.equal(path,'/api/sales?previewSeller=10000000-1000-4000-8000-100000000001');
+ return {actor:{id:'10000000-1000-4000-8000-100000000001',name:'Kenny Endels',role:'seller'},preview:{sellerId:'10000000-1000-4000-8000-100000000001',sellerName:'Kenny Endels',readOnly:true},catalogue:[{id:'preview-m',name:'ALPINE FLEECE',code:'25303101',image:'/fixture.svg',colour:'Black',size:'M',available:100,retailCents:14690,footwear:false,core:true}],customers:[],orders:[]};
+ });
+ await previewPage.setContent('<html><body><div id="root"></div></body></html>');
+ await previewPage.addScriptTag({content:"const OriginalParams=window.URLSearchParams;window.URLSearchParams=class extends OriginalParams{constructor(v){super(v||'previewSeller=10000000-1000-4000-8000-100000000001')}};window.fetch=async(path,init)=>new Response(JSON.stringify(await window.__sellerPreviewFixture(path,init)),{status:200})"});
+ await previewPage.addStyleTag({content:workspaceBundle.outputFiles.find(f=>f.path.endsWith('.css')).text});await previewPage.addScriptTag({content:workspaceBundle.outputFiles.find(f=>f.path.endsWith('.js')).text});
+ await previewPage.getByText('Voorbeeldweergave van Kenny Endels',{exact:true}).waitFor();
+ assert.equal(await previewPage.getByRole('button',{name:'Verkopers',exact:true}).count(),0);
+ await previewPage.getByLabel('ALPINE FLEECE Black maat M',{exact:true}).fill('30');
+ assert.equal(await previewPage.getByRole('button',{name:'Indienen bij BIG K',exact:true}).isDisabled(),true);
+ assert.equal(await previewPage.getByRole('button',{name:'Bewaar concept',exact:true}).isDisabled(),true);
+ await previewPage.getByRole('button',{name:'Winkels',exact:true}).click();assert.equal(await previewPage.getByRole('button',{name:'Winkel opslaan',exact:true}).isDisabled(),true);
+ assert.ok(await previewPage.getByRole('link',{name:'Terug naar mijn beheer'}).count()>0);assert.equal(previewWrites,0);await previewPage.close();
  const invitation=await inviteSeller({id:'owner',name:'Owner',role:'owner'},'Fixture Seller','fixture-seller@example.test'),setupToken=invitation.setupPath.split('#')[1];
  const page=await browser.newPage();let htmlResponse=true,secret='',setupCalls=[];
  await page.exposeFunction('__setupRequest',async(path,init)=>{

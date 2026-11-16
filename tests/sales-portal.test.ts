@@ -41,6 +41,15 @@ await test('seller portal integration',async t=>{try{
  assert.equal((await write(first,'customer',{name:'Test Shop',vat:'BE0123456749',contact:'Test Contact',email:'shop@example.test',phone:'0123456789',address:'Teststraat 10, 1000 Brussel'})).status,409);
  });
  const input=()=>({customerId,items:[{variantId,quantity:30}],factor:2.5,terms:'proforma',submit:true,requestKey:crypto.randomUUID()});
+ await t.test('owner preview is seller-scoped, cannot be used by sellers and rejects preview writes',async()=>{
+ const counts=async()=>({customers:(await salesDb().prepare('SELECT COUNT(*) AS n FROM seller_customers').get())!.n,orders:(await salesDb().prepare('SELECT COUNT(*) AS n FROM seller_orders').get())!.n,sessions:(await salesDb().prepare('SELECT COUNT(*) AS n FROM seller_sessions').get())!.n});
+ const before=await counts(),path='/api/sales?previewSeller='+sellerId;
+ let r=await GET(req(path,owner));assert.equal(r.status,200);const view=await r.json();assert.equal(view.actor.id,sellerId);assert.equal(view.actor.role,'seller');assert.equal(view.preview.readOnly,true);assert.equal(view.accounts,undefined);assert.equal(view.customers.length,1);
+ assert.equal((await GET(req(path,second))).status,403);assert.equal((await GET(req('/api/sales?previewSeller=bad-id',owner))).status,400);assert.equal((await GET(req('/api/sales?previewSeller='+crypto.randomUUID(),owner))).status,404);
+ r=await POST(req(path,owner,{action:'customer',data:{}}));assert.equal(r.status,403);
+ assert.equal((await admin(req('/api/sales/admin?previewSeller='+sellerId,owner,{action:'disable',id:sellerId}))).status,403);assert.deepEqual(await counts(),before);
+ const normal=await (await GET(req('/api/sales',owner))).json();assert.equal(normal.actor.role,'owner');assert.equal(normal.preview,undefined);
+ });
  await t.test('server rejects other sellers, CSRF, stock excess, forged prices, duplicate sizes and unapproved credit',async()=>{
  assert.equal((await write(second,'order',input())).status,404);
  assert.equal((await POST(req('/api/sales',first,{action:'order',data:input()},'https://evil.example'))).status,403);

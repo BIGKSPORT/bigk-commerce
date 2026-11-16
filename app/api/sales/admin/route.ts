@@ -3,7 +3,7 @@ import {body,checkOrigin,failure,HttpError,rateLimitVisitor} from '@/lib/securit
 import {changeSeller,changeSellerEmail,inviteSeller,salesActor} from '@/lib/sales-auth';
 import {changeSalesOrder,setSalesCredit} from '@/lib/sales-service';
 export const runtime='nodejs';
-export async function POST(req:Request){try{checkOrigin(req);const actor=await salesActor(req,true);await rateLimitVisitor(req,'seller-admin',40,60,1000);const p=z.discriminatedUnion('action',[
+export async function POST(req:Request){try{checkOrigin(req);const actor=await salesActor(req,true);if(new URL(req.url).searchParams.has('previewSeller'))throw new HttpError(403,'De voorbeeldweergave is alleen-lezen.');await rateLimitVisitor(req,'seller-admin',40,60,1000);const p=z.discriminatedUnion('action',[
  z.object({action:z.literal('invite'),name:z.string().trim().min(2).max(80),email:z.email().max(254)}).strict(),
  z.object({action:z.enum(['disable','reset']),id:z.string().uuid()}).strict(),
  z.object({action:z.literal('email'),id:z.string().uuid(),email:z.email().max(254)}).strict(),
