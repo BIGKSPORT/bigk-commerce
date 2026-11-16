@@ -16,3 +16,7 @@
 .catalogueFilters .stockFilter{min-height:44px}
 
 .productDialog{position:fixed;inset:0;margin:auto;scroll-behavior:auto}
+
+.workspace[data-presentation=true]{grid-template-columns:1fr}.workspace[data-presentation=true] .bag{display:none}.workspace[data-presentation=true] .catalogueGrid{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media(max-width:1100px){.workspace[data-presentation=true] .catalogueGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){.workspace[data-presentation=true] .catalogueGrid{grid-template-columns:1fr}}
