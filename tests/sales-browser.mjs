@@ -88,17 +88,17 @@ try{
   const screenshot=await page.screenshot({path:out+'/catalogue-'+width+'.png',fullPage:true});if(process.env.CI)console.log('CATALOGUE_SCREENSHOT '+width+' '+(await sharp(screenshot).resize({width:Math.min(width,1100)}).webp({quality:70}).toBuffer()).toString('base64'));
   assert.equal(writes,0);assert.deepEqual(errors,[]);await page.close();
  }
- const ownerPage=await browser.newPage();let ownerLogouts=0;
+ const ownerPage=await browser.newPage();let ownerLogouts=0;const ownerErrors=[];ownerPage.on('pageerror',e=>ownerErrors.push(e.message));
  await ownerPage.exposeFunction('__ownerFixture',async(path,init)=>{
  if(path==='/api/sales'&&init.method==='GET')return {actor:{id:'owner',name:'BIG K',role:'owner'},catalogue:[],customers:[],orders:[],accounts:[]};
  if(path==='/api/admin/logout'&&init.method==='POST'){ownerLogouts++;return {ok:true};}
  throw Error('Unexpected owner auth request '+path);
  });
- await ownerPage.setContent('<html><body><div id="root"></div></body></html>');
+ await ownerPage.setContent('<!doctype html><html><body><div id="root"></div></body></html>');
  await ownerPage.addScriptTag({content:"window.fetch=async(path,init)=>new Response(JSON.stringify(await window.__ownerFixture(path,init)),{status:200})"});
  await ownerPage.addStyleTag({content:workspaceBundle.outputFiles.find(f=>f.path.endsWith('.css')).text});
  await ownerPage.addScriptTag({content:workspaceBundle.outputFiles.find(f=>f.path.endsWith('.js')).text});
- await ownerPage.getByRole('heading',{name:'Goed op weg, BIG K.'}).waitFor();
+ await ownerPage.getByRole('heading',{name:'Goed op weg, BIG K.'}).waitFor({timeout:10000}).catch(async e=>{console.log('OWNER_RENDER_DEBUG '+JSON.stringify({errors:ownerErrors,body:(await ownerPage.locator('body').innerText()).slice(0,5000)}));throw e;});
  await ownerPage.getByRole('button',{name:'Uitloggen',exact:true}).click();
  await ownerPage.getByRole('button',{name:'Inloggen',exact:true}).waitFor();assert.equal(ownerLogouts,1);await ownerPage.close();
 
@@ -109,7 +109,7 @@ try{
  assert.equal(path,'/api/sales?previewSeller=10000000-1000-4000-8000-100000000001');
  return {actor:{id:'10000000-1000-4000-8000-100000000001',name:'Kenny Endels',role:'seller'},preview:{sellerId:'10000000-1000-4000-8000-100000000001',sellerName:'Kenny Endels',readOnly:true},catalogue:[{id:'preview-m',name:'ALPINE FLEECE',code:'25303101',image:'/fixture.svg',colour:'Black',size:'M',available:100,retailCents:14690,footwear:false,core:true}],customers:[],orders:[]};
  });
- await previewPage.setContent('<html><body><div id="root"></div></body></html>');
+ await previewPage.setContent('<!doctype html><html><body><div id="root"></div></body></html>');
  await previewPage.addScriptTag({content:"const OriginalParams=window.URLSearchParams;window.URLSearchParams=class extends OriginalParams{constructor(v){super(v||'previewSeller=10000000-1000-4000-8000-100000000001')}};window.fetch=async(path,init)=>new Response(JSON.stringify(await window.__sellerPreviewFixture(path,init)),{status:200})"});
  await previewPage.addStyleTag({content:workspaceBundle.outputFiles.find(f=>f.path.endsWith('.css')).text});await previewPage.addScriptTag({content:workspaceBundle.outputFiles.find(f=>f.path.endsWith('.js')).text});
  await previewPage.getByText('Voorbeeldweergave van Kenny Endels',{exact:true}).waitFor();
@@ -129,7 +129,7 @@ try{
   const text=await response.text();if(response.ok&&data.action==='begin')secret=JSON.parse(text).secret;
   return {status:response.status,type:response.headers.get('content-type'),text};
  });
- await page.setContent('<html><body><div id="root"></div></body></html>');
+ await page.setContent('<!doctype html><html><body><div id="root"></div></body></html>');
  await page.addScriptTag({content:"window.location.hash="+JSON.stringify(setupToken)+";history.replaceState=()=>{window.location.hash=''};window.fetch=async(path,init)=>{const r=await window.__setupRequest(path,init);return new Response(r.text,{status:r.status,headers:{'Content-Type':r.type}})}"});
  await page.addStyleTag({content:setupBundle.outputFiles.find(f=>f.path.endsWith('.css')).text});await page.addScriptTag({content:setupBundle.outputFiles.find(f=>f.path.endsWith('.js')).text});
  await page.getByRole('button',{name:'Account instellen',exact:true}).click();
