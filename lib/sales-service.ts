@@ -5,7 +5,7 @@ import {salesEvent} from './sales-auth';
 import {HttpError,hash} from './security';
 import {salesQuote} from './sales-pricing';
 import {sharedProducts,productGroups} from './product-groups';
-import {catalogCategories} from './catalog-categories';
+import {publicCategoryOptions} from './catalog-categories';
 import {categoryLabel} from './category-labels';
 import type {SalesActor,SalesCustomer,SalesOrder,SalesModel,SalesProduct,SalesQuote,SalesWorkspace} from './sales-types';
 const coreCodes=new Set(['25302101','25000701','25000702','25000703','25000704','25303001','25302901','25303101','25303102','25303201','25303202','25301601','25301603','25301701','25301702','25301801','25301802','25301803','25301902','25301903','25302701','25300801']);
@@ -13,10 +13,10 @@ export const customerInput=z.object({name:z.string().trim().min(2).max(150),vat:
 export const orderInput=z.object({customerId:z.string().uuid(),items:z.array(z.object({variantId:z.string().min(1).max(100),quantity:z.number().int().min(1).max(10000)}).strict()).min(1).max(250),factor:z.union([z.literal(2.5),z.literal(2.7)]),terms:z.enum(['proforma','net30']),submit:z.boolean(),requestKey:z.string().uuid(),draftId:z.string().uuid().optional(),version:z.number().int().positive().optional()}).strict();
 
 export async function salesCatalogueData():Promise<{catalogue:SalesProduct[];models:SalesModel[]}>{
- const [raw,categories]=await Promise.all([products(),catalogCategories()]);
+ const [raw,categories]=await Promise.all([products(),publicCategoryOptions()]);
  const catalog=sharedProducts(raw),catalogue:SalesProduct[]=[],models:SalesModel[]=[];
  for(const group of productGroups(catalog)){
-  const p=group.parent,category=categories.find(c=>c.name===p.category),presentation=p.content?.presentation;
+  const p=group.parent,category=categories?.find(c=>c.name===p.category),presentation=p.content?.presentation;
   const colours:SalesModel['colours']=[];
   for(const option of group.colours){
    const record=option.product;if(!record.priceCents)continue;
@@ -30,7 +30,7 @@ export async function salesCatalogueData():Promise<{catalogue:SalesProduct[];mod
    if(variantIds.length)colours.push({id:option.id,name:option.colour,article:option.article,images:option.images,variantIds});
   }
   if(!colours.length)continue;
-  models.push({id:group.id,productId:p.id,name:p.name,category:p.category,categoryLabel:categoryLabel(p.category,'nl',category?.labels),categoryActive:category?.active!==false,description:presentation?.enabled&&presentation.introduction?presentation.introduction:p.description,composition:p.content?.composition||'',fit:p.content?.fit||'',care:p.content?.care||'',details:p.content?.details||'',sizeGuide:presentation?.enabled?presentation.sizeGuide:'',sizeTable:presentation?.enabled?presentation.sizeTable:'',features:presentation?.enabled?presentation.features.map(f=>({id:f.id,heading:f.heading||f.name,description:f.description,image:f.image,alt:f.alt})):[],colours});
+  models.push({id:group.id,productId:p.id,name:p.name,category:p.category,categoryLabel:categoryLabel(p.category,'nl',category?.labels),categoryActive:category?.active!==false,description:p.description,introduction:presentation?.enabled?presentation.introduction:'',composition:p.content?.composition||'',fit:p.content?.fit||'',care:p.content?.care||'',details:p.content?.details||'',sizeGuide:presentation?.enabled?presentation.sizeGuide:'',sizeTable:presentation?.enabled?presentation.sizeTable:'',features:presentation?.enabled?presentation.features.map(f=>({id:f.id,heading:f.heading||f.name,description:f.description,image:f.image,alt:f.alt})):[],colours});
  }
  return {catalogue,models};
 }

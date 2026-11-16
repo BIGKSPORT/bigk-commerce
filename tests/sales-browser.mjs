@@ -75,7 +75,7 @@ try{
   await dialog.getByText('Regular fit uit de backoffice',{exact:true}).waitFor();await dialog.getByText('Geverifieerde materiaalinformatie',{exact:true}).waitFor();
   assert.equal(await dialog.getByLabel('ALPINE FLEECE Black maat L',{exact:true}).isDisabled(),true);
   await dialog.getByLabel('ALPINE FLEECE Dusty Blue maat M',{exact:true}).fill('2');
-  await dialog.getByRole('button',{name:'Productfoto 2',exact:true}).click();assert.equal(await dialog.locator('img').first().getAttribute('data-source'),'/back.webp');
+  await dialog.evaluate(el=>{el.scrollTop=0;});await dialog.getByRole('button',{name:'Productfoto 2',exact:true}).click();assert.equal(await dialog.locator('img').first().getAttribute('data-source'),'/back.webp');
   await page.screenshot({path:out+'/catalogue-detail-'+width+'.png',fullPage:true});
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+1),false);
   await dialog.getByRole('button',{name:'Productdetails sluiten'}).click();assert.equal(await page.getByLabel('ALPINE FLEECE Black maat M',{exact:true}).inputValue(),'3');
