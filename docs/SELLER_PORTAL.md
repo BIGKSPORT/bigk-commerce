@@ -52,3 +52,7 @@ CI `Seller portal checks` runs the same tests without secrets and uploads deskto
 Manual hosted checklist: invitation expiry/reuse, authenticator login, disable/reset, real product names/colours/sizes/prices, stock exhaustion, reload persistence, draft edit conflicts, first order/reorder, credit approval, commission/one-time bonus, presentation mode, desktop/iPhone/Android, owner payment reference, two different sellers' data isolation. Verify consumer checkout remains unchanged. Offline here means physical selling: a network connection is needed to log in, refresh or save; there is no service worker or durable offline draft storage.
 
 Limitations: Belgium/21% VAT only; latest 200 orders in dashboard summaries; no invoicing, shipping, stock allocation, commission payout or returns integration; no store visit CRM. A loaded catalogue is a snapshot until refreshed. Keep access limited to approved sellers.
+
+## Owner access and seller email changes
+
+The existing owner admin session opens `/staff/sales` on the same origin. The authenticated backoffice shows a **Verkopersplatform** link only when the portal authentication endpoint is enabled. No production cookies are copied to preview. Each seller has a separate password and authenticator; no owner rights are shared. The owner can edit a seller login email without losing that seller's assigned customers or order history. Editing the login revokes current seller sessions.

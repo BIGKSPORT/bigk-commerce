@@ -44,3 +44,9 @@ export async function sellerLogin(email:string,password:string,code:string){requ
  const value=token();await db().prepare('INSERT INTO seller_sessions(hash,seller_id,account_version,expires_at) VALUES(?,?,?,?)').run(hash('seller:'+value),row.id,row.version,new Date(Date.now()+2*3600000).toISOString());
  await salesEvent({id:String(row.id),name:String(row.name),role:'seller'},'seller.login',String(row.id));return sessionCookie('bigk_seller',value,7200);
 });}
+
+export async function changeSellerEmail(actor:SalesActor,id:string,email:string){if(actor.role!=='owner')throw new HttpError(403,'Alleen BIG K kan de login wijzigen.');return transaction(async()=>{
+ const normalized=email.toLowerCase().trim();const row=await db().prepare('SELECT id FROM seller_accounts WHERE id=?').get(id);if(!row)throw new HttpError(404,'Verkoper niet gevonden.');
+ if(await db().prepare('SELECT id FROM seller_accounts WHERE email=? AND id<>?').get(normalized,id))throw new HttpError(409,'Dit e-mailadres is al in gebruik.');
+ await db().prepare('UPDATE seller_accounts SET email=?,version=version+1 WHERE id=?').run(normalized,id);await db().prepare('DELETE FROM seller_sessions WHERE seller_id=?').run(id);await salesEvent(actor,'seller.email_changed',id);return {ok:true};
+});}

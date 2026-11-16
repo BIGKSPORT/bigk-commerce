@@ -74,6 +74,12 @@ await test('seller portal integration',async t=>{try{
  assert.equal((await admin(req('/api/sales/admin',owner,{action:'credit',id:customerId,approved:true}))).status,200);assert.equal((await write(first,'order',{...input(),terms:'net30'})).status,200);
  assert.equal((await write(first,'status',{id:orderId,action:'cancel'})).status,409);
  });
+ await t.test('owner can change a seller email without losing customers or orders; active sessions are revoked',async()=>{
+ assert.equal((await admin(req('/api/sales/admin',first,{action:'email',id:sellerId,email:'changed@example.test'}))).status,403);
+ assert.equal((await admin(req('/api/sales/admin',owner,{action:'email',id:sellerId,email:'changed@example.test'}))).status,200);
+ assert.equal((await GET(req('/api/sales',first))).status,401);const row=await salesDb().prepare('SELECT email,version FROM seller_accounts WHERE id=?').get(sellerId);assert.equal(row!.email,'changed@example.test');assert.ok((await salesDb().prepare('SELECT id FROM seller_orders WHERE seller_id=?').all(sellerId)).length>0);
+ await salesDb().prepare('INSERT INTO seller_sessions VALUES(?,?,?,?)').run(hash('seller:seller-one'),sellerId,row!.version,new Date(Date.now()+600000).toISOString());
+ });
  await t.test('disable revokes seller sessions immediately and owner-only account list stays private',async()=>{assert.equal((await admin(req('/api/sales/admin',owner,{action:'disable',id:sellerId}))).status,200);assert.equal((await GET(req('/api/sales',first))).status,401);assert.equal((await (await GET(req('/api/sales',owner))).json()).accounts.length,2);});
  await t.test('pure pricing handles threshold, footwear and commission rounding',()=>{const base={id:'x',name:'Core',code:'25301801',image:'',colour:'Black',size:'M',available:10000,retailCents:10000,footwear:false,core:true};let q=salesQuote([base],[{variantId:'x',quantity:50}],2.7,'proforma',true);assert.equal(q.factor,2.7);assert.equal(q.subtotal,Math.round(10000/2.7)*50);assert.equal(q.commission,Math.round(q.subtotal*0.12)+10000);q=salesQuote([{...base,footwear:true}],[{variantId:'x',quantity:1}],2.7,'net30',false);assert.equal(q.factor,2.5);assert.equal(q.subtotal,4545);assert.equal(q.bonus,0);});
  }finally{await closeDatabase();rmSync(dir,{recursive:true,force:true});}});
