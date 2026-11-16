@@ -36,6 +36,20 @@ try{
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+1),false);
   if(!mobile){catalogueMissing=true;await page.getByRole('button',{name:'Voorraad vernieuwen',exact:true}).click();await page.getByText('Een product in je selectie is niet langer beschikbaar.',{exact:false}).waitFor();assert.equal(await page.getByRole('button',{name:'Indienen bij BIG K',exact:true}).isDisabled(),true);catalogueMissing=false;await page.getByRole('button',{name:'Voorraad vernieuwen',exact:true}).click();await page.getByText('€ 311,54',{exact:true}).waitFor();}if(mobile)await page.getByRole('button',{name:'Bestelling openen of sluiten'}).click();await page.getByRole('button',{name:'Indienen bij BIG K',exact:true}).click();await page.getByText('Ingediend · wacht op BIG K',{exact:false}).waitFor();assert.equal(saves,1);await page.getByText('30 × ALPINE FLEECE',{exact:false}).waitFor();assert.deepEqual(errors,[]);await page.close();
  }
+
+ const ownerPage=await browser.newPage();let ownerLogouts=0;
+ await ownerPage.exposeFunction('__ownerFixture',async(path,init)=>{
+ if(path==='/api/sales'&&init.method==='GET')return {actor:{id:'owner',name:'BIG K',role:'owner'},catalogue:[],customers:[],orders:[],accounts:[]};
+ if(path==='/api/admin/logout'&&init.method==='POST'){ownerLogouts++;return {ok:true};}
+ throw Error('Unexpected owner auth request '+path);
+ });
+ await ownerPage.setContent('<html><body><div id="root"></div></body></html>');
+ await ownerPage.addScriptTag({content:"window.fetch=async(path,init)=>new Response(JSON.stringify(await window.__ownerFixture(path,init)),{status:200})"});
+ await ownerPage.addStyleTag({content:workspaceBundle.outputFiles.find(f=>f.path.endsWith('.css')).text});
+ await ownerPage.addScriptTag({content:workspaceBundle.outputFiles.find(f=>f.path.endsWith('.js')).text});
+ await ownerPage.getByRole('heading',{name:'Goed op weg, BIG K.'}).waitFor();
+ await ownerPage.getByRole('button',{name:'Uitloggen',exact:true}).click();
+ await ownerPage.getByRole('button',{name:'Inloggen',exact:true}).waitFor();assert.equal(ownerLogouts,1);await ownerPage.close();
  const page=await browser.newPage();await page.setContent('<html><body><div id="root"></div></body></html>');await page.addScriptTag({content:`window.location.hash='fixture-token';history.replaceState=()=>{window.location.hash=''};window.fetch=async(path,init)=>{const data=JSON.parse(init.body);return new Response(JSON.stringify(data.action==='begin'?{secret:'FIXTURESECRET',qr:'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg"/%3E'}:{ok:true}),{status:200})};`});await page.addStyleTag({content:setupBundle.outputFiles.find(f=>f.path.endsWith('.css')).text});await page.addScriptTag({content:setupBundle.outputFiles.find(f=>f.path.endsWith('.js')).text});await page.getByRole('button',{name:'Account instellen',exact:true}).click();await page.getByLabel('Nieuw wachtwoord, minimaal 16 tekens').fill('Fixture password 1234');await page.getByLabel('Authenticatorcode').fill('123456');await page.getByRole('button',{name:'Account activeren'}).click();await page.getByText('Je account is ingesteld.',{exact:true}).waitFor();assert.equal(new URL(page.url()).hash,'');await page.close();
  console.log('PASS: actual seller UI desktop/iPhone/Android: login, catalogue, real variant selection, out-of-stock, live commission, presentation mode, submit once and setup. API calls simulated; backend verified separately.');
 }finally{await browser.close();}
