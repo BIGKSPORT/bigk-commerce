@@ -1,6 +1,6 @@
 # BIG K seller portal
 
-New, private route: `/staff/sales`. No existing source files, consumer routes, checkout, stock quantities or payment integration are changed.
+New, private route: `/staff/sales`. Existing consumer routes, checkout, stock quantities and payment integration are unchanged. The only existing component changed is the backoffice: it shows a conditional Verkopersplatform link for the authenticated owner.
 
 ## First version
 
@@ -56,3 +56,7 @@ Limitations: Belgium/21% VAT only; latest 200 orders in dashboard summaries; no 
 ## Owner access and seller email changes
 
 The existing owner admin session opens `/staff/sales` on the same origin. The authenticated backoffice shows a **Verkopersplatform** link only when the portal authentication endpoint is enabled. No production cookies are copied to preview. Each seller has a separate password and authenticator; no owner rights are shared. The owner can edit a seller login email without losing that seller's assigned customers or order history. Editing the login revokes current seller sessions.
+
+## Activation status
+
+The owner requested access through their existing bigk.be backoffice, and a separate seller account for Kenny Endels using team@bigk.be temporarily. Production activation is pending explicit authorization: automatic approval review rejected production DDL/RLS/grants as beyond the earlier staging-only scope. No live seller tables or account were created, no production feature flag was set, and this branch remains unmerged. After approval, apply reviewed production DDL, enable the production flag, release the reviewed commit, verify owner access on the same origin, and issue Kenny a single-use enrollment link. Do not copy production sessions or credentials to preview.
