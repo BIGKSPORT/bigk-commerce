@@ -1,7 +1,15 @@
 import {build} from 'esbuild';
 import sharp from 'sharp';
 import {chromium} from 'playwright';
-import {mkdirSync,readFileSync,writeFileSync} from 'node:fs';
+import {mkdirSync,readFileSync,writeFileSync,mkdtempSync,rmSync} from 'node:fs';
+import {tmpdir} from 'node:os';
+import {join} from 'node:path';
+import {randomBytes} from 'node:crypto';
+import {POST as setupPost} from '../app/api/sales/setup/route.ts';
+import {inviteSeller} from '../lib/sales-auth.ts';
+import {salesDb} from '../lib/sales-db.ts';
+import {closeDatabase} from '../lib/db.ts';
+import {totp} from '../lib/admin-mfa.ts';
 import {gzipSync} from 'node:zlib';
 import assert from 'node:assert/strict';
 import {salesQuote} from '../lib/sales-pricing.ts';
@@ -12,6 +20,7 @@ const workspaceBundle=await bundle('sales-workspace'),setupBundle=await bundle('
 const empty=await build({stdin:{resolveDir:process.cwd(),loader:'tsx',contents:"import React from 'react';import{createRoot}from'react-dom/client';createRoot(document.getElementById('root')).render(<div/>);"},bundle:true,write:false,minify:true,platform:'browser',jsx:'automatic',define:{'process.env.NODE_ENV':'"production"'}});
 const full=workspaceBundle.outputFiles.find(f=>f.path.endsWith('.js')).contents,baseline=empty.outputFiles[0].contents;
 writeFileSync(out+'/bundle-size.json',JSON.stringify({method:'Minified standalone component bundle less identical React runtime; indicative, not Next route chunk measurement',addedMinifiedBytes:full.length-baseline.length,addedGzipBytes:gzipSync(full).length-gzipSync(baseline).length},null,2));
+const setupDir=mkdtempSync(join(tmpdir(),'bigk-sales-browser-'));Object.assign(process.env,{DATABASE_PROVIDER:'sqlite',DATABASE_PATH:join(setupDir,'store.sqlite'),DATABASE_SCHEMA:'bigk',NODE_ENV:'test',APP_URL:'https://setup.example',ADMIN_MFA_KEY:randomBytes(32).toString('hex'),SELLER_PORTAL_ENABLED:'true'});delete process.env.VERCEL;delete process.env.VERCEL_ENV;
 const browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium',headless:true,args:['--no-sandbox','--disable-crashpad-for-testing']});
 try{
  for(const [name,width,mobile] of [['desktop',1440,false],['iphone',390,true],['android',412,true]]){
@@ -50,6 +59,29 @@ try{
  await ownerPage.getByRole('heading',{name:'Goed op weg, BIG K.'}).waitFor();
  await ownerPage.getByRole('button',{name:'Uitloggen',exact:true}).click();
  await ownerPage.getByRole('button',{name:'Inloggen',exact:true}).waitFor();assert.equal(ownerLogouts,1);await ownerPage.close();
- const page=await browser.newPage();await page.setContent('<html><body><div id="root"></div></body></html>');await page.addScriptTag({content:`window.location.hash='fixture-token';history.replaceState=()=>{window.location.hash=''};window.fetch=async(path,init)=>{const data=JSON.parse(init.body);return new Response(JSON.stringify(data.action==='begin'?{secret:'FIXTURESECRET',qr:'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg"/%3E'}:{ok:true}),{status:200})};`});await page.addStyleTag({content:setupBundle.outputFiles.find(f=>f.path.endsWith('.css')).text});await page.addScriptTag({content:setupBundle.outputFiles.find(f=>f.path.endsWith('.js')).text});await page.getByRole('button',{name:'Account instellen',exact:true}).click();await page.getByLabel('Nieuw wachtwoord, minimaal 16 tekens').fill('Fixture password 1234');await page.getByLabel('Authenticatorcode').fill('123456');await page.getByRole('button',{name:'Account activeren'}).click();await page.getByText('Je account is ingesteld.',{exact:true}).waitFor();assert.equal(new URL(page.url()).hash,'');await page.close();
+
+ const invitation=await inviteSeller({id:'owner',name:'Owner',role:'owner'},'Fixture Seller','fixture-seller@example.test'),setupToken=invitation.setupPath.split('#')[1];
+ const page=await browser.newPage();let htmlResponse=true,secret='',setupCalls=[];
+ await page.exposeFunction('__setupRequest',async(path,init)=>{
+  assert.equal(path,'/api/sales/setup','The UI must use the actual Next.js setup API route');assert.equal(init.method,'POST');
+  const data=JSON.parse(init.body);assert.equal(data.token,setupToken);setupCalls.push(data.action);
+  if(htmlResponse)return {status:404,type:'text/html',text:'<!DOCTYPE html><html><body>Not found</body></html>'};
+  const response=await setupPost(new Request('https://setup.example'+path,{method:'POST',headers:{origin:'https://setup.example','Content-Type':'application/json'},body:init.body}));
+  const text=await response.text();if(response.ok&&data.action==='begin')secret=JSON.parse(text).secret;
+  return {status:response.status,type:response.headers.get('content-type'),text};
+ });
+ await page.setContent('<html><body><div id="root"></div></body></html>');
+ await page.addScriptTag({content:"window.location.hash="+JSON.stringify(setupToken)+";history.replaceState=()=>{window.location.hash=''};window.fetch=async(path,init)=>{const r=await window.__setupRequest(path,init);return new Response(r.text,{status:r.status,headers:{'Content-Type':r.type}})}"});
+ await page.addStyleTag({content:setupBundle.outputFiles.find(f=>f.path.endsWith('.css')).text});await page.addScriptTag({content:setupBundle.outputFiles.find(f=>f.path.endsWith('.js')).text});
+ await page.getByRole('button',{name:'Account instellen',exact:true}).click();
+ await page.getByRole('alert').filter({hasText:'Account instellen is tijdelijk niet beschikbaar.'}).waitFor();
+ assert.equal(await page.getByText(/Unexpected token/).count(),0);
+ htmlResponse=false;await page.getByRole('button',{name:'Account instellen',exact:true}).click();
+ await page.getByLabel('Nieuw wachtwoord, minimaal 16 tekens').fill('Fixture password 1234');
+ await page.getByLabel('Authenticatorcode').fill(totp(secret,Math.floor(Date.now()/30000)));
+ await page.getByRole('button',{name:'Account activeren'}).click();await page.getByText('Je account is ingesteld.',{exact:true}).waitFor();
+ assert.equal(new URL(page.url()).hash,'');assert.deepEqual(setupCalls,['begin','begin','finish']);
+ const enrolled=await salesDb().prepare('SELECT password_hash,secret_encrypted,invite_hash FROM seller_accounts WHERE email=?').get('fixture-seller@example.test');assert.ok(enrolled.password_hash);assert.ok(enrolled.secret_encrypted);assert.equal(enrolled.invite_hash,null);
+ const reused=await setupPost(new Request('https://setup.example/api/sales/setup',{method:'POST',headers:{origin:'https://setup.example','Content-Type':'application/json'},body:JSON.stringify({action:'begin',token:setupToken})}));assert.equal(reused.status,410);await page.close();
  console.log('PASS: actual seller UI desktop/iPhone/Android: login, catalogue, real variant selection, out-of-stock, live commission, presentation mode, submit once and setup. API calls simulated; backend verified separately.');
-}finally{await browser.close();}
+}finally{await browser.close();await closeDatabase();rmSync(setupDir,{recursive:true,force:true});}
