@@ -5,7 +5,7 @@ import {salesEvent} from './sales-auth';
 import {HttpError,hash} from './security';
 import {salesQuote} from './sales-pricing';
 import type {SalesActor,SalesCustomer,SalesOrder,SalesProduct,SalesQuote,SalesWorkspace} from './sales-types';
-const coreCodes=new Set(['25303001','25302901','25303101','25303102','25303201','25303202','25301601','25301603','25301701','25301702','25301801','25301802','25301803','25301902','25301903','25302701','25300801']);
+const coreCodes=new Set(['25302101','25000701','25000702','25000703','25000704','25303001','25302901','25303101','25303102','25303201','25303202','25301601','25301603','25301701','25301702','25301801','25301802','25301803','25301902','25301903','25302701','25300801']);
 export const customerInput=z.object({name:z.string().trim().min(2).max(150),vat:z.string().trim().regex(/^(?:BE)?[01][0-9]{9}$/i).transform(v=>v.toUpperCase().replace(/^BE/,'')).refine(v=>97-Number(v.slice(0,8))%97===Number(v.slice(8)),'Ongeldig Belgisch btw-nummer.'),contact:z.string().trim().min(2).max(100),email:z.email().max(254),phone:z.string().trim().min(6).max(50),address:z.string().trim().min(8).max(500)}).strict();
 export const orderInput=z.object({customerId:z.string().uuid(),items:z.array(z.object({variantId:z.string().min(1).max(100),quantity:z.number().int().min(1).max(10000)}).strict()).min(1).max(250),factor:z.union([z.literal(2.5),z.literal(2.7)]),terms:z.enum(['proforma','net30']),submit:z.boolean(),requestKey:z.string().uuid(),draftId:z.string().uuid().optional(),version:z.number().int().positive().optional()}).strict();
 export async function salesCatalogue():Promise<SalesProduct[]>{return (await products()).flatMap(p=>{
