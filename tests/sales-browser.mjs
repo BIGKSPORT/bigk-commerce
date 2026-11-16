@@ -48,7 +48,7 @@ try{
 
 
  for(const width of [1440,390]){
-  const page=await browser.newPage({viewport:{width,height:1000},isMobile:width===390,hasTouch:width===390}),errors=[];page.on('pageerror',e=>errors.push(e.message));
+  const page=await browser.newPage({viewport:{width,height:1000},isMobile:width===390,hasTouch:width===390,reducedMotion:'reduce'}),errors=[];page.on('pageerror',e=>errors.push(e.message));
   let version=0,writes=0;
   const response=()=>{
    const name=version?'ALPINE UPDATED':'ALPINE FLEECE',categoryLabel=version?'Nieuwe fleececategorie':'Fleece';
@@ -58,11 +58,12 @@ try{
    return {actor:{id:'fixture',name:'Catalogus',role:'seller'},catalogue:rows,models,customers:[],orders:[]};
   };
   await page.exposeFunction('__catalogueFixture',async(path,init)=>{assert.equal(path,'/api/sales');if(init.method!=='GET'){writes++;throw Error('No writes expected');}return response();});
-  await page.setContent('<html lang="nl"><head><meta name="viewport" content="width=device-width,initial-scale=1"/></head><body><div id="root"></div></body></html>');
+  await page.setContent('<!doctype html><html lang="nl"><head><meta name="viewport" content="width=device-width,initial-scale=1"/></head><body><div id="root"></div></body></html>');
   await page.addScriptTag({content:"window.fetch=async(path,init)=>new Response(JSON.stringify(await window.__catalogueFixture(path,init)),{status:200,headers:{'Content-Type':'application/json'}})"});
   await page.addStyleTag({content:readFileSync('app/globals.css','utf8')+'\n'+readFileSync('app/identity.css','utf8')+'\n'+workspaceBundle.outputFiles.find(f=>f.path.endsWith('.css')).text});await page.addScriptTag({content:workspaceBundle.outputFiles.find(f=>f.path.endsWith('.js')).text});
   await page.getByRole('heading',{name:'ALPINE FLEECE',exact:true}).waitFor({timeout:10000}).catch(async e=>{console.log('CATALOGUE_RENDER_DEBUG '+JSON.stringify({width,errors,body:(await page.locator('body').innerText()).slice(0,5000)}));throw e;});assert.equal(await page.getByRole('heading',{name:'ALPINE FLEECE',exact:true}).count(),1);
   const categories=page.getByRole('navigation',{name:'Productcategorieën'});
+  console.log('CATALOGUE_LAYOUT '+JSON.stringify(await categories.evaluate(el=>({nav:el.getBoundingClientRect().toJSON(),card:document.querySelector('article')?.getBoundingClientRect().toJSON(),scrollY:window.scrollY,viewport:[window.innerWidth,window.innerHeight],mode:document.compatMode}))));
   await categories.getByRole('button',{name:/Broeken/}).click();assert.equal(await page.getByRole('heading',{name:'ALPINE FLEECE',exact:true}).count(),0);
   await categories.getByRole('button',{name:/Alle producten/}).click();
   await page.getByLabel('Filter op kleur',{exact:true}).selectOption('Dusty Blue');assert.equal(await page.getByRole('heading',{name:'CORE PANTS',exact:true}).count(),0);
