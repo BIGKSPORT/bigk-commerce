@@ -61,3 +61,11 @@ export async function changeSalesOrder(actor:SalesActor,id:string,action:'submit
  await db().prepare('UPDATE seller_orders SET version=version+1,status=?,quote=?,earned_cents=?,payment_reference=?,updated_at=? WHERE id=?').run(action==='paid'?'paid':action==='submit'?'submitted':'cancelled',JSON.stringify(quote),action==='paid'?quote.commission:0,action==='paid'?reference.trim():'',new Date().toISOString(),id);
  await salesEvent(actor,'order.'+action,id);return {ok:true};
 });}
+
+export async function salesSellerPreview(actor:SalesActor,sellerId:string):Promise<SalesWorkspace>{
+ if(actor.role!=='owner')throw new HttpError(403,'Alleen de eigenaar kan een verkopersweergave openen.');
+ if(!z.string().uuid().safeParse(sellerId).success)throw new HttpError(400,'Ongeldige verkoper.');
+ const seller=await db().prepare('SELECT id,name FROM seller_accounts WHERE id=?').get(sellerId);if(!seller)throw new HttpError(404,'Verkoper niet gevonden.');
+ const workspace=await salesWorkspace({id:String(seller.id),name:String(seller.name),role:'seller'});
+ return {...workspace,preview:{sellerId:String(seller.id),sellerName:String(seller.name),readOnly:true}};
+}
