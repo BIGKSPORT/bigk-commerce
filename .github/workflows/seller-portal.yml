@@ -33,6 +33,7 @@ jobs:
         env:
           BIGK_ARTIFACT_DIR: ${{ runner.temp }}/sales-review
       - uses: actions/upload-artifact@v4
+        continue-on-error: true
         if: always()
         with:
           name: sales-review
