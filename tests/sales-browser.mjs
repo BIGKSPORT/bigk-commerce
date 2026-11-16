@@ -66,7 +66,7 @@ try{
   console.log('CATALOGUE_LAYOUT '+JSON.stringify(await categories.evaluate(el=>({nav:el.getBoundingClientRect().toJSON(),card:document.querySelector('article')?.getBoundingClientRect().toJSON(),scrollY:window.scrollY,viewport:[window.innerWidth,window.innerHeight],mode:document.compatMode}))));
   await categories.getByRole('button',{name:/Broeken/}).click();assert.equal(await page.getByRole('heading',{name:'ALPINE FLEECE',exact:true}).count(),0);
   await categories.getByRole('button',{name:/Alle producten/}).click();
-  await page.getByLabel('Filter op kleur',{exact:true}).selectOption('Dusty Blue');assert.equal(await page.getByRole('heading',{name:'CORE PANTS',exact:true}).count(),0);
+  if(width===390)await page.getByText('Filters en sorteren',{exact:true}).click();await page.getByLabel('Filter op kleur',{exact:true}).selectOption('Dusty Blue');assert.equal(await page.getByRole('heading',{name:'CORE PANTS',exact:true}).count(),0);
   await page.getByLabel('Filter op maat',{exact:true}).selectOption('L');await page.getByRole('heading',{name:'Geen producten gevonden'}).waitFor();
   await page.getByRole('button',{name:'Filters wissen',exact:true}).click();
   await page.getByLabel('Sorteer producten',{exact:true}).selectOption('price');
@@ -79,13 +79,13 @@ try{
   await dialog.evaluate(el=>{el.scrollTop=0;});await dialog.getByRole('button',{name:'Productfoto 2',exact:true}).click();assert.equal(await dialog.locator('img').first().getAttribute('data-source'),'/back.webp');
   await page.screenshot({path:out+'/catalogue-detail-'+width+'.png',fullPage:true});
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+1),false);
-  await dialog.getByRole('button',{name:'Productdetails sluiten'}).click();assert.equal(await page.getByLabel('ALPINE FLEECE Black maat M',{exact:true}).inputValue(),'3');
+  await dialog.getByRole('button',{name:'Productdetails sluiten'}).click();await dialog.waitFor({state:'detached'});assert.equal(await page.getByLabel('ALPINE FLEECE Black maat M',{exact:true}).inputValue(),'3');
   version=1;await page.evaluate(()=>window.dispatchEvent(new Event('focus')));await page.getByRole('heading',{name:'ALPINE UPDATED',exact:true}).waitFor();
   assert.equal(await page.getByLabel('ALPINE UPDATED Black maat M',{exact:true}).inputValue(),'3');
   await categories.getByRole('button',{name:/Nieuwe fleececategorie/}).waitFor();
   const card=page.locator('article').filter({has:page.getByRole('heading',{name:'ALPINE UPDATED',exact:true})});assert.equal(await card.locator('img').first().getAttribute('data-source'),'/changed.webp');
   await card.getByText('€ 159,90',{exact:true}).waitFor();assert.equal(await page.getByLabel('ALPINE UPDATED Black maat M',{exact:true}).getAttribute('max'),'7');
-  const screenshot=await page.screenshot({path:out+'/catalogue-'+width+'.png',fullPage:true});if(process.env.CI)console.log('CATALOGUE_SCREENSHOT '+width+' '+(await sharp(screenshot).resize({width:Math.min(width,1100)}).webp({quality:70}).toBuffer()).toString('base64'));
+  if(width===390)await page.getByText('Filters en sorteren',{exact:true}).click();const screenshot=await page.screenshot({path:out+'/catalogue-'+width+'.png',fullPage:true});if(process.env.CI)console.log('CATALOGUE_SCREENSHOT '+width+' '+(await sharp(screenshot).resize({width:Math.min(width,1100)}).webp({quality:70}).toBuffer()).toString('base64'));
   assert.equal(writes,0);assert.deepEqual(errors,[]);await page.close();
  }
  const ownerPage=await browser.newPage();let ownerLogouts=0;const ownerErrors=[];ownerPage.on('pageerror',e=>ownerErrors.push(e.message));
