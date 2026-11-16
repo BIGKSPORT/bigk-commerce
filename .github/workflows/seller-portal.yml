@@ -1,0 +1,41 @@
+name: Seller portal checks
+on:
+  push:
+    branches: [feat/seller-portal]
+  pull_request:
+    paths:
+      - 'lib/sales-*'
+      - 'app/api/sales/**'
+      - 'app/staff/sales/**'
+      - 'components/sales-*'
+      - 'tests/sales-*'
+      - 'scripts/*sales*'
+      - 'supabase/sales/**'
+      - '.github/workflows/seller-portal.yml'
+permissions:
+  contents: read
+jobs:
+  seller-portal:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      CHROMIUM_PATH: /usr/bin/google-chrome
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: node --import tsx --test tests/sales-portal.test.ts tests/sales-postgres.test.ts
+      - run: node --import tsx tests/sales-browser.mjs
+        env:
+          BIGK_ARTIFACT_DIR: ${{ runner.temp }}/sales-review
+      - uses: actions/upload-artifact@v4
+        continue-on-error: true
+        if: always()
+        with:
+          name: sales-review
+          path: ${{ runner.temp }}/sales-review
+          if-no-files-found: ignore
