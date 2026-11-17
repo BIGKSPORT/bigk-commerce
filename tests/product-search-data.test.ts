@@ -10,6 +10,14 @@ test('search projection omits invalid optional SKU without inventing identifiers
  assert.equal(searchDescription(source as any),'More approved product details');assert.equal(source.description,'Original approved copy');
 });
 
-test('search shipping exactly matches the existing checkout countries and threshold',()=>{
- for(const [cents,rate] of [[2690,6.95],[9999,6.95],[10000,0],[14690,0]]){const offers=searchShippingDetails(cents);assert.deepEqual(offers.map(o=>o.shippingDestination.addressCountry),['BE','NL','FR','DE','LU']);assert(offers.every(o=>o.shippingRate.value===rate&&o.shippingRate.currency==='EUR'));}
+test('search shipping follows the selected destination rather than a global threshold',()=>{
+ for(const cents of [2690,5999,6000,6690,9999,10000,14690]){
+  const offers=searchShippingDetails(cents);
+  assert.deepEqual(offers.map(o=>o.shippingDestination.addressCountry),['BE','NL','FR','DE','LU']);
+  for(const offer of offers){
+   const threshold=['BE','NL'].includes(offer.shippingDestination.addressCountry)?6000:10000;
+   assert.equal(offer.shippingRate.value,cents>=threshold?0:6.95);
+   assert.equal(offer.shippingRate.currency,'EUR');
+  }
+ }
 });

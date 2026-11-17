@@ -9,10 +9,10 @@ const env={...process.env,NODE_ENV:'production',PORT:'3188',APP_URL:origin,DATAB
 for(const key of ['VERCEL','VERCEL_ENV','VERCEL_URL','VERCEL_BRANCH_URL','ADMIN_CANONICAL_ORIGIN','DATABASE_URL'])delete env[key];
 let server,browser;
 try{
- await new Promise((resolve,reject)=>{const seed=spawn(process.execPath,['--import','tsx','--input-type=module','-e',"import {db} from './lib/db.ts';await db().prepare('UPDATE products SET active=1,approved=1 WHERE id=?').run('P001');"],{env,stdio:'ignore'});seed.once('error',reject);seed.once('exit',code=>code===0?resolve():reject(Error('Fixture seed failed')))});
+ await new Promise((resolve,reject)=>{const seed=spawn(process.execPath,['--import','tsx','--input-type=module','-e',"import {db} from './lib/db.ts';await db().prepare('UPDATE products SET active=1,approved=1 WHERE id IN (?,?)').run('P001','P003');"],{env,stdio:'ignore'});seed.once('error',reject);seed.once('exit',code=>code===0?resolve():reject(Error('Fixture seed failed')))});
  server=spawn(process.execPath,['node_modules/next/dist/bin/next','start','--hostname','127.0.0.1'],{env,stdio:['ignore','ignore','ignore']});
  let ready=false;for(let i=0;i<80;i++){try{if((await fetch(origin+'/api/catalog')).ok){ready=true;break}}catch{}await new Promise(r=>setTimeout(r,250));}assert(ready,'Next server did not start');
- const {products}=await(await fetch(origin+'/api/catalog')).json(),product=products.find(p=>p.priceCents&&p.images.length);
+ const {products}=await(await fetch(origin+'/api/catalog')).json(),product=products.find(p=>p.id==='P003');
  browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium',headless:true,args:['--no-sandbox']});
  for(const width of [390,1440]){
   const context=await browser.newContext({viewport:{width,height:900}}),page=await context.newPage();let firstKey='',calls=0;
@@ -20,6 +20,18 @@ try{
   await page.goto(origin+'/checkout');await page.evaluate(id=>localStorage.setItem('bigk-bag-v2',JSON.stringify([{variantId:id,quantity:1}])),product.variants[0].id);await page.reload();
   await page.locator('input[name="firstName"]').fill('Already typed');await page.getByRole('button',{name:'Use saved details',exact:true}).click();
   assert.equal(await page.locator('input[name="firstName"]').inputValue(),'Already typed');assert.equal(await page.locator('input[name="address"]').inputValue(),'Saved Street 2');assert.equal(await page.locator('input[name="email"]').inputValue(),'saved@example.test');assert(!(await page.evaluate(()=>localStorage.getItem('bigk-bag-v2'))).includes('saved@example.test'));
+  assert.equal(product.priceCents,6690);
+  const deliveryLine=page.locator('.bag-totals p').filter({hasText:/^Delivery/}).locator('strong');
+  await page.locator('select[name="country"]').selectOption('BE');
+  assert.equal(await deliveryLine.innerText(),'Free');
+  await page.locator('select[name="country"]').selectOption('FR');
+  assert((await deliveryLine.innerText()).includes('6.95'));
+  await page.reload();
+  assert.equal(await page.locator('select[name="country"]').inputValue(),'FR');
+  assert((await deliveryLine.innerText()).includes('6.95'));
+  await page.locator('select[name="country"]').selectOption('NL');
+  assert.equal(await deliveryLine.innerText(),'Free');
+  await page.locator('select[name="country"]').selectOption('BE');
   await page.locator('.checkout-product img').first().waitFor();await page.locator('.checkout-product img').first().evaluate(i=>i.decode());
   assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'Checkout fits the viewport');
   assert.equal(await page.locator('.newsletter-signup').count(),0);
