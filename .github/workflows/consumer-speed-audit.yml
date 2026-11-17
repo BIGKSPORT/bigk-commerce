@@ -26,8 +26,4 @@ jobs:
           SPEED_DEVICE: ${{ matrix.device }}
           CHROME_PATH: /usr/bin/google-chrome
         run: LIGHTHOUSE_CLI="$RUNNER_TEMP/speed-tools/node_modules/lighthouse/cli/index.js" node scripts/audit-consumer-speed.mjs
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: consumer-speed-${{ matrix.device }}
-          path: ${{ runner.temp }}/bigk-speed-${{ matrix.device }}/
+      # Results are retained in job logs; artifact quota is full.
