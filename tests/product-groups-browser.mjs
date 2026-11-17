@@ -1,3 +1,4 @@
+import {publicProductSlug} from '../lib/product-public-urls.ts';
 import {chromium} from 'playwright';import {spawn} from 'node:child_process';import {randomBytes,scryptSync} from 'node:crypto';import {mkdtemp,rm,mkdir} from 'node:fs/promises';import {tmpdir} from 'node:os';import {join} from 'node:path';import assert from 'node:assert/strict';
 const dir=await mkdtemp(join(tmpdir(),'bigk-groups-browser-')),origin='http://localhost:3210',password=randomBytes(24).toString('base64url'),salt=randomBytes(16).toString('hex'),artifacts=process.env.BIGK_ARTIFACT_DIR||'/workspace/bigk-grouping-review';await mkdir(artifacts,{recursive:true});
 const env={...process.env,NODE_ENV:'production',PORT:'3210',APP_URL:origin,DATABASE_PROVIDER:'sqlite',DATABASE_SCHEMA:'bigk_staging',DATABASE_PATH:join(dir,'store.sqlite'),MEDIA_PATH:join(dir,'media'),MEDIA_DRIVER:'database',COMMERCE_MODE:'demo',LIVE_COMMERCE_APPROVED:'false',EMAIL_DELIVERY_ENABLED:'false',STRIPE_SECRET_KEY:'',STRIPE_WEBHOOK_SECRET:'',ADMIN_PASSWORD_HASH:salt+':'+scryptSync(password,salt,64).toString('hex')};for(const key of ['VERCEL','VERCEL_ENV','VERCEL_URL','VERCEL_BRANCH_URL','ADMIN_CANONICAL_ORIGIN','DATABASE_URL'])delete env[key];let server,browser,output='';
@@ -9,6 +10,13 @@ try{
  assert.equal((await page.request.get(origin+'/api/admin/product-groups')).status(),401);assert.equal((await page.request.get(origin+'/products/ribs-low-white-socks')).status(),404);
  await page.goto(origin+'/admin');await page.getByLabel('Admin password',{exact:true}).fill(password);await page.getByRole('button',{name:'Sign in securely'}).click();await page.getByRole('navigation',{name:'Backoffice navigation'}).waitFor();
  const catalog=async()=>((await(await page.request.get(origin+'/api/admin/catalog')).json()).products),before=await catalog(),inventory=products=>products.flatMap(p=>p.variants.map(v=>[p.id,v.id,v.size,v.stock,v.reserved]));
+ const legacyCore=before.find(p=>p.id==='P003');const cleanCore=publicProductSlug(legacyCore,before);
+ for(const locale of ['nl','fr','en','es','it']){
+  const old=origin+'/'+locale+'/products/'+legacyCore.slug+'?colourId=P004&size=M&utm_source=legacy-test';
+  const response=await page.request.get(old,{maxRedirects:0});assert.equal(response.status(),308);
+  const target=new URL(response.headers().location,origin);assert.equal(target.pathname,'/'+locale+'/products/'+cleanCore);assert.equal(target.searchParams.get('colour'),'Dusty Blue');assert.equal(target.searchParams.get('size'),'M');assert.equal(target.searchParams.get('utm_source'),'legacy-test');assert.equal(target.searchParams.has('colourId'),false);
+  const clean=await page.request.get(target.href,{maxRedirects:0});assert.equal(clean.status(),200);const html=await clean.text();assert(html.includes('rel="canonical" href="'+origin+'/'+locale+'/products/'+cleanCore+'"'));assert(!html.includes('rel="canonical" href="'+origin+'/'+locale+'/products/'+legacyCore.slug+'"'));
+ }
  const groups=(await(await page.request.get(origin+'/api/admin/product-groups')).json()).groups;assert.equal(groups.find(g=>g.id==='P006').parent.name,'ALPIN VEST');assert.equal(groups.find(g=>g.id==='P012').parent.name,'ALPIN HOOD GILLET');assert.equal(groups.filter(g=>g.id.startsWith('RIBS-')).length,3);
  for(const width of [1440,390]){
   await page.setViewportSize({width,height:1000});await page.goto(origin+'/admin');await page.getByRole('navigation',{name:'Backoffice navigation'}).getByRole('button',{name:'Products',exact:true}).click();await page.getByRole('searchbox',{name:'Search products'}).fill('ALPIN VEST');const row=page.locator('tr[data-product-group="P006"]');assert.equal(await row.count(),1);await row.getByRole('button',{expanded:false}).click();assert.equal(await page.locator('tr[data-colour-id="P006"]').count(),1);assert.equal(await page.locator('tr[data-colour-id="P007"]').count(),1);await page.screenshot({path:join(artifacts,'grouped-backoffice-'+width+'.png'),fullPage:true});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
@@ -20,13 +28,13 @@ try{
   assert.equal(await velvetCard.count(),1);assert.equal(await velvetCard.locator('.product-card-swatch').count(),4);
   await velvetCard.locator('.product-card-swatch[data-colour="Black"]').click();
   assert.equal(await velvetCard.getAttribute('data-selected-colour'),'Black');
-  assert((await velvetCard.locator('.product-meta a').getAttribute('href')).includes('colourId=P027'));
+  assert.equal(new URL(await velvetCard.locator('.product-meta a').getAttribute('href'),origin).searchParams.get('colour'),'Black');
   await page.screenshot({path:join(artifacts,'velvet-one-product-'+width+'.png'),fullPage:true});
   for(const id of ['P017','P018','P026','P027']){
    const colour=before.find(p=>p.id===id);await page.goto(origin+'/products/'+colour.slug+'?size=M');
    await page.getByRole('heading',{name:velvet.name,exact:true}).waitFor();
-   assert.equal(new URL(page.url()).pathname,'/en/products/'+velvet.slug);
-   assert.equal(new URL(page.url()).searchParams.get('colourId'),id==='P017'?null:id);
+   assert.equal(new URL(page.url()).pathname,'/en/products/'+publicProductSlug(velvet,before));
+   assert.equal(new URL(page.url()).searchParams.get('colour'),colour.content.trade.colour);assert.equal(new URL(page.url()).searchParams.has('colourId'),false);
    assert.equal(await page.locator('.product-colour-options a').count(),4);
    assert.equal(await page.locator('.size-options button[aria-pressed="true"]').innerText(),'M');
    await page.locator('.gallery-enlarge img').first().evaluate(img=>img.decode());
@@ -63,7 +71,7 @@ try{
   assert.equal(await page.locator('.detail-info > .detail-description').count(),0);
   assert.equal(await page.locator('.product-colour-options a span').count(),4);
   assert.equal(await page.locator('.detail-info details').first().getByText('Details',{exact:true}).count(),1);
-  const core=before.find(p=>p.id==='P003'),blue=before.find(p=>p.id==='P004');await page.goto(origin+'/products/'+blue.slug+'?size=M');await page.getByRole('heading',{name:core.name,exact:true}).waitFor();assert(new URL(page.url()).pathname.endsWith(core.slug));assert.equal(new URL(page.url()).searchParams.get('colourId'),'P004');assert.equal(await page.locator('.size-options button[aria-pressed="true"]').innerText(),'M');await page.getByRole('link',{name:'Choose Black',exact:true}).click();await page.waitForURL(url=>!url.searchParams.has('colourId'));assert.equal(await page.locator('.size-options button[aria-pressed="true"]').innerText(),'M');await page.goBack();await page.waitForURL(url=>url.searchParams.get('colourId')==='P004');assert.equal(await page.locator('.size-options button[aria-pressed="true"]').innerText(),'M');await page.reload();assert.equal(await page.locator('.size-options button[aria-pressed="true"]').innerText(),'M');await page.screenshot({path:join(artifacts,'shared-core-product-'+width+'.png'),fullPage:true});
+  const core=before.find(p=>p.id==='P003'),blue=before.find(p=>p.id==='P004');await page.goto(origin+'/products/'+blue.slug+'?size=M');await page.getByRole('heading',{name:core.name,exact:true}).waitFor();assert(new URL(page.url()).pathname.endsWith(publicProductSlug(core,before)));assert.equal(new URL(page.url()).searchParams.get('colour'),'Dusty Blue');assert.equal(await page.locator('.size-options button[aria-pressed="true"]').innerText(),'M');await page.getByRole('link',{name:'Choose Black',exact:true}).click();await page.waitForURL(url=>url.searchParams.get('colour')==='Black');assert.equal(await page.locator('.size-options button[aria-pressed="true"]').innerText(),'M');await page.goBack();await page.waitForURL(url=>url.searchParams.get('colour')==='Dusty Blue');assert.equal(await page.locator('.size-options button[aria-pressed="true"]').innerText(),'M');await page.reload();assert.equal(await page.locator('.size-options button[aria-pressed="true"]').innerText(),'M');await page.screenshot({path:join(artifacts,'shared-core-product-'+width+'.png'),fullPage:true});
   assert(!/[\u3400-\u9fff]/u.test(await page.locator('body').innerText()));
  }
  await page.goto(origin+'/admin');await page.getByRole('navigation',{name:'Backoffice navigation'}).getByRole('button',{name:'Products',exact:true}).click();await page.getByRole('searchbox',{name:'Search products'}).fill('25301801');await page.getByRole('button',{name:'Edit shared product',exact:true}).click();let dialog=page.getByRole('dialog');await dialog.getByLabel('Shared description',{exact:true}).fill('Shared description saved once for every Core.2 colour.');await dialog.getByRole('button',{name:'Save shared content',exact:true}).click();await dialog.waitFor({state:'detached'});assert.deepEqual(inventory(await catalog()),inventory(before));

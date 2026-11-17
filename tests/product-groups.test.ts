@@ -1,3 +1,4 @@
+import {publicProductSlug} from '../lib/product-public-urls';
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {mkdtempSync,rmSync} from 'node:fs';
@@ -31,10 +32,10 @@ try{
   });
   await t.test('colour links resolve to their own variants; invalid explicit colour never defaults; legacy links keep selected colour',()=>{
    const source=sharedProducts(plan.catalog),root=source.find(p=>p.id==='P003')!,child=source.find(p=>p.id==='P004')!,option=colourOptions(source,root).find(c=>c.product.id===child.id)!;
-   const link=new URL(groupUrl(source,option,'M'),'https://bigk.example');assert.equal(link.searchParams.get('colourId'),child.id);
-   const resolved=resolveGroupSelection(source,source,root.slug,{colourId:child.id,size:'M'})!;assert.equal(resolved.selected.product.id,child.id);assert.equal(resolved.canonical,'/products/'+root.slug);
+   const link=new URL(groupUrl(source,option,'M'),'https://bigk.example');assert.equal(link.searchParams.get('colour'),option.colour);assert.equal(link.searchParams.has('colourId'),false);
+   const resolved=resolveGroupSelection(source,source,root.slug,{colourId:child.id,size:'M'})!;assert.equal(resolved.selected.product.id,child.id);assert.equal(resolved.canonical,'/products/'+publicProductSlug(root,source));
    assert.equal(resolveGroupSelection(source,source,root.slug,{colour:'does-not-exist'}),undefined);assert.equal(resolveGroupSelection(source,source,child.slug,{})!.selected.product.id,child.id);
-   const publicChildOnly=source.filter(p=>p.id===child.id);assert(new URL(groupUrl(publicChildOnly,colourOptions(publicChildOnly,child)[0]),'https://bigk.example').searchParams.get('colourId')===child.id);
+   const publicChildOnly=source.filter(p=>p.id===child.id);assert(new URL(groupUrl(publicChildOnly,colourOptions(publicChildOnly,child)[0]),'https://bigk.example').searchParams.get('colour')===colourOptions(publicChildOnly,child)[0].colour);
   });
 
   await t.test('VELVET is one style with four colour records and twenty independently stocked sizes',()=>{
@@ -47,7 +48,7 @@ try{
    assert.equal(singleListingCards([black],source)[0].product.id,'P027');
    for(const id of ['P017','P018','P026','P027']){
     const raw=before.find(p=>p.id===id)!,entry=resolveGroupSelection(before,source,raw.slug,{size:'M'})!;
-    assert.equal(entry.selected.product.id,id);assert.equal(entry.canonical,'/products/'+before.find(p=>p.id==='P017')!.slug);assert.equal(entry.size,'M');
+    assert.equal(entry.selected.product.id,id);assert.equal(entry.canonical,'/products/'+publicProductSlug(before.find(p=>p.id==='P017')!,before));assert.equal(entry.size,'M');
     assert.deepEqual(entry.selected.product.variants,raw.variants);assert.deepEqual(entry.selected.images,raw.images);
     assert.deepEqual(entry.selected.product.content?.trade?.identifiers,raw.content?.trade?.identifiers);
    }
@@ -79,6 +80,12 @@ try{
   await t.test('adding a colour to a published B10 keeps the new colour private and preserves all 33 original identifiers',async()=>{
    await importB10Draft();let p=(await products()).find(p=>p.id==='B10')!;await updateProduct({id:p.id,version:p.version,priceCents:p.priceCents,approved:true,active:true,variants:p.variants});p=(await products()).find(p=>p.id==='B10')!;const identifiers=structuredClone(p.content?.trade?.identifiers);
    const id=await addProductColour({parentId:p.id,version:p.version,colour:'Reviewed fourth colour',article:'99998888',sizes:['40','41'],images:[],priceCents:12999});const catalog=await products(),added=catalog.find(p=>p.id===id)!;assert.equal(added.active,false);assert.equal(added.approved,false);assert.equal(added.priceCents,12999);assert(added.variants.every(v=>v.stock===0));assert(!publicProducts(catalog).some(p=>p.id===id));assert.equal(catalog.find(p=>p.id==='B10')!.variants.length,33);assert.deepEqual(catalog.find(p=>p.id==='B10')!.content?.trade?.identifiers,identifiers);
+  });
+  await t.test('owner cannot assign an existing clean or historical public URL to another product',async()=>{
+   const catalog=await products(),root=catalog.find(p=>p.id==='P003')!,other=catalog.find(p=>p.id==='P019')!,before=stock(catalog);
+   const slug=publicProductSlug(root,sharedProducts(catalog));
+   await assert.rejects(()=>updateProduct({id:other.id,version:other.version,slug,priceCents:other.priceCents,approved:other.approved,active:other.active,variants:other.variants}),/already used/);
+   assert.deepEqual(stock(await products()),before);assert.equal((await products()).find(p=>p.id===other.id)!.slug,other.slug);
   });
   await t.test('translation schema rejects translated names or commercial data',()=>{const payload={id:root.id,versions:{},name:root.name,description:root.description,category:root.category,content:{...root.content,translations:{nl:{name:'Translated name',priceCents:1}}}};assert.equal(groupEditSchema.safeParse(payload).success,false)});
  });

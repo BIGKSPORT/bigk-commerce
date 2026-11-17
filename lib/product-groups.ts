@@ -1,3 +1,4 @@
+import {publicProductSlug} from './product-public-urls';
 import type {Product,Variant} from './types';
 /** Explicit source-reviewed identities; never infer interchangeability from a name or prefix. */
 export const reviewedGroups=[
@@ -61,8 +62,8 @@ export function productGroups(catalog:Product[],includeArchived=false):ProductGr
 export function groupUrl(catalog:Product[],option:ColourOption,size?:string){
  const rootId=parentId(option.product,catalog),root=catalog.find(p=>p.id===rootId)||option.product;
  if(rootId==='P001'){const params=new URLSearchParams({colour:option.colour});if(size)params.set('size',size);return '/en/products/alpin-fleece-jacket?'+params;}
- const params=new URLSearchParams();if(option.product.id!==rootId)params.set('colourId',option.product.id);if(colourOptions(catalog,option.product).filter(o=>o.product.id===option.product.id).length>1)params.set('colour',option.colour);if(size)params.set('size',size);
- return '/products/'+(root.group?.slug||root.slug)+(params.size?'?'+params:'');
+ const options=colourOptions(catalog,root),params=new URLSearchParams();if(options.length>1||option.product.id!==rootId)params.set('colour',option.colour);if(options.filter(o=>o.colour.toLowerCase()===option.colour.toLowerCase()).length>1)params.set('colourId',option.product.id);if(size)params.set('size',size);
+ return '/products/'+publicProductSlug(root,catalog)+(params.size?'?'+params:'');
 }
 export function optionFor(catalog:Product[],p:Product,colour?:string){return colourOptions(catalog,p).find(option=>option.product.id===p.id&&(!colour||option.colour===colour))}
 

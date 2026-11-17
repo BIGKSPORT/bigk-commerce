@@ -1,3 +1,4 @@
+import {publicProductSlug,preserveProductQuery} from './product-public-urls';
 import type {Product} from './types';
 import {colourOptions,parentId,normalizedSize,groupUrl,type ColourOption} from './product-groups';
 import {resolveProduct} from './catalog-view';
@@ -12,5 +13,6 @@ export function resolveGroupSelection(raw:Product[],visible:Product[],slug:strin
  else selected=options.find(o=>o.product.id===requested.id)||options[0];
  if(!selected)return;
  const size=query.size?selected.variants.find(v=>normalizedSize(v.size)===normalizedSize(query.size!))?.size:undefined;
- return {root,selected,options,size,canonical:'/products/'+root.slug,redirect:requested.id!==root.id||slug!==root.slug?groupUrl(raw,selected,size):undefined};
+ const publicSlug=publicProductSlug(root,raw);
+ return {root,selected,options,size,canonical:'/products/'+publicSlug,redirect:requested.id!==root.id||slug!==publicSlug||query.colourId!==undefined?preserveProductQuery(groupUrl(raw,selected,size),query):undefined};
 }
