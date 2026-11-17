@@ -1,4 +1,3 @@
-import {createServer} from 'node:http';
 import {build} from 'esbuild';
 import {chromium} from 'playwright';
 import {mkdtempSync,rmSync,readFileSync} from 'node:fs';
@@ -15,11 +14,9 @@ import {GET as adminGet,POST as adminPost} from '../app/api/b2b/admin/route.ts';
 const dir=mkdtempSync(join(tmpdir(),'bigk-b2b-browser-'));
 Object.assign(process.env,{DATABASE_PROVIDER:'sqlite',DATABASE_PATH:join(dir,'store.sqlite'),DATABASE_SCHEMA:'bigk',NODE_ENV:'test',APP_URL:'https://b2b.example',B2B_PORTAL_ENABLED:'true',SELLER_PORTAL_ENABLED:'true',ADMIN_MFA_REQUIRED:'false'});delete process.env.VERCEL;delete process.env.VERCEL_ENV;
 const imagePlugin={name:'b2b-test-image',setup(build){build.onResolve({filter:/^next\/image$/},()=>({path:'image',namespace:'fixture'}));build.onLoad({filter:/.*/,namespace:'fixture'},()=>({contents:`import React from 'react';const image='data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="320" height="320"><rect width="320" height="320" fill="#eee8e2"/><path d="M100 80L50 110 70 160 100 145 100 260 220 260 220 145 250 160 270 110 220 80Z" fill="#303536"/></svg>');export default function Image({fill,priority,...props}){return <img {...props} src={image}/>}`,loader:'jsx',resolveDir:process.cwd()}));}};
-async function bundle(admin){return build({stdin:{resolveDir:process.cwd(),loader:'tsx',contents:`import React from 'react';import{createRoot}from'react-dom/client';import Screen from './components/${admin?'admin-b2b':'b2b-portal'}';const transport={request:async(path,init)=>{const r=await window.__b2bApi(path,init||{method:'GET'});if(r.status>=400)throw Object.assign(Error(r.body.error),{status:r.status});return r.body;}};createRoot(document.getElementById('root')).render(<Screen ${admin?'transport={transport}':''}/>);`},bundle:true,write:false,outdir:dir,platform:'browser',jsx:'automatic',minify:true,plugins:[imagePlugin],define:{'process.env.NODE_ENV':'"production"'}});}
+async function bundle(admin){return build({stdin:{resolveDir:process.cwd(),loader:'tsx',contents:`import React from 'react';import{createRoot}from'react-dom/client';import Screen from './components/${admin?'admin-b2b':'b2b-portal'}';const transport={request:async(path,init)=>{const r=await window.__b2bApi(path,init||{method:'GET'});if(r.status>=400)throw Object.assign(Error(r.body.error),{status:r.status});return r.body;}};createRoot(document.getElementById('root')).render(<Screen ${admin?'transport={transport}':''}/>);`},bundle:true,write:false,outdir:dir,platform:'browser',jsx:'automatic',minify:true,plugins:[imagePlugin],define:{'process.env.NODE_ENV':'"production"','window.location.origin':'"https://b2b.example"'}});}
 const [buyerBundle,adminBundle]=await Promise.all([bundle(false),bundle(true)]);
-const server=createServer((_req,res)=>{res.writeHead(200,{'Content-Type':'text/html'});res.end('<!doctype html><html lang="nl"><head><meta name="viewport" content="width=device-width,initial-scale=1"/></head><body><div id="root"></div></body></html>');});
-await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
-const origin='http://127.0.0.1:'+server.address().port;process.env.APP_URL=origin;
+const origin='https://b2b.example';
 const browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium',headless:true,args:['--no-sandbox','--disable-crashpad-for-testing']});
 try{
  await db().prepare('INSERT INTO sessions VALUES(?,?)').run(hash('b2b-browser-owner'),new Date(Date.now()+3600000).toISOString());
@@ -32,8 +29,8 @@ try{
    const handler=path==='/api/b2b/admin'?(method==='GET'?adminGet:adminPost):path==='/api/b2b/auth'?(method==='DELETE'?authDelete:method==='GET'?authGet:authPost):path==='/api/b2b'?(method==='GET'?GET:POST):null;
    assert.ok(handler,'unexpected endpoint '+path);const response=await handler(req),setCookie=response.headers.get('Set-Cookie');if(setCookie)cookie=setCookie.split(';')[0];return {status:response.status,body:await response.json()};
   });
-  await page.goto(origin+'/'+(isAdmin?'admin':'b2b')+fragment,{waitUntil:'domcontentloaded'});
-  await page.addScriptTag({content:"window.fetch=async(path,init)=>{const r=await window.__b2bApi(path,init||{method:'GET'});return new Response(JSON.stringify(r.body),{status:r.status,headers:{'Content-Type':'application/json'}})};if(!crypto.randomUUID)crypto.randomUUID=()=>('10000000-1000-4000-8000-'+Array.from(crypto.getRandomValues(new Uint8Array(6)),v=>v.toString(16).padStart(2,'0')).join(''));"});
+  await page.setContent('<!doctype html><html lang="nl"><head><meta name="viewport" content="width=device-width,initial-scale=1"/></head><body><div id="root"></div></body></html>');
+  await page.addScriptTag({content:"window.location.hash="+JSON.stringify(fragment.slice(1))+";history.replaceState=()=>{window.location.hash=''};window.fetch=async(path,init)=>{const r=await window.__b2bApi(path,init||{method:'GET'});return new Response(JSON.stringify(r.body),{status:r.status,headers:{'Content-Type':'application/json'}})};if(!crypto.randomUUID)crypto.randomUUID=()=>('10000000-1000-4000-8000-'+Array.from(crypto.getRandomValues(new Uint8Array(6)),v=>v.toString(16).padStart(2,'0')).join(''));"});
   const b=isAdmin?adminBundle:buyerBundle;await page.addStyleTag({content:readFileSync('app/globals.css','utf8')+'\n'+readFileSync('app/identity.css','utf8')+'\n'+(b.outputFiles.find(f=>f.path.endsWith('.css'))?.text||'')});await page.addScriptTag({content:b.outputFiles.find(f=>f.path.endsWith('.js')).text});return {page,errors};
  }
  for(const [index,width] of [1440,390,412].entries()){
@@ -53,4 +50,4 @@ try{
   assert.equal(await buyer.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+1),false);assert.deepEqual(buyerErrors,[]);assert.deepEqual(ownerErrors,[]);
   await buyer.getByRole('button',{name:'Uitloggen',exact:true}).click();await buyer.getByRole('button',{name:'Aanmeldlink aanvragen',exact:true}).waitFor();await buyer.close();await owner.close();console.log('B2B_LOGIN_TO_SALE_PASS '+width);
  }
-}finally{await browser.close();await new Promise(resolve=>server.close(resolve));await closeDatabase();rmSync(dir,{recursive:true,force:true});}
+}finally{await browser.close();await closeDatabase();rmSync(dir,{recursive:true,force:true});}
