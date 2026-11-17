@@ -1,0 +1,33 @@
+name: Consumer speed audit
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/consumer-speed-audit.yml'
+      - 'scripts/audit-consumer-speed.mjs'
+permissions:
+  contents: read
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        device: [mobile, desktop]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Install isolated audit tools
+        run: npm install --prefix "$RUNNER_TEMP/speed-tools" lighthouse@12.8.2
+      - name: Measure public webshop
+        env:
+          SPEED_DEVICE: ${{ matrix.device }}
+          CHROME_PATH: /usr/bin/google-chrome
+        run: LIGHTHOUSE_CLI="$RUNNER_TEMP/speed-tools/node_modules/lighthouse/cli/index.js" node scripts/audit-consumer-speed.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: consumer-speed-${{ matrix.device }}
+          path: ${{ runner.temp }}/bigk-speed-${{ matrix.device }}/
