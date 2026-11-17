@@ -22,7 +22,7 @@ try{
   await dialog.locator('.size-options button').filter({hasText:/^S$/}).click();
   const buy=dialog.getByRole('button',{name:'Add to bag',exact:true});await buy.scrollIntoViewIfNeeded();
   assert.ok(await buy.evaluate(el=>{const r=el.getBoundingClientRect(),d=el.closest('dialog').getBoundingClientRect();return r.top>=d.top&&r.bottom<=d.bottom+1}));
-  await buy.click();await page.locator('[data-bag-variant="QV-BLUE-S"]').waitFor();
+  await buy.click();await page.waitForTimeout(150);console.log(JSON.stringify({width:viewport.width,errors,cart:await page.evaluate(()=>localStorage.getItem("bigk-bag-v2")),dialogs:await page.locator("dialog").evaluateAll(nodes=>nodes.map(n=>({open:n.open,text:n.innerText.slice(0,1000)})))}));await page.locator('[data-bag-variant="QV-BLUE-S"]').waitFor({timeout:5000});
   assert.deepEqual(await page.evaluate(()=>JSON.parse(localStorage.getItem('bigk-bag-v2'))),[{variantId:'QV-BLUE-S',quantity:1}]);
   assert.ok((await page.getByRole('link',{name:'Secure checkout',exact:true}).getAttribute('href')).endsWith('/checkout'));
   assert.deepEqual(errors,[]);console.log('QUICK_VIEW_PURCHASE_PASS '+viewport.width+'x'+viewport.height);await page.close();
