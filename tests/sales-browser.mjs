@@ -88,6 +88,29 @@ try{
   if(width===390)await page.getByText('Filters en sorteren',{exact:true}).click();const screenshot=await page.screenshot({path:out+'/catalogue-'+width+'.png',fullPage:true});if(process.env.CI)console.log('CATALOGUE_SCREENSHOT '+width+' '+(await sharp(screenshot).resize({width:Math.min(width,1100)}).webp({quality:70}).toBuffer()).toString('base64'));
   assert.equal(writes,0);assert.deepEqual(errors,[]);await page.close();
  }
+
+ for(const width of [1440,390,412]){
+  for(const role of ['owner','seller']){
+   const page=await browser.newPage({viewport:{width,height:1000},reducedMotion:'reduce'}),errors=[];let payouts=0,paid=false;
+   page.on('pageerror',e=>errors.push(e.message));page.on('dialog',d=>d.accept());
+   const statement=()=>({sellerId:'10000000-1000-4000-8000-100000000001',sellerName:'Kenny',month:'2025-01',dueDate:'2025-02-10',closed:true,key:'a'.repeat(64),totalCents:24400,lines:[{orderId:'20000000-1000-4000-8000-100000000001',customerName:'Fixture Sport',paidAt:'2025-01-15T10:00:00Z',netCents:120000,commissionCents:14400,bonusCents:10000}],...(paid?{payout:{reference:'BANK-COMMISSION-TEST',recordedAt:'2025-02-05T10:00:00Z'}}:{})});
+   await page.exposeFunction('__commissionFixture',async(path,init)=>{
+    if(path==='/api/sales'&&init.method==='GET')return {actor:{id:role==='owner'?'owner':'seller',name:'Kenny',role},catalogue:[],customers:[],orders:[],accounts:[],commissions:[statement()]};
+    if(path==='/api/sales/admin'&&init.method==='POST'){assert.equal(role,'owner');const data=JSON.parse(init.body);assert.equal(data.action,'commissionPaid');assert.equal(data.totalCents,24400);assert.equal(data.reference,'BANK-COMMISSION-TEST');payouts++;paid=true;return {ok:true};}
+    throw Error('Unexpected commission request '+path);
+   });
+   await page.setContent('<!doctype html><html lang="nl"><head><meta name="viewport" content="width=device-width,initial-scale=1"/></head><body><div id="root"></div></body></html>');
+   await page.addScriptTag({content:"window.fetch=async(path,init)=>new Response(JSON.stringify(await window.__commissionFixture(path,init)),{status:200,headers:{'Content-Type':'application/json'}})"});
+   await page.addStyleTag({content:readFileSync('app/globals.css','utf8')+'\n'+readFileSync('app/identity.css','utf8')+'\n'+workspaceBundle.outputFiles.find(f=>f.path.endsWith('.css')).text});await page.addScriptTag({content:workspaceBundle.outputFiles.find(f=>f.path.endsWith('.js')).text});
+   await page.getByRole('button',{name:'Commissies',exact:true}).click();await page.getByRole('heading',{name:'Maandelijkse commissieafrekening'}).waitFor();
+   await page.getByText('1 betaalde orders bekijken',{exact:true}).click();await page.getByText('Fixture Sport',{exact:false}).waitFor();
+   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+1),false);
+   const download=page.waitForEvent('download');await page.getByRole('button',{name:'Download maandafrekening CSV'}).click();const csv=await download;assert.match(csv.suggestedFilename(),/BIGK-commissie-2025-01/);const contents=readFileSync(await csv.path(),'utf8');assert.ok(contents.includes('144,00'));assert.ok(contents.includes('100,00'));assert.ok(contents.includes('244,00'));
+   if(role==='owner'){await page.getByLabel('Referentie uitgevoerde commissiebetaling').fill('BANK-COMMISSION-TEST');await page.getByRole('button',{name:'Uitgevoerde betaling registreren',exact:true}).click();await page.getByText('Referentie: BANK-COMMISSION-TEST',{exact:false}).waitFor();assert.equal(payouts,1);assert.equal(await page.getByRole('button',{name:'Uitgevoerde betaling registreren',exact:true}).count(),0);}
+   else assert.equal(await page.getByRole('button',{name:'Uitgevoerde betaling registreren',exact:true}).count(),0);
+   await page.screenshot({path:out+'/commission-'+role+'-'+width+'.png',fullPage:true});assert.deepEqual(errors,[]);await page.close();
+  }
+ }
  const ownerPage=await browser.newPage();let ownerLogouts=0;const ownerErrors=[];ownerPage.on('pageerror',e=>ownerErrors.push(e.message));
  await ownerPage.exposeFunction('__ownerFixture',async(path,init)=>{
  if(path==='/api/sales'&&init.method==='GET')return {actor:{id:'owner',name:'BIG K',role:'owner'},catalogue:[],customers:[],orders:[],accounts:[]};
