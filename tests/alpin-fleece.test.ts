@@ -44,3 +44,11 @@ test('owner catalogue renames reach public products and search metadata in every
   }
  }
 });
+
+test('every fleece variant points at the named parent node in every locale without source mutations',()=>{
+ const before=structuredClone(family);
+ for(const locale of alpinLocales){const group=alpinStructuredData(locale,family)['@graph'][0] as any;
+  for(const variant of group.hasVariant){assert.equal(variant.isVariantOf['@id'],group['@id']);assert.equal(variant.isVariantOf.name,group.name);assert.equal(variant.isVariantOf.description,group.description);assert.ok(variant.description);}
+ }
+ assert.deepEqual(family,before);
+});

@@ -1,5 +1,5 @@
 'use client';
-import {useState} from 'react';
+import {memo,useState} from 'react';
 import Link from './site-link';
 import {useSiteLanguage} from './site-language';
 import {Heart,Plus,Scale,Check} from 'lucide-react';
@@ -8,7 +8,7 @@ import type {Product} from '@/lib/types';
 import {money} from '@/lib/format';
 import ProductCardMedia from './product-card-media';
 import ProductCardColours from './product-card-colours';
-export default function ProductCard({initial,products,mode,savedIds,comparedIds,onSave,onCompare,onQuickView}:{initial:ColourOption;products:Product[];mode:'demo'|'live';savedIds:string[];comparedIds:string[];onSave:(id:string)=>void;onCompare:(id:string)=>void;onQuickView:(p:Product,colour:string)=>void}){
+function ProductCard({initial,products,mode,savedIds,comparedIds,onSave,onCompare,onQuickView}:{initial:ColourOption;products:Product[];mode:'demo'|'live';savedIds:string[];comparedIds:string[];onSave:(id:string)=>void;onCompare:(id:string)=>void;onQuickView:(p:Product,colour:string)=>void}){
  const {t,path}=useSiteLanguage();
  const [selectedKey,setSelectedKey]=useState(initial.id);const options=colourOptions(products,initial.product);const selected=options.find(option=>option.id===selectedKey)||initial;
  const saved=savedIds.includes(selected.product.id),compared=comparedIds.includes(selected.product.id);
@@ -19,3 +19,6 @@ export default function ProductCard({initial,products,mode,savedIds,comparedIds,
  </article>;
 }
 
+
+
+export default memo(ProductCard);

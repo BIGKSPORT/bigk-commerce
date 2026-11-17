@@ -1,0 +1,33 @@
+name: Search and consumer performance checks
+on:
+  pull_request:
+    paths:
+      - 'lib/product-search-data.ts'
+      - 'lib/alpin-fleece-seo.ts'
+      - 'app/products/[slug]/page.tsx'
+      - 'components/storefront.tsx'
+      - 'components/product-card.tsx'
+      - 'tests/product-search-data.test.ts'
+      - 'tests/alpin-fleece.test.ts'
+      - '.github/workflows/search-performance.yml'
+permissions:
+  contents: read
+jobs:
+  consumer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      CHROMIUM_PATH: /usr/bin/google-chrome
+      BIGK_ARTIFACT_DIR: /tmp/bigk-consumer-review
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: node --import tsx --test tests/alpin-fleece.test.ts tests/product-search-data.test.ts tests/bag-presentation.test.ts tests/product-groups.test.ts tests/published-translations.test.ts
+      - run: node tests/quick-view-browser.mjs
+      - run: npm run build
+      - run: node tests/product-groups-browser.mjs
