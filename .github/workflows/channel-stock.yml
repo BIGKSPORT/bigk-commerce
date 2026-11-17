@@ -1,0 +1,30 @@
+name: Channel stock checks
+on:
+  pull_request:
+    paths:
+      - 'lib/channel-*'
+      - 'components/admin-channel-stock*'
+      - 'components/backoffice.tsx'
+      - 'app/api/admin/channels/**'
+      - 'tests/channel-*'
+      - 'scripts/channel-*'
+      - 'supabase/channels/**'
+      - '.github/workflows/channel-stock.yml'
+permissions:
+  contents: read
+jobs:
+  channel-stock:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      CHROMIUM_PATH: /usr/bin/google-chrome
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: node --import tsx --test tests/channel-stock.test.ts tests/channel-postgres.test.ts tests/b2b-portal.test.ts tests/sales-portal.test.ts tests/sales-commissions.test.ts
+      - run: node --import tsx tests/channel-browser.mjs
