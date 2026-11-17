@@ -3,8 +3,8 @@ import type {CommissionStatement} from '@/lib/sales-commissions';
 import styles from './sales-workspace.module.css';
 const money=(n:number)=>new Intl.NumberFormat('nl-BE',{style:'currency',currency:'EUR'}).format(n/100);
 function download(s:CommissionStatement){
- const cell=(v:string|number)=>'"'+(typeof v==='string'&&/^[=+\-@\t\r]/.test(v)?"'"+v:String(v)).replaceAll('"','""')+'"';
- const rows:(string|number)[][]=[['Verkoper','Maand','Order','Winkel','Klantbetaling','Omzet excl. btw EUR','Commissie EUR','Bonus EUR'],...s.lines.map(l=>[s.sellerName,s.month,l.orderId,l.customerName,l.paidAt,(l.netCents/100).toFixed(2),(l.commissionCents/100).toFixed(2),(l.bonusCents/100).toFixed(2)]),['Totaal vergoeding excl. eventuele btw',(s.totalCents/100).toFixed(2)],['Status',s.payout?'Uitbetaling geregistreerd':'Nog niet uitbetaald'],['Betalingsreferentie',s.payout?.reference||'']];
+ const cell=(v:string|number)=>'"'+(typeof v==='string'&&/^(?:[\t\r\n]|\s*[=+\-@])/.test(v)?"'"+v:String(v)).replaceAll('"','""')+'"';
+ const rows:(string|number)[][]=[['Verkoper','Maand','Order','Winkel','Klantbetaling','Omzet excl. btw EUR','Commissie EUR','Bonus EUR'],...s.lines.map(l=>[s.sellerName,s.month,l.orderId,l.customerName,l.paidAt,(l.netCents/100).toFixed(2).replace('.',','),(l.commissionCents/100).toFixed(2).replace('.',','),(l.bonusCents/100).toFixed(2).replace('.',',')]),['Totaal vergoeding excl. eventuele btw',(s.totalCents/100).toFixed(2).replace('.',',')],['Status',s.payout?'Uitbetaling geregistreerd':'Nog niet uitbetaald'],['Betalingsreferentie',s.payout?.reference||'']];
  const url=URL.createObjectURL(new Blob(['\uFEFF'+rows.map(r=>r.map(cell).join(';')).join('\r\n')],{type:'text/csv;charset=utf-8'})),a=document.createElement('a');a.href=url;a.download='BIGK-commissie-'+s.month+'-'+s.sellerId+'.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
 export default function SalesCommissions({statements,owner,readOnly,busy,onRecord}:{statements:CommissionStatement[];owner:boolean;readOnly:boolean;busy:boolean;onRecord:(statement:CommissionStatement,reference:string)=>Promise<void>}){

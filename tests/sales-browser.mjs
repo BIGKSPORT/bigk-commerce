@@ -103,9 +103,9 @@ try{
    await page.addScriptTag({content:"window.fetch=async(path,init)=>new Response(JSON.stringify(await window.__commissionFixture(path,init)),{status:200,headers:{'Content-Type':'application/json'}})"});
    await page.addStyleTag({content:readFileSync('app/globals.css','utf8')+'\n'+readFileSync('app/identity.css','utf8')+'\n'+workspaceBundle.outputFiles.find(f=>f.path.endsWith('.css')).text});await page.addScriptTag({content:workspaceBundle.outputFiles.find(f=>f.path.endsWith('.js')).text});
    await page.getByRole('button',{name:'Commissies',exact:true}).click();await page.getByRole('heading',{name:'Maandelijkse commissieafrekening'}).waitFor();
-   await page.getByText('1 betaalde orders bekijken',{exact:true}).click();await page.getByText('Fixture Sport',{exact:true}).waitFor();
+   await page.getByText('1 betaalde orders bekijken',{exact:true}).click();await page.getByText('Fixture Sport',{exact:false}).waitFor();
    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+1),false);
-   const download=page.waitForEvent('download');await page.getByRole('button',{name:'Download maandafrekening CSV'}).click();assert.match((await download).suggestedFilename(),/BIGK-commissie-2025-01/);
+   const download=page.waitForEvent('download');await page.getByRole('button',{name:'Download maandafrekening CSV'}).click();const csv=await download;assert.match(csv.suggestedFilename(),/BIGK-commissie-2025-01/);const contents=readFileSync(await csv.path(),'utf8');assert.ok(contents.includes('144,00'));assert.ok(contents.includes('100,00'));assert.ok(contents.includes('244,00'));
    if(role==='owner'){await page.getByLabel('Referentie uitgevoerde commissiebetaling').fill('BANK-COMMISSION-TEST');await page.getByRole('button',{name:'Uitgevoerde betaling registreren',exact:true}).click();await page.getByText('Referentie: BANK-COMMISSION-TEST',{exact:false}).waitFor();assert.equal(payouts,1);assert.equal(await page.getByRole('button',{name:'Uitgevoerde betaling registreren',exact:true}).count(),0);}
    else assert.equal(await page.getByRole('button',{name:'Uitgevoerde betaling registreren',exact:true}).count(),0);
    await page.screenshot({path:out+'/commission-'+role+'-'+width+'.png',fullPage:true});assert.deepEqual(errors,[]);await page.close();
