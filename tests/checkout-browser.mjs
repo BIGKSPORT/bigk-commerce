@@ -9,10 +9,10 @@ const env={...process.env,NODE_ENV:'production',PORT:'3188',APP_URL:origin,DATAB
 for(const key of ['VERCEL','VERCEL_ENV','VERCEL_URL','VERCEL_BRANCH_URL','ADMIN_CANONICAL_ORIGIN','DATABASE_URL'])delete env[key];
 let server,browser;
 try{
- await new Promise((resolve,reject)=>{const seed=spawn(process.execPath,['--import','tsx','--input-type=module','-e',"import {db} from './lib/db.ts';await db().prepare('UPDATE products SET active=1,approved=1 WHERE id IN (?,?)').run('P001','P003');"],{env,stdio:'ignore'});seed.once('error',reject);seed.once('exit',code=>code===0?resolve():reject(Error('Fixture seed failed')))});
+ await new Promise((resolve,reject)=>{const seed=spawn(process.execPath,['--import','tsx','--input-type=module','-e',"import {db} from './lib/db.ts';await db().prepare('UPDATE products SET active=1,approved=1,price_cents=6690 WHERE id=?').run('P001');"],{env,stdio:'ignore'});seed.once('error',reject);seed.once('exit',code=>code===0?resolve():reject(Error('Fixture seed failed')))});
  server=spawn(process.execPath,['node_modules/next/dist/bin/next','start','--hostname','127.0.0.1'],{env,stdio:['ignore','ignore','ignore']});
  let ready=false;for(let i=0;i<80;i++){try{if((await fetch(origin+'/api/catalog')).ok){ready=true;break}}catch{}await new Promise(r=>setTimeout(r,250));}assert(ready,'Next server did not start');
- const {products}=await(await fetch(origin+'/api/catalog')).json(),product=products.find(p=>p.id==='P003');
+ const {products}=await(await fetch(origin+'/api/catalog')).json(),product=products.find(p=>p.id==='P001');
  browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium',headless:true,args:['--no-sandbox']});
  for(const width of [390,1440]){
   const context=await browser.newContext({viewport:{width,height:900}}),page=await context.newPage();let firstKey='',calls=0;
