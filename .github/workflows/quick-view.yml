@@ -1,0 +1,26 @@
+name: Quick view purchase checks
+on:
+  pull_request:
+    paths:
+      - 'components/storefront.tsx'
+      - 'components/product-gallery.tsx'
+      - 'app/storefront-polish.css'
+      - 'tests/quick-view-browser.mjs'
+      - '.github/workflows/quick-view.yml'
+permissions:
+  contents: read
+jobs:
+  quick-view:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      CHROMIUM_PATH: /usr/bin/google-chrome
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: node tests/quick-view-browser.mjs

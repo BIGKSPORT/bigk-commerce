@@ -340,3 +340,14 @@ body {
     padding: 8px 12px;
   }
 }
+
+/* Quick view must scroll to variant choices and purchase controls. */
+.modal.quick-view-modal {
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+}
+@media (max-width: 760px) {
+  .quick-view-modal .gallery-window.detail-image {
+    height: clamp(180px, 38dvh, 300px);
+  }
+}
