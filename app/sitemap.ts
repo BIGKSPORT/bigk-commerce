@@ -1,3 +1,4 @@
+import {publicProductSlug} from '@/lib/product-public-urls';
 import {publicIndexingEnabled} from '@/lib/search-visibility';
 import {siteLocales,localizePath} from '@/lib/i18n/site-routing';
 import {blogPosts} from '@/lib/blog';
@@ -15,14 +16,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const publicIndexing = publicIndexingEnabled();
   if (!publicIndexing) return [];
   const catalog = await products();
+  const source=sharedProducts(catalog),visible=publicProducts(source);
   const seen = new Set<string>();
   const entries: MetadataRoute.Sitemap = siteLocales.map(locale=>({url:seller.origin+'/'+locale,changeFrequency:'weekly',priority:1,alternates:{languages:Object.fromEntries(siteLocales.map(l=>[l,seller.origin+'/'+l]))}}));
   const alpin=catalog.filter(hasAlpinTechnology);
   if(alpin.length===2&&alpin.every(p=>p.active&&p.approved&&p.images.length)){for(const path of Object.values(alpinPaths))entries.push({url:seller.origin+path,changeFrequency:'weekly',priority:0.8});}
-  for (const group of productGroups(publicProducts(sharedProducts(catalog)))) {
+  for (const group of productGroups(visible)) {
     const p=group.parent;
-    if(hasAlpinTechnology(p)||!group.colours.some(option=>option.images.length)||seen.has(p.group?.slug||p.slug))continue;
-    const slug=p.group?.slug||p.slug;seen.add(slug);
+    if(hasAlpinTechnology(p)||!group.colours.some(option=>option.images.length)||seen.has(publicProductSlug(p,source)))continue;
+    const slug=publicProductSlug(p,source);seen.add(slug);
     for(const locale of siteLocales)entries.push({url:seller.origin+localizePath('/products/'+encodeURIComponent(slug),locale),changeFrequency:'weekly',priority:0.8});
   }
   const posts=await blogPosts();for(const locale of siteLocales){entries.push({url:seller.origin+'/'+locale+'/blog',changeFrequency:'weekly',priority:0.6});for(const p of posts)entries.push({url:seller.origin+'/'+locale+'/blog/'+p.slug,lastModified:new Date(p.updatedAt),priority:0.6});}
