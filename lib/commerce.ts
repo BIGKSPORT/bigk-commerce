@@ -1,3 +1,4 @@
+import {checkoutCountries,shippingCharge} from './shipping-policy';
 import {sharedProducts} from './product-groups';
 import {alpinPublicProduct} from './alpin-fleece';
 import {stripeKeyMode} from './stripe-config';
@@ -16,7 +17,7 @@ export const checkoutSchema = z.object({
   phone: z.string().regex(/^\+[1-9][0-9]{7,14}$/),
   firstName: z.string().trim().min(1).max(100),
   lastName: z.string().trim().min(1).max(100),
-  country: z.enum(['BE', 'NL', 'FR', 'DE', 'LU']),
+  country: z.enum(checkoutCountries),
   address: z.string().trim().min(3).max(200),
   postal: z.string().trim().min(2).max(20),
   city: z.string().trim().min(1).max(100),
@@ -29,7 +30,7 @@ export const checkoutSchema = z.object({
 export type CheckoutInput = z.infer<typeof checkoutSchema>;
 export const isLive = () => process.env.COMMERCE_MODE === 'live';
 export function liveReady() { const key=process.env.STRIPE_SECRET_KEY||'',schema=databaseSchema();let isolatedTest=false;try{isolatedTest=process.env.NODE_ENV==='test'&&['localhost','127.0.0.1','[::1]'].includes(new URL(process.env.DATABASE_URL||'').hostname)}catch{}if(isPostgres()&&!process.env.DATABASE_URL)return false;if(isPostgres()&&!isolatedTest&&((schema==='bigk_staging'&&stripeKeyMode(key)!=='test')||(schema==='bigk'&&stripeKeyMode(key)!=='live')))return false;return process.env.COMMERCE_MODE === 'live' && process.env.LIVE_COMMERCE_APPROVED === 'true' && !!process.env.STRIPE_SECRET_KEY && !!process.env.STRIPE_WEBHOOK_SECRET && (process.env.RECEIPT_SECRET?.length || 0) >= 32 && !!process.env.APP_URL?.startsWith('https://'); }
-export function shipping(subtotal: number) { return subtotal >= 10000 ? 0 : 695; }
+export const shipping = shippingCharge;
 function receipt(id: string) { const secret = process.env.RECEIPT_SECRET || (isLive() ? '' : 'bigk-local-demo-receipts-do-not-use-live'); if (!secret)
     throw new HttpError(503, 'Receipt signing is not configured.'); return createHmac('sha256', secret).update(id).digest('base64url'); }
 export async function expireReservations() { (await transaction(async () => { const sql = db(); const stale = (await sql.prepare("SELECT id FROM orders WHERE status='pending' AND expires_at<?").all(new Date().toISOString())) as {
@@ -79,7 +80,7 @@ export async function createOrder(input: CheckoutInput, verifiedEmail?:string) {
           promoDiscount = quote.discountCents;
           promoCode = quote.code;
         }
-        const id = crypto.randomUUID(), receiptToken = receipt(id), ship = shipping(Math.max(0, subtotal - promoDiscount)), now = new Date(), expires = new Date(now.getTime() + 35 * 60000);
+        const id = crypto.randomUUID(), receiptToken = receipt(id), ship = shipping(Math.max(0, subtotal - promoDiscount),input.country), now = new Date(), expires = new Date(now.getTime() + 35 * 60000);
         const total = Math.max(0, subtotal - promoDiscount) + ship;
         (await sql.prepare('INSERT INTO orders(id,status,subtotal,shipping,total,email,phone,customer,receipt_hash,request_key,request_hash,created_at,expires_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)').run(id, isLive() ? 'pending' : 'demo', subtotal, ship, total, input.email.toLowerCase(), input.phone, JSON.stringify({ language:input.locale||'en', firstName: input.firstName, lastName: input.lastName, country: input.country, address: input.address, postal: input.postal, city: input.city, promoCode: promoCode||null, promoDiscountCents: promoDiscount||0 }), hash(receiptToken), input.requestKey, requestHash, now.toISOString(), expires.toISOString()));
         for (const line of lines) {

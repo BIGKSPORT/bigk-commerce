@@ -1,0 +1,33 @@
+name: Country shipping checks
+on:
+  pull_request:
+    paths:
+      - 'lib/shipping-policy.ts'
+      - 'lib/commerce.ts'
+      - 'app/api/checkout/route.ts'
+      - 'app/checkout/page.tsx'
+      - 'components/bag-contents.tsx'
+      - 'lib/i18n/shipping-copy.ts'
+      - 'tests/shipping-policy.test.ts'
+      - '.github/workflows/country-shipping.yml'
+permissions:
+  contents: read
+jobs:
+  consumer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      CHROMIUM_PATH: /usr/bin/google-chrome
+      BIGK_ARTIFACT_DIR: /tmp/bigk-country-shipping
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: node --import tsx --test tests/shipping-policy.test.ts tests/product-search-data.test.ts
+      - run: npm test
+      - run: npm run build
+      - run: node tests/checkout-browser.mjs
