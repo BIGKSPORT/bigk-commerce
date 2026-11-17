@@ -14,7 +14,7 @@ import {gzipSync} from 'node:zlib';
 import assert from 'node:assert/strict';
 import {salesQuote} from '../lib/sales-pricing.ts';
 const out=process.env.BIGK_ARTIFACT_DIR||'/workspace/scratch/6c89b13ffc0a/sales-review';mkdirSync(out,{recursive:true});
-const imagePlugin={name:'next-image-fixture',setup(build){build.onResolve({filter:/^next\/image$/},()=>({path:'image',namespace:'fixture'}));build.onLoad({filter:/.*/,namespace:'fixture'},()=>({contents:`import React from 'react';const image='data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="320" height="320"><rect width="320" height="320" fill="#eee8e2"/><path d="M100 80L50 110 70 160 100 145 100 260 220 260 220 145 250 160 270 110 220 80Z" fill="#303536"/></svg>');export default function Image(props){return <img {...props} src={image}/>}`,loader:'jsx',resolveDir:process.cwd()}));}};
+const imagePlugin={name:'next-image-fixture',setup(build){build.onResolve({filter:/^next\/image$/},()=>({path:'image',namespace:'fixture'}));build.onLoad({filter:/.*/,namespace:'fixture'},()=>({contents:`import React from 'react';const image='data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="320" height="320"><rect width="320" height="320" fill="#eee8e2"/><path d="M100 80L50 110 70 160 100 145 100 260 220 260 220 145 250 160 270 110 220 80Z" fill="#303536"/></svg>');export default function Image(props){return <img {...props} data-source={props.src} src={image}/>}`,loader:'jsx',resolveDir:process.cwd()}));}};
 async function bundle(entry){return build({stdin:{resolveDir:process.cwd(),loader:'tsx',contents:`import React from 'react';import {createRoot} from 'react-dom/client';import Screen from './components/${entry}';createRoot(document.getElementById('root')).render(<Screen/>);`},bundle:true,write:false,outdir:out,platform:'browser',jsx:'automatic',plugins:[imagePlugin],define:{'process.env.NODE_ENV':'"production"'},minify:true});}
 const workspaceBundle=await bundle('sales-workspace'),setupBundle=await bundle('sales-setup');
 const empty=await build({stdin:{resolveDir:process.cwd(),loader:'tsx',contents:"import React from 'react';import{createRoot}from'react-dom/client';createRoot(document.getElementById('root')).render(<div/>);"},bundle:true,write:false,minify:true,platform:'browser',jsx:'automatic',define:{'process.env.NODE_ENV':'"production"'}});
@@ -46,17 +46,59 @@ try{
   if(!mobile){catalogueMissing=true;await page.getByRole('button',{name:'Voorraad vernieuwen',exact:true}).click();await page.getByText('Een product in je selectie is niet langer beschikbaar.',{exact:false}).waitFor();assert.equal(await page.getByRole('button',{name:'Indienen bij BIG K',exact:true}).isDisabled(),true);catalogueMissing=false;await page.getByRole('button',{name:'Voorraad vernieuwen',exact:true}).click();await page.getByText('€ 311,54',{exact:true}).waitFor();}if(mobile)await page.getByRole('button',{name:'Bestelling openen of sluiten'}).click();await page.getByRole('button',{name:'Indienen bij BIG K',exact:true}).click();await page.getByText('Ingediend · wacht op BIG K',{exact:false}).waitFor();assert.equal(saves,1);await page.getByText('30 × ALPINE FLEECE',{exact:false}).waitFor();assert.deepEqual(errors,[]);await page.close();
  }
 
- const ownerPage=await browser.newPage();let ownerLogouts=0;
+
+ for(const width of [1440,390]){
+  const page=await browser.newPage({viewport:{width,height:1000},isMobile:width===390,hasTouch:width===390,reducedMotion:'reduce'}),errors=[];page.on('pageerror',e=>errors.push(e.message));
+  let version=0,writes=0;
+  const response=()=>{
+   const name=version?'ALPINE UPDATED':'ALPINE FLEECE',categoryLabel=version?'Nieuwe fleececategorie':'Fleece';
+   const rows=[{id:'bm',modelId:'fleece',name,code:'25303101',image:version?'/changed.webp':'/front.webp',colour:'Black',size:'M',available:version?7:50,retailCents:version?15990:14690,footwear:false,core:true},{id:'bl',modelId:'fleece',name,code:'25303101',image:'/front.webp',colour:'Black',size:'L',available:0,retailCents:14690,footwear:false,core:true},{id:'dm',modelId:'fleece',name,code:'25303102',image:'/blue.webp',colour:'Dusty Blue',size:'M',available:20,retailCents:14690,footwear:false,core:true},{id:'pants',modelId:'pants',name:'CORE PANTS',code:'25302701',image:'/pants.webp',colour:'Black',size:'M',available:30,retailCents:9390,footwear:false,core:true}];
+   const base={productId:'P001',category:'Fleece',categoryLabel,categoryActive:true,description:version?'Nieuwe beschrijving uit de backoffice.':'Productinformatie uit de backoffice.',composition:'Geverifieerde materiaalinformatie',fit:'Regular fit uit de backoffice',care:'Onderhoud uit de backoffice',details:'Geverifieerde productdetails',sizeGuide:'Maatadvies uit de backoffice',sizeTable:'Maat\tBorst\nM\t100',features:[]};
+   const models=[{...base,id:'fleece',name,colours:[{id:'black',name:'Black',article:'25303101',images:[version?'/changed.webp':'/front.webp','/back.webp'],variantIds:['bm','bl']},{id:'blue',name:'Dusty Blue',article:'25303102',images:['/blue.webp'],variantIds:['dm']}]},{...base,id:'pants',productId:'P010',name:'CORE PANTS',category:'Pants',categoryLabel:'Broeken',colours:[{id:'pants-black',name:'Black',article:'25302701',images:['/pants.webp'],variantIds:['pants']}]}];
+   return {actor:{id:'fixture',name:'Catalogus',role:'seller'},catalogue:rows,models,customers:[],orders:[]};
+  };
+  await page.exposeFunction('__catalogueFixture',async(path,init)=>{assert.equal(path,'/api/sales');if(init.method!=='GET'){writes++;throw Error('No writes expected');}return response();});
+  await page.setContent('<!doctype html><html lang="nl"><head><meta name="viewport" content="width=device-width,initial-scale=1"/></head><body><div id="root"></div></body></html>');
+  await page.addScriptTag({content:"window.fetch=async(path,init)=>new Response(JSON.stringify(await window.__catalogueFixture(path,init)),{status:200,headers:{'Content-Type':'application/json'}})"});
+  await page.addStyleTag({content:readFileSync('app/globals.css','utf8')+'\n'+readFileSync('app/identity.css','utf8')+'\n'+workspaceBundle.outputFiles.find(f=>f.path.endsWith('.css')).text});await page.addScriptTag({content:workspaceBundle.outputFiles.find(f=>f.path.endsWith('.js')).text});
+  await page.getByRole('heading',{name:'ALPINE FLEECE',exact:true}).waitFor({timeout:10000}).catch(async e=>{console.log('CATALOGUE_RENDER_DEBUG '+JSON.stringify({width,errors,body:(await page.locator('body').innerText()).slice(0,5000)}));throw e;});assert.equal(await page.getByRole('heading',{name:'ALPINE FLEECE',exact:true}).count(),1);
+  const categories=page.getByRole('navigation',{name:'Productcategorieën'});
+  console.log('CATALOGUE_LAYOUT '+JSON.stringify(await categories.evaluate(el=>({nav:el.getBoundingClientRect().toJSON(),card:document.querySelector('article')?.getBoundingClientRect().toJSON(),scrollY:window.scrollY,viewport:[window.innerWidth,window.innerHeight],mode:document.compatMode}))));
+  await categories.getByRole('button',{name:/Broeken/}).click();assert.equal(await page.getByRole('heading',{name:'ALPINE FLEECE',exact:true}).count(),0);
+  await categories.getByRole('button',{name:/Alle producten/}).click();
+  if(width===390)await page.getByText('Filters en sorteren',{exact:true}).click();await page.getByLabel('Filter op kleur',{exact:true}).selectOption('Dusty Blue');assert.equal(await page.getByRole('heading',{name:'CORE PANTS',exact:true}).count(),0);
+  await page.getByLabel('Filter op maat',{exact:true}).selectOption('L');await page.getByRole('heading',{name:'Geen producten gevonden'}).waitFor();
+  await page.getByRole('button',{name:'Filters wissen',exact:true}).click();
+  await page.getByLabel('Sorteer producten',{exact:true}).selectOption('price');
+  const names=await page.locator('article h2').allTextContents();assert.deepEqual(names,['CORE PANTS','ALPINE FLEECE']);
+  await page.getByLabel('ALPINE FLEECE Black maat M',{exact:true}).fill('3');
+  await page.getByRole('button',{name:'Bekijk ALPINE FLEECE',exact:true}).click();const dialog=page.getByRole('dialog');
+  await dialog.getByText('Regular fit uit de backoffice',{exact:true}).waitFor();await dialog.getByText('Geverifieerde materiaalinformatie',{exact:true}).waitFor();
+  assert.equal(await dialog.getByLabel('ALPINE FLEECE Black maat L',{exact:true}).isDisabled(),true);
+  await dialog.getByLabel('ALPINE FLEECE Dusty Blue maat M',{exact:true}).fill('2');
+  await dialog.evaluate(el=>{el.scrollTop=0;});await dialog.getByRole('button',{name:'Productfoto 2',exact:true}).click();assert.equal(await dialog.locator('img').first().getAttribute('data-source'),'/back.webp');
+  await page.screenshot({path:out+'/catalogue-detail-'+width+'.png',fullPage:true});
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+1),false);
+  await dialog.getByRole('button',{name:'Productdetails sluiten'}).click();await dialog.waitFor({state:'detached'});assert.equal(await page.getByLabel('ALPINE FLEECE Black maat M',{exact:true}).inputValue(),'3');
+  version=1;await page.evaluate(()=>window.dispatchEvent(new Event('focus')));await page.getByRole('heading',{name:'ALPINE UPDATED',exact:true}).waitFor();
+  assert.equal(await page.getByLabel('ALPINE UPDATED Black maat M',{exact:true}).inputValue(),'3');
+  await categories.getByRole('button',{name:/Nieuwe fleececategorie/}).waitFor();
+  const card=page.locator('article').filter({has:page.getByRole('heading',{name:'ALPINE UPDATED',exact:true})});assert.equal(await card.locator('img').first().getAttribute('data-source'),'/changed.webp');
+  await card.getByText('€ 159,90',{exact:true}).waitFor();assert.equal(await page.getByLabel('ALPINE UPDATED Black maat M',{exact:true}).getAttribute('max'),'7');
+  if(width===390)await page.getByText('Filters en sorteren',{exact:true}).click();const screenshot=await page.screenshot({path:out+'/catalogue-'+width+'.png',fullPage:true});if(process.env.CI)console.log('CATALOGUE_SCREENSHOT '+width+' '+(await sharp(screenshot).resize({width:Math.min(width,1100)}).webp({quality:70}).toBuffer()).toString('base64'));
+  assert.equal(writes,0);assert.deepEqual(errors,[]);await page.close();
+ }
+ const ownerPage=await browser.newPage();let ownerLogouts=0;const ownerErrors=[];ownerPage.on('pageerror',e=>ownerErrors.push(e.message));
  await ownerPage.exposeFunction('__ownerFixture',async(path,init)=>{
  if(path==='/api/sales'&&init.method==='GET')return {actor:{id:'owner',name:'BIG K',role:'owner'},catalogue:[],customers:[],orders:[],accounts:[]};
  if(path==='/api/admin/logout'&&init.method==='POST'){ownerLogouts++;return {ok:true};}
  throw Error('Unexpected owner auth request '+path);
  });
- await ownerPage.setContent('<html><body><div id="root"></div></body></html>');
+ await ownerPage.setContent('<!doctype html><html><body><div id="root"></div></body></html>');
  await ownerPage.addScriptTag({content:"window.fetch=async(path,init)=>new Response(JSON.stringify(await window.__ownerFixture(path,init)),{status:200})"});
  await ownerPage.addStyleTag({content:workspaceBundle.outputFiles.find(f=>f.path.endsWith('.css')).text});
  await ownerPage.addScriptTag({content:workspaceBundle.outputFiles.find(f=>f.path.endsWith('.js')).text});
- await ownerPage.getByRole('heading',{name:'Goed op weg, BIG K.'}).waitFor();
+ await ownerPage.getByRole('heading',{name:'Goed op weg, BIG K.'}).waitFor({timeout:10000}).catch(async e=>{console.log('OWNER_RENDER_DEBUG '+JSON.stringify({errors:ownerErrors,body:(await ownerPage.locator('body').innerText()).slice(0,5000)}));throw e;});
  await ownerPage.getByRole('button',{name:'Uitloggen',exact:true}).click();
  await ownerPage.getByRole('button',{name:'Inloggen',exact:true}).waitFor();assert.equal(ownerLogouts,1);await ownerPage.close();
 
@@ -67,7 +109,7 @@ try{
  assert.equal(path,'/api/sales?previewSeller=10000000-1000-4000-8000-100000000001');
  return {actor:{id:'10000000-1000-4000-8000-100000000001',name:'Kenny Endels',role:'seller'},preview:{sellerId:'10000000-1000-4000-8000-100000000001',sellerName:'Kenny Endels',readOnly:true},catalogue:[{id:'preview-m',name:'ALPINE FLEECE',code:'25303101',image:'/fixture.svg',colour:'Black',size:'M',available:100,retailCents:14690,footwear:false,core:true}],customers:[],orders:[]};
  });
- await previewPage.setContent('<html><body><div id="root"></div></body></html>');
+ await previewPage.setContent('<!doctype html><html><body><div id="root"></div></body></html>');
  await previewPage.addScriptTag({content:"const OriginalParams=window.URLSearchParams;window.URLSearchParams=class extends OriginalParams{constructor(v){super(v||'previewSeller=10000000-1000-4000-8000-100000000001')}};window.fetch=async(path,init)=>new Response(JSON.stringify(await window.__sellerPreviewFixture(path,init)),{status:200})"});
  await previewPage.addStyleTag({content:workspaceBundle.outputFiles.find(f=>f.path.endsWith('.css')).text});await previewPage.addScriptTag({content:workspaceBundle.outputFiles.find(f=>f.path.endsWith('.js')).text});
  await previewPage.getByText('Voorbeeldweergave van Kenny Endels',{exact:true}).waitFor();
@@ -87,7 +129,7 @@ try{
   const text=await response.text();if(response.ok&&data.action==='begin')secret=JSON.parse(text).secret;
   return {status:response.status,type:response.headers.get('content-type'),text};
  });
- await page.setContent('<html><body><div id="root"></div></body></html>');
+ await page.setContent('<!doctype html><html><body><div id="root"></div></body></html>');
  await page.addScriptTag({content:"window.location.hash="+JSON.stringify(setupToken)+";history.replaceState=()=>{window.location.hash=''};window.fetch=async(path,init)=>{const r=await window.__setupRequest(path,init);return new Response(r.text,{status:r.status,headers:{'Content-Type':r.type}})}"});
  await page.addStyleTag({content:setupBundle.outputFiles.find(f=>f.path.endsWith('.css')).text});await page.addScriptTag({content:setupBundle.outputFiles.find(f=>f.path.endsWith('.js')).text});
  await page.getByRole('button',{name:'Account instellen',exact:true}).click();
