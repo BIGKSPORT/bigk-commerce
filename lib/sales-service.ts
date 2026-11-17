@@ -1,3 +1,4 @@
+import {b2bDb} from './b2b-db';
 import {commissionStatements} from './sales-commissions';
 import {z} from 'zod';
 import {products,transaction} from './db';
@@ -44,6 +45,7 @@ export async function salesWorkspace(actor:SalesActor):Promise<SalesWorkspace>{
  return {actor,commissions,catalogue:catalogueData.catalogue,models:catalogueData.models,customers:customers.map(customerRow),orders:orders.map(orderRow),accounts:accounts?.map(r=>({id:String(r.id),name:String(r.name),email:String(r.email),active:Number(r.active)}))};
 }
 export async function createSalesCustomer(actor:SalesActor,input:z.infer<typeof customerInput>){if(actor.role!=='seller')throw new HttpError(403,'Klanten worden aangemaakt vanuit een verkopersaccount.');return transaction(async()=>{
+ if(process.env.B2B_PORTAL_ENABLED==='true'&&await b2bDb().prepare('SELECT id FROM b2b_accounts WHERE vat=?').get(input.vat))throw new HttpError(409,'Deze winkel is een rechtstreeks B2B-account. Vraag BIG K om de klanttoewijzing te controleren.');
  if(await db().prepare('SELECT id FROM seller_customers WHERE vat=?').get(input.vat))throw new HttpError(409,'Dit btw-nummer is al geregistreerd. Vraag BIG K om de klanttoewijzing te controleren.');
  const id=crypto.randomUUID();await db().prepare('INSERT INTO seller_customers(id,seller_id,name,vat,contact,email,phone,address,created_at) VALUES(?,?,?,?,?,?,?,?,?)').run(id,actor.id,input.name,input.vat,input.contact,input.email,input.phone,input.address,new Date().toISOString());await salesEvent(actor,'customer.created',id);return {id};
 });}
