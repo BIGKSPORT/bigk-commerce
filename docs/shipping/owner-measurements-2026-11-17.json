@@ -1,0 +1,182 @@
+{
+  "source": "Owner message, 17 November 2026",
+  "status": "review_only_not_used_for_live_quotes",
+  "weightUnit": "g",
+  "dimensionUnit": "cm",
+  "needsConfirmation": [
+    "Whether weights include final outer shipping packaging",
+    "Whether dimensions are final shipping parcels or individual packed products",
+    "Dimensions assumed to be centimetres; Core 2 weight interpreted as 243 grams",
+    "Match supplier article candidates and confirm one profile covers every size/colour",
+    "Multi-item packing rules, outer packaging weight, missing products and customs data remain outstanding"
+  ],
+  "profiles": [
+    {
+      "reportedName": "Snake scarf",
+      "weightGrams": 200,
+      "dimensionsCm": [
+        30,
+        33,
+        3
+      ],
+      "supplierArticleCandidates": [
+        "25302401",
+        "25302402",
+        "25302403"
+      ],
+      "packingConfirmed": false
+    },
+    {
+      "reportedName": "Velvet",
+      "weightGrams": 655,
+      "dimensionsCm": [
+        45,
+        35,
+        5
+      ],
+      "supplierArticleCandidates": [
+        "25000701",
+        "25000702",
+        "25000703",
+        "25000704"
+      ],
+      "packingConfirmed": false
+    },
+    {
+      "reportedName": "Alpin Gillet",
+      "weightGrams": 500,
+      "dimensionsCm": [
+        45,
+        35,
+        5
+      ],
+      "supplierArticleCandidates": [
+        "25303201",
+        "25303202"
+      ],
+      "packingConfirmed": false
+    },
+    {
+      "reportedName": "Nano down",
+      "weightGrams": 423,
+      "dimensionsCm": [
+        45,
+        35,
+        4
+      ],
+      "supplierArticleCandidates": [
+        "25302901"
+      ],
+      "packingConfirmed": false
+    },
+    {
+      "reportedName": "Nano down vest",
+      "weightGrams": 297,
+      "dimensionsCm": [
+        45,
+        35,
+        5
+      ],
+      "supplierArticleCandidates": [
+        "25303001"
+      ],
+      "packingConfirmed": false
+    },
+    {
+      "reportedName": "Summit",
+      "weightGrams": 659,
+      "dimensionsCm": [
+        45,
+        35,
+        5
+      ],
+      "supplierArticleCandidates": [
+        "25302101"
+      ],
+      "packingConfirmed": false
+    },
+    {
+      "reportedName": "Alpin vest hood",
+      "weightGrams": 600,
+      "dimensionsCm": [
+        45,
+        35,
+        6
+      ],
+      "supplierArticleCandidates": [
+        "25301701",
+        "25301702"
+      ],
+      "packingConfirmed": false
+    },
+    {
+      "reportedName": "Ribs low",
+      "weightGrams": 112,
+      "dimensionsCm": [
+        21,
+        11,
+        4
+      ],
+      "supplierArticleCandidates": [],
+      "packingConfirmed": false
+    },
+    {
+      "reportedName": "Ribs Medium",
+      "weightGrams": 122,
+      "dimensionsCm": [
+        21,
+        11,
+        4
+      ],
+      "supplierArticleCandidates": [],
+      "packingConfirmed": false
+    },
+    {
+      "reportedName": "Ribs long",
+      "weightGrams": 133,
+      "dimensionsCm": [
+        21,
+        11,
+        4
+      ],
+      "supplierArticleCandidates": [],
+      "packingConfirmed": false
+    },
+    {
+      "reportedName": "coreloose",
+      "weightGrams": 290,
+      "dimensionsCm": [
+        30,
+        22,
+        3
+      ],
+      "supplierArticleCandidates": [
+        "25301902",
+        "25301903"
+      ],
+      "packingConfirmed": false
+    },
+    {
+      "reportedName": "Core 2",
+      "weightGrams": 243,
+      "dimensionsCm": [
+        30,
+        22,
+        3
+      ],
+      "supplierArticleCandidates": [
+        "25301801",
+        "25301802",
+        "25301803"
+      ],
+      "packingConfirmed": false
+    }
+  ],
+  "missingExpectedProducts": [
+    "ALPINE FLEECE",
+    "ALPINE FZ HOOD",
+    "CORE PANTS",
+    "NEOFIT PANTS",
+    "Footwear (per model, weight of one pair and packed shoe box)"
+  ]
+}
