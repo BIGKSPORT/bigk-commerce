@@ -4,11 +4,10 @@
   "weightUnit": "g",
   "dimensionUnit": "cm",
   "needsConfirmation": [
-    "Whether weights include final outer shipping packaging",
-    "Whether dimensions are final shipping parcels or individual packed products",
-    "Dimensions assumed to be centimetres; Core 2 weight interpreted as 243 grams",
-    "Match supplier article candidates and confirm one profile covers every size/colour",
-    "Multi-item packing rules, outer packaging weight, missing products and customs data remain outstanding"
+    "Measurements are owner estimates; validate actual packed parcels against carrier weight and dimension bands.",
+    "Confirm one clothing profile covers every size/colour, and footwear size-band profiles apply to every shoe model.",
+    "Define combined parcel dimensions/weight for multi-item orders; do not sum outer dimensions or assume one-item packaging fits every basket.",
+    "Complete HS codes, origin countries, international carrier tariffs and destination exclusion list."
   ],
   "profiles": [
     {
@@ -24,7 +23,8 @@
         "25302402",
         "25302403"
       ],
-      "packingConfirmed": false
+      "packingConfirmed": true,
+      "weightBasis": "one individually packed item including shipping packaging; owner confirmed"
     },
     {
       "reportedName": "Velvet",
@@ -40,7 +40,8 @@
         "25000703",
         "25000704"
       ],
-      "packingConfirmed": false
+      "packingConfirmed": true,
+      "weightBasis": "one individually packed item including shipping packaging; owner confirmed"
     },
     {
       "reportedName": "Alpin Gillet",
@@ -54,7 +55,8 @@
         "25303201",
         "25303202"
       ],
-      "packingConfirmed": false
+      "packingConfirmed": true,
+      "weightBasis": "one individually packed item including shipping packaging; owner confirmed"
     },
     {
       "reportedName": "Nano down",
@@ -67,7 +69,8 @@
       "supplierArticleCandidates": [
         "25302901"
       ],
-      "packingConfirmed": false
+      "packingConfirmed": true,
+      "weightBasis": "one individually packed item including shipping packaging; owner confirmed"
     },
     {
       "reportedName": "Nano down vest",
@@ -80,7 +83,8 @@
       "supplierArticleCandidates": [
         "25303001"
       ],
-      "packingConfirmed": false
+      "packingConfirmed": true,
+      "weightBasis": "one individually packed item including shipping packaging; owner confirmed"
     },
     {
       "reportedName": "Summit",
@@ -93,7 +97,8 @@
       "supplierArticleCandidates": [
         "25302101"
       ],
-      "packingConfirmed": false
+      "packingConfirmed": true,
+      "weightBasis": "one individually packed item including shipping packaging; owner confirmed"
     },
     {
       "reportedName": "Alpin vest hood",
@@ -107,7 +112,8 @@
         "25301701",
         "25301702"
       ],
-      "packingConfirmed": false
+      "packingConfirmed": true,
+      "weightBasis": "one individually packed item including shipping packaging; owner confirmed"
     },
     {
       "reportedName": "Ribs low",
@@ -118,7 +124,8 @@
         4
       ],
       "supplierArticleCandidates": [],
-      "packingConfirmed": false
+      "packingConfirmed": true,
+      "weightBasis": "one individually packed item including shipping packaging; owner confirmed"
     },
     {
       "reportedName": "Ribs Medium",
@@ -129,7 +136,8 @@
         4
       ],
       "supplierArticleCandidates": [],
-      "packingConfirmed": false
+      "packingConfirmed": true,
+      "weightBasis": "one individually packed item including shipping packaging; owner confirmed"
     },
     {
       "reportedName": "Ribs long",
@@ -140,7 +148,8 @@
         4
       ],
       "supplierArticleCandidates": [],
-      "packingConfirmed": false
+      "packingConfirmed": true,
+      "weightBasis": "one individually packed item including shipping packaging; owner confirmed"
     },
     {
       "reportedName": "coreloose",
@@ -154,7 +163,8 @@
         "25301902",
         "25301903"
       ],
-      "packingConfirmed": false
+      "packingConfirmed": true,
+      "weightBasis": "one individually packed item including shipping packaging; owner confirmed"
     },
     {
       "reportedName": "Core 2",
@@ -169,14 +179,116 @@
         "25301802",
         "25301803"
       ],
-      "packingConfirmed": false
+      "packingConfirmed": true,
+      "weightBasis": "one individually packed item including shipping packaging; owner confirmed"
+    },
+    {
+      "reportedName": "ALPIN FLEECE",
+      "weightGrams": 700,
+      "dimensionsCm": [
+        45,
+        35,
+        10
+      ],
+      "supplierArticleCandidates": [
+        "25303101",
+        "25303102"
+      ],
+      "packingConfirmed": true,
+      "precision": "owner_estimate",
+      "weightBasis": "one individually packed item including shipping packaging; owner confirmed"
+    },
+    {
+      "reportedName": "Core pants",
+      "weightGrams": 420,
+      "dimensionsCm": [
+        30,
+        22,
+        5
+      ],
+      "supplierArticleCandidates": [
+        "25302701"
+      ],
+      "packingConfirmed": true,
+      "precision": "owner_estimate",
+      "weightBasis": "one individually packed item including shipping packaging; owner confirmed"
+    },
+    {
+      "reportedName": "Neofit pants",
+      "weightGrams": 425,
+      "dimensionsCm": [
+        30,
+        22,
+        5
+      ],
+      "supplierArticleCandidates": [
+        "25300801"
+      ],
+      "packingConfirmed": true,
+      "precision": "owner_estimate",
+      "weightBasis": "one individually packed item including shipping packaging; owner confirmed"
+    },
+    {
+      "reportedName": "ALPINE FZ HOOD",
+      "weightGrams": 600,
+      "dimensionsCm": [
+        45,
+        45,
+        6
+      ],
+      "supplierArticleCandidates": [
+        "25301601",
+        "25301603"
+      ],
+      "packingConfirmed": true,
+      "precision": "owner_estimate",
+      "weightBasis": "one individually packed item including shipping packaging; owner confirmed"
     }
   ],
-  "missingExpectedProducts": [
-    "ALPINE FLEECE",
-    "ALPINE FZ HOOD",
-    "CORE PANTS",
-    "NEOFIT PANTS",
-    "Footwear (per model, weight of one pair and packed shoe box)"
-  ]
+  "missingExpectedProducts": [],
+  "footwearProfiles": [
+    {
+      "sizeMin": 36,
+      "sizeMax": 39,
+      "weightGrams": 900,
+      "dimensionsCm": [
+        30,
+        11.5,
+        22.5
+      ],
+      "precision": "owner_estimate",
+      "weightBasis": "one packed pair including shipping packaging; owner confirmed",
+      "modelApplicability": "pending confirmation",
+      "packingConfirmed": true
+    },
+    {
+      "sizeMin": 40,
+      "sizeMax": 42,
+      "weightGrams": 1000,
+      "dimensionsCm": [
+        31,
+        12,
+        24
+      ],
+      "precision": "owner_estimate",
+      "weightBasis": "one packed pair including shipping packaging; owner confirmed",
+      "modelApplicability": "pending confirmation",
+      "packingConfirmed": true
+    },
+    {
+      "sizeMin": 43,
+      "sizeMax": 46,
+      "weightGrams": 1100,
+      "dimensionsCm": [
+        35,
+        13,
+        23
+      ],
+      "precision": "owner_estimate",
+      "weightBasis": "one packed pair including shipping packaging; owner confirmed",
+      "modelApplicability": "pending confirmation",
+      "packingConfirmed": true
+    }
+  ],
+  "precision": "Owner describes supplied measurements as approximate; not certified carrier billable weights or dimensions."
 }
