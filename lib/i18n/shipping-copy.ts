@@ -23,11 +23,11 @@ export const shippingCopy:Record<string,{nl:string;fr:string;es:string;it:string
     "es": "Envíos internacionales. Elige tu país al pagar para ver las opciones disponibles. Se excluyen Noruega y los destinos con requisitos adicionales que todavía no gestionamos.",
     "it": "Spedizioni internazionali. Seleziona il paese al pagamento per vedere le opzioni disponibili. Sono esclusi la Norvegia e i paesi con requisiti aggiuntivi non ancora gestiti."
   },
-  "Standard delivery is €6.95 below €60 in Belgium and the Netherlands, and below €100 in France, Germany and Luxembourg. For Austria, Czechia, Spain, Italy, Poland and Romania, the standard rate varies by country. It is half price from €60 and free from €100. Thresholds apply after discounts. The final delivery charge is shown before payment.": {
-    "nl": "Standaardverzending kost €6,95 onder €60 in België en Nederland en onder €100 in Frankrijk, Duitsland en Luxemburg. Voor Oostenrijk, Tsjechië, Spanje, Italië, Polen en Roemenië verschilt het tarief per land. Vanaf €60 betaal je de helft en vanaf €100 is verzending gratis. Drempels gelden na korting. Je ziet de definitieve verzendkosten vóór betaling.",
-    "fr": "La livraison standard coûte 6,95 € sous 60 € en Belgique et aux Pays-Bas et sous 100 € en France, en Allemagne et au Luxembourg. Pour l’Autriche, la Tchéquie, l’Espagne, l’Italie, la Pologne et la Roumanie, le tarif varie selon le pays. La livraison est à moitié prix dès 60 € et gratuite dès 100 €. Les seuils s’appliquent après remise. Les frais définitifs sont affichés avant paiement.",
-    "es": "El envío estándar cuesta 6,95 € por debajo de 60 € en Bélgica y Países Bajos y de 100 € en Francia, Alemania y Luxemburgo. Para Austria, Chequia, España, Italia, Polonia y Rumanía, el precio varía según el país. El envío cuesta la mitad desde 60 € y es gratis desde 100 €. Los umbrales se aplican después de los descuentos. El coste final se muestra antes del pago.",
-    "it": "La spedizione standard costa 6,95 € sotto i 60 € in Belgio e nei Paesi Bassi e sotto i 100 € in Francia, Germania e Lussemburgo. Per Austria, Cechia, Spagna, Italia, Polonia e Romania la tariffa varia in base al paese. La spedizione è a metà prezzo da 60 € e gratuita da 100 €. Le soglie si applicano dopo gli sconti. Il costo finale viene mostrato prima del pagamento."
+  "Standard delivery is €6.95 below €60 in Belgium and the Netherlands, and below €100 in France, Germany and Luxembourg. For Austria, Czechia, Spain, Italy, Poland and Romania, the standard rate varies by country. It is half price from €60 and free from €100. Thresholds apply after discounts. The final delivery charge is shown before payment. Standard delivery to the United Kingdom, Switzerland, United States, Canada and Australia is €12.50 per order.": {
+    "nl": "Standaardverzending kost €6,95 onder €60 in België en Nederland en onder €100 in Frankrijk, Duitsland en Luxemburg. Voor Oostenrijk, Tsjechië, Spanje, Italië, Polen en Roemenië verschilt het tarief per land. Vanaf €60 betaal je de helft en vanaf €100 is verzending gratis. Drempels gelden na korting. Je ziet de definitieve verzendkosten vóór betaling. Standaardverzending naar het Verenigd Koninkrijk, Zwitserland, de Verenigde Staten, Canada en Australië kost €12,50 per bestelling.",
+    "fr": "La livraison standard coûte 6,95 € sous 60 € en Belgique et aux Pays-Bas et sous 100 € en France, en Allemagne et au Luxembourg. Pour l’Autriche, la Tchéquie, l’Espagne, l’Italie, la Pologne et la Roumanie, le tarif varie selon le pays. La livraison est à moitié prix dès 60 € et gratuite dès 100 €. Les seuils s’appliquent après remise. Les frais définitifs sont affichés avant paiement. La livraison standard vers le Royaume-Uni, la Suisse, les États-Unis, le Canada et l’Australie coûte 12,50 € par commande.",
+    "es": "El envío estándar cuesta 6,95 € por debajo de 60 € en Bélgica y Países Bajos y de 100 € en Francia, Alemania y Luxemburgo. Para Austria, Chequia, España, Italia, Polonia y Rumanía, el precio varía según el país. El envío cuesta la mitad desde 60 € y es gratis desde 100 €. Los umbrales se aplican después de los descuentos. El coste final se muestra antes del pago. El envío estándar al Reino Unido, Suiza, Estados Unidos, Canadá y Australia cuesta 12,50 € por pedido.",
+    "it": "La spedizione standard costa 6,95 € sotto i 60 € in Belgio e nei Paesi Bassi e sotto i 100 € in Francia, Germania e Lussemburgo. Per Austria, Cechia, Spagna, Italia, Polonia e Romania la tariffa varia in base al paese. La spedizione è a metà prezzo da 60 € e gratuita da 100 €. Le soglie si applicano dopo gli sconti. Il costo finale viene mostrato prima del pagamento. La spedizione standard verso Regno Unito, Svizzera, Stati Uniti, Canada e Australia costa 12,50 € per ordine."
   },
 
   "Carrier delivery estimates": {
@@ -53,6 +53,12 @@ export const shippingCopy:Record<string,{nl:string;fr:string;es:string;it:string
     fr: "Livraison vers un autre pays ? Demandez un devis",
     es: "¿Envío a otro país? Solicita un presupuesto",
     it: "Spedizione in un altro paese? Richiedi un preventivo",
+  },
+  "Flat-rate standard delivery": {
+    nl: "Standaardverzending tegen vast tarief",
+    fr: "Livraison standard à tarif fixe",
+    es: "Envío estándar con tarifa fija",
+    it: "Spedizione standard a tariffa fissa",
   },
   "Delivery country": {
     "nl": "Bezorgland",
