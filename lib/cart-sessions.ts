@@ -22,7 +22,8 @@ export async function saveSavedCart(req:Request,raw:unknown){
  const nextExpiry=captureEnabled()?"CASE WHEN cart_sessions.contact_email IS NOT NULL THEN ? ELSE excluded.expires_at END":"excluded.expires_at";
  await cleanSavedCarts();
  await db().prepare(`INSERT INTO cart_sessions(id,items,stage,total,created_at,updated_at,expires_at) VALUES(?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET items=excluded.items,stage=excluded.stage,total=excluded.total,updated_at=excluded.updated_at,expires_at=${nextExpiry}`).run(hash(key),JSON.stringify(items),items.length?parsed.data.stage:'cleared',items.reduce((sum,i)=>sum+i.quantity*i.unitPrice,0),now,now,expires,...(captureEnabled()?[expiresIn(contactTtl)]:[]));
- return {items:items.map(({variantId,quantity})=>({variantId,quantity})),hasCart:true,cookie:fresh?cartCookie(key,ttl):null};
+ const row=captureEnabled()?await db().prepare('SELECT contact_email FROM cart_sessions WHERE id=?').get(hash(key)):undefined;
+ return {items:items.map(({variantId,quantity})=>({variantId,quantity})),hasCart:true,cookie:cartCookie(key,row?.contact_email?contactTtl:ttl)};
 }
 const contactInput=z.object({
  email:z.union([z.literal(''),z.string().trim().email().max(254)]),
@@ -40,13 +41,16 @@ export async function saveCheckoutContact(req:Request,raw:unknown){
  const version=email?'v1:'+locale:null;
  const address=email.toLowerCase()||null;
  const result=await db().prepare(`UPDATE cart_sessions SET
-   marketing_consent_at=CASE WHEN ? = 0 THEN NULL
-     WHEN marketing_consent=TRUE AND contact_email=? AND marketing_consent_version=? THEN marketing_consent_at
-     ELSE ? END,
+   marketing_consent_at=CASE
+     WHEN ? IS NULL THEN NULL
+     WHEN ? = 1 AND marketing_consent=TRUE AND contact_email=? AND marketing_consent_version=? THEN marketing_consent_at
+     WHEN ? = 1 OR (marketing_consent=TRUE AND contact_email=?) THEN ?
+     WHEN contact_email=? THEN marketing_consent_at
+     ELSE NULL END,
    marketing_consent=CASE WHEN ? = 1 THEN TRUE ELSE FALSE END,
    contact_email=?,marketing_consent_version=?,updated_at=?,expires_at=?
    WHERE id=? AND expires_at>? AND stage='checkout' AND order_id IS NULL`)
-  .run(consent?1:0,address,version,now,consent?1:0,address,version,now,expiresIn(email?contactTtl:ttl),hash(key),now);
+  .run(address,consent?1:0,address,version,consent?1:0,address,now,address,consent?1:0,address,version,now,expiresIn(email?contactTtl:ttl),hash(key),now);
  if(!result.changes)throw new HttpError(409,'No active checkout.');
  return cartCookie(key,email?contactTtl:ttl);
 }
