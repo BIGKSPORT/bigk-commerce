@@ -16,7 +16,7 @@ export function isCheckoutCountry(country:string):country is CheckoutCountry {
 export function isFlatRateInternationalCountry(country:string):boolean {
  return (flatRateInternationalCountries as readonly string[]).includes(country);
 }
-export function freeShippingThreshold(country:string):number {
+export function freeShippingThreshold(country:string):number|null {
  if(!isCheckoutCountry(country))throw new RangeError('Shipping is not configured for this destination.');
  if(isFlatRateInternationalCountry(country))return null;
  return country==='BE'||country==='NL'?6000:10000;
