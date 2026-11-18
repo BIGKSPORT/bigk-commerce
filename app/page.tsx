@@ -18,7 +18,7 @@ export default async function Home({ searchParams }: {
  const {path}=await getSiteLanguage();
  const b10=resolveProduct(raw,'b10-sneakers');
  const launchBanner=!preview&&!category&&!series&&saved!=='1'&&b10?.active&&b10.approved ? (
-  <Link href={path('/products/b10-sneakers')} prefetch={false} aria-label="Shop the BIG K B10 sneaker" style={{display:'block',background:'#191020'}}>
+  <Link href={path('/products/b10-sneakers')} prefetch={false} aria-label="Shop the BIG K B10 sneaker" style={{display:'block',background:'#191020',marginBottom:'clamp(24px, 4vw, 56px)'}}>
    <img src="/b10-launch.webp" alt="BIG K Grand Show Release B10" width={880} height={1100} style={{display:'block',width:'min(100%, 520px)',height:'auto',margin:'0 auto'}}/>
   </Link>
  ) : undefined;
