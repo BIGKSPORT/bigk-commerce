@@ -13,7 +13,7 @@ export async function POST(req:Request){try{
   await db().prepare('DELETE FROM login_tokens WHERE hash=?').run(hash(value));await db().prepare('DELETE FROM customer_sessions WHERE expires_at<?').run(new Date().toISOString());await db().prepare('INSERT INTO customer_sessions VALUES(?,?,?)').run(hash(session),row.email,new Date(Date.now()+7*24*3600000).toISOString());return row.email;
  }):null;
  const agencyEmail=process.env.TIKTOK_AGENCY_EMAIL?.trim().toLowerCase();
- const url=agencyEmail&&email?.toLowerCase()===agencyEmail
+ const url=agencyEmail&&typeof email==='string'&&email.toLowerCase()===agencyEmail
   ? new URL('/tiktok-agency',process.env.APP_URL||req.url)
   : target(req,'/account');
  if(!email)url.searchParams.set('error','expired');return new Response(null,{status:303,headers:{Location:url.toString(),...(email?{'Set-Cookie':sessionCookie('bigk_customer',session,7*24*3600)}:{}),'Cache-Control':'no-store','Referrer-Policy':'no-referrer'}});
