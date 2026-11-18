@@ -8,7 +8,7 @@ export default function robots(): MetadataRoute.Robots {
   const publicIndexing = publicIndexingEnabled();
   return {
     rules: publicIndexing
-      ? [{ userAgent: '*', allow: '/', disallow: ['/admin', '/staff', '/warehouse', '/account', '/checkout', '/order', '/api/',...['en','nl','fr','es','it'].flatMap(locale=>['account','checkout','order'].map(page=>'/'+locale+'/'+page))] }]
+      ? [{ userAgent: '*', allow: ['/', '/api/media/*.webp$'], disallow: ['/admin', '/staff', '/warehouse', '/account', '/checkout', '/order', '/api/',...['en','nl','fr','es','it'].flatMap(locale=>['account','checkout','order'].map(page=>'/'+locale+'/'+page))] }]
       : [{ userAgent: '*', disallow: '/' }],
     ...(publicIndexing ? { sitemap: seller.origin + '/sitemap.xml' } : {}),
   };
