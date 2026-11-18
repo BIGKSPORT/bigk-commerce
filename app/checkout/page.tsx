@@ -13,6 +13,7 @@ import {checkoutAttemptKey} from '@/lib/checkout-attempt';
 import {localizedMoney} from '@/lib/i18n/config';
 import { SimpleHeader } from '@/components/simple-header';
 import { Footer } from '@/components/brand';
+import {contactText} from '@/lib/i18n/checkout-contact-copy';
 import PaymentMethods from '@/components/payment-methods';
 
 export default function Checkout(){
@@ -32,6 +33,37 @@ export default function Checkout(){
   const formRef=useRef<HTMLFormElement>(null);
   const key=useRef('');
   const payload=useRef('');
+  const captureContact=process.env.NEXT_PUBLIC_CHECKOUT_CONTACT_CAPTURE==='true'&&paymentEnvironment!=='live';
+  const contactTimer=useRef<ReturnType<typeof setTimeout>|undefined>(undefined);
+  const contactWrites=useRef(Promise.resolve());
+  const lastContact=useRef('');
+  const contactEmail=useRef('');
+  useEffect(()=>()=>clearTimeout(contactTimer.current),[]);
+  function queueContact(immediate=false){
+   if(!captureContact)return;
+   clearTimeout(contactTimer.current);
+   const form=formRef.current;
+   const input=form?.elements.namedItem('email');
+   const consent=form?.elements.namedItem('marketingConsent');
+   if(!(input instanceof HTMLInputElement)||!(consent instanceof HTMLInputElement))return;
+   const email=input.value.trim().toLowerCase();
+   if(email&&input.validity.typeMismatch)return;
+   if(contactEmail.current&&contactEmail.current!==email)consent.checked=false;
+   contactEmail.current=email;
+   const body=JSON.stringify({email,consent:!!email&&consent.checked,locale});
+   const send=()=>{
+    contactWrites.current=contactWrites.current.then(async()=>{
+     if(body===lastContact.current||(!email&&!lastContact.current))return;
+     for(let attempt=0;attempt<2;attempt++){
+      const response=await fetch('/api/cart',{method:'PUT',headers:{'Content-Type':'application/json'},body});
+      if(response.ok){lastContact.current=body;return;}
+      if(response.status!==409)return;
+      await new Promise(resolve=>setTimeout(resolve,450));
+     }
+    }).catch(()=>{});
+   };
+   if(immediate)send();else contactTimer.current=setTimeout(send,450);
+  }
 
   useEffect(()=>{
     try{const saved=sessionStorage.getItem('bigk-delivery-country');if(saved&&isCheckoutCountry(saved))setCountry(saved)}catch{}
@@ -91,6 +123,8 @@ export default function Checkout(){
     const fingerprint=JSON.stringify(data);
     if(payload.current!==fingerprint){payload.current=fingerprint;key.current=crypto.randomUUID()}
     try{
+      queueContact(true);
+      await contactWrites.current;
       key.current=await checkoutAttemptKey(fingerprint,key.current);
       const r=await fetch('/api/checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...data,requestKey:key.current})});
       const d=await r.json();
@@ -136,11 +170,15 @@ export default function Checkout(){
             <CheckoutSavedDetails apply={details=>{let filled=0;for(const [name,value] of Object.entries(details)){const field=formRef.current?.elements.namedItem(name);if(value&&(field instanceof HTMLInputElement||field instanceof HTMLSelectElement)&&(!field.value||(name==='country'&&!formRef.current?.dataset.countryEdited))){field.value=value;if(name==='country')setCountry(value);filled++}}return filled}}/>
             <section className="panel">
               <div className="checkout-section-title"><span>01</span><div><h2>{t("Your details")}</h2><p>{t("We’ll use these to keep you updated about your order.")}</p></div></div>
+              <label className="field">{t("Email address")}<input name="email" type="email" autoComplete="email" required maxLength={254} onChange={()=>queueContact()} onBlur={()=>queueContact(true)}/></label>
+              {captureContact&&<>
+                <p className="subtle-note">{contactText[locale].notice} <Link href="/info/privacy">{contactText[locale].privacy}</Link></p>
+                <label className="check-field"><input name="marketingConsent" type="checkbox" onChange={()=>queueContact(true)}/><span>{contactText[locale].consent}</span></label>
+              </>}
               <div className="field-row">
                 <label className="field">{t("First name")}<input name="firstName" autoComplete="given-name" required maxLength={100}/></label>
                 <label className="field">{t("Last name")}<input name="lastName" autoComplete="family-name" required maxLength={100}/></label>
               </div>
-              <label className="field">{t("Email address")}<input name="email" type="email" autoComplete="email" required maxLength={254}/></label>
               <label className="field">{t("Mobile phone")}<input name="phone" type="tel" autoComplete="tel" required pattern="[+][1-9][0-9]{7,14}" placeholder="+32470123456" title={t("Use + followed by 8 to 15 digits, without spaces.")}/><span className="subtle-note">{t("International format, including country code.")}</span></label>
             </section>
             <section className="panel">
