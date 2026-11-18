@@ -51,7 +51,7 @@ export async function POST(request: Request) {
         cache: 'no-store', redirect: 'error', signal: AbortSignal.timeout(8000),
       });
       const result = await response.json().catch(() => null);
-      if (!response.ok || result?.code !== 0 || !result.data) {
+      if (!response.ok || result?.code !== 0 || (body === undefined && !result.data)) {
         throw new HttpError(502, 'TikTok returned HTTP '+response.status+(Number.isInteger(result?.code) ? ' / code '+result.code : '')+'.');
       }
       return result.data as T;
