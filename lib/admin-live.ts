@@ -1,4 +1,5 @@
 import {db} from './db';
+import {operationsDb} from './operations-db';
 
 export type AdminLiveSnapshot = {
   activeCarts: number;
@@ -59,7 +60,7 @@ export async function readAdminLive(now = new Date()): Promise<AdminLiveSnapshot
         AND o.created_at>=? AND o.expires_at>? ${includeOrder}) AS checkout_activity
   `).get(since, sampledAt, since, sampledAt, since, sampledAt, ...testEmails);
 
-  const paid = await db().prepare(`
+  const paid = await operationsDb().prepare(`
     SELECT o.total, MIN(a.created_at) AS paid_at, i.snapshot,
       (SELECT COALESCE(SUM(l.quantity),0) FROM order_lines l WHERE l.order_id=o.id) AS units
     FROM orders o JOIN audit a ON a.entity=o.id AND a.action='payment.confirmed'
