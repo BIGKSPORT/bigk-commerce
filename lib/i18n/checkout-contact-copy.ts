@@ -11,7 +11,7 @@ export const contactText = {
     "consent": "Ik ga akkoord met marketingmails van BIG K. Ik kan me op elk moment uitschrijven."
   },
   "fr": {
-    "notice": "Nous enregistrons votre adresse e-mail pendant le paiement afin de pouvoir traiter votre commande et conserver votre panier. Si vous ne finalisez pas votre commande, nous supprimons votre adresse e-mail au bout de 30 jours.",
+    "notice": "Nous enregistrons votre adresse e-mail pendant le processus de commande afin de pouvoir traiter votre commande et conserver votre panier. Si vous ne finalisez pas votre commande, nous supprimons votre adresse e-mail au bout de 30 jours.",
     "privacy": "Consultez notre avis de confidentialité.",
     "consent": "J’accepte de recevoir les e-mails marketing de BIG K. Je peux me désinscrire à tout moment."
   },
