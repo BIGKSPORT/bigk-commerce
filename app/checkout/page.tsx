@@ -1,5 +1,5 @@
 'use client';
-import {shippingCharge,freeShippingThreshold,isCheckoutCountry} from '@/lib/shipping-policy';
+import {shippingCharge,freeShippingThreshold,isCheckoutCountry,checkoutCountries,checkoutCountryNames} from '@/lib/shipping-policy';
 import {bagMedia} from '@/lib/bag-presentation';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { ArrowRight, LockKeyhole, Truck, Check } from 'lucide-react';
@@ -145,8 +145,7 @@ export default function Checkout(){
             </section>
             <section className="panel">
               <div className="checkout-section-title"><span>02</span><div><h2>{t("Delivery address")}</h2><p>{t("Where should we send your selection?")}</p></div></div>
-              <label className="field">{t("Country")}<select name="country" value={country} onChange={e=>{setCountry(e.target.value);try{sessionStorage.setItem('bigk-delivery-country',e.target.value)}catch{}if(formRef.current)formRef.current.dataset.countryEdited='true'}} autoComplete="country" required><option value="BE">{t("Belgium")}</option><option value="NL">{t("Netherlands")}</option><option value="FR">{t("France")}</option><option value="DE">{t("Germany")}</option><option value="LU">{t("Luxembourg")}</option></select></label>
-              <p><a className="text-button" href="mailto:team@bigk.be?subject=International%20shipping%20quote">{t("Shipping to another country? Request a quote")}</a></p>
+              <label className="field">{t("Country")}<select name="country" value={country} onChange={e=>{setCountry(e.target.value);try{sessionStorage.setItem('bigk-delivery-country',e.target.value)}catch{}if(formRef.current)formRef.current.dataset.countryEdited='true'}} autoComplete="country" required>{checkoutCountries.map(code=><option key={code} value={code}>{t(checkoutCountryNames[code])}</option>)}</select></label>
               <label className="field">{t("Street and house number")}<input name="address" autoComplete="street-address" required minLength={3} maxLength={200}/></label>
               <div className="field-row">
                 <label className="field">{t("Postal code")}<input name="postal" autoComplete="postal-code" required minLength={2} maxLength={20}/></label>
