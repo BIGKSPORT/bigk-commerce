@@ -10,14 +10,17 @@ const headers = { 'Cache-Control': 'private, no-store', 'Referrer-Policy': 'no-r
 const reply = (body: object, status = 200) => Response.json(body, { status, headers });
 
 export async function GET(request: Request) {
+  let stage = 'admin session';
   try {
     await requireAdmin(request);
     const appKey = process.env.TIKTOK_SHOP_APP_KEY?.trim();
     const secret = process.env.TIKTOK_SHOP_APP_SECRET?.trim();
     if (!appKey || !secret) return reply({ error: 'TikTok Shop credentials are missing.' }, 503);
 
+    stage = 'read saved authorization';
     const row = await db().prepare('SELECT credentials FROM tiktok_shop_connection WHERE id=?').get('belgium');
     if (typeof row?.credentials !== 'string') return reply({ error: 'No TikTok seller authorization is saved.' }, 404);
+    stage = 'decrypt saved authorization';
     const { access_token: accessToken } = unseal<{ access_token?: string }>(row.credentials);
     if (!accessToken) return reply({ error: 'The saved TikTok authorization is incomplete.' }, 503);
 
@@ -30,16 +33,19 @@ export async function GET(request: Request) {
       sign: createHmac('sha256', secret).update(signatureInput).digest('hex'),
     }).toString();
 
+    stage = 'contact TikTok API';
     const response = await fetch(endpoint, {
       headers: { 'content-type': 'application/json', 'x-tts-access-token': accessToken },
       cache: 'no-store',
       redirect: 'error',
       signal: AbortSignal.timeout(10000),
     });
-    const data = await response.json();
+    stage = 'read TikTok response';
+    const data = await response.json().catch(() => null);
+    if (!data) return reply({ error: 'TikTok returned an unreadable response (HTTP '+response.status+').' }, 502);
     if (!response.ok || data.code !== 0 || !Array.isArray(data.data?.shops)) {
       return reply({
-        error: 'TikTok could not verify the authorized shops. Check Shop Authorized Information permissions and seller authorization.',
+        error: 'TikTok declined the authorized-shops request (HTTP '+response.status+'). Check Shop Authorized Information permissions and seller authorization.',
         tiktokCode: Number.isInteger(data.code) ? data.code : null,
       }, 502);
     }
@@ -52,6 +58,6 @@ export async function GET(request: Request) {
     if (error instanceof HttpError && error.status === 401) {
       return reply({ error: 'Sign in to the BIG K back office first.' }, 401);
     }
-    return reply({ error: 'Could not verify the TikTok Shop connection.' }, 502);
+    return reply({ error: 'TikTok verification failed at: '+stage+'.' }, 502);
   }
 }
