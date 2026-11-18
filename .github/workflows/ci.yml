@@ -17,6 +17,8 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run typecheck
+      - name: Checkout contact privacy, rate limit and retention
+        run: node --import tsx tests/cart-sessions.test.ts
       - run: node --import tsx --test tests/revolut-preparation.test.ts
       - run: node --import tsx tests/catalog-translations.test.ts
       - run: node --import tsx tests/published-translations.test.ts
