@@ -2,7 +2,7 @@ import type {Metadata} from 'next';
 import type {Product} from './types';
 import {seller} from './seller';
 import {alpinArticle,alpinColour,alpinProductColour,alpinProductUrl,alpinCopy,alpinGroupId,alpinName,alpinPaths,alpinVariantMapping,alpinVariantUrl,type AlpinLocale} from './alpin-fleece';
-import {searchSku,searchDescription,searchShippingDetails} from './product-search-data';
+import {searchSku,searchDescription,searchShippingDetails,searchReturnPolicy} from './product-search-data';
 import {alpinUI} from './i18n/alpin-ui';
 export function alpinMetadata(locale:AlpinLocale,products:Product[],indexable:boolean):Metadata {
  const copy=alpinCopy(locale),url=seller.origin+alpinPaths[locale],image=products[0]?.images[0],translation=products[0]?.content?.localizedCopy,seoTitle=translation?.seoTitle||`${products[0]?.name||alpinName} | BIG K`,seoDescription=translation?.seoDescription||copy.seoDescription;
@@ -13,7 +13,7 @@ export function alpinStructuredData(locale:AlpinLocale,products:Product[]) {
  return {'@context':'https://schema.org','@graph':[
   {'@type':'ProductGroup','@id':groupId,productGroupID:alpinGroupId,name:groupName,description:groupDescription,url,brand:{'@type':'Brand',name:'Big K'},variesBy:['https://schema.org/color','https://schema.org/size'],hasVariant:products.flatMap(product=>alpinVariantMapping(product).map(variant=>{
    const variantUrl=seller.origin+alpinProductUrl(locale,product,variant.size);
-   return {'@type':'Product','@id':variantUrl+'#variant',inProductGroupWithID:alpinGroupId,isVariantOf:{'@type':'ProductGroup','@id':groupId,productGroupID:alpinGroupId,name:groupName,description:groupDescription},name:product.name,description:product.content?.localizedCopy?.description||copy.shortDescription,sku:searchSku(variant.sku,variant.sku),...(variant.gtin?{['gtin'+variant.gtin.length]:variant.gtin}:{}),color:alpinProductColour(product,locale),size:variant.size,image:product.images.map(image=>seller.origin+image),url:variantUrl,offers:{'@type':'Offer',url:variantUrl,price:product.priceCents===null?undefined:(product.priceCents/100).toFixed(2),priceCurrency:'EUR',...(product.priceCents===null?{}:{shippingDetails:searchShippingDetails(product.priceCents)}),availability:product.active&&product.approved&&variant.stock-variant.reserved>0?'https://schema.org/InStock':'https://schema.org/OutOfStock'}};
+   return {'@type':'Product','@id':variantUrl+'#variant',inProductGroupWithID:alpinGroupId,isVariantOf:{'@type':'ProductGroup','@id':groupId,productGroupID:alpinGroupId,name:groupName,description:groupDescription},name:product.name,description:product.content?.localizedCopy?.description||copy.shortDescription,sku:searchSku(variant.sku,variant.sku),...(variant.gtin?{['gtin'+variant.gtin.length]:variant.gtin}:{}),color:alpinProductColour(product,locale),size:variant.size,image:product.images.map(image=>seller.origin+image),url:variantUrl,offers:{'@type':'Offer',url:variantUrl,price:product.priceCents===null?undefined:(product.priceCents/100).toFixed(2),priceCurrency:'EUR',hasMerchantReturnPolicy:searchReturnPolicy,...(product.priceCents===null?{}:{shippingDetails:searchShippingDetails(product.priceCents)}),availability:product.active&&product.approved&&variant.stock-variant.reserved>0?'https://schema.org/InStock':'https://schema.org/OutOfStock'}};
   }))},
   {'@type':'BreadcrumbList',itemListElement:[{'@type':'ListItem',position:1,name:alpinUI[locale].collection,item:seller.origin+'/#catalog'},{'@type':'ListItem',position:2,name:products[0]?.name||alpinName,item:url}]},
  ]};
