@@ -47,6 +47,12 @@ export const shippingCopy:Record<string,{nl:string;fr:string;es:string;it:string
     "es": "Plazos por transportista en MyParcel",
     "it": "Tempi per corriere su MyParcel"
   },
+  "Shipping to another country? Request a quote": {
+    nl: "Verzending naar een ander land? Vraag een offerte aan",
+    fr: "Livraison vers un autre pays ? Demandez un devis",
+    es: "¿Envío a otro país? Solicita un presupuesto",
+    it: "Spedizione in un altro paese? Richiedi un preventivo",
+  },
   "Delivery country": {
     "nl": "Bezorgland",
     "fr": "Pays de livraison",
