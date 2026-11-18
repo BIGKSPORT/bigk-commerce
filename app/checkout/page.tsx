@@ -159,7 +159,7 @@ export default function Checkout(){
             </section>
             <section className="panel checkout-payment">
               <h2>{t("Ready for your next move?")}</h2>
-              {mode==='live'&&paymentEnvironment==='live'&&<PaymentMethods placement="checkout"/>}
+              {mode==='live'&&paymentEnvironment==='live'&&<><PaymentMethods placement="checkout"/><p className="subtle-note">{t("If Stripe asks for a Link code, choose Pay without Link to continue.")}</p></>}
               {mode==='live'&&!ready&&<p className="info-message" role="status">{t("Checkout is being prepared. Payment is not available yet.")}</p>}
               <label className="check-field"><input name="consent" type="checkbox" required/><span>{mode==='demo'?t('I understand this is a demo order, I am using fictional information, and no payment or shipment will take place.'):<>{t("I agree to the")} <Link href="/info/terms">{t("terms")}</Link> {t("and have read the")} <Link href="/info/privacy">{t("privacy notice")}</Link>.</>}</span></label>
               {error&&<div className="error-message" role="alert">{t(error)}</div>}
