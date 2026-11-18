@@ -24,7 +24,7 @@ try{
    await db().prepare("UPDATE orders SET status='paid' WHERE id=?").run(orderId);
    const paid=(await getOrder(orderId))!;
    assert.throws(()=>buildOrderShipment({...paid,withdrawals:[{id:'w',status:'requested',createdAt:'',items:[]}]},input()),/withdrawal/);
-   assert.throws(()=>buildOrderShipment({...paid,deliveryAddress:{...paid.deliveryAddress,country:'US'}},input()),/destination/);
+   assert.throws(()=>buildOrderShipment({...paid,deliveryAddress:{...paid.deliveryAddress,country:'US'}},input()),/required customs details/);
    assert(!orderLabelSchema.safeParse({...input(),weightGrams:0}).success);assert(!orderLabelSchema.safeParse({...input(),confirmAddress:false}).success);
    assert.deepEqual(splitShippingAddress('Example Street 12'),{street:'Example Street',number:'12'});
    assert.equal(splitShippingAddress('12 Example Street').number,'');
