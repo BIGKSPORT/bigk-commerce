@@ -42,7 +42,7 @@ export async function saveCheckoutContact(req:Request,raw:unknown){
  const address=email.toLowerCase()||null;
  const result=await db().prepare(`UPDATE cart_sessions SET
    marketing_consent_at=CASE
-     WHEN ? IS NULL THEN NULL
+     WHEN CAST(? AS TEXT) IS NULL THEN NULL
      WHEN ? = 1 AND marketing_consent=TRUE AND contact_email=? AND marketing_consent_version=? THEN marketing_consent_at
      WHEN ? = 1 OR (marketing_consent=TRUE AND contact_email=?) THEN ?
      WHEN contact_email=? THEN marketing_consent_at
