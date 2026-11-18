@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {mkdtemp,rm} from 'node:fs/promises';import {tmpdir} from 'node:os';import {join} from 'node:path';
 const dir=await mkdtemp(join(tmpdir(),'bigk-cart-test-'));Object.assign(process.env,{NODE_ENV:'test',DATABASE_PROVIDER:'sqlite',DATABASE_PATH:join(dir,'store.sqlite'),APP_URL:'http://localhost:3000',NEXT_PUBLIC_CHECKOUT_CONTACT_CAPTURE:'true'});delete process.env.VERCEL;delete process.env.VERCEL_ENV;
 const {db,closeDatabase}=await import('../lib/db');const {getSavedCart,saveSavedCart,savedCartOverview,cleanSavedCarts}=await import('../lib/cart-sessions');
-const {GET,PUT}=await import('../app/api/cart/route');
+const {GET,POST,PUT}=await import('../app/api/cart/route');
 const req=(cookie='')=>new Request('http://localhost:3000/api/cart',{headers:{Origin:'http://localhost:3000',Cookie:cookie}});
 const contact=(cookie:string,email:string,consent:boolean)=>new Request('http://localhost:3000/api/cart',{
  method:'PUT',headers:{Origin:'http://localhost:3000',Cookie:cookie,'Content-Type':'application/json'},
@@ -32,7 +32,14 @@ try{
   const response=await GET(req(key));
   assert.deepEqual(Object.keys(await response.json()).sort(),['hasCart','items']);
  }
+ const ownSave=await POST(new Request('http://localhost:3000/api/cart', {
+  method:'POST',headers:{Origin:'http://localhost:3000',Cookie:cookie,'Content-Type':'application/json'},
+  body:JSON.stringify({items:[{variantId:'P001-0',quantity:2}],stage:'checkout'}),
+ }));
+ assert.equal(ownSave.status,200);
+ assert.deepEqual(Object.keys(await ownSave.json()).sort(),['hasCart','items']);
  assert.equal((await PUT(contact('','intruder@example.test',true))).status,409);
+ console.log('PASS privacy: public cart GET (same shopper, different shopper, no cookie) and POST return only items and hasCart.');
  await db().prepare("UPDATE cart_sessions SET marketing_consent_at=? WHERE contact_email IS NOT NULL").run('2020-01-01T00:00:00.000Z');
  assert.equal((await PUT(contact(cookie,'shopper@example.test',false))).status,204);
  const withdrawn=await db().prepare("SELECT marketing_consent,marketing_consent_at FROM cart_sessions WHERE contact_email IS NOT NULL").get();
@@ -46,7 +53,11 @@ try{
   assert.equal(response.status,204);
  }
  assert(blocked,'Contact writes are rate limited');
- await db().prepare("DELETE FROM cart_sessions WHERE contact_email=?").run('another@example.test');
+ console.log('PASS rate limiting: repeated checkout contact PUT requests return HTTP 429.');
+ await db().prepare("UPDATE cart_sessions SET expires_at=? WHERE contact_email=?").run('2000-01-01T00:00:00.000Z','another@example.test');
+ await cleanSavedCarts();
+ assert.equal((await savedCartOverview()).length,1);
+ console.log('PASS cleanup: an expired contact cart is deleted while an unexpired contact cart is retained.');
  await saveSavedCart(req(cookie),{items:[],stage:'bag'});assert.equal((await savedCartOverview())[0].status,'cleared');
  await db().prepare('UPDATE cart_sessions SET expires_at=?').run('2000-01-01T00:00:00.000Z');await cleanSavedCarts();assert.equal((await savedCartOverview()).length,0);
  console.log('PASS saved carts: authoritative prices, strict input, private cookie access, inactivity estimate, empty bags, retention, consent withdrawal, private responses and rate limiting.');
