@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {checkoutCountries,freeShippingThreshold,shippingCharge} from '../lib/shipping-policy';
+import {checkoutCountries,flatRateInternationalCountries,freeShippingThreshold,shippingCharge} from '../lib/shipping-policy';
 test('BE/NL free shipping starts at exactly €60, other configured countries at €100',()=>{
  for(const cc of checkoutCountries.slice(0,5)){
   const limit=cc==='BE'||cc==='NL'?6000:10000;
@@ -11,7 +11,7 @@ test('BE/NL free shipping starts at exactly €60, other configured countries at
  }
 });
 test('unconfigured destinations including Norway never inherit a cheap or free rate',()=>{
- for(const cc of ['NO','US','GB','ZZ',''])assert.throws(()=>shippingCharge(100000,cc),RangeError);
+ for(const cc of ['NO','NZ','ZZ',''])assert.throws(()=>shippingCharge(100000,cc),RangeError);
  for(const subtotal of [-1,NaN,Infinity,60.1])assert.throws(()=>shippingCharge(subtotal,'BE'),RangeError);
 });
 test('promotional discounts can move an order below its country threshold',()=>{
@@ -36,5 +36,12 @@ test('new EU markets charge half from €60 and offer free delivery from €100'
   assert.equal(shippingCharge(6000,country),Math.ceil(rate/2));
   assert.equal(shippingCharge(9999,country),Math.ceil(rate/2));
   assert.equal(shippingCharge(10000,country),0);
+ }
+});
+
+test('international flat rates do not use the European free shipping threshold',()=>{
+ for(const country of flatRateInternationalCountries){
+  assert.equal(freeShippingThreshold(country),null);
+  for(const subtotal of [5999,6000,10000,50000])assert.equal(shippingCharge(subtotal,country),1250);
  }
 });
