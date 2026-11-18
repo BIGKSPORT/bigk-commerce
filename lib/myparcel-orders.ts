@@ -6,7 +6,7 @@ import {providerDiagnostic} from './myparcel-test';
 import type {Order} from './types';
 
 const BASE='https://api.sendmyparcel.be';
-import {isCheckoutCountry} from './shipping-policy';
+import {isCheckoutCountry,isFlatRateInternationalCountry} from './shipping-policy';
 function orderCarrier(country:string){return ['AT','ES','IT'].includes(country)?1:4;}
 const object=(v:unknown):Record<string,unknown>=>v&&typeof v==='object'&&!Array.isArray(v)?v as Record<string,unknown>:{};
 const validId=(v:unknown)=>/^[1-9][0-9]{0,15}$/.test(String(v))?String(v):null;
@@ -58,6 +58,7 @@ export async function checkMyParcelConnection(){
 export function buildOrderShipment(order:Order,input:OrderLabelInput){
  if(order.status!=='paid')throw new HttpError(409,'Only paid orders can receive a shipping label.');
  if(order.withdrawals?.some(w=>w.status==='requested'))throw new HttpError(409,'Resolve the open withdrawal request before creating a label.');
+ if(isFlatRateInternationalCountry(order.deliveryAddress.country))throw new HttpError(400,'Create this international label in MyParcel with the required customs details, then enter the tracking number here.');
  if(!isCheckoutCountry(order.deliveryAddress.country))throw new HttpError(400,'This destination is not enabled for webshop shipping.');
  return {data:{shipments:[{carrier:orderCarrier(order.deliveryAddress.country),reference_identifier:orderLabelReference(order.id),
   recipient:{cc:order.deliveryAddress.country,postal_code:order.deliveryAddress.postal,city:order.deliveryAddress.city,
