@@ -1,5 +1,9 @@
 /** Interface copy only. Product names and source identifiers remain unchanged. */
 export const checkoutCopy: Record<string, {nl:string;fr:string}> = {
+  "If Stripe asks for a Link code, choose Pay without Link to continue.": {
+    nl: "Vraagt Stripe om een Link-code? Kies Betalen zonder Link om verder te gaan.",
+    fr: "Si Stripe vous demande un code Link, choisissez Payer sans Link pour continuer.",
+  },
   "demo": {"nl":"demo","fr":"démonstration"},
   "BIG K / CHECKOUT": {
     "nl": "BIG K / AFREKENEN",
