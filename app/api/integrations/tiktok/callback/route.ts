@@ -87,7 +87,6 @@ export async function GET(request: Request) {
     }
 
     const sql = db();
-    await sql.prepare('CREATE TABLE IF NOT EXISTS tiktok_shop_connection (id TEXT PRIMARY KEY, credentials TEXT NOT NULL, updated_at TEXT NOT NULL)').run();
     await sql.prepare('INSERT INTO tiktok_shop_connection (id, credentials, updated_at) VALUES (?, ?, ?) ON CONFLICT(id) DO UPDATE SET credentials=excluded.credentials, updated_at=excluded.updated_at')
       .run('belgium', seal(data), new Date().toISOString());
     return finish('TikTok seller authorization saved. BIG K can now verify the authorized shop.', 200);
