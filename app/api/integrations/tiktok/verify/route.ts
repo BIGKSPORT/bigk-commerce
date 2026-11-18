@@ -21,7 +21,7 @@ export async function GET(request: Request) {
     const row = await db().prepare('SELECT credentials FROM tiktok_shop_connection WHERE id=?').get('belgium');
     if (typeof row?.credentials !== 'string') return reply({ error: 'No TikTok seller authorization is saved.' }, 404);
     stage = 'decrypt saved authorization';
-    const { access_token: accessToken } = unseal<{ access_token?: string }>(row.credentials);
+    const { access_token: accessToken, granted_scopes: grantedScopes } = unseal<{ access_token?: string; granted_scopes?: unknown }>(row.credentials);
     if (!accessToken) return reply({ error: 'The saved TikTok authorization is incomplete.' }, 503);
 
     const endpoint = new URL('https://open-api.tiktokglobalshop.com/authorization/202309/shops');
@@ -44,8 +44,15 @@ export async function GET(request: Request) {
     const data = await response.json().catch(() => null);
     if (!data) return reply({ error: 'TikTok returned an unreadable response (HTTP '+response.status+').' }, 502);
     if (!response.ok || data.code !== 0 || !Array.isArray(data.data?.shops)) {
+      const scopes = Array.isArray(grantedScopes) && grantedScopes.every(scope => typeof scope === 'string')
+        ? grantedScopes : null;
+      const hasScope = scopes?.some(scope => ['seller.authorization.info', 'seller.fs.order&fufillment.management'].includes(scope));
+      const scopeStatus = scopes === null ? 'TikTok did not include a scope list with the saved credentials.'
+        : hasScope ? 'The saved credentials report the required shop permission.'
+        : 'The saved credentials do not report the required shop permission.';
+      const requestId = typeof data.request_id === 'string' && /^[a-zA-Z0-9_-]{1,96}$/.test(data.request_id) ? data.request_id : '';
       return reply({
-        error: 'TikTok declined the authorized-shops request (HTTP '+response.status+'). Check Shop Authorized Information permissions and seller authorization.',
+        error: 'TikTok declined the authorized-shops request (HTTP '+response.status+'). ' + scopeStatus + (requestId ? ' TikTok request ID: ' + requestId + '.' : ''),
         tiktokCode: Number.isInteger(data.code) ? data.code : null,
       }, 502);
     }
