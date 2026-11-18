@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { db } from './db';
+import { isPostgres } from './database';
 import { HttpError } from './security';
 
 export const discountCodeSchema = z
@@ -46,9 +47,9 @@ export type DiscountRow = {
 
 let tablesReady = false;
 
-/** Idempotent table ensure (SQLite boot + Postgres search_path). */
+/** PostgreSQL discount tables are provisioned through migrations. */
 export async function ensureDiscountTables() {
-  if (tablesReady) return;
+  if (isPostgres() || tablesReady) return;
   await db()
     .prepare(
       `CREATE TABLE IF NOT EXISTS discount_codes(
