@@ -6,7 +6,8 @@ import {providerDiagnostic} from './myparcel-test';
 import type {Order} from './types';
 
 const BASE='https://api.sendmyparcel.be';
-const countries=['BE','NL','FR','DE','LU'] as const;
+import {isCheckoutCountry} from './shipping-policy';
+function orderCarrier(country:string){return ['AT','ES','IT'].includes(country)?1:4;}
 const object=(v:unknown):Record<string,unknown>=>v&&typeof v==='object'&&!Array.isArray(v)?v as Record<string,unknown>:{};
 const validId=(v:unknown)=>/^[1-9][0-9]{0,15}$/.test(String(v))?String(v):null;
 function recipientHash(value:Record<string,unknown>){return hash(JSON.stringify(['cc','postal_code','city','street','number','box_number','person'].map(key=>String(value[key]||'').trim().replace(/\s+/g,' ').toLowerCase())));}
@@ -57,8 +58,8 @@ export async function checkMyParcelConnection(){
 export function buildOrderShipment(order:Order,input:OrderLabelInput){
  if(order.status!=='paid')throw new HttpError(409,'Only paid orders can receive a shipping label.');
  if(order.withdrawals?.some(w=>w.status==='requested'))throw new HttpError(409,'Resolve the open withdrawal request before creating a label.');
- if(!countries.includes(order.deliveryAddress.country as typeof countries[number]))throw new HttpError(400,'This destination is not enabled for webshop shipping.');
- return {data:{shipments:[{carrier:4,reference_identifier:orderLabelReference(order.id),
+ if(!isCheckoutCountry(order.deliveryAddress.country))throw new HttpError(400,'This destination is not enabled for webshop shipping.');
+ return {data:{shipments:[{carrier:orderCarrier(order.deliveryAddress.country),reference_identifier:orderLabelReference(order.id),
   recipient:{cc:order.deliveryAddress.country,postal_code:order.deliveryAddress.postal,city:order.deliveryAddress.city,
    street:input.street,number:input.number,box_number:input.boxNumber,person:order.deliveryAddress.name},
   options:{package_type:1,delivery_type:2,label_description:'BIG K '+order.id.slice(0,8).toUpperCase()},
@@ -105,7 +106,7 @@ export async function refreshOrderLabel(orderId:string){
  const id=validId(matches[0].id);
  if(!id||(row.shipment_id&&row.shipment_id!==id))throw new HttpError(409,'Carrier shipment identity does not match this order.');
  const order=await eligibleOrder(orderId),recipient=object(matches[0].recipient);
- if((matches[0].carrier_id??matches[0].carrier)!==4||recipient.cc!==order.deliveryAddress.country||String(recipient.postal_code)!==order.deliveryAddress.postal)throw new HttpError(409,'Carrier shipment destination does not match this order.');
+ if((matches[0].carrier_id??matches[0].carrier)!==orderCarrier(order.deliveryAddress.country)||recipient.cc!==order.deliveryAddress.country||String(recipient.postal_code)!==order.deliveryAddress.postal)throw new HttpError(409,'Carrier shipment destination does not match this order.');
  const expected=object(row.diagnostic?JSON.parse(String(row.diagnostic)):{}).recipientHash;
  if(!expected||recipientHash(recipient)!==expected)throw new HttpError(409,'Carrier address does not match the address reviewed for this label. Check MyParcel.');
  await save(reference,'created',id,shipmentDetails({data:{shipments:matches}},id));
