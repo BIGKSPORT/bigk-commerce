@@ -31,15 +31,32 @@ function TikTokProductPanel({product,title,description}:{product:Product;title:s
   }catch(cause){setError(cause instanceof Error?cause.message:'TikTok listings are unavailable.')}
   finally{setLoading(false)}
  }
+ const [submission,setSubmission]=useState('');
+ async function publish(listing:TikTokListingMatch){
+  if(!listing.title||!window.confirm('Submit the title and description shown here for this TikTok listing? This sends an update to TikTok Shop.'))return;
+  setLoading(true);setError('');setSubmission('');
+  try{
+   const response=await fetch('/api/integrations/tiktok/publish',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({productId:product.id,listingId:listing.id,currentTitle:listing.title,title:title.trim()||undefined,description:description.trim()||undefined}),
+   });
+   const data=await response.json() as {message?:string;error?:string};
+   if(!response.ok)throw new Error(data.error||'TikTok update could not be confirmed.');
+   setSubmission(data.message||'Update submitted to TikTok.');
+  }catch(cause){setError(cause instanceof Error?cause.message:'TikTok update could not be confirmed. Check Seller Centre.')}
+  finally{setLoading(false)}
+ }
  return <section className="bo-panel">
   <h3>TikTok Shop</h3>
   <p className="bo-hint">Find the existing listing by verified EAN and preview its proposed title and description.</p>
   <button type="button" className="button outline" disabled={loading} onClick={()=>void load()}>{loading?'Checking TikTok…':'Find listing'}</button>
   {error&&<p role="alert">{error}</p>}
+  {submission&&<p role="status">{submission}</p>}
   {loaded&&listings.length===0&&<p role="status">{cursor?'No verified match on the pages checked.':'No verified EAN match found.'}</p>}
   {listings.map(listing=><details key={listing.id}>
    <summary>{listing.title||listing.id} · {listing.status||'Status unavailable'}</summary>
    <dl><dt>Current TikTok title</dt><dd>{listing.title||'Unavailable'}</dd><dt>Proposed title</dt><dd>{title||'Enter a product name'}</dd><dt>Proposed description</dt><dd>{description||'Enter a product description'}</dd></dl>
+   <button type="button" className="button dark" disabled={loading||!listing.title||(!title.trim()&&!description.trim())} onClick={()=>void publish(listing)}>Submit update to TikTok</button>
   </details>)}
   {cursor&&<button type="button" className="button outline" disabled={loading} onClick={()=>void load(cursor)}>Check next page</button>}
  </section>;
