@@ -22,7 +22,7 @@ The CRM is integrated into the existing seller workspace at `/staff/sales`. Sign
 
 The existing protected `/api/jobs/email` cron runs every five minutes. At 08:00 Europe/Brussels, the job sends each active salesperson one idempotent digest of their open follow-ups due today or overdue. It uses the existing email-delivery policy; preview/staging sends remain restricted to the configured test recipient.
 
-Transactional delivery requires the production environment to have `RESEND_API_KEY`, `EMAIL_FROM`, `EMAIL_DELIVERY_ENABLED=true` and an HTTPS `APP_URL`. Do not put provider credentials in source control or chat.
+Transactional delivery requires the production environment to have `RESEND_API_KEY`, `EMAIL_FROM`, `EMAIL_DELIVERY_ENABLED=true` and an HTTPS `APP_URL`. If the provider key is empty, the cron reports delivery as blocked, leaves existing outbox jobs queued for a later retry, and skips sales reminders; it does not mark those messages as sent. Add the secret in Vercel Project Settings → Environment Variables (Production), then the next scheduled run can deliver them. Do not put provider credentials in source control or chat.
 
 ## Account and VAT checks
 
