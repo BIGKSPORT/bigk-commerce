@@ -4,6 +4,12 @@ on:
     paths:
       - 'lib/b2b-*'
       - 'lib/sales-service.ts'
+      - 'lib/sales-crm.ts'
+      - 'lib/sales-schema.ts'
+      - 'lib/sales-db.ts'
+      - 'components/sales-crm*'
+      - 'app/api/sales/crm/**'
+      - 'supabase/sales/**'
       - 'components/b2b-*'
       - 'components/admin-b2b.tsx'
       - 'components/backoffice.tsx'
