@@ -38,14 +38,14 @@ async function canAccessAccount(actor:SalesActor,id:string){
 }
 export async function salesCrmData(actor:SalesActor){
  const [allAccounts,assignments,prospects,followups,sellers,sellerCustomers,sellerOrders,b2bOrders]=await Promise.all([
-  b2bDb().prepare("SELECT a.*,(SELECT COUNT(*) FROM b2b_orders o WHERE o.account_id=a.id AND o.status IN ('paid','fulfilled')) AS paid_orders FROM b2b_accounts a ORDER BY a.name").all(),
-  salesDb().prepare('SELECT x.account_id,x.seller_id,a.name AS seller_name FROM seller_b2b_assignments x JOIN seller_accounts a ON a.id=x.seller_id').all(),
+  actor.role==='owner'?b2bDb().prepare("SELECT a.*,(SELECT COUNT(*) FROM b2b_orders o WHERE o.account_id=a.id AND o.status IN ('paid','fulfilled')) AS paid_orders FROM b2b_accounts a ORDER BY a.name").all():salesDb().prepare("SELECT a.*,(SELECT COUNT(*) FROM b2b_orders o WHERE o.account_id=a.id AND o.status IN ('paid','fulfilled')) AS paid_orders FROM b2b_accounts a JOIN seller_b2b_assignments x ON x.account_id=a.id WHERE x.seller_id=? ORDER BY a.name").all(actor.id),
+  salesDb().prepare('SELECT x.account_id,x.seller_id,a.name AS seller_name FROM seller_b2b_assignments x JOIN seller_accounts a ON a.id=x.seller_id'+(actor.role==='seller'?' WHERE x.seller_id=?':'')).all(...(actor.role==='seller'?[actor.id]:[])),
   salesDb().prepare('SELECT p.*,a.name AS seller_name FROM seller_prospects p LEFT JOIN seller_accounts a ON a.id=p.seller_id'+(actor.role==='seller'?' WHERE p.seller_id=?':'')+' ORDER BY p.updated_at DESC').all(...(actor.role==='seller'?[actor.id]:[])),
   salesDb().prepare('SELECT f.*,p.company_name AS prospect_name,b.name AS account_name FROM seller_followups f LEFT JOIN seller_prospects p ON p.id=f.prospect_id LEFT JOIN seller_b2b_assignments x ON x.account_id=f.account_id LEFT JOIN seller_accounts a ON a.id=f.seller_id LEFT JOIN b2b_accounts b ON b.id=f.account_id'+(actor.role==='seller'?' WHERE f.seller_id=? AND (p.seller_id=f.seller_id OR x.seller_id=f.seller_id)':'')+' ORDER BY f.completed_at IS NOT NULL,f.due_at ASC LIMIT 500').all(...(actor.role==='seller'?[actor.id]:[])),
   actor.role==='owner'?salesDb().prepare('SELECT id,name,email,active FROM seller_accounts ORDER BY name').all():Promise.resolve([]),
   salesDb().prepare('SELECT c.*,a.name AS seller_name FROM seller_customers c JOIN seller_accounts a ON a.id=c.seller_id'+(actor.role==='seller'?' WHERE c.seller_id=?':'')+' ORDER BY c.name').all(...(actor.role==='seller'?[actor.id]:[])),
   salesDb().prepare('SELECT o.*,c.name AS customer_name,a.name AS seller_name FROM seller_orders o JOIN seller_customers c ON c.id=o.customer_id JOIN seller_accounts a ON a.id=o.seller_id'+(actor.role==='seller'?' WHERE o.seller_id=?':'')+' ORDER BY o.created_at DESC LIMIT 500').all(...(actor.role==='seller'?[actor.id]:[])),
-  b2bDb().prepare('SELECT * FROM b2b_orders ORDER BY created_at DESC LIMIT 500').all()
+  actor.role==='owner'?b2bDb().prepare('SELECT * FROM b2b_orders ORDER BY created_at DESC LIMIT 500').all():salesDb().prepare('SELECT o.* FROM b2b_orders o JOIN seller_b2b_assignments x ON x.account_id=o.account_id WHERE x.seller_id=? ORDER BY o.created_at DESC LIMIT 500').all(actor.id)
  ]);
  const assignmentById=new Map(assignments.map((x:any)=>[String(x.account_id),x]));
  const visibleAccounts=allAccounts.filter((a:any)=>actor.role==='owner'||String((assignmentById.get(String(a.id)) as any)?.seller_id||'')===actor.id);
