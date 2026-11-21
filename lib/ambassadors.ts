@@ -94,6 +94,26 @@ export async function updateAmbassadorRefund(orderId:string,refundedProductNetCe
   await audit('ambassador.commission.refund_review',orderId);
  });
 }
+
+export async function holdAmbassadorCommissionForRefund(orderId:string,reference:string){
+ await transaction(async()=>{
+  const c=await db().prepare("SELECT id,status FROM ambassador_commissions WHERE order_id=?").get(orderId) as {id:string;status:string}|undefined;
+  if(!c||c.status==='paid'||c.status==='reversed')return;
+  await db().prepare("UPDATE ambassador_commissions SET status='held',hold_reason=?,payout_id=NULL,updated_at=? WHERE order_id=?").run('refund_reconciliation:'+reference,new Date().toISOString(),orderId);
+  await audit('ambassador.commission.held_for_refund',orderId);
+ });
+}
+export async function reconcileAmbassadorRefund(orderId:string,verifiedNetCents:number,admin:string){
+ if(!Number.isSafeInteger(verifiedNetCents)||verifiedNetCents<0)throw new HttpError(400,'Ongeldige btw-exclusieve basis.');
+ return transaction(async()=>{
+  const c=await db().prepare("SELECT c.*,t.product_subtotal_cents,t.discount_cents FROM ambassador_commissions c JOIN ambassador_attributions t ON t.id=c.attribution_id WHERE c.order_id=?").get(orderId) as Record<string,unknown>|undefined;
+  if(!c||c.status!=='held')throw new HttpError(409,'Geen vastgehouden commissie om te reconciliëren.');
+  if(verifiedNetCents>Math.max(0,Number(c.product_subtotal_cents)-Number(c.discount_cents)))throw new HttpError(400,'De geverifieerde basis overschrijdt de netto productwaarde.');
+  const status=verifiedNetCents===0?'reversed':'eligible';
+  await db().prepare("UPDATE ambassador_commissions SET eligible_product_net_cents=?,commission_cents=?,status=?,hold_reason='',eligible_at=?,updated_at=? WHERE order_id=? AND status='held'").run(verifiedNetCents,Math.floor(verifiedNetCents*Number(c.commission_percent)/100),status,new Date().toISOString(),new Date().toISOString(),orderId);
+  await audit('ambassador.commission.refund_reconciled',orderId);
+ });
+}
 export async function markAmbassadorCommissionEligible(orderId:string,reviewedBy:string,deliveredAt:string,returnsClosedAt:string,verifiedNetCents:number){
  const latest=Math.max(Date.parse(deliveredAt),Date.parse(returnsClosedAt));
  if(!Number.isFinite(latest)||latest>Date.now()||Date.parse(returnsClosedAt)<Date.parse(deliveredAt))throw new HttpError(400,'Levering en retourcontrole moeten in de juiste volgorde bevestigd zijn.');
