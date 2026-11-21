@@ -9,6 +9,8 @@ CREATE TABLE IF NOT EXISTS bigk.ambassador_applications (
   social_url TEXT NOT NULL DEFAULT '',
   audience_note TEXT NOT NULL DEFAULT '',
   motivation TEXT NOT NULL DEFAULT '',
+  privacy_accepted_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  privacy_notice_version TEXT NOT NULL DEFAULT '2026-11-21',
   status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','approved','rejected','withdrawn')),
   reviewed_by TEXT,
   reviewed_at TIMESTAMPTZ,
