@@ -20,7 +20,7 @@ export async function submitAmbassadorApplication(input:ApplicationInput){
   const existing=await db().prepare("SELECT id,status FROM ambassador_applications WHERE lower(email)=? ORDER BY created_at DESC LIMIT 1").get(email) as {id:string;status:string}|undefined;
   if(existing?.status==='pending')throw new HttpError(409,'Er is al een open aanvraag met dit e-mailadres.');
   const id=crypto.randomUUID();
-  await db().prepare("INSERT INTO ambassador_applications(id,email,full_name,social_url,audience_note,motivation,status,created_at,updated_at) VALUES(?,?,?,?,?,?,'pending',?,?)").run(id,email,v.fullName,v.socialUrl,v.audienceNote,v.motivation,now,now);
+  await db().prepare("INSERT INTO ambassador_applications(id,email,full_name,social_url,audience_note,motivation,privacy_accepted_at,privacy_notice_version,status,created_at,updated_at) VALUES(?,?,?,?,?,?,?,'2026-11-21','pending',?,?)").run(id,email,v.fullName,v.socialUrl,v.audienceNote,v.motivation,now,now,now);
   return {id,status:'pending' as const};
  });
 }
@@ -78,8 +78,8 @@ export async function attributeAmbassadorOrder(orderId:string,code:string,email:
  if(own)throw new HttpError(400,'Een ambassadeur kan de eigen code niet gebruiken.');
  const id=crypto.randomUUID();
  await db().prepare("INSERT INTO ambassador_attributions(id,ambassador_id,order_id,customer_email_hash,discount_code,product_subtotal_cents,discount_cents) VALUES(?,?,?,?,?,?,?)").run(id,a.id,orderId,customerHash,a.discount_code,subtotalCents,discountCents);
- const net=Math.max(0,subtotalCents-discountCents);
- const commission=Math.floor(net*0.10);
+ const net=0;
+ const commission=0;
  await db().prepare("INSERT INTO ambassador_commissions(id,attribution_id,ambassador_id,order_id,eligible_product_net_cents,commission_percent,commission_cents,status,hold_reason) VALUES(?,?,?,?,?,10,?,'pending','delivery_and_returns_pending')").run(crypto.randomUUID(),id,a.id,orderId,net,commission);
  return true;
 }
@@ -94,15 +94,17 @@ export async function updateAmbassadorRefund(orderId:string,refundedProductNetCe
   await audit('ambassador.commission.refund_review',orderId);
  });
 }
-export async function markAmbassadorCommissionEligible(orderId:string,reviewedBy:string,deliveredAt:string,returnsClosedAt:string){
+export async function markAmbassadorCommissionEligible(orderId:string,reviewedBy:string,deliveredAt:string,returnsClosedAt:string,verifiedNetCents:number){
  const latest=Math.max(Date.parse(deliveredAt),Date.parse(returnsClosedAt));
- if(!Number.isFinite(latest)||latest>Date.now())throw new HttpError(400,'Levering en retourcontrole moeten bevestigd zijn.');
+ if(!Number.isFinite(latest)||latest>Date.now()||Date.parse(returnsClosedAt)<Date.parse(deliveredAt))throw new HttpError(400,'Levering en retourcontrole moeten in de juiste volgorde bevestigd zijn.');
+ if(!Number.isSafeInteger(verifiedNetCents)||verifiedNetCents<0)throw new HttpError(400,'Vul de geverifieerde productbasis exclusief btw in.');
  return transaction(async()=>{
-  const c=await db().prepare("SELECT * FROM ambassador_commissions WHERE order_id=?").get(orderId) as Record<string,unknown>|undefined;
+  const c=await db().prepare("SELECT c.*,t.product_subtotal_cents,t.discount_cents FROM ambassador_commissions c JOIN ambassador_attributions t ON t.id=c.attribution_id WHERE c.order_id=?").get(orderId) as Record<string,unknown>|undefined;
   if(!c||c.status!=='pending')throw new HttpError(409,'Commissie is niet meer in afwachting.');
   const paid=await db().prepare("SELECT status FROM orders WHERE id=?").get(orderId);
   if(!paid||!['paid','fulfilled'].includes(String(paid.status)))throw new HttpError(409,'Bestelling is niet betaald.');
-  await db().prepare("UPDATE ambassador_commissions SET status='eligible',hold_reason='',eligible_at=?,updated_at=? WHERE order_id=? AND status='pending'").run(new Date(latest).toISOString(),new Date().toISOString(),orderId);
+  if(verifiedNetCents>Math.max(0,Number(c.product_subtotal_cents)-Number(c.discount_cents)))throw new HttpError(400,'De btw-exclusieve productbasis kan niet hoger zijn dan de netto orderbasis.');
+  await db().prepare("UPDATE ambassador_commissions SET eligible_product_net_cents=?,commission_cents=?,status='eligible',hold_reason='',eligible_at=?,updated_at=? WHERE order_id=? AND status='pending'").run(verifiedNetCents,Math.floor(verifiedNetCents*Number(c.commission_percent)/100),new Date(latest).toISOString(),new Date().toISOString(),orderId);
   await audit('ambassador.commission.eligible',orderId);
  });
 }
@@ -138,6 +140,7 @@ export async function updateAmbassadorPayout(id:string,action:'approve'|'paid'|'
    await db().prepare("UPDATE ambassador_commissions SET status='paid',paid_at=?,updated_at=? WHERE payout_id=? AND status='approved'").run(now,now,id);
   }else if(action==='cancel'&&p.status==='draft'){
    await db().prepare("UPDATE ambassador_payouts SET status='cancelled' WHERE id=? AND status='draft'").run(id);
+   await db().prepare("UPDATE ambassador_commissions SET payout_id=NULL WHERE payout_id=? AND status='approved'").run(id);
   }else throw new HttpError(409,'Deze uitbetalingsstatus kan niet worden gewijzigd.');
   await audit('ambassador.payout.'+action,id);
  });
