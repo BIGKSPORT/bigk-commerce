@@ -134,7 +134,7 @@ export async function updateAmbassadorPayout(id:string,action:'approve'|'paid'|'
    await db().prepare("UPDATE ambassador_payouts SET status='approved',approved_by=?,approved_at=? WHERE id=? AND status='draft'").run(admin,now,id);
   }else if(action==='paid'&&p.status==='approved'&&reference.trim()){
    await db().prepare("UPDATE ambassador_payouts SET status='paid',paid_by=?,paid_at=?,reference=? WHERE id=? AND status='approved'").run(admin,now,reference,id);
-   await db().prepare("UPDATE ambassador_commissions SET status='paid',payout_id=?,paid_at=?,updated_at=? undefined").run(now,now,id);
+   await db().prepare("UPDATE ambassador_commissions SET status='paid',paid_at=?,updated_at=? WHERE payout_id=? AND status='approved'").run(now,now,id);
   }else if(action==='cancel'&&p.status==='draft'){
    await db().prepare("UPDATE ambassador_payouts SET status='cancelled' WHERE id=? AND status='draft'").run(id);
   }else throw new HttpError(409,'Deze uitbetalingsstatus kan niet worden gewijzigd.');
