@@ -1,5 +1,6 @@
 import {transaction} from './db';
 import {salesDb} from './sales-db';
+import {b2bDb} from './b2b-db';
 import {hash,HttpError} from './security';
 import type {SalesActor} from './sales-types';
 
@@ -19,6 +20,7 @@ function paymentRecord(entity:unknown):PaymentRecord{
 // Read the complete paid-order history, independently of the dashboard's last 200 orders.
 // Existing finalised earned_cents/bonus snapshots remain authoritative; never reprice history.
 export async function commissionStatements(actor:SalesActor,now=new Date()):Promise<CommissionStatement[]>{
+ b2bDb();
  const rows=await salesDb().prepare("SELECT o.id,o.seller_id,o.earned_cents,o.quote,o.updated_at,c.name AS customer_name,a.name AS seller_name FROM seller_orders o JOIN seller_customers c ON c.id=o.customer_id JOIN seller_accounts a ON a.id=o.seller_id WHERE o.status='paid'"+(actor.role==='seller'?' AND o.seller_id=?':'')+' ORDER BY o.updated_at,o.id').all(...(actor.role==='seller'?[actor.id]:[]));
  const b2bRows=await salesDb().prepare("SELECT o.id,o.commission_seller_id AS seller_id,o.commission_cents AS earned_cents,o.commission_bonus_cents AS bonus_cents,o.quote,COALESCE(o.commission_paid_at,o.updated_at) AS updated_at,a.name AS customer_name,s.name AS seller_name FROM b2b_orders o JOIN b2b_accounts a ON a.id=o.account_id JOIN seller_accounts s ON s.id=o.commission_seller_id WHERE o.status IN ('paid','fulfilled') AND o.commission_seller_id IS NOT NULL AND o.commission_cents>0"+(actor.role==='seller'?' AND o.commission_seller_id=?':'')+' ORDER BY o.updated_at,o.id').all(...(actor.role==='seller'?[actor.id]:[]));
  const groups=new Map<string,CommissionStatement>(),currentMonth=commissionMonth(now);
