@@ -9,6 +9,7 @@ import {salesQuote} from '../lib/sales-pricing';
 import {hash} from '../lib/security';
 import {totp} from '../lib/admin-mfa';
 import {GET,POST} from '../app/api/sales/route';
+import {GET as crmGet} from '../app/api/sales/crm/route';
 import {POST as crmPost} from '../app/api/sales/crm/route';
 import {POST as admin} from '../app/api/sales/admin/route';
 import {POST as setup} from '../app/api/sales/setup/route';
@@ -91,7 +92,7 @@ await test('seller portal integration',async t=>{try{
  const crmData=await (await GET(req('/api/sales',first))).json();assert.equal(crmData.target.newStoresThisMonth,1);assert.equal(crmData.target.monthlyTarget,3);
  const inactiveQuote=await write(first,'quote',input());assert.equal(inactiveQuote.status,200);assert.equal((await inactiveQuote.json()).rate,0.08);
  assert.equal((await crmPost(req('/api/sales/crm',first,{action:'customer.activity',customerId,note:'Telefonisch contact over de volgende bestelling.'}))).status,200);
- const crmActive=await (await GET(req('/api/sales/crm',first))).json();assert.equal(crmActive.sellerCustomers[0].lastActivityAt!==null,true);
+ const crmActive=await (await crmGet(req('/api/sales/crm',first))).json();assert.equal(crmActive.sellerCustomers[0].lastActivityAt!==null,true);
  const activeQuote=await write(first,'quote',input());assert.equal(activeQuote.status,200);assert.equal((await activeQuote.json()).rate,0.08);
  const r=await write(first,'order',input());assert.equal(r.status,200);const id=(await r.json()).id;assert.equal((await admin(req('/api/sales/admin',owner,{action:'paid',id,reference:'BANK-TEST-1'}))).status,409);assert.equal((await admin(req('/api/sales/admin',owner,{action:'paid',id,reference:'BANK-TEST-2'}))).status,200);row=await salesDb().prepare('SELECT * FROM seller_orders WHERE id=?').get(id);q=JSON.parse(String(row!.quote));assert.equal(q.bonus,0);assert.equal(q.rate,0.08);
  assert.equal((await admin(req('/api/sales/admin',owner,{action:'credit',id:customerId,approved:true}))).status,200);assert.equal((await write(first,'order',{...input(),terms:'net30'})).status,200);
