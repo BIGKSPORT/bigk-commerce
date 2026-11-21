@@ -11,6 +11,8 @@ CREATE TABLE IF NOT EXISTS bigk.ambassador_applications (
   motivation TEXT NOT NULL DEFAULT '',
   privacy_accepted_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   privacy_notice_version TEXT NOT NULL DEFAULT '2026-11-21',
+  terms_accepted_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  terms_version TEXT NOT NULL DEFAULT '0.1-2026-11-21',
   status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','approved','rejected','withdrawn')),
   reviewed_by TEXT,
   reviewed_at TIMESTAMPTZ,
