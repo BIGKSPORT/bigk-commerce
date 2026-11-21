@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS b2b_orders(id TEXT PRIMARY KEY,account_id TEXT NOT NU
 CREATE TABLE IF NOT EXISTS b2b_events(id TEXT PRIMARY KEY,actor_id TEXT NOT NULL,action TEXT NOT NULL,entity TEXT NOT NULL,created_at TEXT NOT NULL);
 CREATE INDEX IF NOT EXISTS b2b_orders_account ON b2b_orders(account_id,created_at);
 CREATE INDEX IF NOT EXISTS b2b_orders_status ON b2b_orders(status,updated_at);
+CREATE INDEX IF NOT EXISTS b2b_orders_commission_seller ON b2b_orders(commission_seller_id,status,updated_at);
 CREATE INDEX IF NOT EXISTS b2b_sessions_account ON b2b_sessions(account_id);
 CREATE INDEX IF NOT EXISTS b2b_links_account ON b2b_links(account_id);
 `;
