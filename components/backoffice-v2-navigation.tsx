@@ -47,7 +47,7 @@ const groups:NavGroup[]=[
   {label:'Media library',tab:'Media library',icon:Images},
  ]},
  {label:'Markets',icon:Globe,items:[{label:'Markets',disabled:true,hint:'Not configured yet',icon:Globe}]},
- {label:'Analytics',icon:BarChart3,items:[{label:'Reports & overview',tab:'Overview',icon:BarChart3}]},
+ {label:'Analytics',icon:BarChart3,items:[{label:'Sales reports',tab:'Analytics',icon:BarChart3}]},
  {label:'Sales channels',icon:Store,items:[
   {label:'Stock & channels',tab:'Voorraad & kanalen',icon:Warehouse},
   {label:'Connections',tab:'Connections',icon:Layers},
