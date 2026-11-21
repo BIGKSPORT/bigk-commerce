@@ -141,6 +141,7 @@ try{
  await previewPage.addScriptTag({content:"const OriginalParams=window.URLSearchParams;window.URLSearchParams=class extends OriginalParams{constructor(v){super(v||'previewSeller=10000000-1000-4000-8000-100000000001')}};window.fetch=async(path,init)=>new Response(JSON.stringify(await window.__sellerPreviewFixture(path,init)),{status:200})"});
  await previewPage.addStyleTag({content:workspaceBundle.outputFiles.find(f=>f.path.endsWith('.css')).text});await previewPage.addScriptTag({content:workspaceBundle.outputFiles.find(f=>f.path.endsWith('.js')).text});
  await previewPage.getByText('Voorbeeldweergave van Kenny Endels',{exact:true}).waitFor();
+ await previewPage.getByRole('button',{name:'Catalogus',exact:true}).click();
  assert.equal(await previewPage.getByRole('button',{name:'Verkopers',exact:true}).count(),0);
  await previewPage.getByLabel('ALPINE FLEECE Black maat M',{exact:true}).first().fill('30');
  assert.equal(await previewPage.getByRole('button',{name:'Indienen bij BIG K',exact:true}).isDisabled(),true);
