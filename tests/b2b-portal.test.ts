@@ -13,7 +13,7 @@ import {b2bWorkspace,b2bAccountInput} from '../lib/b2b-service';
 import {GET,POST} from '../app/api/b2b/route';
 import {GET as authGet,POST as auth,DELETE as logout} from '../app/api/b2b/auth/route';
 import {GET as adminGet,POST as admin} from '../app/api/b2b/admin/route';
-import {createSalesCustomer} from '../lib/sales-service';
+import {createSalesCustomer,salesWorkspace} from '../lib/sales-service';
 import {commissionStatements} from '../lib/sales-commissions';
 const dir=mkdtempSync(join(tmpdir(),'bigk-b2b-'));
 Object.assign(process.env,{DATABASE_PROVIDER:'sqlite',DATABASE_PATH:join(dir,'store.sqlite'),DATABASE_SCHEMA:'bigk',NODE_ENV:'test',APP_URL:'https://bigk.example',B2B_PORTAL_ENABLED:'true',SELLER_PORTAL_ENABLED:'true',ADMIN_MFA_REQUIRED:'false'});delete process.env.VERCEL;delete process.env.VERCEL_ENV;
@@ -92,6 +92,7 @@ await test('direct B2B portal integration',async t=>{let accountId='',secondId='
   await salesDb().prepare('INSERT INTO seller_accounts(id,name,email,created_at) VALUES(?,?,?,?)').run(sellerOne,'Seller One','one@agents.test',now);
   await salesDb().prepare('INSERT INTO seller_accounts(id,name,email,created_at) VALUES(?,?,?,?)').run(sellerTwo,'Seller Two','two@agents.test',now);
   await salesDb().prepare('INSERT INTO seller_b2b_assignments(account_id,seller_id,assigned_at) VALUES(?,?,?)').run(accountId,sellerOne,now);
+  assert.equal((await salesWorkspace({id:sellerOne,name:'Seller One',role:'seller'})).customers.some(c=>c.id===accountId&&c.source==='b2b'),true);
   const repeatQuote=await quote(8),repeatRequest={items:[{variantId,quantity:8}],quoteKey:repeatQuote.key,requestKey:crypto.randomUUID(),accepted:true};
   const repeatResponse=await POST(req('/api/b2b',cookie,{action:'order',data:repeatRequest}));assert.equal(repeatResponse.status,200);const repeatId=(await repeatResponse.json()).id;
   await salesDb().prepare('UPDATE seller_b2b_assignments SET seller_id=?,assigned_at=? WHERE account_id=?').run(sellerTwo,new Date(Date.now()+1000).toISOString(),accountId);
