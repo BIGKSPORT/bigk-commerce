@@ -1,7 +1,6 @@
 import {z} from 'zod';
 import {ambassadorWorkspace,reviewAmbassadorApplication,setAmbassadorStatus,markAmbassadorCommissionEligible,approveAmbassadorCommission,createAmbassadorPayout,updateAmbassadorPayout,reconcileAmbassadorRefund} from '@/lib/ambassadors';
 import {body,checkOrigin,failure,HttpError,requireAdmin} from '@/lib/security';
-import {audit} from '@/lib/db';
 export const runtime='nodejs';
 const schema=z.discriminatedUnion('action',[
  z.object({action:z.literal('review'),applicationId:z.string().uuid(),decision:z.enum(['approve','reject']),note:z.string().trim().min(3).max(1000)}).strict(),
