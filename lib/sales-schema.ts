@@ -15,4 +15,6 @@ CREATE INDEX IF NOT EXISTS seller_prospects_owner ON seller_prospects(seller_id,
 CREATE INDEX IF NOT EXISTS seller_followups_owner ON seller_followups(seller_id,completed_at,due_at);
 CREATE INDEX IF NOT EXISTS seller_followups_prospect ON seller_followups(prospect_id,created_at);
 CREATE INDEX IF NOT EXISTS seller_followups_account ON seller_followups(account_id,created_at);
+CREATE TABLE IF NOT EXISTS seller_customer_activities(id TEXT PRIMARY KEY,seller_id TEXT NOT NULL REFERENCES seller_accounts(id),customer_id TEXT NOT NULL REFERENCES seller_customers(id),activity_at TEXT NOT NULL,note TEXT NOT NULL,created_at TEXT NOT NULL);
+CREATE INDEX IF NOT EXISTS seller_customer_activities_recent ON seller_customer_activities(customer_id,seller_id,activity_at);
 `;
