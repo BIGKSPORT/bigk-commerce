@@ -121,7 +121,8 @@ export async function createAmbassadorPayout(ambassadorId:string,start:string,en
   const amount=rows.reduce((n,r)=>n+Number(r.commission_cents),0);
   if(amount<=0)throw new HttpError(409,'Geen goedgekeurde commissies in deze periode.');
   const id=crypto.randomUUID(),now=new Date().toISOString();
-  await db().prepare("INSERT INTO ambassador_payouts(id,ambassador_id,period_start,period_end,amount_cents,status,invoice_reference,created_by,created_at) VALUES(?,?,?,?,?,'draft',?,?,?)").run(id,ambassadorId,start,end,amount,invoiceReference,admin,now);\n  await db().prepare("UPDATE ambassador_commissions SET payout_id=? WHERE ambassador_id=? AND status='approved' AND payout_id IS NULL AND created_at>=? AND created_at<?").run(id,ambassadorId,start+'T00:00:00.000Z',new Date(Date.parse(end+'T00:00:00.000Z')+86400000).toISOString());
+  await db().prepare("INSERT INTO ambassador_payouts(id,ambassador_id,period_start,period_end,amount_cents,status,invoice_reference,created_by,created_at) VALUES(?,?,?,?,?,'draft',?,?,?)").run(id,ambassadorId,start,end,amount,invoiceReference,admin,now);
+  await db().prepare("UPDATE ambassador_commissions SET payout_id=? WHERE ambassador_id=? AND status='approved' AND payout_id IS NULL AND created_at>=? AND created_at<?").run(id,ambassadorId,start+'T00:00:00.000Z',new Date(Date.parse(end+'T00:00:00.000Z')+86400000).toISOString());
   await audit('ambassador.payout.draft',id);return {id,amountCents:amount,commissionIds:rows.map(r=>String(r.id))};
  });
 }
