@@ -53,7 +53,7 @@ export async function salesCrmData(actor:SalesActor){
   salesDb().prepare('SELECT c.*,a.name AS seller_name,(SELECT MAX(x.activity_at) FROM seller_customer_activities x WHERE x.customer_id=c.id AND x.seller_id=c.seller_id) AS last_activity_at FROM seller_customers c JOIN seller_accounts a ON a.id=c.seller_id'+(actor.role==='seller'?' WHERE c.seller_id=?':'')+' ORDER BY c.name').all(...(actor.role==='seller'?[actor.id]:[])),
   salesDb().prepare('SELECT o.*,c.name AS customer_name,a.name AS seller_name FROM seller_orders o JOIN seller_customers c ON c.id=o.customer_id JOIN seller_accounts a ON a.id=o.seller_id'+(actor.role==='seller'?' WHERE o.seller_id=?':'')+' ORDER BY o.created_at DESC LIMIT 500').all(...(actor.role==='seller'?[actor.id]:[])),
   actor.role==='owner'?b2bDb().prepare('SELECT * FROM b2b_orders ORDER BY created_at DESC LIMIT 500').all():salesDb().prepare('SELECT o.* FROM b2b_orders o JOIN seller_b2b_assignments x ON x.account_id=o.account_id WHERE x.seller_id=? ORDER BY o.created_at DESC LIMIT 500').all(actor.id),
-  salesDb().prepare('SELECT customer_id,seller_id,quote,updated_at FROM seller_orders WHERE status=\\'paid\\''+(actor.role==='seller'?' AND seller_id=?':'')+' ORDER BY updated_at ASC').all(...(actor.role==='seller'?[actor.id]:[]))
+  salesDb().prepare('SELECT customer_id,seller_id,quote,updated_at FROM seller_orders WHERE status=\'paid\''+(actor.role==='seller'?' AND seller_id=?':'')+' ORDER BY updated_at ASC').all(...(actor.role==='seller'?[actor.id]:[]))
  ]);
  const assignmentById=new Map(assignments.map((x:any)=>[String(x.account_id),x]));
  const visibleAccounts=allAccounts.filter((a:any)=>actor.role==='owner'||String((assignmentById.get(String(a.id)) as any)?.seller_id||'')===actor.id);
