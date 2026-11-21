@@ -1,6 +1,10 @@
-# BIG K seller portal
+# BIG K® seller portal
 
 New, private route: `/staff/sales`. Existing consumer routes, checkout, stock quantities and payment integration are unchanged. The only existing component changed is the backoffice: it shows a conditional Verkopersplatform link for the authenticated owner.
+
+## Naamgebruik
+
+**BIG K®** is het merk. **BIGK BV** is de juridische onderneming achter het merk. Gebruik BIGK BV voor bedrijfsverantwoordelijkheden, klanttoewijzingen, goedkeuringen, betalingen en formele communicatie; behoud BIG K® voor merkidentiteit en commerciële branding.
 
 ## First version
 
@@ -10,7 +14,7 @@ New, private route: `/staff/sales`. Existing consumer routes, checkout, stock qu
 - Seller sees only their assigned customers and orders. Owner sees all sellers, credit approvals and order payments. Warehouse/staff credentials do not confer seller access.
 - Catalogue reads existing products and variant identifiers, colours, size, retail price, images, stock less reservations. Draft products are included for offline selling; archived variants and products without an EUR price are excluded. No supplier cost fields are sent.
 - Create Belgian shop/customer; select quantities by real variant. Save, reopen and edit drafts; submit orders reaching the minimum. Every save is server priced, stock checked, authenticated and idempotent. Conflicting draft changes are rejected.
-- Drafts and submitted orders are sales proposals. They do not reserve inventory, alter consumer orders or charge customers. BIG K confirms availability, invoicing and fulfilment separately.
+- Drafts and submitted orders are sales proposals. They do not reserve inventory, alter consumer orders or charge customers. BIGK BV confirms availability, invoicing and fulfilment separately.
 - Register a fully received payment as owner, with its unique bank/invoice payment reference. This records earned commission; it does not create an invoice, payment or shipment, or record commission payout. No automated commission transfers.
 
 ## Agreed commercial rules
