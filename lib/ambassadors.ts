@@ -109,8 +109,8 @@ export async function reconcileAmbassadorRefund(orderId:string,verifiedNetCents:
   const c=await db().prepare("SELECT c.*,t.product_subtotal_cents,t.discount_cents FROM ambassador_commissions c JOIN ambassador_attributions t ON t.id=c.attribution_id WHERE c.order_id=?").get(orderId) as Record<string,unknown>|undefined;
   if(!c||c.status!=='held')throw new HttpError(409,'Geen vastgehouden commissie om te reconciliëren.');
   if(verifiedNetCents>Math.max(0,Number(c.product_subtotal_cents)-Number(c.discount_cents)))throw new HttpError(400,'De geverifieerde basis overschrijdt de netto productwaarde.');
-  const status=verifiedNetCents===0?'reversed':'eligible';
-  await db().prepare("UPDATE ambassador_commissions SET eligible_product_net_cents=?,commission_cents=?,status=?,hold_reason='',eligible_at=?,updated_at=? WHERE order_id=? AND status='held'").run(verifiedNetCents,Math.floor(verifiedNetCents*Number(c.commission_percent)/100),status,new Date().toISOString(),new Date().toISOString(),orderId);
+  const status=verifiedNetCents===0?'reversed':c.eligible_at?'eligible':'pending';
+  await db().prepare("UPDATE ambassador_commissions SET eligible_product_net_cents=?,commission_cents=?,status=?,hold_reason=?,eligible_at=COALESCE(eligible_at,?),updated_at=? WHERE order_id=? AND status='held'").run(verifiedNetCents,Math.floor(verifiedNetCents*Number(c.commission_percent)/100),status,status==='pending'?'delivery_and_returns_pending':'',new Date().toISOString(),new Date().toISOString(),orderId);
   await audit('ambassador.commission.refund_reconciled',orderId);
  });
 }
