@@ -89,7 +89,7 @@ export async function createOrder(input: CheckoutInput, verifiedEmail?:string) {
             if (isLive())
                 (await sql.prepare('UPDATE variants SET reserved=reserved+? WHERE id=?').run(line.quantity, line.v.id));
         }
-        if (promoCode && promoDiscount) { await reservePromoForOrder(id, promoCode, input.email, promoDiscount); await attributeAmbassadorOrder(id,promoCode,input.email,subtotal,promoDiscount); }
+        if (promoCode && promoDiscount) { await reservePromoForOrder(id, promoCode, input.email, promoDiscount); if(isLive())await attributeAmbassadorOrder(id,promoCode,input.email,subtotal,promoDiscount); }
         if(clubConfig().enabled&&verifiedEmail&&verifiedEmail===input.email.toLowerCase()&&isLive()){
           const clubLines=lines.map(l=>({id:l.v.id,grossCents:l.p.priceCents!*l.quantity,kind:productKind(l.p.tags),...(promoDiscount?{promotionCents:0}:{})}));
           // When a promo is present, points are already blocked above. promotionCents left 0; coupon flag via points path only.
