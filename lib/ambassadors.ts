@@ -117,11 +117,11 @@ export async function approveAmbassadorCommission(orderId:string,admin:string){
 export async function createAmbassadorPayout(ambassadorId:string,start:string,end:string,admin:string,invoiceReference:string){
  if(!/^\d{4}-\d{2}-\d{2}$/.test(start)||!/^\d{4}-\d{2}-\d{2}$/.test(end)||end<start||!invoiceReference.trim())throw new HttpError(400,'Periode en factuurreferentie zijn verplicht.');
  return transaction(async()=>{
-  const rows=await db().prepare("SELECT id,commission_cents FROM ambassador_commissions WHERE ambassador_id=? AND status='approved' AND created_at>=? AND created_at<?").all(ambassadorId,start+'T00:00:00.000Z',new Date(Date.parse(end+'T00:00:00.000Z')+86400000).toISOString());
+  const rows=await db().prepare("SELECT id,commission_cents FROM ambassador_commissions WHERE ambassador_id=? AND status='approved' AND payout_id IS NULL AND created_at>=? AND created_at<?").all(ambassadorId,start+'T00:00:00.000Z',new Date(Date.parse(end+'T00:00:00.000Z')+86400000).toISOString());
   const amount=rows.reduce((n,r)=>n+Number(r.commission_cents),0);
   if(amount<=0)throw new HttpError(409,'Geen goedgekeurde commissies in deze periode.');
   const id=crypto.randomUUID(),now=new Date().toISOString();
-  await db().prepare("INSERT INTO ambassador_payouts(id,ambassador_id,period_start,period_end,amount_cents,status,invoice_reference,created_by,created_at) VALUES(?,?,?,?,?,'draft',?,?,?)").run(id,ambassadorId,start,end,amount,invoiceReference,admin,now);
+  await db().prepare("INSERT INTO ambassador_payouts(id,ambassador_id,period_start,period_end,amount_cents,status,invoice_reference,created_by,created_at) VALUES(?,?,?,?,?,'draft',?,?,?)").run(id,ambassadorId,start,end,amount,invoiceReference,admin,now);\n  await db().prepare("UPDATE ambassador_commissions SET payout_id=? WHERE ambassador_id=? AND status='approved' AND payout_id IS NULL AND created_at>=? AND created_at<?").run(id,ambassadorId,start+'T00:00:00.000Z',new Date(Date.parse(end+'T00:00:00.000Z')+86400000).toISOString());
   await audit('ambassador.payout.draft',id);return {id,amountCents:amount,commissionIds:rows.map(r=>String(r.id))};
  });
 }
@@ -134,7 +134,7 @@ export async function updateAmbassadorPayout(id:string,action:'approve'|'paid'|'
    await db().prepare("UPDATE ambassador_payouts SET status='approved',approved_by=?,approved_at=? WHERE id=? AND status='draft'").run(admin,now,id);
   }else if(action==='paid'&&p.status==='approved'&&reference.trim()){
    await db().prepare("UPDATE ambassador_payouts SET status='paid',paid_by=?,paid_at=?,reference=? WHERE id=? AND status='approved'").run(admin,now,reference,id);
-   await db().prepare("UPDATE ambassador_commissions SET status='paid',payout_id=?,paid_at=?,updated_at=? WHERE ambassador_id=? AND status='approved' AND created_at>=? AND created_at<?").run(id,now,now,p.ambassador_id,String(p.period_start)+'T00:00:00.000Z',new Date(Date.parse(String(p.period_end)+'T00:00:00.000Z')+86400000).toISOString());
+   await db().prepare("UPDATE ambassador_commissions SET status='paid',payout_id=?,paid_at=?,updated_at=? undefined").run(now,now,id);
   }else if(action==='cancel'&&p.status==='draft'){
    await db().prepare("UPDATE ambassador_payouts SET status='cancelled' WHERE id=? AND status='draft'").run(id);
   }else throw new HttpError(409,'Deze uitbetalingsstatus kan niet worden gewijzigd.');
