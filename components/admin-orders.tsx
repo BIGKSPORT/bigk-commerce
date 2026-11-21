@@ -1,6 +1,6 @@
 'use client';
 import AdminMyParcelLabel, {MyParcelConnection} from './admin-myparcel-label';
-import {useState, type FormEvent} from 'react';
+import {useEffect,useRef,useState, type FormEvent} from 'react';
 import {ArrowUpRight, Package, Search, RotateCcw} from 'lucide-react';
 import {Modal} from './storefront';
 import {money} from '@/lib/format';
@@ -12,11 +12,13 @@ export function AdminOrders({
   transport,
   onSaved,
   club,
+  initialOrderId,
 }: {
   orders: Order[];
   transport: AdminTransport;
   onSaved: () => Promise<void>;
   club: ClubAdmin | null;
+  initialOrderId?: string;
 }) {
   const [invoicePath, setInvoicePath] = useState('');
   const [shippingDraft, setShippingDraft] = useState<
@@ -25,6 +27,8 @@ export function AdminOrders({
   const [query, setQuery] = useState('');
   const [status, setStatus] = useState('paid');
   const [selected, setSelected] = useState<Order | null>(null);
+  const openedInitialOrder=useRef<string|undefined>(undefined);
+  useEffect(()=>{if(!initialOrderId||openedInitialOrder.current===initialOrderId)return;const match=orders.find(order=>order.id===initialOrderId);if(match){openedInitialOrder.current=initialOrderId;setSelected(match);setStatus('All');}},[initialOrderId,orders]);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);

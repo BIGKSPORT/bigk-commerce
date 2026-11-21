@@ -11,6 +11,7 @@ on:
       - 'tests/sales-*'
       - 'scripts/*sales*'
       - 'supabase/sales/**'
+      - 'supabase/migrations/**'
       - '.github/workflows/seller-portal.yml'
 permissions:
   contents: read
@@ -28,7 +29,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run typecheck
-      - run: node --import tsx --test tests/sales-portal.test.ts tests/sales-postgres.test.ts tests/sales-commissions.test.ts
+      - run: node --import tsx --test tests/sales-portal.test.ts tests/sales-postgres.test.ts tests/sales-commissions.test.ts tests/sales-reminders.test.ts
       - run: node --import tsx tests/sales-browser.mjs
         env:
           BIGK_ARTIFACT_DIR: ${{ runner.temp }}/sales-review

@@ -2398,5 +2398,9 @@
   "BIG K ® / BUILT INTO EVERY DETAIL": {
     "es": "BIG K ® / CADA DETALLE CUENTA",
     "it": "BIG K ® / CURA IN OGNI DETTAGLIO"
+  },
+  "If Stripe asks for a Link code, choose Pay without Link to continue.": {
+    "es": "Si Stripe solicita un código de Link, elige Pagar sin Link para continuar.",
+    "it": "Se Stripe chiede un codice Link, scegli Paga senza Link per continuare."
   }
 }

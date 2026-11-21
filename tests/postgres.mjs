@@ -18,7 +18,7 @@ try {
   await assert.rejects(() => db.query('SELECT * FROM bigk.orders'), /permission denied/);
   await db.exec('RESET ROLE;');
   const tables = (await db.query("SELECT relname,relrowsecurity FROM pg_class JOIN pg_namespace n ON n.oid=relnamespace WHERE n.nspname='bigk' AND relkind='r'")).rows;
-  assert.equal(tables.length,29); assert(tables.some(t=>t.relname==='storefront_merchandising')); assert(tables.every(t=>t.relrowsecurity));
+  assert.equal(tables.length,34); assert(tables.some(t=>t.relname==='storefront_merchandising')); assert(tables.every(t=>t.relrowsecurity), 'Tables without RLS: '+tables.filter(t=>!t.relrowsecurity).map(t=>t.relname).join(', ')); for(const name of ['seller_b2b_assignments','seller_prospects','seller_followups','discount_codes','discount_redemptions']) assert(tables.some(t=>t.relname===name&&t.relrowsecurity),name+' must have RLS enabled');
   console.log('PASS: migration runs twice; 27 records; all private tables use RLS; anonymous/customer roles cannot read orders.');
   await db.exec(await readFile(new URL('../supabase/templates/server-role.sql',import.meta.url),'utf8'));
   await db.exec('SET ROLE bigk_server;');

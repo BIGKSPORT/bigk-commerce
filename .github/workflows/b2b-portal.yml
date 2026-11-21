@@ -4,6 +4,13 @@ on:
     paths:
       - 'lib/b2b-*'
       - 'lib/sales-service.ts'
+      - 'lib/sales-crm.ts'
+      - 'lib/sales-schema.ts'
+      - 'lib/sales-db.ts'
+      - 'components/sales-crm*'
+      - 'app/api/sales/crm/**'
+      - 'supabase/sales/**'
+      - 'supabase/migrations/**'
       - 'components/b2b-*'
       - 'components/admin-b2b.tsx'
       - 'components/backoffice.tsx'
@@ -29,5 +36,5 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run typecheck
-      - run: node --import tsx --test tests/b2b-portal.test.ts tests/b2b-postgres.test.ts tests/sales-portal.test.ts tests/sales-commissions.test.ts
+      - run: node --import tsx --test tests/b2b-portal.test.ts tests/b2b-postgres.test.ts tests/sales-portal.test.ts tests/sales-commissions.test.ts tests/sales-crm.test.ts
       - run: node --import tsx tests/b2b-browser.mjs

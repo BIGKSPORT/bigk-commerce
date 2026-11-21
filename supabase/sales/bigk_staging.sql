@@ -10,6 +10,31 @@ CREATE INDEX IF NOT EXISTS seller_orders_owner ON seller_orders(seller_id,create
 CREATE INDEX IF NOT EXISTS seller_orders_customer ON seller_orders(customer_id,status);
 CREATE INDEX IF NOT EXISTS seller_customers_owner ON seller_customers(seller_id);
 
+CREATE TABLE IF NOT EXISTS seller_b2b_assignments(account_id TEXT PRIMARY KEY,seller_id TEXT NOT NULL,assigned_at TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS seller_prospects(id TEXT PRIMARY KEY,seller_id TEXT,company_name TEXT NOT NULL,vat TEXT NOT NULL DEFAULT '',contact TEXT NOT NULL,email TEXT NOT NULL,phone TEXT NOT NULL DEFAULT '',stage TEXT NOT NULL CHECK(stage IN ('prospect','contacted','interested','negotiation','converted','lost')),notes TEXT NOT NULL DEFAULT '',converted_account_id TEXT,created_at TEXT NOT NULL,updated_at TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS seller_followups(id TEXT PRIMARY KEY,seller_id TEXT NOT NULL,prospect_id TEXT,account_id TEXT,due_at TEXT NOT NULL,note TEXT NOT NULL,completed_at TEXT,created_at TEXT NOT NULL,CHECK((prospect_id IS NOT NULL AND account_id IS NULL) OR (prospect_id IS NULL AND account_id IS NOT NULL)));
+CREATE INDEX IF NOT EXISTS seller_b2b_assignments_owner ON seller_b2b_assignments(seller_id);
+CREATE INDEX IF NOT EXISTS seller_prospects_owner ON seller_prospects(seller_id,stage,updated_at);
+CREATE INDEX IF NOT EXISTS seller_followups_owner ON seller_followups(seller_id,completed_at,due_at);
+CREATE INDEX IF NOT EXISTS seller_followups_prospect ON seller_followups(prospect_id,created_at);
+CREATE INDEX IF NOT EXISTS seller_followups_account ON seller_followups(account_id,created_at);
+
+
+ALTER TABLE bigk_staging.seller_b2b_assignments ENABLE ROW LEVEL SECURITY;
+REVOKE ALL ON bigk_staging.seller_b2b_assignments FROM PUBLIC,anon,authenticated;
+GRANT SELECT,INSERT,UPDATE,DELETE ON bigk_staging.seller_b2b_assignments TO bigk_staging_server;
+DROP POLICY IF EXISTS seller_server_access ON bigk_staging.seller_b2b_assignments;
+CREATE POLICY seller_server_access ON bigk_staging.seller_b2b_assignments TO bigk_staging_server USING (true) WITH CHECK (true);
+ALTER TABLE bigk_staging.seller_prospects ENABLE ROW LEVEL SECURITY;
+REVOKE ALL ON bigk_staging.seller_prospects FROM PUBLIC,anon,authenticated;
+GRANT SELECT,INSERT,UPDATE,DELETE ON bigk_staging.seller_prospects TO bigk_staging_server;
+DROP POLICY IF EXISTS seller_server_access ON bigk_staging.seller_prospects;
+CREATE POLICY seller_server_access ON bigk_staging.seller_prospects TO bigk_staging_server USING (true) WITH CHECK (true);
+ALTER TABLE bigk_staging.seller_followups ENABLE ROW LEVEL SECURITY;
+REVOKE ALL ON bigk_staging.seller_followups FROM PUBLIC,anon,authenticated;
+GRANT SELECT,INSERT,UPDATE,DELETE ON bigk_staging.seller_followups TO bigk_staging_server;
+DROP POLICY IF EXISTS seller_server_access ON bigk_staging.seller_followups;
+CREATE POLICY seller_server_access ON bigk_staging.seller_followups TO bigk_staging_server USING (true) WITH CHECK (true);
 ALTER TABLE bigk_staging.seller_accounts ENABLE ROW LEVEL SECURITY;
 REVOKE ALL ON bigk_staging.seller_accounts FROM PUBLIC,anon,authenticated;
 GRANT SELECT,INSERT,UPDATE,DELETE ON bigk_staging.seller_accounts TO bigk_staging_server;

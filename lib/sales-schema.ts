@@ -7,4 +7,12 @@ CREATE TABLE IF NOT EXISTS seller_events(id TEXT PRIMARY KEY,actor_id TEXT NOT N
 CREATE INDEX IF NOT EXISTS seller_orders_owner ON seller_orders(seller_id,created_at);
 CREATE INDEX IF NOT EXISTS seller_orders_customer ON seller_orders(customer_id,status);
 CREATE INDEX IF NOT EXISTS seller_customers_owner ON seller_customers(seller_id);
+CREATE TABLE IF NOT EXISTS seller_b2b_assignments(account_id TEXT PRIMARY KEY,seller_id TEXT NOT NULL,assigned_at TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS seller_prospects(id TEXT PRIMARY KEY,seller_id TEXT,company_name TEXT NOT NULL,vat TEXT NOT NULL DEFAULT '',contact TEXT NOT NULL,email TEXT NOT NULL,phone TEXT NOT NULL DEFAULT '',stage TEXT NOT NULL CHECK(stage IN ('prospect','contacted','interested','negotiation','converted','lost')),notes TEXT NOT NULL DEFAULT '',converted_account_id TEXT,created_at TEXT NOT NULL,updated_at TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS seller_followups(id TEXT PRIMARY KEY,seller_id TEXT NOT NULL,prospect_id TEXT,account_id TEXT,due_at TEXT NOT NULL,note TEXT NOT NULL,completed_at TEXT,created_at TEXT NOT NULL,CHECK((prospect_id IS NOT NULL AND account_id IS NULL) OR (prospect_id IS NULL AND account_id IS NOT NULL)));
+CREATE INDEX IF NOT EXISTS seller_b2b_assignments_owner ON seller_b2b_assignments(seller_id);
+CREATE INDEX IF NOT EXISTS seller_prospects_owner ON seller_prospects(seller_id,stage,updated_at);
+CREATE INDEX IF NOT EXISTS seller_followups_owner ON seller_followups(seller_id,completed_at,due_at);
+CREATE INDEX IF NOT EXISTS seller_followups_prospect ON seller_followups(prospect_id,created_at);
+CREATE INDEX IF NOT EXISTS seller_followups_account ON seller_followups(account_id,created_at);
 `;

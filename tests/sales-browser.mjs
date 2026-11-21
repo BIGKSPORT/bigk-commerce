@@ -30,6 +30,7 @@ try{
   await page.exposeFunction('__salesFixture',async(path,init)=>{const data=init?.body?JSON.parse(init.body):{};
    if(path==='/api/sales/auth'){authenticated=true;return {status:200,body:{ok:true}};}
    if(path==='/api/sales'&&(!init?.method||init.method==='GET'))return {status:authenticated?200:401,body:authenticated?{actor:{id:'seller-1',name:'Nicky',role:'seller'},catalogue:catalogueMissing?[]:[product,{...product,id:'variant-xl',size:'XL',available:0}],customers:[customer],orders}:{error:'Log in met je verkopersaccount.'}};
+   if(path==='/api/sales/crm'&&(!init?.method||init.method==='GET'))return {status:authenticated?200:401,body:authenticated?{actor:{id:'seller-1',name:'Nicky',role:'seller'},metrics:{prospects:0,openProspects:0,followupsDue:0,accounts:0,revenueCents:0},pipeline:{prospect:0,contacted:0,interested:0,negotiation:0,converted:0,lost:0},sellers:[],prospects:[],followups:[],accounts:[],sellerCustomers:[],orders:[],salesOrders:[]}:{error:'Log in met je verkopersaccount.'}};
    if(path==='/api/sales'&&data.action==='order'){saves++;orders=[{id:'20000000-1000-4000-8000-100000000001',version:1,customerId:customer.id,customerName:customer.name,sellerId:'seller-1',sellerName:'Nicky',status:'submitted',terms:'proforma',quote:salesQuote([product],data.data.items,2.5,'proforma',true),earnedCents:0,createdAt:'2026-11-16T10:00:00Z',paymentReference:''}];return {status:200,body:{id:orders[0].id}};}
    throw Error('Unexpected fixture request '+path);
   });
@@ -37,9 +38,13 @@ try{
   await page.addScriptTag({content:`window.fetch=async(path,init)=>{const r=await window.__salesFixture(path,init);return new Response(JSON.stringify(r.body),{status:r.status,headers:{'Content-Type':'application/json'}})};if(!crypto.randomUUID)crypto.randomUUID=()=>('10000000-1000-4000-8000-'+Array.from(crypto.getRandomValues(new Uint8Array(6)),v=>v.toString(16).padStart(2,'0')).join(''));`});
   await page.addStyleTag({content:readFileSync('app/globals.css','utf8')+'\n'+readFileSync('app/identity.css','utf8')+'\n'+workspaceBundle.outputFiles.find(f=>f.path.endsWith('.css')).text});await page.addScriptTag({content:workspaceBundle.outputFiles.find(f=>f.path.endsWith('.js')).text});
   await page.getByLabel('E-mailadres',{exact:true}).fill('rep@example.test');await page.getByLabel('Wachtwoord',{exact:true}).fill('Fixture password 1234');await page.getByLabel('Authenticatorcode').fill('123456');await page.getByRole('button',{name:'Inloggen',exact:true}).click();
-  await page.getByRole('heading',{name:'Goed op weg, Nicky.'}).waitFor();if(mobile)await page.getByRole('button',{name:'Bestelling openen of sluiten'}).click();await page.getByLabel('Winkel',{exact:true}).selectOption(customer.id);
+  await page.getByRole('heading',{name:'Goed op weg, Nicky.'}).waitFor();
+  await page.getByRole('button',{name:'Sales CRM',exact:true}).click();await page.getByRole('heading',{name:'Sales cockpit'}).waitFor();await page.getByRole('heading',{name:'Sales pipeline'}).waitFor();
+  await page.getByRole('button',{name:/Nieuwe prospect/}).click();await page.getByLabel('Bedrijfsnaam').waitFor();assert.equal(await page.getByLabel('Toewijzen aan').count(),0,'a salesperson must not see owner assignment controls');
+  await page.getByRole('button',{name:'Sluiten',exact:true}).click();await page.getByRole('button',{name:'Catalogus',exact:true}).click();
+  if(mobile)await page.getByRole('button',{name:'Bestelling openen of sluiten'}).click();await page.getByLabel('Winkel',{exact:true}).selectOption(customer.id);
   assert.equal(await page.getByLabel('ALPINE FLEECE Black maat XL',{exact:true}).isDisabled(),true);
-  await page.getByLabel('ALPINE FLEECE Black maat M',{exact:true}).fill('30');await page.getByText('€ 311,54',{exact:true}).waitFor();
+  await page.getByLabel('ALPINE FLEECE Black maat M',{exact:true}).first().fill('30');await page.getByText('€ 311,54',{exact:true}).waitFor();
   await page.getByLabel('Presentatiemodus').check();assert.equal(await page.getByText('Jouw verwachte commissie',{exact:true}).count(),0);await page.getByLabel('Presentatiemodus').uncheck();
   if(mobile)await page.getByRole('button',{name:'Bestelling openen of sluiten'}).click();const screenshot=await page.screenshot({path:out+'/sales-'+name+'.png',fullPage:true});if(process.env.CI)console.log('SALES_SCREENSHOT '+name+' '+(await sharp(screenshot).resize({width:Math.min(width,1100)}).webp({quality:70}).toBuffer()).toString('base64'));
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+1),false);
@@ -71,7 +76,7 @@ try{
   await page.getByRole('button',{name:'Filters wissen',exact:true}).click();
   await page.getByLabel('Sorteer producten',{exact:true}).selectOption('price');
   const names=await page.locator('article h2').allTextContents();assert.deepEqual(names,['CORE PANTS','ALPINE FLEECE']);
-  await page.getByLabel('ALPINE FLEECE Black maat M',{exact:true}).fill('3');
+  await page.getByLabel('ALPINE FLEECE Black maat M',{exact:true}).first().fill('3');
   await page.getByRole('button',{name:'Bekijk ALPINE FLEECE',exact:true}).click();const dialog=page.getByRole('dialog');
   await dialog.getByText('Regular fit uit de backoffice',{exact:true}).waitFor();await dialog.getByText('Geverifieerde materiaalinformatie',{exact:true}).waitFor();
   assert.equal(await dialog.getByLabel('ALPINE FLEECE Black maat L',{exact:true}).isDisabled(),true);
@@ -79,7 +84,7 @@ try{
   await dialog.evaluate(el=>{el.scrollTop=0;});await dialog.getByRole('button',{name:'Productfoto 2',exact:true}).click();assert.equal(await dialog.locator('img').first().getAttribute('data-source'),'/back.webp');
   await page.screenshot({path:out+'/catalogue-detail-'+width+'.png',fullPage:true});
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+1),false);
-  await dialog.getByRole('button',{name:'Productdetails sluiten'}).click();await dialog.waitFor({state:'detached'});assert.equal(await page.getByLabel('ALPINE FLEECE Black maat M',{exact:true}).inputValue(),'3');
+  await dialog.getByRole('button',{name:'Productdetails sluiten'}).click();await dialog.waitFor({state:'detached'});assert.equal(await page.getByLabel('ALPINE FLEECE Black maat M',{exact:true}).first().inputValue(),'3');
   version=1;await page.evaluate(()=>window.dispatchEvent(new Event('focus')));await page.getByRole('heading',{name:'ALPINE UPDATED',exact:true}).waitFor();
   assert.equal(await page.getByLabel('ALPINE UPDATED Black maat M',{exact:true}).inputValue(),'3');
   await categories.getByRole('button',{name:/Nieuwe fleececategorie/}).waitFor();
@@ -137,7 +142,7 @@ try{
  await previewPage.addStyleTag({content:workspaceBundle.outputFiles.find(f=>f.path.endsWith('.css')).text});await previewPage.addScriptTag({content:workspaceBundle.outputFiles.find(f=>f.path.endsWith('.js')).text});
  await previewPage.getByText('Voorbeeldweergave van Kenny Endels',{exact:true}).waitFor();
  assert.equal(await previewPage.getByRole('button',{name:'Verkopers',exact:true}).count(),0);
- await previewPage.getByLabel('ALPINE FLEECE Black maat M',{exact:true}).fill('30');
+ await previewPage.getByLabel('ALPINE FLEECE Black maat M',{exact:true}).first().fill('30');
  assert.equal(await previewPage.getByRole('button',{name:'Indienen bij BIG K',exact:true}).isDisabled(),true);
  assert.equal(await previewPage.getByRole('button',{name:'Bewaar concept',exact:true}).isDisabled(),true);
  await previewPage.getByRole('button',{name:'Winkels',exact:true}).click();assert.equal(await previewPage.getByRole('button',{name:'Winkel opslaan',exact:true}).isDisabled(),true);

@@ -5,7 +5,7 @@ import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import assert from 'node:assert/strict';
 const root=await mkdtemp(join(tmpdir(),'bigk-organization-browser-')),origin='http://127.0.0.1:3220';
-const env={...process.env,DATABASE_PROVIDER:'sqlite',DATABASE_PATH:join(root,'store.sqlite'),DATABASE_SCHEMA:'bigk_staging',COMMERCE_MODE:'demo',APP_URL:origin,ADMIN_MFA_REQUIRED:'true',ADMIN_MFA_KEY:'b'.repeat(64),EMAIL_DELIVERY_ENABLED:'false',OPERATIONS_FIXTURE_PATH:join(root,'fixture.json')};delete env.VERCEL;delete env.VERCEL_ENV;delete env.ADMIN_CANONICAL_ORIGIN;
+const env={...process.env,DATABASE_PROVIDER:'sqlite',DATABASE_PATH:join(root,'store.sqlite'),DATABASE_SCHEMA:'bigk_staging',COMMERCE_MODE:'demo',B10_HOMEPAGE_BANNER:'off',APP_URL:origin,ADMIN_MFA_REQUIRED:'true',ADMIN_MFA_KEY:'b'.repeat(64),EMAIL_DELIVERY_ENABLED:'false',OPERATIONS_FIXTURE_PATH:join(root,'fixture.json')};delete env.VERCEL;delete env.VERCEL_ENV;delete env.ADMIN_CANONICAL_ORIGIN;
 let server,browser;
 try{
  const seed=await new Promise((resolve,reject)=>{const c=spawn(process.execPath,['--import','tsx','tests/fixtures/seed-store-organization.ts'],{env,stdio:'inherit'});c.once('error',reject);c.once('exit',resolve);});assert.equal(seed,0);
