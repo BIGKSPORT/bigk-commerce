@@ -69,6 +69,7 @@ export async function salesCrmData(actor:SalesActor){
  });
  return {
   actor,
+  emailDeliveryConfigured:actor.role==='owner'?Boolean(process.env.RESEND_API_KEY?.trim()&&process.env.EMAIL_FROM?.trim()&&process.env.APP_URL?.startsWith('https://')&&process.env.EMAIL_DELIVERY_ENABLED!=='false'):undefined,
   metrics:{prospects:prospects.length,openProspects:prospects.filter((p:any)=>!['converted','lost'].includes(String(p.stage))).length,followupsDue:followups.filter((f:any)=>!f.completed_at&&String(f.due_at)<=new Date().toISOString()).length,accounts:visibleAccounts.length+sellerCustomers.length,revenueCents:revenue},
   pipeline,
   sellers:performance,
