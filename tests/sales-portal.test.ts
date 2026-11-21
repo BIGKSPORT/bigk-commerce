@@ -88,11 +88,10 @@ await test('seller portal integration',async t=>{try{
  assert.equal((await admin(req('/api/sales/admin',first,{action:'paid',id:orderId,reference:'BANK-TEST-1'}))).status,403);
  assert.equal((await admin(req('/api/sales/admin',owner,{action:'paid',id:orderId,reference:'BANK-TEST-1'}))).status,200);
  let row=await salesDb().prepare('SELECT * FROM seller_orders WHERE id=?').get(orderId),q=JSON.parse(String(row!.quote));assert.equal(q.bonus,10000);assert.equal(q.rate,0.12);assert.equal(row!.earned_cents,q.commission);
- const dashboard=await (await crmPost(req('/api/sales/crm',first,{action:'customer.activity',customerId,note:'Initial contact log.'}))).json();assert.ok(dashboard.id);
  const crmData=await (await GET(req('/api/sales',first))).json();assert.equal(crmData.target.newStoresThisMonth,1);assert.equal(crmData.target.monthlyTarget,3);
  const inactiveQuote=await write(first,'quote',input());assert.equal(inactiveQuote.status,200);assert.equal((await inactiveQuote.json()).rate,0);
  assert.equal((await crmPost(req('/api/sales/crm',first,{action:'customer.activity',customerId,note:'Telefonisch contact over de volgende bestelling.'}))).status,200);
- const crmStatus=await (await crmPost(req('/api/sales/crm',first,{action:'customer.activity',customerId,note:'Extra opvolging.'}))).json();assert.ok(crmStatus.id);
+ const crmActive=await (await GET(req('/api/sales/crm',first))).json();assert.equal(crmActive.sellerCustomers[0].activeForCommission,true);
  const activeQuote=await write(first,'quote',input());assert.equal(activeQuote.status,200);assert.equal((await activeQuote.json()).rate,0.08);
  const r=await write(first,'order',input());assert.equal(r.status,200);const id=(await r.json()).id;assert.equal((await admin(req('/api/sales/admin',owner,{action:'paid',id,reference:'BANK-TEST-1'}))).status,409);assert.equal((await admin(req('/api/sales/admin',owner,{action:'paid',id,reference:'BANK-TEST-2'}))).status,200);row=await salesDb().prepare('SELECT * FROM seller_orders WHERE id=?').get(id);q=JSON.parse(String(row!.quote));assert.equal(q.bonus,0);assert.equal(q.rate,0.08);
  assert.equal((await admin(req('/api/sales/admin',owner,{action:'credit',id:customerId,approved:true}))).status,200);assert.equal((await write(first,'order',{...input(),terms:'net30'})).status,200);
