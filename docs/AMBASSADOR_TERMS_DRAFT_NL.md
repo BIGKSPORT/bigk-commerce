@@ -1,8 +1,8 @@
 # BIG K® Ambassadorprogramma — ontwerpvoorwaarden
 
-**Contractpartij:** BIGK BV (hierna: “BIGK”).  
+**Contractpartij:** BIGK BV, Theo Verellenlaan 27, 2990 Wuustwezel, België. Ondernemingsnummer en btw-nummer: **BE 1034.189.749**. Website: https://bigk.be. (hierna: “BIGK”).  
 **Status:** ontwerp voor juridische en fiscale nazicht; geen juridisch gevalideerde eindversie.  
-**Versie:** 0.1 — 21 november 2026.
+**Versie:** 0.2 — 21 november 2026.
 
 ## 1. Toelating en start
 
@@ -58,7 +58,7 @@ Reeds definitief goedgekeurde commissies blijven betaalbaar, behoudens fraude, t
 
 ## 9. Privacy
 
-BIGK verwerkt aanvraag- en accountgegevens voor beoordeling, contractbeheer, toerekening, fraudepreventie, boekhouding en communicatie. Alleen gegevens die daarvoor noodzakelijk zijn worden verwerkt en de toegang wordt beperkt. De volledige privacyverklaring moet vóór livegang de verwerkingsverantwoordelijke, contactgegevens, rechtsgronden, bewaartermijnen, ontvangers/verwerkers, rechten, klachtenmogelijkheid bij de Gegevensbeschermingsautoriteit en eventuele doorgiften buiten de EER concreet vermelden.
+BIGK verwerkt aanvraag- en accountgegevens voor beoordeling, contractbeheer, toerekening, fraudepreventie, boekhouding en communicatie. De afzonderlijke privacy-informatie voor de ambassadeursaanvraag beschrijft de gegevensverwerking. BIGK gebruikt de gegevens niet voor ongerelateerde marketing zonder een passende rechtsgrond.
 
 ## 10. Toepasselijk recht
 
@@ -66,11 +66,4 @@ Belgisch recht is van toepassing, onverminderd dwingende bescherming die aan een
 
 ---
 
-## Nog te bevestigen vóór publicatie
-
-- Volledige maatschappelijke zetel, ondernemingsnummer en contactgegevens van BIGK BV.
-- Of deelname uitsluitend B2B/zelfstandige ondernemers is, dan wel ook particulieren kunnen deelnemen; dit beïnvloedt facturatie, btw, sociale kwalificatie en mogelijk consumentenrecht.
-- Factuurflow, betalingstermijn, minimumbedrag en periodieke afrekening.
-- Definitie van uitgesloten producten en behandeling van gedeeltelijke retouren/chargebacks.
-- Definitieve privacyverklaring, bewaartermijnen en rechtsgrond per gegevenscategorie.
-- Controle door Belgische advocaat en accountant.
+Dit document blijft een ontwerp tot juridische en fiscale controle is afgerond. De definitieve afspraken over de doelgroep (particulieren en/of ondernemingen), factuurflow, betalingstermijn, minimumbedrag, uitgesloten producten en geschillenregeling moeten vóór activatie worden vastgelegd.
