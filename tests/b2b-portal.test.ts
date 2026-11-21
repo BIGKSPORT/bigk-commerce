@@ -14,6 +14,7 @@ import {GET,POST} from '../app/api/b2b/route';
 import {GET as authGet,POST as auth,DELETE as logout} from '../app/api/b2b/auth/route';
 import {GET as adminGet,POST as admin} from '../app/api/b2b/admin/route';
 import {createSalesCustomer} from '../lib/sales-service';
+import {commissionStatements} from '../lib/sales-commissions';
 const dir=mkdtempSync(join(tmpdir(),'bigk-b2b-'));
 Object.assign(process.env,{DATABASE_PROVIDER:'sqlite',DATABASE_PATH:join(dir,'store.sqlite'),DATABASE_SCHEMA:'bigk',NODE_ENV:'test',APP_URL:'https://bigk.example',B2B_PORTAL_ENABLED:'true',SELLER_PORTAL_ENABLED:'true',ADMIN_MFA_REQUIRED:'false'});delete process.env.VERCEL;delete process.env.VERCEL_ENV;
 function req(path:string,cookie='',data?:unknown,origin='https://bigk.example'){return new Request('https://bigk.example'+path,{method:data===undefined?'GET':'POST',headers:{cookie,origin,'Content-Type':'application/json'},...(data===undefined?{}:{body:JSON.stringify(data)})});}
@@ -86,7 +87,21 @@ await test('direct B2B portal integration',async t=>{let accountId='',secondId='
   const data={action:'paid',id:orderId,version:orderVersion,reference:'BANK-001'};const results=await Promise.all([write(data),write(data)]);assert.deepEqual(results.map(r=>r.status).sort(),[200,409]);
   const row=await db().prepare('SELECT stock,reserved FROM variants WHERE id=?').get(variant);assert.equal(row!.stock,170);assert.equal(row!.reserved,0);
   assert.equal((await write({action:'fulfil',id:orderId,version:3,tracking:'DPD TRACK-001'})).status,200);assert.equal((await db().prepare('SELECT stock FROM variants WHERE id=?').get(variant))!.stock,170);
-  const w=await b2bWorkspace(accountId);assert.equal(w.account.hasPaidOrder,true);assert.equal(w.orders[0].tracking,'DPD TRACK-001');const q=await quote(8);assert.equal(q.quote.minimum,30000);assert.equal(q.quote.subtotal,32000);assert.equal(q.quote.shipping,1250);assert.equal(q.quote.vat,6983);
+  const w=await b2bWorkspace(accountId);assert.equal(w.account.hasPaidOrder,true);assert.equal(w.orders[0].tracking,'DPD TRACK-001');
+  const sellerOne=crypto.randomUUID(),sellerTwo=crypto.randomUUID(),now=new Date().toISOString();
+  await salesDb().prepare('INSERT INTO seller_accounts(id,name,email,created_at) VALUES(?,?,?,?)').run(sellerOne,'Seller One','one@agents.test',now);
+  await salesDb().prepare('INSERT INTO seller_accounts(id,name,email,created_at) VALUES(?,?,?,?)').run(sellerTwo,'Seller Two','two@agents.test',now);
+  await salesDb().prepare('INSERT INTO seller_b2b_assignments(account_id,seller_id,assigned_at) VALUES(?,?,?)').run(accountId,sellerOne,now);
+  const repeatQuote=await quote(8),repeatRequest={items:[{variantId,quantity:8}],quoteKey:repeatQuote.key,requestKey:crypto.randomUUID(),accepted:true};
+  const repeatResponse=await POST(req('/api/b2b',cookie,{action:'order',data:repeatRequest}));assert.equal(repeatResponse.status,200);const repeatId=(await repeatResponse.json()).id;
+  await salesDb().prepare('UPDATE seller_b2b_assignments SET seller_id=?,assigned_at=? WHERE account_id=?').run(sellerTwo,new Date(Date.now()+1000).toISOString(),accountId);
+  assert.equal((await write({action:'confirm',id:repeatId,version:1,invoiceReference:'PRO-REPEAT',paymentInstructions:'Betaal op de rekening van de factuur.',paymentUrl:''})).status,200);
+  assert.equal((await write({action:'paid',id:repeatId,version:2,reference:'BANK-REPEAT'})).status,200);
+  const commissionOrder=await b2bDb().prepare('SELECT commission_seller_id,commission_rate,commission_cents,commission_bonus_cents FROM b2b_orders WHERE id=?').get(repeatId);
+  assert.equal(commissionOrder!.commission_seller_id,sellerOne);assert.equal(Number(commissionOrder!.commission_rate),0.08);assert.equal(Number(commissionOrder!.commission_cents),2560);assert.equal(Number(commissionOrder!.commission_bonus_cents),0);
+  const statement=(await commissionStatements({id:sellerOne,name:'Seller One',role:'seller'})).flatMap(x=>x.lines).find(x=>x.orderId===repeatId);assert.equal(statement?.commissionCents,2560);
+  assert.equal((await commissionStatements({id:sellerTwo,name:'Seller Two',role:'seller'})).flatMap(x=>x.lines).some(x=>x.orderId===repeatId),false);
+  const q=await quote(8);assert.equal(q.quote.minimum,30000);assert.equal(q.quote.subtotal,32000);assert.equal(q.quote.shipping,1250);assert.equal(q.quote.vat,6983);
  });
  await t.test('cancelling confirmed orders releases only their reservation and cannot cancel paid sales',async()=>{
   const q=await quote(8),r=await POST(req('/api/b2b',cookie,{action:'order',data:{items:[{variantId:variant,quantity:8}],quoteKey:q.key,requestKey:crypto.randomUUID(),accepted:true}})),id=(await r.json()).id;
