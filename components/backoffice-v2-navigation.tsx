@@ -10,6 +10,7 @@ type Props={
  activeTab:string;
  products:Product[];
  orders:Order[];
+ salesAvailable:boolean;
  onNavigate:(tab:string)=>void;
  onProductSelect:(product:Product)=>void;
  onOrderSelect:(order:Order)=>void;
@@ -59,7 +60,7 @@ const groups:NavGroup[]=[
   {label:'Shipping test tools',href:'/admin/shipping-test',icon:Package},
  ]},
 ];
-export default function BackofficeV2Navigation({activeTab,products,orders,onNavigate,onProductSelect,onOrderSelect,onCustomerSelect}:Props){
+export default function BackofficeV2Navigation({activeTab,products,orders,salesAvailable,onNavigate,onProductSelect,onOrderSelect,onCustomerSelect}:Props){
  const [expanded,setExpanded]=useState<string[]>(['Orders','Products','Content']);
  const [searchOpen,setSearchOpen]=useState(false),[query,setQuery]=useState(''),[customers,setCustomers]=useState<CustomerResult[]>([]),[customersLoaded,setCustomersLoaded]=useState(false),[customerError,setCustomerError]=useState(''),[loadingCustomers,setLoadingCustomers]=useState(false);
  useEffect(()=>{
@@ -83,7 +84,7 @@ export default function BackofficeV2Navigation({activeTab,products,orders,onNavi
    <nav className={styles.navigation} aria-label="Backoffice navigation">
     {groups.map(group=>{const active=group.items.some(item=>item.tab===activeTab);const open=expanded.includes(group.label)||active;return <section className={styles.group} key={group.label}>
      {group.items.length===1&&group.items[0].tab==='Overview'?<button type="button" className={active?styles.active:styles.groupButton} onClick={()=>onNavigate('Overview')}><group.icon size={17}/><span>{group.label}</span></button>:<button type="button" className={active?styles.activeGroup:styles.groupButton} aria-expanded={open} onClick={()=>setExpanded(old=>old.includes(group.label)?old.filter(x=>x!==group.label):[...old,group.label])}><group.icon size={17}/><span>{group.label}</span>{open?<ChevronDown size={14}/>:<ChevronRight size={14}/>}</button>}
-     {open&&group.items.length>1&&<div className={styles.children}>{group.items.map(item=>{const Icon=item.icon;const selected=item.tab===activeTab;return item.disabled?<div className={styles.disabled} key={item.label} title={item.hint}><Icon size={15}/><span>{item.label}</span><small>Later</small></div>:item.href?<a className={styles.childLink} href={item.href} key={item.label}><Icon size={15}/><span>{item.label}</span></a>:<button type="button" key={item.label} className={selected?styles.childActive:styles.childLink} onClick={()=>onNavigate(item.tab!)}><Icon size={15}/><span>{item.label}</span></button>})}</div>}
+     {open&&group.items.length>1&&<div className={styles.children}>{group.items.map(item=>{const Icon=item.icon;const selected=item.tab===activeTab;return item.disabled?<div className={styles.disabled} key={item.label} title={item.hint}><Icon size={15}/><span>{item.label}</span><small>Later</small></div>:item.href?<a className={styles.childLink} href={item.href} key={item.label}><Icon size={15}/><span>{item.label}</span></a>:<button type="button" key={item.label} className={selected?styles.childActive:styles.childLink} onClick={()=>onNavigate(item.tab!)}><Icon size={15}/><span>{item.label}</span></button>})}{group.label==='Sales channels'&&salesAvailable&&<a className={styles.childLink} href="/staff/sales"><Users size={15}/><span>Seller portal</span></a>}</div>}
     </section>})}
    </nav>
    <div className={styles.footer}><span>BIG K · Store admin</span></div>
