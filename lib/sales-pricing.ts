@@ -1,4 +1,5 @@
 import type {SalesProduct,SalesQuote} from './sales-types';
+// CRM contact activity is for follow-up only; every paid repeat order earns the standard rate.
 export const salesRules={firstMinimum:120000,reorderMinimum:30000,factorThreshold:200000,openingBonus:10000,proformaRate:0.12,reorderRate:0.08,monthlyNewStoreTarget:3};
 // All money is integer euro cents. The owner's factor convention divides VAT-inclusive RRP
 // by the factor to obtain the VAT-exclusive wholesale unit price.
