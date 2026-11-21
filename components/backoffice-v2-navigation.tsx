@@ -15,7 +15,9 @@ type Props={
  onOrderSelect:(order:Order)=>void;
  onCustomerSelect:(id:string)=>void;
 };
-const groups=[
+type NavItem={label:string;icon:typeof Home;tab?:string;href?:string;disabled?:boolean;hint?:string};
+type NavGroup={label:string;icon:typeof Home;items:NavItem[]};
+const groups:NavGroup[]=[
  {label:'Home',icon:Home,items:[{label:'Home',tab:'Overview',icon:LayoutDashboard}]},
  {label:'Orders',icon:ShoppingBag,items:[
   {label:'All orders',tab:'Orders',icon:ShoppingBag},
