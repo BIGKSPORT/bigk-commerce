@@ -4,7 +4,7 @@ Location: `/staff/sales` → **Commissies**, for the owner and each seller. Owne
 
 ## Current supported flow
 
-- Only existing in-stock seller orders are included. BIG K must register the **full customer payment** with its existing order-payment action. Draft, submitted and cancelled orders do not earn commission here.
+- Only existing in-stock seller orders are included. BIGK BV must register the **full customer payment** with its existing order-payment action. Draft, submitted and cancelled orders do not earn commission here.
 - Existing order commission and opening-bonus snapshots are authoritative. Historical pricing, rates and bonus qualification are not recalculated by the statement feature.
 - Statements include all fully paid seller orders, not just the dashboard's latest 200. The month is determined by the stored customer-payment registration timestamp (`updated_at` on finalised paid orders), in Europe/Brussels.
 - The current month is accruing. A closed month's planned payment date is the tenth of the following month. No scheduler or bank transfer is performed.
