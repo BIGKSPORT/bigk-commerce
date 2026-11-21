@@ -38,6 +38,7 @@ const groups:NavGroup[]=[
  {label:'Marketing',icon:Megaphone,items:[
   {label:'Campaigns',tab:'Marketing',icon:Megaphone},
   {label:'BIG K Club',tab:'BigK Club',icon:Users},
+  {label:'Ambassadors',tab:'Ambassadors',icon:Users},
   {label:'Events',tab:'Events',icon:Ticket},
  ]},
  {label:'Discounts',icon:Tag,items:[{label:'Discount codes',tab:'Discounts',icon:Tag}]},
