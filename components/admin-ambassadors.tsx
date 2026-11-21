@@ -5,7 +5,7 @@ type Props={transport:AdminTransport};
 type Data={applications:Record<string,unknown>[];ambassadors:Record<string,unknown>[];commissions:Record<string,unknown>[];payouts:Record<string,unknown>[]};
 const euro=(n:unknown)=>new Intl.NumberFormat('nl-BE',{style:'currency',currency:'EUR'}).format(Number(n||0)/100);
 export function AdminAmbassadors({transport}:Props){
- const [data,setData]=useState<Data>({applications:[],ambassadors:[],commissions:[],payouts:[]}),[error,setError]=useState(''),[busy,setBusy]=useState(false),[note,setNote]=useState('Goedgekeurd na controle'),[invoice,setInvoice]=useState(''),[start,setStart]=useState(new Date().toISOString().slice(0,7)+'-01'),[end,setEnd]=useState(new Date().toISOString().slice(0,10));
+ const [data,setData]=useState<Data>({applications:[],ambassadors:[],commissions:[],payouts:[]}),[error,setError]=useState(''),[busy,setBusy]=useState(false),[note,setNote]=useState('Goedgekeurd na controle'),[invoice,setInvoice]=useState(''),[reviewDates,setReviewDates]=useState<Record<string,{deliveredAt:string;returnsClosedAt:string;verifiedNetCents:string}>>({}),[start,setStart]=useState(new Date().toISOString().slice(0,7)+'-01'),[end,setEnd]=useState(new Date().toISOString().slice(0,10));
  async function load(){try{setData(await transport.request('/api/admin/ambassadors'))}catch(e){setError((e as Error).message)}}
  useEffect(()=>{void load()},[]);
  async function act(payload:Record<string,unknown>){setBusy(true);setError('');try{await transport.request('/api/admin/ambassadors',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});await load()}catch(e){setError((e as Error).message)}finally{setBusy(false)}}
