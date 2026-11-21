@@ -5,7 +5,7 @@ import {products,transaction} from './db';
 import {salesDb as db} from './sales-db';
 import {salesEvent} from './sales-auth';
 import {HttpError,hash} from './security';
-import {salesQuote} from './sales-pricing';
+import {salesQuote,salesRules} from './sales-pricing';
 import {sharedProducts,productGroups} from './product-groups';
 import {publicCategoryOptions} from './catalog-categories';
 import {categoryLabel} from './category-labels';
@@ -37,11 +37,11 @@ export async function salesCatalogueData():Promise<{catalogue:SalesProduct[];mod
  return {catalogue,models};
 }
 export async function salesCatalogue():Promise<SalesProduct[]>{return (await salesCatalogueData()).catalogue;}
-function customerRow(r:Record<string,unknown>):SalesCustomer{return {id:String(r.id),name:String(r.name),vat:'BE'+r.vat,contact:String(r.contact),email:String(r.email),phone:String(r.phone),address:String(r.address),creditApproved:!!Number(r.credit_approved),hasPaidOrder:Number(r.has_paid_order)>0};}
+function customerRow(r:Record<string,unknown>):SalesCustomer{const lastActivityAt=r.last_activity_at?String(r.last_activity_at):null;return {id:String(r.id),name:String(r.name),vat:'BE'+r.vat,contact:String(r.contact),email:String(r.email),phone:String(r.phone),address:String(r.address),creditApproved:!!Number(r.credit_approved),hasPaidOrder:Number(r.has_paid_order)>0,lastActivityAt,activeForCommission:!!lastActivityAt&&Date.parse(lastActivityAt)>=Date.now()-salesRules.activeCustomerDays*86400000};}
 function orderRow(r:Record<string,unknown>):SalesOrder{return {id:String(r.id),version:Number(r.version),customerId:String(r.customer_id),customerName:String(r.customer_name),sellerId:String(r.seller_id),sellerName:String(r.seller_name),status:r.status as SalesOrder['status'],terms:r.terms as SalesOrder['terms'],quote:JSON.parse(String(r.quote)),earnedCents:Number(r.earned_cents),createdAt:String(r.created_at),paymentReference:String(r.payment_reference)};}
 export async function salesWorkspace(actor:SalesActor):Promise<SalesWorkspace>{
  const filter=actor.role==='owner'?'':' WHERE seller_id=?',params=actor.role==='owner'?[]:[actor.id];
- const [commissions,catalogueData,customers,orders,accounts]=await Promise.all([commissionStatements(actor),salesCatalogueData(),db().prepare('SELECT c.*,(SELECT COUNT(*) FROM seller_orders o WHERE o.customer_id=c.id AND o.status=\'paid\') AS has_paid_order FROM seller_customers c'+(actor.role==='owner'?'':' WHERE c.seller_id=?')+' ORDER BY c.name').all(...params),db().prepare('SELECT o.*,c.name AS customer_name,a.name AS seller_name FROM seller_orders o JOIN seller_customers c ON c.id=o.customer_id JOIN seller_accounts a ON a.id=o.seller_id'+(actor.role==='owner'?'':' WHERE o.seller_id=?')+' ORDER BY o.created_at DESC LIMIT 200').all(...params),actor.role==='owner'?db().prepare('SELECT id,name,email,active FROM seller_accounts ORDER BY name').all():Promise.resolve(undefined)]);
+ const [commissions,catalogueData,customers,orders,accounts]=await Promise.all([commissionStatements(actor),salesCatalogueData(),db().prepare('SELECT c.*,(SELECT COUNT(*) FROM seller_orders o WHERE o.customer_id=c.id AND o.status=\'paid\') AS has_paid_order,(SELECT MAX(x.activity_at) FROM seller_customer_activities x WHERE x.customer_id=c.id AND x.seller_id=c.seller_id) AS last_activity_at FROM seller_customers c'+(actor.role==='owner'?'':' WHERE c.seller_id=?')+' ORDER BY c.name').all(...params),db().prepare('SELECT o.*,c.name AS customer_name,a.name AS seller_name FROM seller_orders o JOIN seller_customers c ON c.id=o.customer_id JOIN seller_accounts a ON a.id=o.seller_id'+(actor.role==='owner'?'':' WHERE o.seller_id=?')+' ORDER BY o.created_at DESC LIMIT 200').all(...params),actor.role==='owner'?db().prepare('SELECT id,name,email,active FROM seller_accounts ORDER BY name').all():Promise.resolve(undefined)]);
  return {actor,commissions,catalogue:catalogueData.catalogue,models:catalogueData.models,customers:customers.map(customerRow),orders:orders.map(orderRow),accounts:accounts?.map(r=>({id:String(r.id),name:String(r.name),email:String(r.email),active:Number(r.active)}))};
 }
 export async function createSalesCustomer(actor:SalesActor,input:z.infer<typeof customerInput>){if(actor.role!=='seller')throw new HttpError(403,'Klanten worden aangemaakt vanuit een verkopersaccount.');return transaction(async()=>{
@@ -51,10 +51,11 @@ export async function createSalesCustomer(actor:SalesActor,input:z.infer<typeof 
 });}
 async function ownedCustomer(actor:SalesActor,id:string){const row=await db().prepare('SELECT * FROM seller_customers WHERE id=?'+(actor.role==='seller'?' AND seller_id=?':'')).get(id,...(actor.role==='seller'?[actor.id]:[]));if(!row)throw new HttpError(404,'Klant niet gevonden.');return row;}
 async function firstOrder(customerId:string){return !await db().prepare("SELECT id FROM seller_orders WHERE customer_id=? AND status='paid'").get(customerId);}
+async function activeCustomerFollowup(customerId:string,sellerId:string){const row=await db().prepare('SELECT MAX(activity_at) AS last_activity_at FROM seller_customer_activities WHERE customer_id=? AND seller_id=?').get(customerId,sellerId);return !!row?.last_activity_at&&Date.parse(String(row.last_activity_at))>=Date.now()-salesRules.activeCustomerDays*86400000;}
 export async function calculateSalesQuote(actor:SalesActor,input:z.infer<typeof orderInput>):Promise<SalesQuote>{
- const c=await ownedCustomer(actor,input.customerId),first=await firstOrder(input.customerId);
+ const c=await ownedCustomer(actor,input.customerId),first=await firstOrder(input.customerId),activeRepeat=!first&&await activeCustomerFollowup(input.customerId,actor.id);
  if(input.terms==='net30'&&(!Number(c.credit_approved)||first))throw new HttpError(409,'30 dagen is alleen beschikbaar voor goedgekeurde klanten met een betaalde eerdere bestelling.');
- let quote:SalesQuote;try{quote=salesQuote(await salesCatalogue(),input.items,input.factor,input.terms,first);}catch(e){throw new HttpError(400,e instanceof Error?e.message:'Ongeldige bestelling.');}
+ let quote:SalesQuote;try{quote=salesQuote(await salesCatalogue(),input.items,input.factor,input.terms,first,activeRepeat);}catch(e){throw new HttpError(400,e instanceof Error?e.message:'Ongeldige bestelling.');}
  if(input.factor===2.7&&!quote.factorEligible)throw new HttpError(409,'Factor 2,7 vereist €2.000 core-kleding, berekend aan factor 2,5.');
  for(const line of quote.lines)if(line.quantity>line.available)throw new HttpError(409,line.name+' '+line.colour+' '+line.size+': onvoldoende beschikbare voorraad.');
  return quote;
@@ -76,7 +77,7 @@ export async function changeSalesOrder(actor:SalesActor,id:string,action:'submit
  if(actor.role!=='owner')throw new HttpError(403,'Alleen BIG K kan ontvangen betalingen registreren.');
  if(row.status!=='submitted'||reference.trim().length<4)throw new HttpError(409,'Dien de bestelling eerst in en geef de betalingsreferentie op.');
  if(await db().prepare("SELECT id FROM seller_orders WHERE payment_reference=? AND status='paid'").get(reference.trim()))throw new HttpError(409,'Deze betalingsreferentie is al gebruikt.');
- const first=await firstOrder(String(row.customer_id));quote={...quote,bonus:first&&row.terms==='proforma'&&quote.subtotal>=120000?10000:0};quote.commission=Math.round(quote.subtotal*quote.rate)+quote.bonus;
+ const first=await firstOrder(String(row.customer_id)),activeRepeat=!first&&await activeCustomerFollowup(String(row.customer_id),String(row.seller_id));const rate=first?(row.terms==='proforma'?salesRules.proformaRate:salesRules.reorderRate):(activeRepeat?salesRules.reorderRate:0),bonus=first&&quote.subtotal>=salesRules.firstMinimum?salesRules.openingBonus:0;quote={...quote,rate,bonus,commission:Math.round(quote.subtotal*rate)+bonus};
  }else if(action==='submit'){
  if(row.status!=='draft')throw new HttpError(409,'Deze bestelling is al ingediend.');
  quote=await calculateSalesQuote(actor,{customerId:String(row.customer_id),items:quote.lines.map(l=>({variantId:l.id,quantity:l.quantity})),factor:quote.factor,terms:row.terms as 'proforma'|'net30',submit:true,requestKey:crypto.randomUUID()});if(!quote.minimumMet)throw new HttpError(409,'Minimum bestelbedrag nog niet bereikt.');
