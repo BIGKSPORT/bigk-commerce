@@ -39,7 +39,7 @@ try{
   await page.getByLabel('E-mailadres',{exact:true}).fill('rep@example.test');await page.getByLabel('Wachtwoord',{exact:true}).fill('Fixture password 1234');await page.getByLabel('Authenticatorcode').fill('123456');await page.getByRole('button',{name:'Inloggen',exact:true}).click();
   await page.getByRole('heading',{name:'Goed op weg, Nicky.'}).waitFor();if(mobile)await page.getByRole('button',{name:'Bestelling openen of sluiten'}).click();await page.getByLabel('Winkel',{exact:true}).selectOption(customer.id);
   assert.equal(await page.getByLabel('ALPINE FLEECE Black maat XL',{exact:true}).isDisabled(),true);
-  await page.getByLabel('ALPINE FLEECE Black maat M',{exact:true}).fill('30');await page.getByText('€ 311,54',{exact:true}).waitFor();
+  await page.getByLabel('ALPINE FLEECE Black maat M',{exact:true}).first().fill('30');await page.getByText('€ 311,54',{exact:true}).waitFor();
   await page.getByLabel('Presentatiemodus').check();assert.equal(await page.getByText('Jouw verwachte commissie',{exact:true}).count(),0);await page.getByLabel('Presentatiemodus').uncheck();
   if(mobile)await page.getByRole('button',{name:'Bestelling openen of sluiten'}).click();const screenshot=await page.screenshot({path:out+'/sales-'+name+'.png',fullPage:true});if(process.env.CI)console.log('SALES_SCREENSHOT '+name+' '+(await sharp(screenshot).resize({width:Math.min(width,1100)}).webp({quality:70}).toBuffer()).toString('base64'));
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+1),false);
