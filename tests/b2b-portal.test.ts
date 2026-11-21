@@ -93,7 +93,7 @@ await test('direct B2B portal integration',async t=>{let accountId='',secondId='
   await salesDb().prepare('INSERT INTO seller_accounts(id,name,email,created_at) VALUES(?,?,?,?)').run(sellerTwo,'Seller Two','two@agents.test',now);
   await salesDb().prepare('INSERT INTO seller_b2b_assignments(account_id,seller_id,assigned_at) VALUES(?,?,?)').run(accountId,sellerOne,now);
   assert.equal((await salesWorkspace({id:sellerOne,name:'Seller One',role:'seller'})).customers.some(c=>c.id===accountId&&c.source==='b2b'),true);
-  const repeatQuote=await quote(8),repeatRequest={items:[{variantId,quantity:8}],quoteKey:repeatQuote.key,requestKey:crypto.randomUUID(),accepted:true};
+  const repeatQuote=await quote(8),repeatRequest={items:[{variantId:variant,quantity:8}],quoteKey:repeatQuote.key,requestKey:crypto.randomUUID(),accepted:true};
   const repeatResponse=await POST(req('/api/b2b',cookie,{action:'order',data:repeatRequest}));assert.equal(repeatResponse.status,200);const repeatId=(await repeatResponse.json()).id;
   await salesDb().prepare('UPDATE seller_b2b_assignments SET seller_id=?,assigned_at=? WHERE account_id=?').run(sellerTwo,new Date(Date.now()+1000).toISOString(),accountId);
   assert.equal((await write({action:'confirm',id:repeatId,version:1,invoiceReference:'PRO-REPEAT',paymentInstructions:'Betaal op de rekening van de factuur.',paymentUrl:''})).status,200);
