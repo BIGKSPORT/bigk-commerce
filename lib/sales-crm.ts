@@ -18,7 +18,7 @@ export const prospectInput=z.object({
 }).strict();
 export const prospectUpdate=z.object({
  id:z.string().uuid(),
- stage:z.enum(prospectStages).optional(),
+ stage:z.enum(['prospect','contacted','interested','negotiation','lost']).optional(),
  notes:z.string().trim().max(4000).optional(),
  sellerId:z.string().uuid().nullable().optional()
 }).strict();
@@ -26,11 +26,12 @@ export const crmAction=z.discriminatedUnion('action',[
  z.object({action:z.literal('prospect.create'),data:prospectInput}).strict(),
  z.object({action:z.literal('prospect.update'),data:prospectUpdate}).strict(),
  z.object({action:z.literal('account.assign'),accountId:z.string().uuid(),sellerId:z.string().uuid().nullable()}).strict(),
- z.object({action:z.literal('account.contact'),accountId:z.string().uuid(),contact:z.string().trim().min(2).max(100),email:z.email().max(254),phone:z.string().trim().min(6).max(50),address:z.string().trim().min(5).max(500)}).strict(),
+ z.object({action:z.literal('account.contact'),accountId:z.string().uuid(),contact:z.string().trim().min(2).max(100),email:z.email().max(254),phone:z.string().trim().min(6).max(50),address:z.string().trim().min(5).max(500),postal:z.string().regex(/^\d{4}$/),city:z.string().trim().min(2).max(100)}).strict(),
  z.object({action:z.literal('prospect.convert'),prospectId:z.string().uuid(),accountId:z.string().uuid()}).strict(),
  z.object({action:z.literal('followup.create'),prospectId:z.string().uuid().optional(),accountId:z.string().uuid().optional(),sellerId:z.string().uuid().optional(),dueAt:z.string().datetime(),note:z.string().trim().min(2).max(2000)}).strict().refine(v=>!!(v.prospectId||v.accountId)&&!(v.prospectId&&v.accountId),'Kies één prospect of account.'),
  z.object({action:z.literal('followup.complete'),id:z.string().uuid()}).strict()
 ]);
+function validBelgianVat(value:string){const vat=value.toUpperCase().replace(/^BE/,'');return /^[01]\d{9}$/.test(vat)&&97-Number(vat.slice(0,8))%97===Number(vat.slice(8));}
 const ownerOnly=(actor:SalesActor)=>{if(actor.role!=='owner')throw new HttpError(403,'Alleen BIG K kan deze wijziging uitvoeren.');};
 async function sellerExists(id:string){if(!await salesDb().prepare('SELECT id FROM seller_accounts WHERE id=? AND active=1').get(id))throw new HttpError(404,'Actieve verkoper niet gevonden.');}
 async function ownedProspect(actor:SalesActor,id:string){const row=await salesDb().prepare('SELECT * FROM seller_prospects WHERE id=?'+(actor.role==='seller'?' AND seller_id=?':'')).get(id,...(actor.role==='seller'?[actor.id]:[]));if(!row)throw new HttpError(404,'Prospect niet gevonden.');return row;}
@@ -71,9 +72,9 @@ export async function salesCrmData(actor:SalesActor){
   metrics:{prospects:prospects.length,openProspects:prospects.filter((p:any)=>!['converted','lost'].includes(String(p.stage))).length,followupsDue:followups.filter((f:any)=>!f.completed_at&&String(f.due_at)<=new Date().toISOString()).length,accounts:visibleAccounts.length+sellerCustomers.length,revenueCents:revenue},
   pipeline,
   sellers:performance,
-  prospects:prospects.map((p:any)=>({...p,id:String(p.id),sellerId:p.seller_id?String(p.seller_id):null,sellerName:p.seller_name||'Niet toegewezen',stage:String(p.stage),createdAt:String(p.created_at),updatedAt:String(p.updated_at)})),
+  prospects:prospects.map((p:any)=>({...p,id:String(p.id),sellerId:p.seller_id?String(p.seller_id):null,sellerName:p.seller_name||'Niet toegewezen',vatValid:!p.vat||validBelgianVat(String(p.vat)),stage:String(p.stage),createdAt:String(p.created_at),updatedAt:String(p.updated_at)})),
   followups:followups.map((f:any)=>({...f,id:String(f.id),sellerId:String(f.seller_id),prospectId:f.prospect_id?String(f.prospect_id):null,accountId:f.account_id?String(f.account_id):null,dueAt:String(f.due_at),completedAt:f.completed_at?String(f.completed_at):null})),
-  accounts:visibleAccounts.map((a:any)=>{const assigned=assignmentById.get(String(a.id));return {id:String(a.id),name:String(a.name),vat:'BE'+String(a.vat),email:String(a.email),contact:String(a.contact),phone:String(a.phone),address:String(a.address),postal:String(a.postal),city:String(a.city),active:!!Number(a.active),hasPaidOrder:Number(a.paid_orders)>0,sellerId:assigned?String(assigned.seller_id):null,sellerName:assigned?String(assigned.seller_name):'Niet toegewezen',orders:visibleB2BOrders.filter((o:any)=>String(o.account_id)===String(a.id)).length};}),
+  accounts:visibleAccounts.map((a:any)=>{const assigned=assignmentById.get(String(a.id));return {id:String(a.id),name:String(a.name),vat:'BE'+String(a.vat),vatValid:validBelgianVat(String(a.vat)),email:String(a.email),contact:String(a.contact),phone:String(a.phone),address:String(a.address),postal:String(a.postal),city:String(a.city),active:!!Number(a.active),hasPaidOrder:Number(a.paid_orders)>0,sellerId:assigned?String(assigned.seller_id):null,sellerName:assigned?String(assigned.seller_name):'Niet toegewezen',orders:visibleB2BOrders.filter((o:any)=>String(o.account_id)===String(a.id)).length};}),
   sellerCustomers:sellerCustomers.map((c:any)=>({id:String(c.id),name:String(c.name),vat:'BE'+String(c.vat),contact:String(c.contact),email:String(c.email),phone:String(c.phone),creditApproved:!!Number(c.credit_approved),sellerName:String(c.seller_name)})),
   orders:visibleB2BOrders.map((o:any)=>({id:String(o.id),accountId:String(o.account_id),status:String(o.status),totalCents:Number(JSON.parse(String(o.quote)).total||0),createdAt:String(o.created_at),customer:JSON.parse(String(o.customer))})),
   salesOrders:sellerOrders.map((o:any)=>({id:String(o.id),sellerId:String(o.seller_id),sellerName:String(o.seller_name),customerName:String(o.customer_name),status:String(o.status),totalCents:Number(JSON.parse(String(o.quote)).total||0),createdAt:String(o.created_at)}))
@@ -81,49 +82,55 @@ export async function salesCrmData(actor:SalesActor){
 }
 export async function mutateSalesCrm(actor:SalesActor,action:z.infer<typeof crmAction>){
  const now=new Date().toISOString();
- if(action.action==='prospect.create'){
+ if(action.action==='prospect.create')return transaction(async()=>{
   const data=action.data,sellerId=actor.role==='seller'?actor.id:(data.sellerId||null);
   if(sellerId)await sellerExists(sellerId);
-  if(data.vat){const vat=data.vat.toUpperCase().replace(/^BE/,'');if(!/^[01]\d{9}$/.test(vat)||97-Number(vat.slice(0,8))%97!==Number(vat.slice(8)))throw new HttpError(400,'Ongeldig Belgisch btw-nummer.');if(await b2bDb().prepare('SELECT id FROM b2b_accounts WHERE vat=?').get(vat))throw new HttpError(409,'Dit btw-nummer bestaat al als B2B-account. Koppel de bestaande klant.');}
-  const id=crypto.randomUUID();await salesDb().prepare('INSERT INTO seller_prospects(id,seller_id,company_name,vat,contact,email,phone,stage,notes,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?)').run(id,sellerId,data.companyName,data.vat.toUpperCase().replace(/^BE/,''),data.contact,data.email.toLowerCase(),data.phone,'prospect',data.notes,now,now);return {id};
- }
- if(action.action==='prospect.update'){
+  const vat=data.vat.toUpperCase().replace(/^BE/,'');
+  if(data.vat){if(!/^[01]\d{9}$/.test(vat)||97-Number(vat.slice(0,8))%97!==Number(vat.slice(8)))throw new HttpError(400,'Ongeldig Belgisch btw-nummer.');if(await b2bDb().prepare('SELECT id FROM b2b_accounts WHERE vat=?').get(vat))throw new HttpError(409,'Dit btw-nummer bestaat al als B2B-account. Koppel de bestaande klant.');if(await salesDb().prepare('SELECT id FROM seller_prospects WHERE vat=?').get(vat))throw new HttpError(409,'Dit btw-nummer staat al in de prospectpipeline.');}
+  const id=crypto.randomUUID();await salesDb().prepare('INSERT INTO seller_prospects(id,seller_id,company_name,vat,contact,email,phone,stage,notes,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?)').run(id,sellerId,data.companyName,vat,data.contact,data.email.toLowerCase(),data.phone,'prospect',data.notes,now,now);await salesEvent(actor,'crm.prospect_created',id);return {id};
+ });
+ if(action.action==='prospect.update')return transaction(async()=>{
   const row=await ownedProspect(actor,action.data.id),d=action.data;
   if(actor.role==='seller'&&d.sellerId!==undefined)throw new HttpError(403,'Alleen BIG K kan prospects opnieuw toewijzen.');
   if(d.sellerId!==undefined&&d.sellerId)await sellerExists(d.sellerId);
-  await salesDb().prepare('UPDATE seller_prospects SET stage=?,notes=?,seller_id=?,updated_at=? WHERE id=?').run(d.stage||row.stage,d.notes===undefined?row.notes:d.notes,d.sellerId===undefined?row.seller_id:d.sellerId,now,d.id);return {ok:true};
- }
- if(action.action==='account.assign'){
+  const nextSeller=d.sellerId===undefined?row.seller_id:d.sellerId;
+  await salesDb().prepare('UPDATE seller_prospects SET stage=?,notes=?,seller_id=?,updated_at=? WHERE id=?').run(d.stage||row.stage,d.notes===undefined?row.notes:d.notes,nextSeller,now,d.id);
+  if(d.sellerId!==undefined&&d.sellerId)await salesDb().prepare('UPDATE seller_followups SET seller_id=? WHERE prospect_id=?').run(d.sellerId,d.id);
+  await salesEvent(actor,'crm.prospect_updated',d.id);return {ok:true};
+ });
+ if(action.action==='account.assign')return transaction(async()=>{
   ownerOnly(actor);if(action.sellerId)await sellerExists(action.sellerId);
   if(!await b2bDb().prepare('SELECT id FROM b2b_accounts WHERE id=?').get(action.accountId))throw new HttpError(404,'B2B-account niet gevonden.');
-  if(action.sellerId)await salesDb().prepare('INSERT INTO seller_b2b_assignments(account_id,seller_id,assigned_at) VALUES(?,?,?) ON CONFLICT(account_id) DO UPDATE SET seller_id=excluded.seller_id,assigned_at=excluded.assigned_at').run(action.accountId,action.sellerId,now);
+  if(action.sellerId){await salesDb().prepare('INSERT INTO seller_b2b_assignments(account_id,seller_id,assigned_at) VALUES(?,?,?) ON CONFLICT(account_id) DO UPDATE SET seller_id=excluded.seller_id,assigned_at=excluded.assigned_at').run(action.accountId,action.sellerId,now);await salesDb().prepare('UPDATE seller_followups SET seller_id=? WHERE account_id=?').run(action.sellerId,action.accountId);}
   else await salesDb().prepare('DELETE FROM seller_b2b_assignments WHERE account_id=?').run(action.accountId);
-  return {ok:true};
- }
+  await salesEvent(actor,'crm.account_assigned',action.accountId);return {ok:true};
+ });
  if(action.action==='account.contact')return transaction(async()=>{
   await canAccessAccount(actor,action.accountId);
-  const account=await b2bDb().prepare('SELECT id FROM b2b_accounts WHERE id=?').get(action.accountId);if(!account)throw new HttpError(404,'B2B-account niet gevonden.');
-  if(await b2bDb().prepare('SELECT id FROM b2b_accounts WHERE email=? AND id<>?').get(action.email.toLowerCase(),action.accountId))throw new HttpError(409,'Dit e-mailadres is al aan een ander B2B-account gekoppeld.');
-  await b2bDb().prepare('UPDATE b2b_accounts SET contact=?,email=?,phone=?,address=?,version=version+1,updated_at=? WHERE id=?').run(action.contact,action.email.toLowerCase(),action.phone,action.address,now,action.accountId);
-  await b2bDb().prepare('DELETE FROM b2b_sessions WHERE account_id=?').run(action.accountId);await b2bDb().prepare('DELETE FROM b2b_links WHERE account_id=?').run(action.accountId);
-  await salesEvent(actor,'b2b.account_contact_updated',action.accountId);return {ok:true};
+  const account=await b2bDb().prepare('SELECT id,email FROM b2b_accounts WHERE id=?').get(action.accountId);if(!account)throw new HttpError(404,'B2B-account niet gevonden.');
+  const email=action.email.toLowerCase().trim(),emailChanged=email!==String(account.email).toLowerCase();
+  if(await b2bDb().prepare('SELECT id FROM b2b_accounts WHERE email=? AND id<>?').get(email,action.accountId))throw new HttpError(409,'Dit e-mailadres is al aan een ander B2B-account gekoppeld.');
+  if(emailChanged)await b2bDb().prepare('UPDATE b2b_accounts SET contact=?,email=?,phone=?,address=?,postal=?,city=?,version=version+1,updated_at=? WHERE id=?').run(action.contact,email,action.phone,action.address,action.postal,action.city,now,action.accountId);
+  else await b2bDb().prepare('UPDATE b2b_accounts SET contact=?,phone=?,address=?,postal=?,city=?,updated_at=? WHERE id=?').run(action.contact,action.phone,action.address,action.postal,action.city,now,action.accountId);
+  if(emailChanged){await b2bDb().prepare('DELETE FROM b2b_sessions WHERE account_id=?').run(action.accountId);await b2bDb().prepare('DELETE FROM b2b_links WHERE account_id=?').run(action.accountId);}
+  await salesEvent(actor,'b2b.account_contact_updated',action.accountId);return {ok:true,sessionsRevoked:emailChanged};
  });
- if(action.action==='prospect.convert'){
+ if(action.action==='prospect.convert')return transaction(async()=>{
   ownerOnly(actor);const p=await ownedProspect(actor,action.prospectId);
   if(!await b2bDb().prepare('SELECT id FROM b2b_accounts WHERE id=?').get(action.accountId))throw new HttpError(404,'B2B-account niet gevonden.');
-  await salesDb().prepare("UPDATE seller_prospects SET stage='converted',converted_account_id=?,updated_at=? WHERE id=?").run(action.accountId,now,action.prospectId);
   if(p.seller_id){const current=await salesDb().prepare('SELECT seller_id FROM seller_b2b_assignments WHERE account_id=?').get(action.accountId);if(current&&String(current.seller_id)!==String(p.seller_id))throw new HttpError(409,'Dit B2B-account is al aan een andere verkoper toegewezen. Controleer de klantverantwoordelijke.');if(!current)await salesDb().prepare('INSERT INTO seller_b2b_assignments(account_id,seller_id,assigned_at) VALUES(?,?,?)').run(action.accountId,p.seller_id,now);}
-  return {ok:true};
- }
- if(action.action==='followup.create'){
+  await salesDb().prepare("UPDATE seller_prospects SET stage='converted',converted_account_id=?,updated_at=? WHERE id=?").run(action.accountId,now,action.prospectId);
+  await salesEvent(actor,'crm.prospect_converted',action.prospectId);return {ok:true};
+ });
+ if(action.action==='followup.create')return transaction(async()=>{
   const sellerId=actor.role==='seller'?actor.id:(action.sellerId||'');if(!sellerId)throw new HttpError(400,'Wijs de opvolging eerst aan een verkoper toe.');await sellerExists(sellerId);
   if(actor.role==='seller'&&action.sellerId&&action.sellerId!==actor.id)throw new HttpError(403,'Je kunt alleen je eigen opvolgingen aanmaken.');
   if(action.prospectId){const p=await ownedProspect(actor,action.prospectId);if(String(p.seller_id||'')!==sellerId)throw new HttpError(409,'Wijs de prospect eerst aan deze verkoper toe.');}
-  if(action.accountId)await canAccessAccount(actor,action.accountId);
-  const id=crypto.randomUUID();await salesDb().prepare('INSERT INTO seller_followups(id,seller_id,prospect_id,account_id,due_at,note,created_at) VALUES(?,?,?,?,?,?,?)').run(id,sellerId,action.prospectId||null,action.accountId||null,action.dueAt,action.note,now);return {id};
- }
- if(action.action==='followup.complete'){
+  if(action.accountId){await canAccessAccount(actor,action.accountId);const assigned=await salesDb().prepare('SELECT seller_id FROM seller_b2b_assignments WHERE account_id=?').get(action.accountId);if(!assigned||String(assigned.seller_id)!==sellerId)throw new HttpError(409,'Wijs het B2B-account eerst toe aan deze verkoper.');}
+  const id=crypto.randomUUID();await salesDb().prepare('INSERT INTO seller_followups(id,seller_id,prospect_id,account_id,due_at,note,created_at) VALUES(?,?,?,?,?,?,?)').run(id,sellerId,action.prospectId||null,action.accountId||null,action.dueAt,action.note,now);await salesEvent(actor,'crm.followup_created',id);return {id};
+ });
+ if(action.action==='followup.complete')return transaction(async()=>{
   const row=await salesDb().prepare('SELECT id,prospect_id,account_id FROM seller_followups WHERE id=?'+(actor.role==='seller'?' AND seller_id=?':'')).get(action.id,...(actor.role==='seller'?[actor.id]:[]));if(!row)throw new HttpError(404,'Opvolging niet gevonden.');if(row.prospect_id)await ownedProspect(actor,String(row.prospect_id));if(row.account_id)await canAccessAccount(actor,String(row.account_id));
-  await salesDb().prepare('UPDATE seller_followups SET completed_at=? WHERE id=?').run(now,action.id);return {ok:true};
- }
+  await salesDb().prepare('UPDATE seller_followups SET completed_at=? WHERE id=?').run(now,action.id);await salesEvent(actor,'crm.followup_completed',action.id);return {ok:true};
+ });
 }

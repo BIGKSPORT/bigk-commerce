@@ -24,6 +24,7 @@ test('B2B CRM enforces assigned ownership for sellers and global visibility for 
   }
   const accountId=crypto.randomUUID();
   await b2bDb().prepare('INSERT INTO b2b_accounts(id,name,vat,email,contact,phone,address,postal,city,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?)').run(accountId,'CRM Test Shop','0123456749','crm-shop@example.test','Owner','0123456789','Teststraat 1','2000','Antwerpen',now,now);
+  await b2bDb().prepare('INSERT INTO b2b_sessions(hash,account_id,account_version,expires_at) VALUES(?,?,1,?)').run(hash('crm-b2b-session'),accountId,new Date(Date.now()+600000).toISOString());
   let r=await POST(req('/api/sales/crm',owner,{action:'account.assign',accountId,sellerId:sellerOne}));assert.equal(r.status,200);
   const sellerOneData=await (await GET(req('/api/sales/crm',one))).json();
   const sellerTwoData=await (await GET(req('/api/sales/crm',two))).json();
@@ -32,11 +33,15 @@ test('B2B CRM enforces assigned ownership for sellers and global visibility for 
   assert.equal(sellerTwoData.accounts.length,0);
   assert.equal(ownerData.accounts.length,1);
   assert.equal((await POST(req('/api/sales/crm',two,{action:'followup.create',accountId,dueAt:new Date(Date.now()+86400000).toISOString(),note:'Unauthorized call'}))).status,404);
-  assert.equal((await POST(req('/api/sales/crm',two,{action:'account.contact',accountId,contact:'Intruder',email:'intruder@example.test',phone:'0123456789',address:'Otherstraat 2'}))).status,404);
-  assert.equal((await POST(req('/api/sales/crm',one,{action:'account.contact',accountId,contact:'Buyer Updated',email:'updated-shop@example.test',phone:'0987654321',address:'Nieuwe straat 3'}))).status,200);
+  assert.equal((await POST(req('/api/sales/crm',two,{action:'account.contact',accountId,contact:'Intruder',email:'intruder@example.test',phone:'0123456789',address:'Otherstraat 2',postal:'2000',city:'Antwerpen'}))).status,404);
+  assert.equal((await POST(req('/api/sales/crm',one,{action:'account.contact',accountId,contact:'Buyer Updated',email:'crm-shop@example.test',phone:'0987654321',address:'Nieuwe straat 3',postal:'2000',city:'Antwerpen'}))).status,200);
+  assert.equal((await b2bDb().prepare('SELECT COUNT(*) AS n FROM b2b_sessions WHERE account_id=?').get(accountId))!.n,1,'unchanged login email must preserve active customer sessions');
+  assert.equal((await POST(req('/api/sales/crm',one,{action:'account.contact',accountId,contact:'Buyer Updated',email:'updated-shop@example.test',phone:'0987654321',address:'Nieuwe straat 3',postal:'2000',city:'Antwerpen'}))).status,200);
+  assert.equal((await b2bDb().prepare('SELECT COUNT(*) AS n FROM b2b_sessions WHERE account_id=?').get(accountId))!.n,0,'changing the login email must revoke customer sessions');
   assert.equal((await (await GET(req('/api/sales/crm',one))).json()).accounts[0].email,'updated-shop@example.test');
   r=await POST(req('/api/sales/crm',one,{action:'prospect.create',data:{companyName:'Seller One Lead',vat:'',contact:'Buyer',email:'lead-one@example.test',phone:'0123456789',notes:'First contact'}}));assert.equal(r.status,200);
   const prospectId=(await r.json()).id;
+  assert.equal((await POST(req('/api/sales/crm',one,{action:'prospect.update',data:{id:prospectId,stage:'converted'}}))).status,400,'conversion must use the owner-controlled account-link action');
   assert.equal((await (await GET(req('/api/sales/crm',two))).json()).prospects.length,0);
   assert.equal((await POST(req('/api/sales/crm',two,{action:'prospect.update',data:{id:prospectId,stage:'lost'}}))).status,404);
   assert.equal((await POST(req('/api/sales/crm',owner,{action:'prospect.update',data:{id:prospectId,sellerId:sellerTwo}}))).status,200);
@@ -46,5 +51,9 @@ test('B2B CRM enforces assigned ownership for sellers and global visibility for 
   const f=(await (await GET(req('/api/sales/crm',one))).json()).followups[0];
   assert.ok(f);
   assert.equal((await POST(req('/api/sales/crm',two,{action:'followup.complete',id:f.id}))).status,404);
+  assert.equal((await POST(req('/api/sales/crm',owner,{action:'account.assign',accountId,sellerId:sellerTwo}))).status,200);
+  assert.equal((await (await GET(req('/api/sales/crm',one))).json()).followups.length,0);
+  assert.equal((await (await GET(req('/api/sales/crm',two))).json()).followups.length,1,'open account follow-ups transfer with account ownership');
+  assert.equal((await POST(req('/api/sales/crm',two,{action:'followup.complete',id:f.id}))).status,200);
  }finally{rmSync(dir,{recursive:true,force:true});}
 });

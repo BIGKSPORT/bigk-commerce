@@ -20,7 +20,7 @@ import {POST as uploadMedia} from '../app/api/admin/media/route';
 import {setFeature} from '../lib/shop-features';
 import {family} from '../lib/product-groups';
 import sharp from 'sharp';
-const dir=mkdtempSync(join(tmpdir(),'bigk-sales-'));Object.assign(process.env,{DATABASE_PROVIDER:'sqlite',DATABASE_PATH:join(dir,'store.sqlite'),MEDIA_PATH:join(dir,'media'),DATABASE_SCHEMA:'bigk',NODE_ENV:'test',APP_URL:'https://bigk.example',ADMIN_MFA_KEY:'a'.repeat(64),SELLER_PORTAL_ENABLED:'true',ADMIN_MFA_REQUIRED:'false'});delete process.env.VERCEL;delete process.env.VERCEL_ENV;
+const dir=mkdtempSync(join(tmpdir(),'bigk-sales-'));Object.assign(process.env,{DATABASE_PROVIDER:'sqlite',DATABASE_PATH:join(dir,'store.sqlite'),MEDIA_PATH:join(dir,'media'),DATABASE_SCHEMA:'bigk',NODE_ENV:'test',APP_URL:'https://bigk.example',ADMIN_MFA_KEY:'a'.repeat(64),SELLER_PORTAL_ENABLED:'true',ADMIN_MFA_REQUIRED:'false',RESEND_API_KEY:'re_test_fixture',EMAIL_FROM:'BIG K <noreply@bigk.example>',EMAIL_DELIVERY_ENABLED:'true'});delete process.env.VERCEL;delete process.env.VERCEL_ENV;
 const owner='bigk_admin=owner-sales',first='bigk_seller=seller-one',second='bigk_seller=seller-two';
 function req(path:string,cookie='',data?:unknown,origin='https://bigk.example'){return new Request('https://bigk.example'+path,{method:data===undefined?'GET':'POST',headers:{cookie,origin,'Content-Type':'application/json'},...(data===undefined?{}:{body:JSON.stringify(data)})});}
 const write=(cookie:string,action:string,data:unknown)=>POST(req('/api/sales',cookie,{action,data}));
@@ -29,7 +29,8 @@ await test('seller portal integration',async t=>{try{
  await t.test('feature defaults closed and all private data requires login',async()=>{delete process.env.SELLER_PORTAL_ENABLED;assert.equal((await GET(req('/api/sales'))).status,404);process.env.SELLER_PORTAL_ENABLED='true';assert.equal((await GET(req('/api/sales'))).status,401);assert.equal((await admin(req('/api/sales/admin','',{action:'invite',name:'Test',email:'one@example.test'}))).status,403);});
  await t.test('owner invite, MFA enrollment, login and replay protection',async()=>{
  await db().prepare('INSERT INTO sessions VALUES(?,?)').run(hash('owner-sales'),new Date(Date.now()+600000).toISOString());
- let r=await admin(req('/api/sales/admin',owner,{action:'invite',name:'Seller One',email:'one@example.test'}));assert.equal(r.status,200);const value=(await r.json()).setupPath.split('#')[1];
+ const originalFetch=globalThis.fetch;let sentInvite:any=null;globalThis.fetch=(async(_url:any,init:any)=>{sentInvite=JSON.parse(String(init.body));return new Response(JSON.stringify({id:'email-fixture'}),{status:200,headers:{'Content-Type':'application/json'}})}) as typeof fetch;
+ let r;try{r=await admin(req('/api/sales/admin',owner,{action:'invite',name:'Seller One',email:'one@example.test'}));}finally{globalThis.fetch=originalFetch;}assert.equal(r.status,200);const invitation=await r.json();assert.equal(invitation.emailSent,true);assert.equal(sentInvite.to,'one@example.test');assert.match(sentInvite.html,/BIG K Sales-account activeren/);const value=invitation.setupPath.split('#')[1];
  r=await setup(req('/api/sales/setup','',{action:'begin',token:value}));assert.equal(r.status,200);const {secret}=await r.json(),counter=Math.floor(Date.now()/30000);
  r=await setup(req('/api/sales/setup','',{action:'finish',token:value,password:'Strong test password 123!',code:totp(secret,counter)}));assert.equal(r.status,200);
  r=await login(req('/api/sales/auth','',{email:'one@example.test',password:'Strong test password 123!',code:totp(secret,counter+1)}));assert.equal(r.status,200);assert.match(r.headers.get('set-cookie')||'',/HttpOnly; SameSite=Strict/);
