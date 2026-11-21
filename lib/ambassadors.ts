@@ -21,7 +21,7 @@ export async function submitAmbassadorApplication(input:ApplicationInput){
   const existing=await db().prepare("SELECT id,status FROM ambassador_applications WHERE lower(email)=? ORDER BY created_at DESC LIMIT 1").get(email) as {id:string;status:string}|undefined;
   if(existing?.status==='pending')throw new HttpError(409,'Er is al een open aanvraag met dit e-mailadres.');
   const id=crypto.randomUUID();
-  await db().prepare("INSERT INTO ambassador_applications(id,email,full_name,social_url,audience_note,motivation,privacy_accepted_at,privacy_notice_version,terms_accepted_at,terms_version,status,created_at,updated_at) VALUES(?,?,?,?,?,?,?,'2026-11-21',?,'0.1-2026-11-21','pending',?,?)").run(id,email,v.fullName,v.socialUrl,v.audienceNote,v.motivation,now,now,now,now);
+  await db().prepare("INSERT INTO ambassador_applications(id,email,full_name,social_url,audience_note,motivation,privacy_accepted_at,privacy_notice_version,terms_accepted_at,terms_version,status,created_at,updated_at) VALUES(?,?,?,?,?,?,?,'2026-11-21',?,'0.2-2026-11-21','pending',?,?)").run(id,email,v.fullName,v.socialUrl,v.audienceNote,v.motivation,now,now,now,now);
   return {id,status:'pending' as const};
  });
 }
