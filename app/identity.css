@@ -461,3 +461,9 @@
 .admin-editor-modal>.admin-product-editor{display:flex;flex-direction:column;min-height:0;overflow:hidden}
 .admin-editor-modal .admin-editor-body{min-height:0;overflow:auto;overscroll-behavior-y:contain;touch-action:pan-y pinch-zoom}
 .admin-editor-modal .bo-editor-footer{flex:none;position:static}
+
+/* Keep the newsletter grid within tablet and mobile viewports. */
+.newsletter-signup{grid-template-columns:minmax(0,1fr) minmax(0,1.1fr)}
+.newsletter-signup>* , .newsletter-signup form, .newsletter-input{min-width:0}
+.newsletter-input .button{max-width:100%;white-space:normal}
+@media(max-width:900px){.newsletter-signup{grid-template-columns:minmax(0,1fr);gap:24px}}

@@ -18,7 +18,7 @@ For in-chat account inspection, connect the Stripe plugin using the earlier conn
 
 ## Payment methods
 
-Use Stripe-hosted Checkout, EUR and the supported delivery countries BE/NL/FR/DE/LU. Enable cards and Bancontact where Stripe makes them available. Apple Pay / Google Pay are displayed by Stripe only when eligible for the customer's device, currency and account. Do not advertise methods until tested. Dashboard-managed methods are used; the application does not force every payment method on.
+Use Stripe-hosted Checkout in EUR. The current server-side destination allowlist is BE, NL, FR, DE, LU, AT, CZ, ES, IT, PL, RO, GB, CH, US, CA and AU. The flat-rate international group (GB, CH, US, CA and AU) currently has a €12.50 shipping charge; EU rates and free-shipping thresholds are defined in `lib/shipping-policy.ts`. This is a code-level allowlist and tariff configuration, not proof of carrier coverage, customs treatment or tax registration in every market. Confirm fulfilment and VAT obligations before promoting delivery in a new country. Enable cards and Bancontact where Stripe makes them available. Apple Pay / Google Pay are displayed by Stripe only when eligible for the customer's device, currency and account. Do not advertise methods until tested. Dashboard-managed methods are used; the application does not force every payment method on.
 
 ## Test environment before live
 
