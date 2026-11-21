@@ -20,6 +20,7 @@ test('daily follow-up digest is seller-scoped and idempotent',async()=>{
   await salesDb().prepare('INSERT INTO seller_followups(id,seller_id,prospect_id,due_at,note,created_at) VALUES(?,?,?,?,?,?)').run(crypto.randomUUID(),sellerId,prospectId,'2026-11-21T09:00:00.000Z','Call about the winter collection',created);
   let calls=0,payload:any=null;
   globalThis.fetch=(async(_url:any,init:any)=>{calls++;payload=JSON.parse(String(init.body));return new Response(JSON.stringify({id:'email-fixture'}),{status:200,headers:{'Content-Type':'application/json'}})}) as typeof fetch;
+  const beforeEight=await sendSalesFollowupReminders(new Date('2026-11-21T06:59:00.000Z'));assert.deepEqual(beforeEight,{sent:0,failed:0,skipped:0});
   const first=await sendSalesFollowupReminders(new Date(now));
   assert.deepEqual(first,{sent:1,failed:0,skipped:0});
   assert.equal(calls,1);assert.equal(payload.to,'seller-one@example.test');assert.match(payload.text,/Test Shop/);assert.match(payload.html,/winter collection/);

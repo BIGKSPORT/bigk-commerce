@@ -39,6 +39,7 @@ test('B2B CRM enforces assigned ownership for sellers and global visibility for 
   assert.equal((await POST(req('/api/sales/crm',one,{action:'account.contact',accountId,contact:'Buyer Updated',email:'updated-shop@example.test',phone:'0987654321',address:'Nieuwe straat 3',postal:'2000',city:'Antwerpen'}))).status,200);
   assert.equal((await b2bDb().prepare('SELECT COUNT(*) AS n FROM b2b_sessions WHERE account_id=?').get(accountId))!.n,0,'changing the login email must revoke customer sessions');
   assert.equal((await (await GET(req('/api/sales/crm',one))).json()).accounts[0].email,'updated-shop@example.test');
+  assert.equal((await POST(req('/api/sales/crm',one,{action:'prospect.create',data:{companyName:'Invalid VAT Lead',vat:'0123456789',contact:'Buyer',email:'invalid-vat@example.test',phone:'0123456789',notes:'Invalid VAT'}}))).status,400,'invalid Belgian VAT checksum must be rejected server-side');
   r=await POST(req('/api/sales/crm',one,{action:'prospect.create',data:{companyName:'Seller One Lead',vat:'',contact:'Buyer',email:'lead-one@example.test',phone:'0123456789',notes:'First contact'}}));assert.equal(r.status,200);
   const prospectId=(await r.json()).id;
   assert.equal((await POST(req('/api/sales/crm',one,{action:'prospect.update',data:{id:prospectId,stage:'converted'}}))).status,400,'conversion must use the owner-controlled account-link action');
