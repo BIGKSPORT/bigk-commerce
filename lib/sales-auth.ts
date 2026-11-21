@@ -22,7 +22,7 @@ async function sendSellerSetupEmail(id:string,name:string,email:string,setupPath
  if(!key||!from||!origin?.startsWith('https://')||!emailDeliveryAllowed(email))return false;
  const url=new URL(setupPath,origin).toString(),safeName=htmlEscape(name),safeUrl=htmlEscape(url);
  try{
-  const response=await fetch('https://api.resend.com/emails',{method:'POST',headers:{Authorization:'Bearer '+key,'Content-Type':'application/json','Idempotency-Key':'bigk-seller-invite-'+id},body:JSON.stringify({from,to:email,subject:'Je BIG K Sales-account activeren',text:'Hallo '+name+',\n\nJe bent uitgenodigd voor BIG K Sales. Activeer je persoonlijke account via deze link: '+url+'\n\nDe link is 30 minuten geldig en kan één keer worden gebruikt. Stel een sterk wachtwoord in en koppel je authenticator-app tijdens de activatie.\n\nBIG K',html:'<p>Hallo '+safeName+',</p><p>Je bent uitgenodigd voor BIG K Sales. Activeer je persoonlijke account via de beveiligde link hieronder.</p><p><a href="'+safeUrl+'">BIG K Sales-account activeren</a></p><p>De link is 30 minuten geldig en kan één keer worden gebruikt. Stel een sterk wachtwoord in en koppel je authenticator-app tijdens de activatie.</p><p>BIG K</p>'}),signal:AbortSignal.timeout(10000)});
+  const response=await fetch('https://api.resend.com/emails',{method:'POST',headers:{Authorization:'Bearer '+key,'Content-Type':'application/json','Idempotency-Key':'bigk-seller-invite-'+id},body:JSON.stringify({from,to:email,subject:'Je BIG K Sales-account activeren',text:'Hallo '+name+',\n\nJe bent uitgenodigd voor BIG K Sales. Activeer je persoonlijke account via deze link: '+url+'\n\nDe link is 24 uur geldig en kan één keer worden gebruikt. Stel een sterk wachtwoord in en koppel je authenticator-app tijdens de activatie.\n\nBIG K',html:'<p>Hallo '+safeName+',</p><p>Je bent uitgenodigd voor BIG K Sales. Activeer je persoonlijke account via de beveiligde link hieronder.</p><p><a href="'+safeUrl+'">BIG K Sales-account activeren</a></p><p>De link is 24 uur geldig en kan één keer worden gebruikt. Stel een sterk wachtwoord in en koppel je authenticator-app tijdens de activatie.</p><p>BIG K</p>'}),signal:AbortSignal.timeout(10000)});
   return response.ok;
  }catch{return false;}
 }
@@ -30,7 +30,7 @@ export async function inviteSeller(actor:SalesActor,name:string,email:string){
  const invite=await transaction(async()=>{
   const id=crypto.randomUUID(),value=token(),normalized=email.toLowerCase().trim();
   if(await db().prepare('SELECT id FROM seller_accounts WHERE email=?').get(normalized))throw new HttpError(409,'Dit e-mailadres bestaat al. Gebruik Toegang herstellen.');
-  await db().prepare('INSERT INTO seller_accounts(id,name,email,invite_hash,invite_expires,created_at) VALUES(?,?,?,?,?,?)').run(id,name,normalized,hash('seller-invite:'+value),new Date(Date.now()+30*60000).toISOString(),new Date().toISOString());
+  await db().prepare('INSERT INTO seller_accounts(id,name,email,invite_hash,invite_expires,created_at) VALUES(?,?,?,?,?,?)').run(id,name,normalized,hash('seller-invite:'+value),new Date(Date.now()+24*60*60*1000).toISOString(),new Date().toISOString());
   await salesEvent(actor,'seller.invited',id);return {id,name,email:normalized,setupPath:'/staff/sales/setup#'+value};
  });
  const emailSent=await sendSellerSetupEmail(invite.id,invite.name,invite.email,invite.setupPath);
@@ -42,7 +42,7 @@ export async function changeSeller(actor:SalesActor,id:string,action:'disable'|'
  const result=await transaction(async()=>{
   const row=await db().prepare('SELECT id,name,email FROM seller_accounts WHERE id=?').get(id);if(!row)throw new HttpError(404,'Verkoper niet gevonden.');
   const value=action==='reset'?token():null;
-  await db().prepare('UPDATE seller_accounts SET active=?,version=version+1,password_hash=NULL,secret_encrypted=NULL,last_counter=-1,invite_hash=?,invite_expires=? WHERE id=?').run(value?1:0,value?hash('seller-invite:'+value):null,value?new Date(Date.now()+30*60000).toISOString():null,id);
+  await db().prepare('UPDATE seller_accounts SET active=?,version=version+1,password_hash=NULL,secret_encrypted=NULL,last_counter=-1,invite_hash=?,invite_expires=? WHERE id=?').run(value?1:0,value?hash('seller-invite:'+value):null,value?new Date(Date.now()+24*60*60*1000).toISOString():null,id);
   await db().prepare('DELETE FROM seller_sessions WHERE seller_id=?').run(id);await salesEvent(actor,'seller.'+action,id);
   return value?{id:String(row.id),name:String(row.name),email:String(row.email),setupPath:'/staff/sales/setup#'+value}:null;
  });
