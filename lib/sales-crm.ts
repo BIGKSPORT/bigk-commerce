@@ -44,6 +44,7 @@ async function canAccessAccount(actor:SalesActor,id:string){
  if(!a)throw new HttpError(404,'B2B-account niet gevonden.');
 }
 export async function salesCrmData(actor:SalesActor){
+ b2bDb();
  const [allAccounts,assignments,prospects,followups,sellers,sellerCustomers,sellerOrders,b2bOrders,paidHistory,paidB2BHistory]=await Promise.all([
   actor.role==='owner'?b2bDb().prepare("SELECT a.*,(SELECT COUNT(*) FROM b2b_orders o WHERE o.account_id=a.id AND o.status IN ('paid','fulfilled')) AS paid_orders FROM b2b_accounts a ORDER BY a.name").all():salesDb().prepare("SELECT a.*,(SELECT COUNT(*) FROM b2b_orders o WHERE o.account_id=a.id AND o.status IN ('paid','fulfilled')) AS paid_orders FROM b2b_accounts a JOIN seller_b2b_assignments x ON x.account_id=a.id WHERE x.seller_id=? ORDER BY a.name").all(actor.id),
   salesDb().prepare('SELECT x.account_id,x.seller_id,a.name AS seller_name FROM seller_b2b_assignments x JOIN seller_accounts a ON a.id=x.seller_id'+(actor.role==='seller'?' WHERE x.seller_id=?':'')).all(...(actor.role==='seller'?[actor.id]:[])),
