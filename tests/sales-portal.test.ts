@@ -9,6 +9,7 @@ import {salesQuote} from '../lib/sales-pricing';
 import {hash} from '../lib/security';
 import {totp} from '../lib/admin-mfa';
 import {GET,POST} from '../app/api/sales/route';
+import {POST as crmPost} from '../app/api/sales/crm/route';
 import {POST as admin} from '../app/api/sales/admin/route';
 import {POST as setup} from '../app/api/sales/setup/route';
 import {POST as login,DELETE as logout} from '../app/api/sales/auth/route';
@@ -86,8 +87,11 @@ await test('seller portal integration',async t=>{try{
  await t.test('payment is owner-only; opening bonus once per shop; credit requires prior paid order',async()=>{
  assert.equal((await admin(req('/api/sales/admin',first,{action:'paid',id:orderId,reference:'BANK-TEST-1'}))).status,403);
  assert.equal((await admin(req('/api/sales/admin',owner,{action:'paid',id:orderId,reference:'BANK-TEST-1'}))).status,200);
- let row=await salesDb().prepare('SELECT * FROM seller_orders WHERE id=?').get(orderId),q=JSON.parse(String(row!.quote));assert.equal(q.bonus,10000);assert.equal(row!.earned_cents,q.commission);
- const r=await write(first,'order',input());assert.equal(r.status,200);const id=(await r.json()).id;assert.equal((await admin(req('/api/sales/admin',owner,{action:'paid',id,reference:'BANK-TEST-1'}))).status,409);assert.equal((await admin(req('/api/sales/admin',owner,{action:'paid',id,reference:'BANK-TEST-2'}))).status,200);row=await salesDb().prepare('SELECT * FROM seller_orders WHERE id=?').get(id);q=JSON.parse(String(row!.quote));assert.equal(q.bonus,0);
+ let row=await salesDb().prepare('SELECT * FROM seller_orders WHERE id=?').get(orderId),q=JSON.parse(String(row!.quote));assert.equal(q.bonus,10000);assert.equal(q.rate,0.12);assert.equal(row!.earned_cents,q.commission);
+ const inactiveQuote=await write(first,'quote',input());assert.equal(inactiveQuote.status,200);assert.equal((await inactiveQuote.json()).rate,0);
+ assert.equal((await crmPost(req('/api/sales/crm',first,{action:'customer.activity',customerId,note:'Telefonisch contact over de volgende bestelling.'}))).status,200);
+ const activeQuote=await write(first,'quote',input());assert.equal(activeQuote.status,200);assert.equal((await activeQuote.json()).rate,0.08);
+ const r=await write(first,'order',input());assert.equal(r.status,200);const id=(await r.json()).id;assert.equal((await admin(req('/api/sales/admin',owner,{action:'paid',id,reference:'BANK-TEST-1'}))).status,409);assert.equal((await admin(req('/api/sales/admin',owner,{action:'paid',id,reference:'BANK-TEST-2'}))).status,200);row=await salesDb().prepare('SELECT * FROM seller_orders WHERE id=?').get(id);q=JSON.parse(String(row!.quote));assert.equal(q.bonus,0);assert.equal(q.rate,0.08);
  assert.equal((await admin(req('/api/sales/admin',owner,{action:'credit',id:customerId,approved:true}))).status,200);assert.equal((await write(first,'order',{...input(),terms:'net30'})).status,200);
  assert.equal((await write(first,'status',{id:orderId,action:'cancel'})).status,409);
  });
@@ -98,7 +102,7 @@ await test('seller portal integration',async t=>{try{
  await salesDb().prepare('INSERT INTO seller_sessions VALUES(?,?,?,?)').run(hash('seller:seller-one'),sellerId,row!.version,new Date(Date.now()+600000).toISOString());
  });
  await t.test('disable revokes seller sessions immediately and owner-only account list stays private',async()=>{assert.equal((await admin(req('/api/sales/admin',owner,{action:'disable',id:sellerId}))).status,200);assert.equal((await GET(req('/api/sales',first))).status,401);assert.equal((await (await GET(req('/api/sales',owner))).json()).accounts.length,2);});
- await t.test('pure pricing handles threshold, footwear and commission rounding',()=>{const base={id:'x',name:'Core',code:'25301801',image:'',colour:'Black',size:'M',available:10000,retailCents:10000,footwear:false,core:true};let q=salesQuote([base],[{variantId:'x',quantity:50}],2.7,'proforma',true);assert.equal(q.factor,2.7);assert.equal(q.subtotal,Math.round(10000/2.7)*50);assert.equal(q.commission,Math.round(q.subtotal*0.12)+10000);q=salesQuote([{...base,footwear:true}],[{variantId:'x',quantity:1}],2.7,'net30',false);assert.equal(q.factor,2.5);assert.equal(q.subtotal,4545);assert.equal(q.bonus,0);});
+ await t.test('pure pricing handles threshold, footwear and commission rounding',()=>{const base={id:'x',name:'Core',code:'25301801',image:'',colour:'Black',size:'M',available:10000,retailCents:10000,footwear:false,core:true};let q=salesQuote([base],[{variantId:'x',quantity:50}],2.7,'proforma',true);assert.equal(q.factor,2.7);assert.equal(q.subtotal,Math.round(10000/2.7)*50);assert.equal(q.commission,Math.round(q.subtotal*0.12)+10000);q=salesQuote([{...base,footwear:true}],[{variantId:'x',quantity:1}],2.7,'net30',false);assert.equal(q.factor,2.5);assert.equal(q.subtotal,4545);assert.equal(q.bonus,0);assert.equal(q.rate,0);q=salesQuote([base],[{variantId:'x',quantity:1}],2.5,'proforma',false,true);assert.equal(q.rate,0.08);});
 
  await t.test('backoffice edits are the shared source for model groups, categories, descriptions, photos, colours, sizes, prices and stock',async()=>{
   const savedOrder=await salesDb().prepare('SELECT quote FROM seller_orders WHERE id=?').get(orderId);
