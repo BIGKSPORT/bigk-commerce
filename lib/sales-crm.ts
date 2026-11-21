@@ -1,7 +1,9 @@
 import {z} from 'zod';
 import {salesDb} from './sales-db';
+import {transaction} from './db';
 import {b2bDb} from './b2b-db';
 import {HttpError} from './security';
+import {salesEvent} from './sales-auth';
 import type {SalesActor} from './sales-types';
 
 export const prospectStages=['prospect','contacted','interested','negotiation','converted','lost'] as const;
@@ -24,6 +26,7 @@ export const crmAction=z.discriminatedUnion('action',[
  z.object({action:z.literal('prospect.create'),data:prospectInput}).strict(),
  z.object({action:z.literal('prospect.update'),data:prospectUpdate}).strict(),
  z.object({action:z.literal('account.assign'),accountId:z.string().uuid(),sellerId:z.string().uuid().nullable()}).strict(),
+ z.object({action:z.literal('account.contact'),accountId:z.string().uuid(),contact:z.string().trim().min(2).max(100),email:z.email().max(254),phone:z.string().trim().min(6).max(50),address:z.string().trim().min(5).max(500)}).strict(),
  z.object({action:z.literal('prospect.convert'),prospectId:z.string().uuid(),accountId:z.string().uuid()}).strict(),
  z.object({action:z.literal('followup.create'),prospectId:z.string().uuid().optional(),accountId:z.string().uuid().optional(),sellerId:z.string().uuid().optional(),dueAt:z.string().datetime(),note:z.string().trim().min(2).max(2000)}).strict().refine(v=>!!(v.prospectId||v.accountId)&&!(v.prospectId&&v.accountId),'Kies één prospect of account.'),
  z.object({action:z.literal('followup.complete'),id:z.string().uuid()}).strict()
@@ -97,6 +100,14 @@ export async function mutateSalesCrm(actor:SalesActor,action:z.infer<typeof crmA
   else await salesDb().prepare('DELETE FROM seller_b2b_assignments WHERE account_id=?').run(action.accountId);
   return {ok:true};
  }
+ if(action.action==='account.contact')return transaction(async()=>{
+  await canAccessAccount(actor,action.accountId);
+  const account=await b2bDb().prepare('SELECT id FROM b2b_accounts WHERE id=?').get(action.accountId);if(!account)throw new HttpError(404,'B2B-account niet gevonden.');
+  if(await b2bDb().prepare('SELECT id FROM b2b_accounts WHERE email=? AND id<>?').get(action.email.toLowerCase(),action.accountId))throw new HttpError(409,'Dit e-mailadres is al aan een ander B2B-account gekoppeld.');
+  await b2bDb().prepare('UPDATE b2b_accounts SET contact=?,email=?,phone=?,address=?,version=version+1,updated_at=? WHERE id=?').run(action.contact,action.email.toLowerCase(),action.phone,action.address,now,action.accountId);
+  await b2bDb().prepare('DELETE FROM b2b_sessions WHERE account_id=?').run(action.accountId);await b2bDb().prepare('DELETE FROM b2b_links WHERE account_id=?').run(action.accountId);
+  await salesEvent(actor,'b2b.account_contact_updated',action.accountId);return {ok:true};
+ });
  if(action.action==='prospect.convert'){
   ownerOnly(actor);const p=await ownedProspect(actor,action.prospectId);
   if(!await b2bDb().prepare('SELECT id FROM b2b_accounts WHERE id=?').get(action.accountId))throw new HttpError(404,'B2B-account niet gevonden.');

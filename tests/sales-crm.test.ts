@@ -32,6 +32,9 @@ test('B2B CRM enforces assigned ownership for sellers and global visibility for 
   assert.equal(sellerTwoData.accounts.length,0);
   assert.equal(ownerData.accounts.length,1);
   assert.equal((await POST(req('/api/sales/crm',two,{action:'followup.create',accountId,dueAt:new Date(Date.now()+86400000).toISOString(),note:'Unauthorized call'}))).status,404);
+  assert.equal((await POST(req('/api/sales/crm',two,{action:'account.contact',accountId,contact:'Intruder',email:'intruder@example.test',phone:'0123456789',address:'Otherstraat 2'}))).status,404);
+  assert.equal((await POST(req('/api/sales/crm',one,{action:'account.contact',accountId,contact:'Buyer Updated',email:'updated-shop@example.test',phone:'0987654321',address:'Nieuwe straat 3'}))).status,200);
+  assert.equal((await (await GET(req('/api/sales/crm',one))).json()).accounts[0].email,'updated-shop@example.test');
   r=await POST(req('/api/sales/crm',one,{action:'prospect.create',data:{companyName:'Seller One Lead',vat:'',contact:'Buyer',email:'lead-one@example.test',phone:'0123456789',notes:'First contact'}}));assert.equal(r.status,200);
   const prospectId=(await r.json()).id;
   assert.equal((await (await GET(req('/api/sales/crm',two))).json()).prospects.length,0);
