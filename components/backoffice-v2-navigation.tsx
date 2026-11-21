@@ -39,7 +39,7 @@ const groups:NavGroup[]=[
   {label:'BIG K Club',tab:'BigK Club',icon:Users},
   {label:'Events',tab:'Events',icon:Ticket},
  ]},
- {label:'Discounts',icon:Tag,items:[{label:'Discount codes',disabled:true,hint:'Planned for Phase 3',icon:Tag}]},
+ {label:'Discounts',icon:Tag,items:[{label:'Discount codes',tab:'Marketing',icon:Tag}]},
  {label:'Content',icon:BookOpen,items:[
   {label:'Online store',tab:'Storefront',icon:Store},
   {label:'Blog',tab:'Blog',icon:BookOpen},
