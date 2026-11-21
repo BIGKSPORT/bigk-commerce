@@ -67,7 +67,7 @@ export default function BackofficeV2Navigation({activeTab,products,orders,salesA
   const handler=(event:KeyboardEvent)=>{if((event.metaKey||event.ctrlKey)&&event.key.toLowerCase()==='k'){event.preventDefault();setSearchOpen(true)}if(event.key==='Escape')setSearchOpen(false)};
   window.addEventListener('keydown',handler);return()=>window.removeEventListener('keydown',handler);
  },[]);
- useEffect(()=>{if(!searchOpen||customersLoaded||loadingCustomers)return;let active=true;setLoadingCustomers(true);fetch('/api/admin/customers',{cache:'no-store'}).then(async r=>{const d=await r.json();if(!r.ok)throw new Error(d.error||'Customer search is unavailable.');if(active){setCustomers(Array.isArray(d.customers)?d.customers:[]);setCustomersLoaded(true)}}).catch(e=>{if(active)setCustomerError(e instanceof Error?e.message:'Customer search is unavailable.')}).finally(()=>{if(active)setLoadingCustomers(false)});return()=>{active=false}},[searchOpen,customersLoaded,loadingCustomers]);
+ useEffect(()=>{if(!searchOpen||customersLoaded||loadingCustomers)return;let active=true;setLoadingCustomers(true);fetch('/api/admin/customers',{cache:'no-store'}).then(async r=>{const d=await r.json();if(!r.ok)throw new Error(d.error||'Customer search is unavailable.');if(active){setCustomers(Array.isArray(d.customers)?d.customers:[]);setCustomersLoaded(true)}}).catch(e=>{if(active)setCustomerError(e instanceof Error?e.message:'Customer search is unavailable.')}).finally(()=>{if(active)setLoadingCustomers(false)});return()=>{active=false}},[searchOpen,customersLoaded]);
  const results=useMemo<SearchResult[]>(()=>{
   const q=query.trim().toLowerCase();if(!q)return [];
   const found:SearchResult[]=[];
