@@ -53,7 +53,6 @@ export async function createSalesCustomer(actor:SalesActor,input:z.infer<typeof 
 });}
 async function ownedCustomer(actor:SalesActor,id:string){const row=await db().prepare('SELECT * FROM seller_customers WHERE id=?'+(actor.role==='seller'?' AND seller_id=?':'')).get(id,...(actor.role==='seller'?[actor.id]:[]));if(!row)throw new HttpError(404,'Klant niet gevonden.');return row;}
 async function firstOrder(customerId:string){return !await db().prepare("SELECT id FROM seller_orders WHERE customer_id=? AND status='paid'").get(customerId);}
-async function activeCustomerFollowup(customerId:string,sellerId:string){const row=await db().prepare('SELECT MAX(activity_at) AS last_activity_at FROM seller_customer_activities WHERE customer_id=? AND seller_id=?').get(customerId,sellerId);return !!row?.last_activity_at&&Date.parse(String(row.last_activity_at))>=Date.now()-salesRules.activeCustomerDays*86400000;}
 export async function calculateSalesQuote(actor:SalesActor,input:z.infer<typeof orderInput>):Promise<SalesQuote>{
  const c=await ownedCustomer(actor,input.customerId),first=await firstOrder(input.customerId);
  if(input.terms==='net30'&&(!Number(c.credit_approved)||first))throw new HttpError(409,'30 dagen is alleen beschikbaar voor goedgekeurde klanten met een betaalde eerdere bestelling.');
