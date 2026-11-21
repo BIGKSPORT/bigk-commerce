@@ -19,7 +19,7 @@ export default function BackofficeV2Dashboard({orders,products,carts,onNavigate}
   const delta=(a:number,b:number)=>b===0?(a===0?0:null):((a-b)/b)*100;
   const abandoned=carts.filter(c=>c.status==='possibly_abandoned'||c.status==='unpaid_checkout');
   const lowStock=products.flatMap(p=>p.variants.map(v=>({product:p,variant:v}))).filter(x=>x.variant.stock-x.variant.reserved<=2);
-  const unpaid=orders.filter(o=>['pending','payment_review'].includes(o.status));
+  const unpaid=orders.filter(o=>['pending','expired','cancelled','payment_review'].includes(o.status));
   const ship=orders.filter(o=>o.status==='paid');
   return {days,currentSales:total(current),previousSales:total(previous),salesChange:delta(total(current),total(previous)),currentOrders:current.length,previousOrders:previous.length,orderChange:delta(current.length,previous.length),unpaid:unpaid.length,ship:ship.length,abandoned:abandoned.length,lowStock:lowStock.length,lowStockItems:lowStock.slice(0,5),checkout:carts.filter(c=>c.status==='checkout_started'||c.status==='unpaid_checkout').length,paidCount:current.length,paidUnits:current.reduce((n,o)=>n+o.items.reduce((s,i)=>s+i.quantity,0),0)};
  },[orders,products,carts,range]);
