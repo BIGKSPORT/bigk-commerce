@@ -1,0 +1,4 @@
+import {submitAmbassadorApplication,applicationSchema} from '@/lib/ambassadors';
+import {body,failure,HttpError,rateLimitVisitor} from '@/lib/security';
+export const runtime='nodejs';
+export async function POST(req:Request){try{await rateLimitVisitor(req,'ambassador-application',3,3600,200);const parsed=applicationSchema.safeParse(await body(req));if(!parsed.success)throw new HttpError(400,'Controleer alle verplichte velden en de privacybevestiging.');const result=await submitAmbassadorApplication(parsed.data);return Response.json({ok:true,...result},{status:201,headers:{'Cache-Control':'no-store'}})}catch(e){return failure(e)}}
