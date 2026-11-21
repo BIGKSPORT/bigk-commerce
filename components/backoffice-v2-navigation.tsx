@@ -1,6 +1,6 @@
 'use client';
 import {useEffect,useMemo,useState} from 'react';
-import {Activity,BarChart3,BookOpen,ChevronDown,ChevronRight,ClipboardList,Globe,Home,LayoutDashboard,LifeBuoy,LockKeyhole,Mail,Megaphone,Package,Search,Settings,ShoppingBag,Store,Tag,Ticket,Users,X,Warehouse,Images,Layers} from 'lucide-react';
+import {Activity,BarChart3,BookOpen,ChevronDown,ChevronRight,ClipboardList,Globe,Home,LayoutDashboard,LockKeyhole,Megaphone,Package,Search,Settings,ShoppingBag,Store,Tag,Ticket,Users,X,Warehouse,Images,Layers} from 'lucide-react';
 import type {Product,Order} from '@/lib/types';
 import styles from './backoffice-v2-navigation.module.css';
 
@@ -23,8 +23,8 @@ const groups:NavGroup[]=[
  {label:'Orders',icon:ShoppingBag,items:[
   {label:'All orders',tab:'Orders',icon:ShoppingBag},
   {label:'Draft orders',disabled:true,hint:'Planned for Phase 3',icon:ClipboardList},
-  {label:'Shipping labels',tab:'Orders',icon:Package},
-  {label:'Abandoned checkouts',tab:'Orders',icon:Activity},
+  {label:'Shipping labels',tab:'Shipping labels',icon:Package},
+  {label:'Abandoned checkouts',tab:'Abandoned checkouts',icon:Activity},
  ]},
  {label:'Products',icon:Package,items:[
   {label:'All products',tab:'Products',icon:Package},
@@ -40,7 +40,7 @@ const groups:NavGroup[]=[
   {label:'BIG K Club',tab:'BigK Club',icon:Users},
   {label:'Events',tab:'Events',icon:Ticket},
  ]},
- {label:'Discounts',icon:Tag,items:[{label:'Discount codes',tab:'Marketing',icon:Tag}]},
+ {label:'Discounts',icon:Tag,items:[{label:'Discount codes',tab:'Discounts',icon:Tag}]},
  {label:'Content',icon:BookOpen,items:[
   {label:'Online store',tab:'Storefront',icon:Store},
   {label:'Blog',tab:'Blog',icon:BookOpen},
@@ -84,7 +84,7 @@ export default function BackofficeV2Navigation({activeTab,products,orders,salesA
    <nav className={styles.navigation} aria-label="Backoffice navigation">
     {groups.map(group=>{const active=group.items.some(item=>item.tab===activeTab);const open=expanded.includes(group.label)||active;return <section className={styles.group} key={group.label}>
      {group.items.length===1&&group.items[0].tab==='Overview'?<button type="button" className={active?styles.active:styles.groupButton} onClick={()=>onNavigate('Overview')}><group.icon size={17}/><span>{group.label}</span></button>:<button type="button" className={active?styles.activeGroup:styles.groupButton} aria-expanded={open} onClick={()=>setExpanded(old=>old.includes(group.label)?old.filter(x=>x!==group.label):[...old,group.label])}><group.icon size={17}/><span>{group.label}</span>{open?<ChevronDown size={14}/>:<ChevronRight size={14}/>}</button>}
-     {open&&group.items.length>1&&<div className={styles.children}>{group.items.map(item=>{const Icon=item.icon;const selected=item.tab===activeTab;return item.disabled?<div className={styles.disabled} key={item.label} title={item.hint}><Icon size={15}/><span>{item.label}</span><small>Later</small></div>:item.href?<a className={styles.childLink} href={item.href} key={item.label}><Icon size={15}/><span>{item.label}</span></a>:<button type="button" key={item.label} className={selected?styles.childActive:styles.childLink} onClick={()=>onNavigate(item.tab!)}><Icon size={15}/><span>{item.label}</span></button>})}{group.label==='Sales channels'&&salesAvailable&&<a className={styles.childLink} href="/staff/sales"><Users size={15}/><span>Seller portal</span></a>}</div>}
+     {open&&group.items.length>1&&<div className={styles.children}>{group.items.map(item=>{const Icon=item.icon;const selected=item.tab===activeTab&&(group.label!=='Orders'||item.label==='All orders');return item.disabled?<div className={styles.disabled} key={item.label} title={item.hint}><Icon size={15}/><span>{item.label}</span><small>Later</small></div>:item.href?<a className={styles.childLink} href={item.href} key={item.label}><Icon size={15}/><span>{item.label}</span></a>:<button type="button" key={item.label} className={selected?styles.childActive:styles.childLink} onClick={()=>onNavigate(item.tab!)}><Icon size={15}/><span>{item.label}</span></button>})}{group.label==='Sales channels'&&salesAvailable&&<a className={styles.childLink} href="/staff/sales"><Users size={15}/><span>Seller portal</span></a>}</div>}
     </section>})}
    </nav>
    <div className={styles.footer}><span>BIG K · Store admin</span></div>
