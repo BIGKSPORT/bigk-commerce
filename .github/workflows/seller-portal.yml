@@ -11,6 +11,7 @@ on:
       - 'tests/sales-*'
       - 'scripts/*sales*'
       - 'supabase/sales/**'
+      - 'supabase/migrations/**'
       - '.github/workflows/seller-portal.yml'
 permissions:
   contents: read

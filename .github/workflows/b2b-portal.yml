@@ -10,6 +10,7 @@ on:
       - 'components/sales-crm*'
       - 'app/api/sales/crm/**'
       - 'supabase/sales/**'
+      - 'supabase/migrations/**'
       - 'components/b2b-*'
       - 'components/admin-b2b.tsx'
       - 'components/backoffice.tsx'
