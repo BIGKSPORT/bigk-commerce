@@ -48,7 +48,7 @@ export async function salesCrmData(actor:SalesActor){
   b2bDb().prepare('SELECT * FROM b2b_orders ORDER BY created_at DESC LIMIT 500').all()
  ]);
  const assignmentById=new Map(assignments.map((x:any)=>[String(x.account_id),x]));
- const visibleAccounts=allAccounts.filter((a:any)=>actor.role==='owner'||assignmentById.has(String(a.id)));
+ const visibleAccounts=allAccounts.filter((a:any)=>actor.role==='owner'||String((assignmentById.get(String(a.id)) as any)?.seller_id||'')===actor.id);
  const accountIds=new Set(visibleAccounts.map((a:any)=>String(a.id)));
  const visibleB2BOrders=b2bOrders.filter((o:any)=>accountIds.has(String(o.account_id)));
  const paidB2B=visibleB2BOrders.filter((o:any)=>['paid','fulfilled'].includes(String(o.status)));
