@@ -5,6 +5,7 @@ import {b2bDb as db} from './b2b-db';
 import {b2bEvent} from './b2b-auth';
 import {salesCatalogueData} from './sales-service';
 import {b2bQuote} from './b2b-pricing';
+import {salesRules} from './sales-pricing';
 import {hash,HttpError} from './security';
 import type {SalesActor} from './sales-types';
 import type {B2BAccount,B2BOrder,B2BQuote} from './b2b-types';
@@ -21,9 +22,10 @@ export const b2bAdminInput=z.discriminatedUnion('action',[
  z.object({action:z.literal('fulfil'),id:z.string().uuid(),version:z.number().int().positive(),tracking:z.string().trim().min(3).max(300)}).strict(),
  z.object({action:z.literal('cancel'),id:z.string().uuid(),version:z.number().int().positive()}).strict()
 ]);
+function orderCommission(subtotal:number,rate:number,bonus:number){return Math.round(subtotal*rate)+bonus;}
 function owner(actor:SalesActor){if(actor.role!=='owner')throw new HttpError(403,'Alleen BIG K kan B2B-klanten en betalingen beheren.');}
 function accountRow(r:Record<string,unknown>):B2BAccount{return {id:String(r.id),name:String(r.name),vat:'BE'+r.vat,email:String(r.email),contact:String(r.contact),phone:String(r.phone),address:String(r.address),postal:String(r.postal),city:String(r.city),active:!!Number(r.active),version:Number(r.version),hasPaidOrder:Number(r.has_paid_order)>0};}
-function orderRow(r:Record<string,unknown>):B2BOrder{return {id:String(r.id),accountId:String(r.account_id),version:Number(r.version),status:r.status as B2BOrder['status'],customer:JSON.parse(String(r.customer)),quote:JSON.parse(String(r.quote)),invoiceReference:String(r.invoice_reference),paymentInstructions:String(r.payment_instructions),paymentUrl:String(r.payment_url),paymentReference:String(r.payment_reference),tracking:String(r.tracking),createdAt:String(r.created_at)};}
+function orderRow(r:Record<string,unknown>):B2BOrder{return {id:String(r.id),accountId:String(r.account_id),version:Number(r.version),status:r.status as B2BOrder['status'],customer:JSON.parse(String(r.customer)),quote:JSON.parse(String(r.quote)),invoiceReference:String(r.invoice_reference),paymentInstructions:String(r.payment_instructions),paymentUrl:String(r.payment_url),paymentReference:String(r.payment_reference),tracking:String(r.tracking),createdAt:String(r.created_at),commissionSellerId:r.commission_seller_id?String(r.commission_seller_id):null};}
 export async function b2bAccount(id:string){const r=await db().prepare("SELECT a.*,(SELECT COUNT(*) FROM b2b_orders o WHERE o.account_id=a.id AND o.status IN ('paid','fulfilled')) AS has_paid_order FROM b2b_accounts a WHERE a.id=?").get(id);if(!r)throw new HttpError(404,'B2B-account niet gevonden.');return accountRow(r);}
 export async function b2bAdminData(actor:SalesActor){owner(actor);const [accounts,orders]=await Promise.all([db().prepare("SELECT a.*,(SELECT COUNT(*) FROM b2b_orders o WHERE o.account_id=a.id AND o.status IN ('paid','fulfilled')) AS has_paid_order FROM b2b_accounts a ORDER BY a.name").all(),db().prepare('SELECT * FROM b2b_orders ORDER BY created_at DESC LIMIT 200').all()]);return {accounts:accounts.map(accountRow),orders:orders.map(orderRow)};}
 export async function saveB2BAccount(actor:SalesActor,data:z.infer<typeof b2bAccountInput>,update?:{id:string;version:number;active:boolean}){owner(actor);return transaction(async()=>{
@@ -49,7 +51,7 @@ export async function requestB2BOrder(accountId:string,input:z.infer<typeof b2bO
  const digest=hash(JSON.stringify(input)),old=await db().prepare('SELECT id,account_id,request_hash FROM b2b_orders WHERE request_key=?').get(input.requestKey);if(old){if(old.account_id!==accountId||old.request_hash!==digest)throw new HttpError(409,'Deze aanvraag is al gebruikt.');return {id:String(old.id)};}
  const account=await b2bAccount(accountId),{quote,key}=await calculateB2BQuote(accountId,input.items);
  if(key!==input.quoteKey)throw new HttpError(409,'Prijzen of voorwaarden zijn gewijzigd. Controleer de bestelling opnieuw.');if(!quote.minimumMet)throw new HttpError(409,'Minimum bestelbedrag nog niet bereikt.');
- const id=crypto.randomUUID(),now=new Date().toISOString();await db().prepare('INSERT INTO b2b_orders(id,account_id,status,customer,quote,request_key,request_hash,agreement,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?)').run(id,accountId,'requested',JSON.stringify(account),JSON.stringify(quote),input.requestKey,digest,'b2b-stock-proforma-v1',now,now);await b2bEvent(accountId,'order.requested',id);return {id};
+ const id=crypto.randomUUID(),now=new Date().toISOString(),assignment=await salesDb().prepare('SELECT seller_id FROM seller_b2b_assignments WHERE account_id=?').get(accountId),commissionSellerId=assignment?.seller_id?String(assignment.seller_id):null;await db().prepare('INSERT INTO b2b_orders(id,account_id,status,customer,quote,request_key,request_hash,agreement,commission_seller_id,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?)').run(id,accountId,'requested',JSON.stringify(account),JSON.stringify(quote),input.requestKey,digest,'b2b-stock-proforma-v1',commissionSellerId,now,now);await b2bEvent(accountId,'order.requested',id);return {id};
 });}
 export async function changeB2BOrder(actor:SalesActor,input:Extract<z.infer<typeof b2bAdminInput>,{action:'confirm'|'paid'|'fulfil'|'cancel'}>){owner(actor);return transaction(async()=>{
  const row=await db().prepare('SELECT * FROM b2b_orders WHERE id=?').get(input.id);if(!row)throw new HttpError(404,'Bestelling niet gevonden.');if(Number(row.version)!==input.version)throw new HttpError(409,'Deze bestelling is gewijzigd. Vernieuw het overzicht.');
@@ -61,7 +63,7 @@ export async function changeB2BOrder(actor:SalesActor,input:Extract<z.infer<type
  }else if(input.action==='paid'){
   if(order.status!=='confirmed')throw new HttpError(409,'Bevestig de bestelling en proforma eerst.');if(await db().prepare("SELECT id FROM b2b_orders WHERE payment_reference=? AND status IN ('paid','fulfilled')").get(input.reference))throw new HttpError(409,'Deze betalingsreferentie is al gebruikt.');
   for(const line of order.quote.lines){const result=await storeDb().prepare('UPDATE variants SET stock=stock-?,reserved=reserved-? WHERE id=? AND stock>=? AND reserved>=?').run(line.quantity,line.quantity,line.id,line.quantity,line.quantity);if(result.changes!==1)throw new HttpError(409,'Controleer de voorraadreservering voor '+line.name+'.');}
-  await db().prepare('UPDATE b2b_orders SET payment_reference=? WHERE id=?').run(input.reference,input.id);status='paid';
+  const prior=await db().prepare("SELECT id FROM b2b_orders WHERE account_id=? AND id<>? AND status IN ('paid','fulfilled') LIMIT 1").get(order.accountId,input.id),first=!prior,subtotal=Number(order.quote.subtotal||0),rate=first?salesRules.proformaRate:salesRules.reorderRate,bonus=first&&subtotal>=salesRules.firstMinimum?salesRules.openingBonus:0,commission=orderCommission(subtotal,rate,bonus);await db().prepare('UPDATE b2b_orders SET payment_reference=?,commission_rate=?,commission_bonus_cents=?,commission_cents=?,commission_paid_at=? WHERE id=?').run(input.reference,order.commissionSellerId?rate:0,order.commissionSellerId?bonus:0,order.commissionSellerId?commission:0,new Date().toISOString(),input.id);status='paid';
  }else if(input.action==='fulfil'){
   if(order.status!=='paid')throw new HttpError(409,'Verzending kan pas na geregistreerde volledige betaling.');await db().prepare('UPDATE b2b_orders SET tracking=? WHERE id=?').run(input.tracking,input.id);status='fulfilled';
  }else{

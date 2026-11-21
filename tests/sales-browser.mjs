@@ -30,7 +30,7 @@ try{
   await page.exposeFunction('__salesFixture',async(path,init)=>{const data=init?.body?JSON.parse(init.body):{};
    if(path==='/api/sales/auth'){authenticated=true;return {status:200,body:{ok:true}};}
    if(path==='/api/sales'&&(!init?.method||init.method==='GET'))return {status:authenticated?200:401,body:authenticated?{actor:{id:'seller-1',name:'Nicky',role:'seller'},catalogue:catalogueMissing?[]:[product,{...product,id:'variant-xl',size:'XL',available:0}],customers:[customer],orders}:{error:'Log in met je verkopersaccount.'}};
-   if(path==='/api/sales/crm'&&(!init?.method||init.method==='GET'))return {status:authenticated?200:401,body:authenticated?{actor:{id:'seller-1',name:'Nicky',role:'seller'},metrics:{prospects:0,openProspects:0,followupsDue:0,accounts:0,revenueCents:0},pipeline:{prospect:0,contacted:0,interested:0,negotiation:0,converted:0,lost:0},sellers:[],prospects:[],followups:[],accounts:[],sellerCustomers:[],orders:[],salesOrders:[]}:{error:'Log in met je verkopersaccount.'}};
+   if(path==='/api/sales/crm'&&(!init?.method||init.method==='GET'))return {status:authenticated?200:401,body:authenticated?{actor:{id:'seller-1',name:'Nicky',role:'seller'},metrics:{prospects:0,openProspects:0,followupsDue:0,accounts:0,revenueCents:0,newStoresThisMonth:0,monthlyTarget:3},pipeline:{prospect:0,contacted:0,interested:0,negotiation:0,converted:0,lost:0},sellers:[],prospects:[],followups:[],accounts:[],sellerCustomers:[],orders:[],salesOrders:[]}:{error:'Log in met je verkopersaccount.'}};
    if(path==='/api/sales'&&data.action==='order'){saves++;orders=[{id:'20000000-1000-4000-8000-100000000001',version:1,customerId:customer.id,customerName:customer.name,sellerId:'seller-1',sellerName:'Nicky',status:'submitted',terms:'proforma',quote:salesQuote([product],data.data.items,2.5,'proforma',true),earnedCents:0,createdAt:'2026-11-16T10:00:00Z',paymentReference:''}];return {status:200,body:{id:orders[0].id}};}
    throw Error('Unexpected fixture request '+path);
   });
@@ -66,7 +66,7 @@ try{
   await page.setContent('<!doctype html><html lang="nl"><head><meta name="viewport" content="width=device-width,initial-scale=1"/></head><body><div id="root"></div></body></html>');
   await page.addScriptTag({content:"window.fetch=async(path,init)=>new Response(JSON.stringify(await window.__catalogueFixture(path,init)),{status:200,headers:{'Content-Type':'application/json'}})"});
   await page.addStyleTag({content:readFileSync('app/globals.css','utf8')+'\n'+readFileSync('app/identity.css','utf8')+'\n'+workspaceBundle.outputFiles.find(f=>f.path.endsWith('.css')).text});await page.addScriptTag({content:workspaceBundle.outputFiles.find(f=>f.path.endsWith('.js')).text});
-  await page.getByRole('heading',{name:'ALPINE FLEECE',exact:true}).waitFor({timeout:10000}).catch(async e=>{console.log('CATALOGUE_RENDER_DEBUG '+JSON.stringify({width,errors,body:(await page.locator('body').innerText()).slice(0,5000)}));throw e;});assert.equal(await page.getByRole('heading',{name:'ALPINE FLEECE',exact:true}).count(),1);
+  await page.getByRole('heading',{name:'Welkom bij BIG K Sales',exact:true}).waitFor();await page.getByRole('button',{name:'Catalogus',exact:true}).click();await page.getByRole('heading',{name:'ALPINE FLEECE',exact:true}).waitFor({timeout:10000}).catch(async e=>{console.log('CATALOGUE_RENDER_DEBUG '+JSON.stringify({width,errors,body:(await page.locator('body').innerText()).slice(0,5000)}));throw e;});assert.equal(await page.getByRole('heading',{name:'ALPINE FLEECE',exact:true}).count(),1);
   const categories=page.getByRole('navigation',{name:'Productcategorieën'});
   console.log('CATALOGUE_LAYOUT '+JSON.stringify(await categories.evaluate(el=>({nav:el.getBoundingClientRect().toJSON(),card:document.querySelector('article')?.getBoundingClientRect().toJSON(),scrollY:window.scrollY,viewport:[window.innerWidth,window.innerHeight],mode:document.compatMode}))));
   await categories.getByRole('button',{name:/Broeken/}).click();assert.equal(await page.getByRole('heading',{name:'ALPINE FLEECE',exact:true}).count(),0);
@@ -141,6 +141,7 @@ try{
  await previewPage.addScriptTag({content:"const OriginalParams=window.URLSearchParams;window.URLSearchParams=class extends OriginalParams{constructor(v){super(v||'previewSeller=10000000-1000-4000-8000-100000000001')}};window.fetch=async(path,init)=>new Response(JSON.stringify(await window.__sellerPreviewFixture(path,init)),{status:200})"});
  await previewPage.addStyleTag({content:workspaceBundle.outputFiles.find(f=>f.path.endsWith('.css')).text});await previewPage.addScriptTag({content:workspaceBundle.outputFiles.find(f=>f.path.endsWith('.js')).text});
  await previewPage.getByText('Voorbeeldweergave van Kenny Endels',{exact:true}).waitFor();
+ await previewPage.getByRole('button',{name:'Catalogus',exact:true}).click();
  assert.equal(await previewPage.getByRole('button',{name:'Verkopers',exact:true}).count(),0);
  await previewPage.getByLabel('ALPINE FLEECE Black maat M',{exact:true}).first().fill('30');
  assert.equal(await previewPage.getByRole('button',{name:'Indienen bij BIG K',exact:true}).isDisabled(),true);

@@ -1,5 +1,6 @@
 import {transaction} from './db';
 import {salesDb} from './sales-db';
+import {b2bDb} from './b2b-db';
 import {hash,HttpError} from './security';
 import type {SalesActor} from './sales-types';
 
@@ -19,13 +20,15 @@ function paymentRecord(entity:unknown):PaymentRecord{
 // Read the complete paid-order history, independently of the dashboard's last 200 orders.
 // Existing finalised earned_cents/bonus snapshots remain authoritative; never reprice history.
 export async function commissionStatements(actor:SalesActor,now=new Date()):Promise<CommissionStatement[]>{
+ b2bDb();
  const rows=await salesDb().prepare("SELECT o.id,o.seller_id,o.earned_cents,o.quote,o.updated_at,c.name AS customer_name,a.name AS seller_name FROM seller_orders o JOIN seller_customers c ON c.id=o.customer_id JOIN seller_accounts a ON a.id=o.seller_id WHERE o.status='paid'"+(actor.role==='seller'?' AND o.seller_id=?':'')+' ORDER BY o.updated_at,o.id').all(...(actor.role==='seller'?[actor.id]:[]));
+ const b2bRows=await salesDb().prepare("SELECT o.id,o.commission_seller_id AS seller_id,o.commission_cents AS earned_cents,o.commission_bonus_cents AS bonus_cents,o.quote,COALESCE(o.commission_paid_at,o.updated_at) AS updated_at,a.name AS customer_name,s.name AS seller_name FROM b2b_orders o JOIN b2b_accounts a ON a.id=o.account_id JOIN seller_accounts s ON s.id=o.commission_seller_id WHERE o.status IN ('paid','fulfilled') AND o.commission_seller_id IS NOT NULL AND o.commission_cents>0"+(actor.role==='seller'?' AND o.commission_seller_id=?':'')+' ORDER BY o.updated_at,o.id').all(...(actor.role==='seller'?[actor.id]:[]));
  const groups=new Map<string,CommissionStatement>(),currentMonth=commissionMonth(now);
- for(const r of rows){
+ for(const r of [...rows,...b2bRows]){
   const month=commissionMonth(new Date(String(r.updated_at))),sellerId=String(r.seller_id),id=sellerId+':'+month;
   let statement=groups.get(id);
   if(!statement){statement={sellerId,sellerName:String(r.seller_name),month,dueDate:dueDate(month),closed:month<currentMonth,lines:[],totalCents:0,key:''};groups.set(id,statement);}
-  const quote=JSON.parse(String(r.quote)),earned=Number(r.earned_cents),bonus=Number(quote.bonus||0);
+  const quote=JSON.parse(String(r.quote)),earned=Number(r.earned_cents),bonus=Number(r.bonus_cents??quote.bonus??0);
   statement.lines.push({orderId:String(r.id),customerName:String(r.customer_name),paidAt:String(r.updated_at),netCents:Number(quote.subtotal),commissionCents:earned-bonus,bonusCents:bonus});statement.totalCents+=earned;
  }
  for(const s of groups.values())s.key=hash(JSON.stringify({sellerId:s.sellerId,month:s.month,lines:s.lines.map(l=>({orderId:l.orderId,paidAt:l.paidAt,netCents:l.netCents,commissionCents:l.commissionCents,bonusCents:l.bonusCents}))}));

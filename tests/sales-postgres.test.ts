@@ -11,6 +11,6 @@ await test('PostgreSQL schema isolates anonymous, authenticated, staging and pro
  assert.equal((await db.query('SELECT * FROM bigk_staging.seller_accounts')).rows.length,1);
  await assert.rejects(()=>db.exec('SELECT * FROM bigk.seller_accounts'));
  for(const role of ['anon','authenticated']){await db.exec('RESET ROLE; SET ROLE '+role);await assert.rejects(()=>db.exec('SELECT * FROM bigk_staging.seller_accounts'));await assert.rejects(()=>db.exec("INSERT INTO bigk_staging.seller_accounts(id,name,email,created_at) VALUES('x','X','x@test.example','now')"));}
- await db.exec('RESET ROLE;');const result=await db.query<{relrowsecurity:boolean}>("SELECT relrowsecurity FROM pg_class WHERE relname LIKE 'seller_%' AND relkind='r'");assert.equal(result.rows.length,16);assert.ok(result.rows.every(r=>r.relrowsecurity));
+ await db.exec('RESET ROLE;');const result=await db.query<{relrowsecurity:boolean}>("SELECT relrowsecurity FROM pg_class WHERE relname LIKE 'seller_%' AND relkind='r'");assert.equal(result.rows.length,18);assert.ok(result.rows.every(r=>r.relrowsecurity));
  }finally{await db.close();}
 });
