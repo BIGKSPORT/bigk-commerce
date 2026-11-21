@@ -5,7 +5,7 @@
 - Customer benefit: 10% off eligible product subtotal through one unique ambassador code.
 - Ambassador reward: 10% of eligible net product sales after the customer discount, excluding VAT, shipping, gift cards, refunded/cancelled value and non-commissionable items.
 - One code per active ambassador; one ambassador attribution per order.
-- No self-referrals, own-account purchases, household/payment-instrument matches, duplicate orders or staff/test orders.
+- The exact ambassador email is blocked from using its own code. Payment-instrument, household and coordinated-account matching are not automated yet; suspicious patterns require manual review. One attribution per order is enforced.
 - No stacking with BIG K Club Points or any other promotional code.
 - B2B orders and seller/channel commissions are excluded unless a separately approved written agreement says otherwise.
 
@@ -42,4 +42,4 @@
 5. Production migration and feature activation are separate release approvals. Keep the programme disabled until all gates pass.
 
 ## Current implementation status
-The schema migration is additive and server-only. It does not itself create a public application form, issue codes, attribute orders, calculate commissions or authorize payouts. Those application/checkout/admin integrations and automated tests are required before launch. Club Points remain independently controlled by BIGK_CLUB_ENABLED and cannot stack with ambassador discounts.
+The current branch adds the public application flow, admin review and code issuance, live-checkout attribution, manual commission review, refund holds, payout workflow and authenticated ambassador data/dashboard. Commission eligibility still requires a human-verified VAT-exclusive product basis. Stripe chargeback events, end-to-end test coverage, legal review and a migration targeting the isolated staging schema remain launch blockers. Club Points remain independently controlled by BIGK_CLUB_ENABLED and cannot stack with ambassador discounts.
