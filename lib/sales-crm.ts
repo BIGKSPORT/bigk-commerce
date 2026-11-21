@@ -44,7 +44,7 @@ async function canAccessAccount(actor:SalesActor,id:string){
  if(!a)throw new HttpError(404,'B2B-account niet gevonden.');
 }
 export async function salesCrmData(actor:SalesActor){
- const [allAccounts,assignments,prospects,followups,sellers,sellerCustomers,sellerOrders,b2bOrders,paidHistory]=await Promise.all([
+ const [allAccounts,assignments,prospects,followups,sellers,sellerCustomers,sellerOrders,b2bOrders,paidHistory,paidB2BHistory]=await Promise.all([
   actor.role==='owner'?b2bDb().prepare("SELECT a.*,(SELECT COUNT(*) FROM b2b_orders o WHERE o.account_id=a.id AND o.status IN ('paid','fulfilled')) AS paid_orders FROM b2b_accounts a ORDER BY a.name").all():salesDb().prepare("SELECT a.*,(SELECT COUNT(*) FROM b2b_orders o WHERE o.account_id=a.id AND o.status IN ('paid','fulfilled')) AS paid_orders FROM b2b_accounts a JOIN seller_b2b_assignments x ON x.account_id=a.id WHERE x.seller_id=? ORDER BY a.name").all(actor.id),
   salesDb().prepare('SELECT x.account_id,x.seller_id,a.name AS seller_name FROM seller_b2b_assignments x JOIN seller_accounts a ON a.id=x.seller_id'+(actor.role==='seller'?' WHERE x.seller_id=?':'')).all(...(actor.role==='seller'?[actor.id]:[])),
   salesDb().prepare('SELECT p.*,a.name AS seller_name FROM seller_prospects p LEFT JOIN seller_accounts a ON a.id=p.seller_id'+(actor.role==='seller'?' WHERE p.seller_id=?':'')+' ORDER BY p.updated_at DESC').all(...(actor.role==='seller'?[actor.id]:[])),
@@ -53,7 +53,8 @@ export async function salesCrmData(actor:SalesActor){
   salesDb().prepare('SELECT c.*,a.name AS seller_name,(SELECT MAX(x.activity_at) FROM seller_customer_activities x WHERE x.customer_id=c.id AND x.seller_id=c.seller_id) AS last_activity_at FROM seller_customers c JOIN seller_accounts a ON a.id=c.seller_id'+(actor.role==='seller'?' WHERE c.seller_id=?':'')+' ORDER BY c.name').all(...(actor.role==='seller'?[actor.id]:[])),
   salesDb().prepare('SELECT o.*,c.name AS customer_name,a.name AS seller_name FROM seller_orders o JOIN seller_customers c ON c.id=o.customer_id JOIN seller_accounts a ON a.id=o.seller_id'+(actor.role==='seller'?' WHERE o.seller_id=?':'')+' ORDER BY o.created_at DESC LIMIT 500').all(...(actor.role==='seller'?[actor.id]:[])),
   actor.role==='owner'?b2bDb().prepare('SELECT * FROM b2b_orders ORDER BY created_at DESC LIMIT 500').all():salesDb().prepare('SELECT o.* FROM b2b_orders o JOIN seller_b2b_assignments x ON x.account_id=o.account_id WHERE x.seller_id=? ORDER BY o.created_at DESC LIMIT 500').all(actor.id),
-  salesDb().prepare('SELECT customer_id,seller_id,quote,updated_at FROM seller_orders WHERE status=\'paid\''+(actor.role==='seller'?' AND seller_id=?':'')+' ORDER BY updated_at ASC').all(...(actor.role==='seller'?[actor.id]:[]))
+  salesDb().prepare('SELECT customer_id,seller_id,quote,updated_at FROM seller_orders WHERE status=\'paid\''+(actor.role==='seller'?' AND seller_id=?':'')+' ORDER BY updated_at ASC').all(...(actor.role==='seller'?[actor.id]:[])),
+  salesDb().prepare("SELECT account_id AS customer_id,commission_seller_id AS seller_id,commission_bonus_cents,COALESCE(commission_paid_at,updated_at) AS updated_at FROM b2b_orders WHERE status IN ('paid','fulfilled') AND commission_seller_id IS NOT NULL AND commission_bonus_cents>0"+(actor.role==='seller'?' AND commission_seller_id=?':'')+' ORDER BY COALESCE(commission_paid_at,updated_at) ASC').all(...(actor.role==='seller'?[actor.id]:[]))
  ]);
  const assignmentById=new Map(assignments.map((x:any)=>[String(x.account_id),x]));
  const visibleAccounts=allAccounts.filter((a:any)=>actor.role==='owner'||String((assignmentById.get(String(a.id)) as any)?.seller_id||'')===actor.id);
@@ -64,7 +65,7 @@ export async function salesCrmData(actor:SalesActor){
  const revenue=[...paidB2B.map((o:any)=>Number(JSON.parse(String(o.quote)).total||0)),...paidSeller.map((o:any)=>Number(JSON.parse(String(o.quote)).total||0))].reduce((a,b)=>a+b,0);
  const pipeline=prospects.reduce((acc:any,p:any)=>(acc[String(p.stage)]=(acc[String(p.stage)]||0)+1,acc),{});
  const currentMonth=commissionMonth(new Date()),firstPaidByCustomer=new Map<string,{sellerId:string;updatedAt:string;quote:any}>();
- for(const row of paidHistory){const customerId=String(row.customer_id);if(!firstPaidByCustomer.has(customerId))firstPaidByCustomer.set(customerId,{sellerId:String(row.seller_id),updatedAt:String(row.updated_at),quote:JSON.parse(String(row.quote))});}
+ for(const row of paidHistory){const customerId=String(row.customer_id);if(!firstPaidByCustomer.has(customerId))firstPaidByCustomer.set(customerId,{sellerId:String(row.seller_id),updatedAt:String(row.updated_at),quote:JSON.parse(String(row.quote))});}for(const row of paidB2BHistory)if(commissionMonth(new Date(String(row.updated_at)))===currentMonth)newStoresBySeller.set(String(row.seller_id),(newStoresBySeller.get(String(row.seller_id))||0)+1);
  const newStoresBySeller=new Map<string,number>();for(const first of firstPaidByCustomer.values())if(commissionMonth(new Date(first.updatedAt))===currentMonth&&Number(first.quote.subtotal)>=salesRules.firstMinimum)newStoresBySeller.set(first.sellerId,(newStoresBySeller.get(first.sellerId)||0)+1);
  const performance=(actor.role==='owner'?sellers:[{id:actor.id,name:actor.name,email:'',active:1}]).map((s:any)=>{
   const ownedP=prospects.filter((p:any)=>String(p.seller_id||'')===String(s.id));
