@@ -71,7 +71,7 @@ try{
   await page.getByRole('button',{name:'Filters wissen',exact:true}).click();
   await page.getByLabel('Sorteer producten',{exact:true}).selectOption('price');
   const names=await page.locator('article h2').allTextContents();assert.deepEqual(names,['CORE PANTS','ALPINE FLEECE']);
-  await page.getByLabel('ALPINE FLEECE Black maat M',{exact:true}).fill('3');
+  await page.getByLabel('ALPINE FLEECE Black maat M',{exact:true}).first().fill('3');
   await page.getByRole('button',{name:'Bekijk ALPINE FLEECE',exact:true}).click();const dialog=page.getByRole('dialog');
   await dialog.getByText('Regular fit uit de backoffice',{exact:true}).waitFor();await dialog.getByText('Geverifieerde materiaalinformatie',{exact:true}).waitFor();
   assert.equal(await dialog.getByLabel('ALPINE FLEECE Black maat L',{exact:true}).isDisabled(),true);
@@ -79,7 +79,7 @@ try{
   await dialog.evaluate(el=>{el.scrollTop=0;});await dialog.getByRole('button',{name:'Productfoto 2',exact:true}).click();assert.equal(await dialog.locator('img').first().getAttribute('data-source'),'/back.webp');
   await page.screenshot({path:out+'/catalogue-detail-'+width+'.png',fullPage:true});
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+1),false);
-  await dialog.getByRole('button',{name:'Productdetails sluiten'}).click();await dialog.waitFor({state:'detached'});assert.equal(await page.getByLabel('ALPINE FLEECE Black maat M',{exact:true}).inputValue(),'3');
+  await dialog.getByRole('button',{name:'Productdetails sluiten'}).click();await dialog.waitFor({state:'detached'});assert.equal(await page.getByLabel('ALPINE FLEECE Black maat M',{exact:true}).first().inputValue(),'3');
   version=1;await page.evaluate(()=>window.dispatchEvent(new Event('focus')));await page.getByRole('heading',{name:'ALPINE UPDATED',exact:true}).waitFor();
   assert.equal(await page.getByLabel('ALPINE UPDATED Black maat M',{exact:true}).inputValue(),'3');
   await categories.getByRole('button',{name:/Nieuwe fleececategorie/}).waitFor();
@@ -137,7 +137,7 @@ try{
  await previewPage.addStyleTag({content:workspaceBundle.outputFiles.find(f=>f.path.endsWith('.css')).text});await previewPage.addScriptTag({content:workspaceBundle.outputFiles.find(f=>f.path.endsWith('.js')).text});
  await previewPage.getByText('Voorbeeldweergave van Kenny Endels',{exact:true}).waitFor();
  assert.equal(await previewPage.getByRole('button',{name:'Verkopers',exact:true}).count(),0);
- await previewPage.getByLabel('ALPINE FLEECE Black maat M',{exact:true}).fill('30');
+ await previewPage.getByLabel('ALPINE FLEECE Black maat M',{exact:true}).first().fill('30');
  assert.equal(await previewPage.getByRole('button',{name:'Indienen bij BIG K',exact:true}).isDisabled(),true);
  assert.equal(await previewPage.getByRole('button',{name:'Bewaar concept',exact:true}).isDisabled(),true);
  await previewPage.getByRole('button',{name:'Winkels',exact:true}).click();assert.equal(await previewPage.getByRole('button',{name:'Winkel opslaan',exact:true}).isDisabled(),true);
