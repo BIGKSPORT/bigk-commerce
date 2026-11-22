@@ -21,7 +21,7 @@ try {
  assert.deepEqual(await sitemap(),[],'Staging remains excluded even when production flags are copied');
  // SQLite fixture only: simulate production launch flags without touching a hosted database.
  process.env.DATABASE_SCHEMA='bigk';process.env.VERCEL_ENV='production';
- const entries=await sitemap();assert.equal(entries.filter(entry=>entry.url.includes('/products/')).length,3);assert(!entries.some(entry=>/apline-fleece-p001|alpine-fz-p002/.test(entry.url)));for(const locale of ['en','nl','fr'])assert(entries.some(entry=>entry.url.startsWith('https://bigk.be/'+locale+'/products/')));
+ const entries=await sitemap();assert.equal(entries.filter(entry=>entry.url.includes('/products/')).length,5);assert(!entries.some(entry=>/apline-fleece-p001|alpine-fz-p002/.test(entry.url)));for(const locale of ['en','nl','fr','es','it'])assert(entries.some(entry=>entry.url.startsWith('https://bigk.be/'+locale+'/products/')));
  console.log('PASS server rejects historical XS, keeps order ID/price with invariant product name, preserves history, and gates canonical multilingual sitemap.');
 } finally {await closeDatabase();await rm(dir,{recursive:true,force:true})}
 
