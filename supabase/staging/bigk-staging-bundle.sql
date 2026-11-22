@@ -904,12 +904,12 @@ REVOKE ALL ON bigk_staging.discount_codes,bigk_staging.discount_redemptions,
 GRANT SELECT,INSERT,UPDATE,DELETE ON bigk_staging.discount_codes,bigk_staging.discount_redemptions TO bigk_staging_server;
 GRANT SELECT,INSERT,UPDATE ON bigk_staging.ambassador_applications,bigk_staging.ambassadors,
   bigk_staging.ambassador_attributions,bigk_staging.ambassador_commissions,
-  bigk_staging.ambassador_payouts TO bigk_staging_server;
+  bigk_staging.ambassador_payouts,bigk_staging.ambassador_team_bonus_ledger TO bigk_staging_server;
 
 DO $policies$
 DECLARE t TEXT;
 BEGIN
-  FOREACH t IN ARRAY ARRAY['discount_codes','discount_redemptions','ambassador_applications','ambassadors','ambassador_attributions','ambassador_commissions','ambassador_payouts'] LOOP
+  FOREACH t IN ARRAY ARRAY['discount_codes','discount_redemptions','ambassador_applications','ambassadors','ambassador_attributions','ambassador_commissions','ambassador_payouts','ambassador_team_bonus_ledger'] LOOP
     IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='bigk_staging' AND tablename=t AND policyname='staging_server_access') THEN
       EXECUTE format('CREATE POLICY staging_server_access ON bigk_staging.%I TO bigk_staging_server USING (true) WITH CHECK (true)',t);
     END IF;
