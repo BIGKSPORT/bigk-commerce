@@ -16,9 +16,8 @@ const partnerTypes = [
 const levels = [
   ['STARTER', '10%', 'Je start als BIG K® partner.'],
   ['ACTIVE', '15%', 'Je bouwt aan regelmatige verkoop.'],
-  ['TOP', '20%', 'Je community groeit en activeert.'],
-  ['ELITE', '25%', 'Je realiseert sterk en aantoonbaar volume.'],
-  ['VIP / ELITE+', '30%', 'Voor strategische partners met uitzonderlijk bereik.'],
+  ['TOP', '18%', 'Je community groeit en activeert.'],
+  ['ELITE', '20%', 'Je realiseert sterk en aantoonbaar volume.'],
 ];
 
 export default function PartnersPage() {
@@ -58,9 +57,9 @@ export default function PartnersPage() {
       </section>
 
       <section className="levels-section" id="niveaus">
-        <div className="levels-top"><div><p className="eyebrow">03 / GROEI SAMEN</p><h2>Jouw inzet.<br /><em>Jouw groeipad.</em></h2></div><p>Een groeimodel met vijf mogelijke niveaus. Je uiteindelijke commissieniveau wordt door BIGK BV bevestigd op basis van de partnerafspraken en gerealiseerde, geldige verkopen.</p></div>
-        <div className="level-list">{levels.map(([name, rate, desc], i) => <div className="level-row" key={name}><span className="level-no">0{i + 1}</span><strong>{name}</strong><span className="level-desc">{desc}</span><b className={i === 4 ? 'level-rate max' : 'level-rate'}>{rate}</b></div>)}</div>
-        <p className="level-note">Conceptuele groeiladder — percentages zijn voorstellen en worden pas actief na formele goedkeuring. Maximaal 30% directe commissie op eigen geldige verkopen; geen vergoeding voor het aanbrengen van andere partners.</p>
+        <div className="levels-top"><div><p className="eyebrow">03 / GROEI SAMEN</p><h2>Jouw inzet.<br /><em>Jouw groeipad.</em></h2></div><p>Een groeimodel met vier mogelijke niveaus. Je uiteindelijke commissieniveau wordt door BIGK BV bevestigd op basis van de partnerafspraken en gerealiseerde, geldige verkopen.</p></div>
+        <div className="level-list">{levels.map(([name, rate, desc], i) => <div className="level-row" key={name}><span className="level-no">0{i + 1}</span><strong>{name}</strong><span className="level-desc">{desc}</span><b className={i === 3 ? 'level-rate max' : 'level-rate'}>{rate}</b></div>)}</div>
+        <p className="level-note">Commissieniveaus van 10%, 15%, 18% en maximaal 20% op eigen geldige verkopen. BIGK BV kent elk niveau persoonlijk toe; er is geen vergoeding voor het aanbrengen van andere partners.</p>
       </section>
 
       <section className="partner-section benefits">
