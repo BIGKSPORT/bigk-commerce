@@ -7,6 +7,9 @@ export const applicationSchema=z.object({
  fullName:z.string().trim().min(2).max(120),
  email:z.email().max(254),
  socialUrl:z.string().trim().url().max(500),
+ partnerType:z.enum(['ambassador','club','coach','creator','team_leader']).default('ambassador'),
+ organizationName:z.string().trim().max(160).default(''),
+ organizationType:z.string().trim().max(60).default(''),
  audienceNote:z.string().trim().min(10).max(1200),
  motivation:z.string().trim().min(20).max(2000),
  privacyAccepted:z.literal(true),
@@ -26,7 +29,7 @@ export async function submitAmbassadorApplication(input:ApplicationInput){
   const existing=await db().prepare("SELECT id,status FROM ambassador_applications WHERE lower(email)=? ORDER BY created_at DESC LIMIT 1").get(email) as {id:string;status:string}|undefined;
   if(existing?.status==='pending')throw new HttpError(409,'Er is al een open aanvraag met dit e-mailadres.');
   const id=crypto.randomUUID();
-  await db().prepare("INSERT INTO ambassador_applications(id,email,full_name,social_url,audience_note,motivation,privacy_accepted_at,privacy_notice_version,terms_accepted_at,terms_version,status,created_at,updated_at) VALUES(?,?,?,?,?,?,?,'2026-11-21',?,'0.3-2026-11-22','pending',?,?)").run(id,email,v.fullName,v.socialUrl,v.audienceNote,v.motivation,now,now,now,now);
+  await db().prepare("INSERT INTO ambassador_applications(id,email,full_name,social_url,audience_note,motivation,privacy_accepted_at,privacy_notice_version,terms_accepted_at,terms_version,status,created_at,updated_at) VALUES(?,?,?,?,?,?,?,'2026-11-21',?,'0.3-2026-11-22','pending',?,?)").run(id,email,v.fullName,v.socialUrl,v.audienceNote,v.motivation,v.partnerType,v.organizationName,v.organizationType,now,now,now,now);
   return {id,status:'pending' as const};
  });
 }
@@ -57,8 +60,8 @@ export async function reviewAmbassadorApplication(id:string,decision:'approve'|'
   }
   if(!referral)throw new HttpError(503,'Kon geen unieke ambassadeurscode aanmaken. Probeer opnieuw.');
   await upsertDiscountCode({code:discount,type:'percent',value:10,minSubtotalCents:0,maxRedemptions:null,perCustomerLimit:1,active:true,note:'BIG K Ambassador — '+String(a.full_name)});
-  const ambassadorId=crypto.randomUUID(),commissionPercent=defaultPartnerRate('starter');
-  await db().prepare("INSERT INTO ambassadors(id,application_id,email,display_name,referral_code,discount_code,customer_discount_percent,commission_percent,status,approved_by,approved_at,created_at) VALUES(?,?,?,?,?,?,10,?,'active',?,?,?)").run(ambassadorId,id,email,String(a.full_name),referral,discount,commissionPercent,admin,now,now);
+  const partnerType=(['ambassador','club','coach','creator','team_leader'].includes(String(a.partner_type))?String(a.partner_type):'ambassador') as PartnerType,commissionPercent=defaultPartnerRate('starter'),ambassadorId=crypto.randomUUID();
+  await db().prepare("INSERT INTO ambassadors(id,application_id,email,display_name,referral_code,discount_code,customer_discount_percent,commission_percent,status,approved_by,approved_at,created_at,partner_type,partner_level,organization_name,organization_type) VALUES(?,?,?,?,?,?,10,?,'active',?,?,? ,?,'starter',?,?)").run(ambassadorId,id,email,String(a.full_name),referral,discount,commissionPercent,admin,now,now,partnerType,String(a.organization_name||''),String(a.organization_type||''));
   await db().prepare("UPDATE ambassador_applications SET status='approved',reviewed_by=?,reviewed_at=?,review_note=?,updated_at=? WHERE id=? AND status='pending'").run(admin,now,note,now,id);
   await audit('ambassador.application.approved',id);
   return {status:'approved',ambassadorId,referralCode:referral,discountCode:discount};
@@ -66,8 +69,9 @@ export async function reviewAmbassadorApplication(id:string,decision:'approve'|'
 }
 export async function updateAmbassadorPartnerProfile(id:string,profile:{partnerType:PartnerType;partnerLevel:PartnerLevel;commissionPercent:number;teamLeaderId?:string|null;organizationName?:string;organizationType?:string},admin:string){
  const rate=assertPartnerRate(profile.commissionPercent);
+ if(rate!==defaultPartnerRate(profile.partnerLevel))throw new HttpError(400,'Het commissiepercentage moet overeenkomen met het gekozen partnerniveau.');
  if(profile.teamLeaderId===id)throw new HttpError(400,'Een partner kan zichzelf niet als teamleader kiezen.');
- if(profile.teamLeaderId){const leader=await db().prepare("SELECT id,partner_type,status FROM ambassadors WHERE id=?").get(profile.teamLeaderId) as {id:string;partner_type:string;status:string}|undefined;if(!leader||leader.status!=='active'||!['team_leader','regional'].includes(leader.partner_type))throw new HttpError(400,'Kies een actieve teamleader of regional partner.');}
+ if(profile.teamLeaderId){const leader=await db().prepare("SELECT id,partner_type,status FROM ambassadors WHERE id=?").get(profile.teamLeaderId) as {id:string;partner_type:string;status:string}|undefined;if(!leader||leader.status!=='active'||!['team_leader','regional'].includes(leader.partner_type))throw new HttpError(400,'Kies een actieve teamleader of regional partner.');const cycle=await db().prepare("WITH RECURSIVE ancestry(id,team_leader_id) AS (SELECT id,team_leader_id FROM ambassadors WHERE id=? UNION ALL SELECT a.id,a.team_leader_id FROM ambassadors a JOIN ancestry p ON a.id=p.team_leader_id WHERE p.team_leader_id IS NOT NULL) SELECT id FROM ancestry WHERE id=? LIMIT 1").get(profile.teamLeaderId,id);if(cycle)throw new HttpError(409,'Deze teamindeling zou een kringverwijzing veroorzaken.');}
  await transaction(async()=>{await db().prepare("UPDATE ambassadors SET partner_type=?,partner_level=?,commission_percent=?,team_leader_id=?,organization_name=?,organization_type=? WHERE id=?").run(profile.partnerType,profile.partnerLevel,rate,profile.teamLeaderId||null,(profile.organizationName||'').trim().slice(0,160),(profile.organizationType||'').trim().slice(0,60),id);await audit('ambassador.partner_profile.updated',id);});
 }
 export async function setAmbassadorStatus(id:string,status:'active'|'paused'|'terminated',reason:string,admin:string){
