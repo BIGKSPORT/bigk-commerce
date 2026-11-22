@@ -33,10 +33,10 @@ export default function AmbassadorDashboard(){
    {data?.ambassador&&<>
     <section style={{padding:'48px 0 30px'}}>
      <p style={eyebrow}>JOUW BIG K® PARTNEROMGEVING</p><h1 style={title}>Hey {String(profile.display_name||'ambassador')},<br/>goed je te zien.</h1>
-     <p style={{color:'#666',lineHeight:1.6}}>Hier vind je jouw persoonlijke code, commissieoverzicht en uitbetalingsstatus.</p>
+     <p style={{color:'#666',lineHeight:1.6}}>Hier vind je jouw persoonlijke code, partnertype, commissieniveau en uitbetalingsstatus.</p><p style={{fontSize:13,color:'#444'}}>Partnerniveau: <strong>{String(profile.partner_level||'starter').toUpperCase()}</strong> · Type: <strong>{String(profile.partner_type||'ambassador').replace('_',' ')}</strong> · Commissie: <strong>{Number(profile.commission_percent||12)}%</strong></p>
     </section>
     <section style={{...panel,background:'#2D2926',color:'#fff',padding:28,display:'grid',gridTemplateColumns:'1fr auto',gap:20,alignItems:'center'}}>
-     <div><p style={{...eyebrow,color:'#ff536d',marginTop:0}}>JOUW PERSOONLIJKE CODE</p><div style={{fontSize:'clamp(28px,5vw,44px)',fontWeight:950,letterSpacing:2,overflowWrap:'anywhere'}}>{code||'Nog niet beschikbaar'}</div><p style={{color:'#ccc',fontSize:13,marginBottom:0}}>Geef je community 10% korting bij BIG K®.</p></div>
+     <div><p style={{...eyebrow,color:'#ff536d',marginTop:0}}>JOUW PERSOONLIJKE CODE</p><div style={{fontSize:'clamp(28px,5vw,44px)',fontWeight:950,letterSpacing:2,overflowWrap:'anywhere'}}>{code||'Nog niet beschikbaar'}</div><p style={{color:'#ccc',fontSize:13,marginBottom:0}}>Je community krijgt 10% korting. Jouw huidige commissie: {Number(profile.commission_percent||12)}%.</p></div>
      {code&&<button onClick={copyCode} style={{padding:'14px 18px',background:'#E4002B',color:'#fff',border:0,borderRadius:4,fontWeight:900,cursor:'pointer'}}>{copied?'GEKOPIEERD ✓':'KOPIEER CODE'}</button>}
     </section>
     <section style={{display:'grid',gridTemplateColumns:'repeat(3,minmax(0,1fr))',gap:14,margin:'16px 0 30px'}}>
