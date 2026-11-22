@@ -41,5 +41,13 @@
 4. Validate legal text, GDPR privacy notice/retention, Belgian/EU consumer withdrawal handling, VAT and ambassador invoicing with the accountant/legal adviser.
 5. Production migration and feature activation are separate release approvals. Keep the programme disabled until all gates pass.
 
-## Current implementation status
-The current branch adds the public application flow, admin review and code issuance, live-checkout attribution, manual commission review, refund holds, payout workflow and authenticated ambassador data/dashboard. Commission eligibility still requires a human-verified VAT-exclusive product basis. Stripe chargeback events, end-to-end test coverage, legal review and a migration targeting the isolated staging schema remain launch blockers. Club Points remain independently controlled by BIGK_CLUB_ENABLED and cannot stack with ambassador discounts.
+## Current implementation status — 22 November 2026
+The branch contains the public partner landing page and application form, admin review and code issuance, checkout attribution, manual commission review, refund holds, payout workflow, and authenticated partner dashboard.
+
+- Production Supabase: the additive partner tables and columns are installed in schema `bigk`. Row-level security is enabled; browser roles have no table grants; the restricted `bigk_production_web` role has server access. The six partner tables were verified empty immediately after migration.
+- Staging: partner tables are included in the isolated staging bundle. `bigk_staging_server` has the intended server-only access, and the staging schema test checks all six partner tables and anonymous denial.
+- Commercial copy: public rates are Starter 10%, Active 15%, Top 18%, Elite 20%; the community discount is 10%. The public legal pages now match those rates and clearly identify the terms and privacy notice as drafts.
+- Safety: no partner code is automatically issued until admin approval. Commissions start pending and are not payable until delivery, return review, VAT-exclusive basis verification and explicit approval. Team bonuses remain disabled. No payout is sent automatically.
+- Local verification on the current branch: typecheck, staging schema test, partner application/rate tests, auth/shipping tests, payment-journey tests, Alpin commerce test and production build passed. GitHub Actions for the latest commit are still running/queued; merge and production deployment are not yet complete.
+
+Remaining launch gates: legal/accounting approval of the partner terms and invoicing/tax flow; confirmation of privacy suppliers, transfer locations and retention schedule; an end-to-end partner attribution/refund/chargeback test; and completion of GitHub Actions before merge. Stripe chargeback handling remains manual. Club Points remain independently controlled by BIGK_CLUB_ENABLED and cannot stack with ambassador discounts.
