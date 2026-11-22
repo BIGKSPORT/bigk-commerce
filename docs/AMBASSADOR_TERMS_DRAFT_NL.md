@@ -1,8 +1,8 @@
-# BIG K® Ambassadorprogramma — ontwerpvoorwaarden
+# BIG K® Partner Community — ontwerpvoorwaarden
 
 **Contractpartij:** BIGK BV, Theo Verellenlaan 27, 2990 Wuustwezel, België. Ondernemingsnummer en btw-nummer: **BE 1034.189.749**. Website: https://bigk.be. (hierna: “BIGK”).  
 **Status:** ontwerp voor juridische en fiscale nazicht; geen juridisch gevalideerde eindversie.  
-**Versie:** 0.2 — 21 november 2026.
+**Versie:** 0.3 — 22 november 2026.
 
 ## 1. Toelating en start
 
@@ -12,13 +12,17 @@ BIGK kan een aanvraag gemotiveerd weigeren of een deelname opschorten bij een re
 
 ## 2. Voordeel voor de community
 
-Een actieve ambassadeur krijgt één persoonlijke kortingscode die recht geeft op **10% korting** op de daarvoor in aanmerking komende producten bij BIG K®. De code is persoonlijk voor promotionele toerekening, niet overdraagbaar als account of betaalmiddel en niet cumuleerbaar met andere promotiecodes of BIG K Club-punten. De concrete toepasbaarheid, uitgesloten artikelen en eventuele minimumvoorwaarden worden steeds getoond bij checkout.
+Een actieve partner krijgt één persoonlijke kortingscode die recht geeft op **10% korting** op de daarvoor in aanmerking komende producten bij BIG K®. De code is persoonlijk voor promotionele toerekening, niet overdraagbaar als account of betaalmiddel en niet cumuleerbaar met andere promotiecodes of BIG K Club-punten. De concrete toepasbaarheid, uitgesloten artikelen en eventuele minimumvoorwaarden worden steeds getoond bij checkout.
 
 BIGK mag de code voor toekomstige bestellingen pauzeren of beëindigen. Reeds correct geplaatste bestellingen worden behandeld volgens de op het moment van aankoop getoonde consumentenvoorwaarden.
 
 ## 3. Commissie
 
-Voor een toegeschreven en in aanmerking komende bestelling bedraagt de commissie **10% van de netto productomzet exclusief btw**, na aftrek van de ambassadeurskorting en andere productkortingen. Verzendkosten, btw, cadeaubonnen, geannuleerde bestellingen, niet-betaalde bestellingen, terugbetaalde bedragen en niet-commissiewaardige producten tellen niet mee.
+Het individuele commissiepercentage wordt door BIGK vóór activatie schriftelijk bevestigd en bedraagt binnen het huidige ontwerp **12% tot maximaal 20% van de netto productomzet exclusief btw**, na aftrek van de ambassadeurskorting en andere productkortingen. De startinstelling is 12%. Hogere niveaus (15%, 18% en 20%) worden uitsluitend toegekend na beoordeling van aantoonbare eigen verkoop, klantkwaliteit, retourratio, merkgedrag en consistente prestaties. Een niveau of percentage is niet automatisch verworven en kan alleen prospectief worden aangepast met duidelijke kennisgeving. Per bestelling wordt het toepasselijke percentage vastgelegd in het commissieregister.
+
+Voor een clubpartner kan BIGK een afzonderlijke clubvergoeding voor een specifieke clubcampagne schriftelijk vastleggen. Een clubvergoeding en persoonlijke commissie worden niet automatisch gestapeld; de campagnebijlage bepaalt de toewijzing en totale vergoeding.
+
+Een teamleader kan in de toekomst in aanmerking komen voor een afzonderlijke vergoeding voor aantoonbare begeleiding en ondersteuning van actieve partners. Deze vergoeding is **niet actief**, wordt niet opgebouwd en wordt niet uitbetaald zolang de juridische en fiscale toetsing niet schriftelijk is afgerond en BIGK de regeling niet afzonderlijk heeft geactiveerd. Rekrutering op zich geeft nooit recht op een vergoeding. Verzendkosten, btw, cadeaubonnen, geannuleerde bestellingen, niet-betaalde bestellingen, terugbetaalde bedragen en niet-commissiewaardige producten tellen niet mee.
 
 Toerekening gebeurt wanneer de klant de actieve persoonlijke kortingscode bij de bestelling gebruikt. Per bestelling kan slechts één ambassadeur worden toegeschreven. Geen commissie is verschuldigd voor eigen aankopen van de ambassadeur, bestellingen met frauduleuze of kunstmatige transacties, testbestellingen of bestellingen die in strijd met de voorwaarden tot stand kwamen.
 
