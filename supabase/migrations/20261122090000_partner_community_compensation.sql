@@ -3,7 +3,8 @@
 -- Team-leadership bonuses are recorded as disabled groundwork only. No bonus is accrued or paid by this migration.
 
 ALTER TABLE bigk.ambassadors
-  DROP CONSTRAINT IF EXISTS ambassadors_commission_percent_check;
+  DROP CONSTRAINT IF EXISTS ambassadors_commission_percent_check,
+  DROP CONSTRAINT IF EXISTS ambassadors_commission_percent_range;
 ALTER TABLE bigk.ambassadors
   ADD CONSTRAINT ambassadors_commission_percent_range
   CHECK (commission_percent >= 0 AND commission_percent <= 20);
@@ -19,6 +20,8 @@ ALTER TABLE bigk.ambassadors
   ADD COLUMN IF NOT EXISTS team_bonus_enabled BOOLEAN NOT NULL DEFAULT FALSE;
 
 ALTER TABLE bigk.ambassadors
+  DROP CONSTRAINT IF EXISTS ambassadors_not_own_team_leader;
+ALTER TABLE bigk.ambassadors
   ADD CONSTRAINT ambassadors_not_own_team_leader
   CHECK (team_leader_id IS NULL OR team_leader_id <> id);
 
@@ -31,7 +34,8 @@ CREATE INDEX IF NOT EXISTS ambassadors_partner_type_level
   ON bigk.ambassadors(partner_type, partner_level, status);
 
 ALTER TABLE bigk.ambassador_commissions
-  DROP CONSTRAINT IF EXISTS ambassador_commissions_commission_percent_check;
+  DROP CONSTRAINT IF EXISTS ambassador_commissions_commission_percent_check,
+  DROP CONSTRAINT IF EXISTS ambassador_commissions_commission_percent_range;
 ALTER TABLE bigk.ambassador_commissions
   ADD CONSTRAINT ambassador_commissions_commission_percent_range
   CHECK (commission_percent >= 0 AND commission_percent <= 20);
