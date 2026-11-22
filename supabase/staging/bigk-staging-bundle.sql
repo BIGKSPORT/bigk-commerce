@@ -368,6 +368,39 @@ UPDATE bigk_staging.products SET active=0,approved=0,tags=(tags::jsonb || '["ali
 UPDATE bigk_staging.variants SET product_id='P019' WHERE product_id='P020';
 UPDATE bigk_staging.products SET active=0,approved=0,tags=(tags::jsonb || '["alias:P019"]'::jsonb)::text,version=version+1 WHERE id='P020' AND NOT(tags::jsonb @> '["alias:P019"]'::jsonb);
 
+
+-- Source: 20261113140000_discount_codes.sql
+-- Required by checkout/webhook tests even when an order has no promo code.
+CREATE TABLE IF NOT EXISTS bigk_staging.discount_codes(
+  code TEXT PRIMARY KEY,
+  type TEXT NOT NULL CHECK(type IN ('percent','fixed')),
+  value INTEGER NOT NULL CHECK(value>0),
+  min_subtotal_cents INTEGER NOT NULL DEFAULT 0 CHECK(min_subtotal_cents>=0),
+  max_redemptions INTEGER,
+  per_customer_limit INTEGER,
+  starts_at TEXT,
+  ends_at TEXT,
+  active INTEGER NOT NULL DEFAULT 1,
+  redemption_count INTEGER NOT NULL DEFAULT 0 CHECK(redemption_count>=0),
+  note TEXT NOT NULL DEFAULT '',
+  created_at TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS bigk_staging.discount_redemptions(
+  id TEXT PRIMARY KEY,
+  code TEXT NOT NULL REFERENCES bigk_staging.discount_codes(code),
+  order_id TEXT NOT NULL UNIQUE,
+  email TEXT NOT NULL,
+  discount_cents INTEGER NOT NULL CHECK(discount_cents>=0),
+  status TEXT NOT NULL CHECK(status IN ('reserved','applied','released')),
+  created_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS discount_redemptions_email
+  ON bigk_staging.discount_redemptions(email,code);
+ALTER TABLE bigk_staging.discount_codes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE bigk_staging.discount_redemptions ENABLE ROW LEVEL SECURITY;
+REVOKE ALL ON bigk_staging.discount_codes FROM PUBLIC,anon,authenticated;
+REVOKE ALL ON bigk_staging.discount_redemptions FROM PUBLIC,anon,authenticated;
+
 -- Run as the migration owner on staging, after all migrations.
 -- This creates a NOLOGIN permission group, not an administrative DB login.
 DO $$ BEGIN
