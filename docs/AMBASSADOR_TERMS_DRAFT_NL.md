@@ -6,7 +6,7 @@
 
 ## 1. Toelating en start
 
-Iedereen kan een aanvraag indienen. Een aanvraag is geen aanbod, overeenkomst of garantie op deelname. BIGK beslist autonoom over toelating. De samenwerking start pas nadat BIGK de aanvraag schriftelijk heeft goedgekeurd, de unieke code heeft geactiveerd en beide partijen deze voorwaarden of een afzonderlijke samenwerkingsovereenkomst hebben aanvaard.
+Individuele ambassadeurs, creators, coaches, sportclubs en community-/teamleaders kunnen een aanvraag indienen. Een aanvraag vermeldt het gewenste partnertype en, waar van toepassing, de organisatie. Een aanvraag is geen aanbod, overeenkomst of garantie op deelname. BIGK beslist autonoom over toelating. De samenwerking start pas nadat BIGK de aanvraag schriftelijk heeft goedgekeurd, de unieke code heeft geactiveerd en beide partijen deze voorwaarden of een afzonderlijke samenwerkingsovereenkomst hebben aanvaard.
 
 BIGK kan een aanvraag gemotiveerd weigeren of een deelname opschorten bij een redelijk vermoeden van fraude, misleiding, inbreuk op deze voorwaarden of reputatierisico.
 
