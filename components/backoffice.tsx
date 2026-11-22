@@ -20,6 +20,7 @@ import {AdminCatalogTools} from './admin-catalog-tools';
 import {AdminProductEditor} from './admin-product-editor';
 import {AdminOrders} from './admin-orders';
 import {AdminClub} from './admin-club';
+import {AdminAmbassadors} from './admin-ambassadors';
 import {AdminOverview} from './admin-overview';
 import BackofficeV2Navigation from './backoffice-v2-navigation';
 import shellStyles from './backoffice-v2-shell.module.css';
@@ -28,7 +29,7 @@ import {money} from '@/lib/format';
 import type {Product,Order} from '@/lib/types';
 import {codeOf,normalSize,dateTime,type AdminTransport,type Overview,type AuditRow,type ClubAdmin,type MasterData,type MediaAsset} from './admin-types';
 const fetchTransport:AdminTransport={async request(path,init){const r=await fetch(path,{...init,signal:init?.signal||((init?.method||'GET')==='GET'?AbortSignal.timeout(20000):undefined)}),d=await r.json();if(!r.ok){const e=new Error(d.error||'Unable to complete the request.') as Error&{status:number};e.status=r.status;throw e}return d}};
-const nav=[{title:'Overview',icon:LayoutDashboard},{title:'Products',icon:Package},{title:'Categories',icon:Package},{title:'Inventory',icon:Warehouse},{title:'Voorraad & kanalen',icon:Warehouse},{title:'Orders',icon:ShoppingBag},{title:'Customers',icon:Users},{title:'B2B',icon:Users},{title:'Storefront',icon:Images},{title:'Marketing',icon:Mail},{title:'Blog',icon:ClipboardList},{title:'Media library',icon:Images},{title:'BigK Club',icon:Users},{title:'Events',icon:Ticket},{title:'Activity',icon:ClipboardList},{title:'Operations',icon:Settings},{title:'Connections',icon:Settings}];
+const nav=[{title:'Overview',icon:LayoutDashboard},{title:'Products',icon:Package},{title:'Categories',icon:Package},{title:'Inventory',icon:Warehouse},{title:'Voorraad & kanalen',icon:Warehouse},{title:'Orders',icon:ShoppingBag},{title:'Customers',icon:Users},{title:'B2B',icon:Users},{title:'Storefront',icon:Images},{title:'Marketing',icon:Mail},{title:'Ambassadors',icon:Users},{title:'Blog',icon:ClipboardList},{title:'Media library',icon:Images},{title:'BigK Club',icon:Users},{title:'Events',icon:Ticket},{title:'Activity',icon:ClipboardList},{title:'Operations',icon:Settings},{title:'Connections',icon:Settings}];
 function TikTokConnection({review}:{review:boolean}) {
  const [status,setStatus]=useState('');
  const [busy,setBusy]=useState(false);
@@ -99,7 +100,7 @@ export function Backoffice({transport=fetchTransport,review=false,v2Enabled=fals
  {tab==='Blog'&&<AdminBlog transport={transport}/>}{tab==='Marketing'&&<AdminMarketing transport={transport} onCustomers={()=>selectTab('Customers')}/>}
  {tab==='Orders'&&<><AdminSavedCarts carts={savedCarts} available={cartTrackingAvailable}/><AdminOrders orders={orders} transport={transport} onSaved={refresh} club={club} initialOrderId={searchOrderId}/></>}{tab==='Shipping labels'&&<AdminOrders orders={orders} transport={transport} onSaved={refresh} club={club} initialOrderId={searchOrderId}/ >}{tab==='Abandoned checkouts'&&<AdminSavedCarts carts={savedCarts} available={cartTrackingAvailable} onlyAbandoned/>}{tab==='Discounts'&&<AdminDiscounts transport={transport}/ >}
  {tab==='Media library'&&<><AdminBulkPhotos products={products} transport={transport} maxUploadBytes={overview?.maxUploadBytes} onSaved={async()=>{await refresh();await loadMedia()}}/><div className="bo-inline-actions"><label className="button dark bo-upload"><Upload size={16}/>{busy?'Uploading…':'Upload photo'}<input type="file" accept="image/jpeg,image/png,image/webp" disabled={busy} onChange={e=>{const f=e.target.files?.[0];if(f)void upload(f);e.target.value=''}}/></label><p className="bo-hint">Select photos in a product editor to attach them.</p></div>{media.length?<div className="bo-library-grid">{media.map(m=><article key={m.url}><img src={m.url} alt={m.name}/><strong>{m.name}</strong>{m.width&&<small>{m.width} × {m.height} · {Math.ceil((m.bytes||0)/1024)} KB</small>}</article>)}</div>:<div className="bo-empty"><Images size={30}/><h3>Your photography belongs here.</h3><p>Upload a photo to get started.</p></div>}</>}
- {tab==='BigK Club'&&<AdminClub data={club} transport={transport} onSaved={refresh}/>}{tab==='Events'&&<AdminClub data={club} transport={transport} onSaved={refresh} eventsOnly/>}
+ {tab==='BigK Club'&&<AdminClub data={club} transport={transport} onSaved={refresh}/>}{tab==='Ambassadors'&&<AdminAmbassadors transport={transport}/ >}{tab==='Events'&&<AdminClub data={club} transport={transport} onSaved={refresh} eventsOnly/>}
  {tab==='Activity'&&<div className="table-scroll bo-table-card"><table className="admin-table"><thead><tr><th>When</th><th>Change</th><th>Record</th></tr></thead><tbody>{audit.map(a=><tr key={a.id}><td>{dateTime(a.created_at)}</td><td>{a.action.replaceAll('.',' · ').replaceAll('_',' ')}</td><td>{a.entity}</td></tr>)}</tbody></table></div>}
  {tab==='Storefront'&&<AdminStorefront transport={transport} products={products} maxUploadBytes={overview?.maxUploadBytes}/>}
  {tab==='Categories'&&<AdminCategories transport={transport} products={products} onSaved={refresh}/>}

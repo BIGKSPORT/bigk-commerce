@@ -7,6 +7,9 @@ export const applicationSchema=z.object({
  fullName:z.string().trim().min(2).max(120),
  email:z.email().max(254),
  socialUrl:z.string().trim().url().max(500),
+ partnerType:z.enum(['ambassador','club','coach','creator','team_leader']).default('ambassador'),
+ organizationName:z.string().trim().max(160).default(''),
+ organizationType:z.string().trim().max(60).default(''),
  audienceNote:z.string().trim().min(10).max(1200),
  motivation:z.string().trim().min(20).max(2000),
  privacyAccepted:z.literal(true),
@@ -14,6 +17,11 @@ export const applicationSchema=z.object({
 }).strict();
 export type ApplicationInput=z.infer<typeof applicationSchema>;
 const emailOf=(v:string)=>v.trim().toLowerCase();
+export const PARTNER_LEVELS={starter:10,active:15,top:18,elite:20} as const;
+export type PartnerLevel=keyof typeof PARTNER_LEVELS;
+export type PartnerType='ambassador'|'club'|'coach'|'creator'|'team_leader'|'regional';
+export function defaultPartnerRate(level:PartnerLevel){return PARTNER_LEVELS[level]}
+export function assertPartnerRate(value:number){if(!Number.isFinite(value)||value<0||value>20)throw new HttpError(400,'De persoonlijke commissie moet tussen 0 en 20% liggen.');return Math.round(value*100)/100;}
 const codeOf=(v:string)=>v.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,20);
 export async function submitAmbassadorApplication(input:ApplicationInput){
  const v=applicationSchema.parse(input),email=emailOf(v.email),now=new Date().toISOString();
@@ -21,7 +29,7 @@ export async function submitAmbassadorApplication(input:ApplicationInput){
   const existing=await db().prepare("SELECT id,status FROM ambassador_applications WHERE lower(email)=? ORDER BY created_at DESC LIMIT 1").get(email) as {id:string;status:string}|undefined;
   if(existing?.status==='pending')throw new HttpError(409,'Er is al een open aanvraag met dit e-mailadres.');
   const id=crypto.randomUUID();
-  await db().prepare("INSERT INTO ambassador_applications(id,email,full_name,social_url,audience_note,motivation,privacy_accepted_at,privacy_notice_version,terms_accepted_at,terms_version,status,created_at,updated_at) VALUES(?,?,?,?,?,?,?,'2026-11-21',?,'0.1-2026-11-21','pending',?,?)").run(id,email,v.fullName,v.socialUrl,v.audienceNote,v.motivation,now,now,now,now);
+  await db().prepare("INSERT INTO ambassador_applications(id,email,full_name,social_url,audience_note,motivation,privacy_accepted_at,privacy_notice_version,terms_accepted_at,terms_version,status,created_at,updated_at) VALUES(?,?,?,?,?,?,?,'2026-11-21',?,'0.3-2026-11-22','pending',?,?)").run(id,email,v.fullName,v.socialUrl,v.audienceNote,v.motivation,v.partnerType,v.organizationName,v.organizationType,now,now,now,now);
   return {id,status:'pending' as const};
  });
 }
@@ -52,12 +60,19 @@ export async function reviewAmbassadorApplication(id:string,decision:'approve'|'
   }
   if(!referral)throw new HttpError(503,'Kon geen unieke ambassadeurscode aanmaken. Probeer opnieuw.');
   await upsertDiscountCode({code:discount,type:'percent',value:10,minSubtotalCents:0,maxRedemptions:null,perCustomerLimit:1,active:true,note:'BIG K Ambassador — '+String(a.full_name)});
-  const ambassadorId=crypto.randomUUID();
-  await db().prepare("INSERT INTO ambassadors(id,application_id,email,display_name,referral_code,discount_code,customer_discount_percent,commission_percent,status,approved_by,approved_at,created_at) VALUES(?,?,?,?,?,?,10,10,'active',?,?,?)").run(ambassadorId,id,email,String(a.full_name),referral,discount,admin,now,now);
+  const partnerType=(['ambassador','club','coach','creator','team_leader'].includes(String(a.partner_type))?String(a.partner_type):'ambassador') as PartnerType,commissionPercent=defaultPartnerRate('starter'),ambassadorId=crypto.randomUUID();
+  await db().prepare("INSERT INTO ambassadors(id,application_id,email,display_name,referral_code,discount_code,customer_discount_percent,commission_percent,status,approved_by,approved_at,created_at,partner_type,partner_level,organization_name,organization_type) VALUES(?,?,?,?,?,?,10,?,'active',?,?,? ,?,'starter',?,?)").run(ambassadorId,id,email,String(a.full_name),referral,discount,commissionPercent,admin,now,now,partnerType,String(a.organization_name||''),String(a.organization_type||''));
   await db().prepare("UPDATE ambassador_applications SET status='approved',reviewed_by=?,reviewed_at=?,review_note=?,updated_at=? WHERE id=? AND status='pending'").run(admin,now,note,now,id);
   await audit('ambassador.application.approved',id);
   return {status:'approved',ambassadorId,referralCode:referral,discountCode:discount};
  });
+}
+export async function updateAmbassadorPartnerProfile(id:string,profile:{partnerType:PartnerType;partnerLevel:PartnerLevel;commissionPercent:number;teamLeaderId?:string|null;organizationName?:string;organizationType?:string},admin:string){
+ const rate=assertPartnerRate(profile.commissionPercent);
+ if(rate!==defaultPartnerRate(profile.partnerLevel))throw new HttpError(400,'Het commissiepercentage moet overeenkomen met het gekozen partnerniveau.');
+ if(profile.teamLeaderId===id)throw new HttpError(400,'Een partner kan zichzelf niet als teamleader kiezen.');
+ if(profile.teamLeaderId){const leader=await db().prepare("SELECT id,partner_type,status FROM ambassadors WHERE id=?").get(profile.teamLeaderId) as {id:string;partner_type:string;status:string}|undefined;if(!leader||leader.status!=='active'||!['team_leader','regional'].includes(leader.partner_type))throw new HttpError(400,'Kies een actieve teamleader of regional partner.');const cycle=await db().prepare("WITH RECURSIVE ancestry(id,team_leader_id) AS (SELECT id,team_leader_id FROM ambassadors WHERE id=? UNION ALL SELECT a.id,a.team_leader_id FROM ambassadors a JOIN ancestry p ON a.id=p.team_leader_id WHERE p.team_leader_id IS NOT NULL) SELECT id FROM ancestry WHERE id=? LIMIT 1").get(profile.teamLeaderId,id);if(cycle)throw new HttpError(409,'Deze teamindeling zou een kringverwijzing veroorzaken.');}
+ await transaction(async()=>{await db().prepare("UPDATE ambassadors SET partner_type=?,partner_level=?,commission_percent=?,team_leader_id=?,organization_name=?,organization_type=? WHERE id=?").run(profile.partnerType,profile.partnerLevel,rate,profile.teamLeaderId||null,(profile.organizationName||'').trim().slice(0,160),(profile.organizationType||'').trim().slice(0,60),id);await audit('ambassador.partner_profile.updated',id);});
 }
 export async function setAmbassadorStatus(id:string,status:'active'|'paused'|'terminated',reason:string,admin:string){
  return transaction(async()=>{
@@ -70,7 +85,7 @@ export async function setAmbassadorStatus(id:string,status:'active'|'paused'|'te
 }
 export async function attributeAmbassadorOrder(orderId:string,code:string,email:string,subtotalCents:number,discountCents:number){
  const normalized=code.trim().toUpperCase();
- const a=await db().prepare("SELECT id,discount_code,status FROM ambassadors WHERE upper(discount_code)=?").get(normalized) as {id:string;discount_code:string;status:string}|undefined;
+ const a=await db().prepare("SELECT id,discount_code,status,commission_percent FROM ambassadors WHERE upper(discount_code)=?").get(normalized) as {id:string;discount_code:string;status:string;commission_percent:number}|undefined;
  if(!a)return false;
  if(a.status!=='active')throw new HttpError(400,'Deze ambassadeurscode is niet actief.');
  if(!Number.isSafeInteger(subtotalCents)||!Number.isSafeInteger(discountCents)||subtotalCents<=0||discountCents<0||discountCents>subtotalCents)throw new HttpError(400,'Ongeldige bestelbasis voor ambassadeurscode.');
@@ -80,8 +95,8 @@ export async function attributeAmbassadorOrder(orderId:string,code:string,email:
  const id=crypto.randomUUID();
  await db().prepare("INSERT INTO ambassador_attributions(id,ambassador_id,order_id,customer_email_hash,discount_code,product_subtotal_cents,discount_cents) VALUES(?,?,?,?,?,?,?)").run(id,a.id,orderId,customerHash,a.discount_code,subtotalCents,discountCents);
  const net=0;
- const commission=0;
- await db().prepare("INSERT INTO ambassador_commissions(id,attribution_id,ambassador_id,order_id,eligible_product_net_cents,commission_percent,commission_cents,status,hold_reason) VALUES(?,?,?,?,?,10,?,'pending','delivery_and_returns_pending')").run(crypto.randomUUID(),id,a.id,orderId,net,commission);
+ const commission=0,commissionPercent=assertPartnerRate(Number(a.commission_percent));
+ await db().prepare("INSERT INTO ambassador_commissions(id,attribution_id,ambassador_id,order_id,eligible_product_net_cents,commission_percent,commission_cents,status,hold_reason) VALUES(?,?,?,?,?,?,?,'pending','delivery_and_returns_pending')").run(crypto.randomUUID(),id,a.id,orderId,net,commissionPercent,commission);
  return true;
 }
 export async function updateAmbassadorRefund(orderId:string,refundedProductNetCents:number,reference:string){
@@ -96,13 +111,28 @@ export async function updateAmbassadorRefund(orderId:string,refundedProductNetCe
  });
 }
 
+// Caller must execute this helper inside its existing transaction so the refund
+// record, payout adjustment and commission hold commit or roll back together.
 export async function holdAmbassadorCommissionForRefund(orderId:string,reference:string){
- await transaction(async()=>{
-  const c=await db().prepare("SELECT id,status FROM ambassador_commissions WHERE order_id=?").get(orderId) as {id:string;status:string}|undefined;
-  if(!c||c.status==='paid'||c.status==='reversed')return;
-  await db().prepare("UPDATE ambassador_commissions SET status='held',hold_reason=?,payout_id=NULL,updated_at=? WHERE order_id=?").run('refund_reconciliation:'+reference,new Date().toISOString(),orderId);
-  await audit('ambassador.commission.held_for_refund',orderId);
- });
+ const c=await db().prepare("SELECT id,status,payout_id,commission_cents FROM ambassador_commissions WHERE order_id=?").get(orderId) as {id:string;status:string;payout_id:string|null;commission_cents:number}|undefined;
+ if(!c||c.status==='reversed')return;
+ const now=new Date().toISOString();
+ // A refund after payment cannot be silently netted from a completed payout.
+ // Keep the paid ledger entry intact and flag it for manual recovery/reconciliation.
+ if(c.status==='paid'){
+  await audit('ambassador.commission.refund_after_payout_review_required',orderId);
+  return;
+ }
+ if(c.payout_id){
+  const payout=await db().prepare("SELECT amount_cents,status FROM ambassador_payouts WHERE id=?").get(c.payout_id) as {amount_cents:number;status:string}|undefined;
+  if(payout&&['draft','approved'].includes(payout.status)){
+   const revised=Math.max(0,Number(payout.amount_cents)-Number(c.commission_cents));
+   await db().prepare("UPDATE ambassador_payouts SET amount_cents=?,status=CASE WHEN ?=0 THEN 'cancelled' ELSE status END WHERE id=? AND status IN ('draft','approved')").run(revised,revised,c.payout_id);
+   if(revised===0)await db().prepare("UPDATE ambassador_commissions SET payout_id=NULL WHERE payout_id=? AND status='approved'").run(c.payout_id);
+  }
+ }
+ await db().prepare("UPDATE ambassador_commissions SET status='held',hold_reason=?,payout_id=NULL,updated_at=? WHERE order_id=? AND status<>'paid'").run('refund_reconciliation:'+reference,now,orderId);
+ await audit('ambassador.commission.held_for_refund',orderId);
 }
 export async function reconcileAmbassadorRefund(orderId:string,verifiedNetCents:number,admin:string){
  if(!Number.isSafeInteger(verifiedNetCents)||verifiedNetCents<0)throw new HttpError(400,'Ongeldige btw-exclusieve basis.');
@@ -167,7 +197,7 @@ export async function updateAmbassadorPayout(id:string,action:'approve'|'paid'|'
  });
 }
 export async function ambassadorPortal(email:string){
- const a=await db().prepare("SELECT id,display_name,referral_code,discount_code,status,approved_at FROM ambassadors WHERE lower(email)=?").get(emailOf(email)) as Record<string,unknown>|undefined;
+ const a=await db().prepare("SELECT id,display_name,referral_code,discount_code,status,approved_at,commission_percent,partner_type,partner_level,organization_name,organization_type,team_leader_id FROM ambassadors WHERE lower(email)=?").get(emailOf(email)) as Record<string,unknown>|undefined;
  if(!a)return {ambassador:false};
  const [summary,commissions,payouts]=await Promise.all([
   db().prepare("SELECT status,COUNT(*) AS orders,COALESCE(SUM(commission_cents),0) AS cents FROM ambassador_commissions WHERE ambassador_id=? GROUP BY status").all(a.id),
