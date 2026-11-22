@@ -48,7 +48,7 @@ try{
   await page.getByLabel('Presentatiemodus').check();assert.equal(await page.getByText('Jouw verwachte commissie',{exact:true}).count(),0);await page.getByLabel('Presentatiemodus').uncheck();
   if(mobile)await page.getByRole('button',{name:'Bestelling openen of sluiten'}).click();const screenshot=await page.screenshot({path:out+'/sales-'+name+'.png',fullPage:true});if(process.env.CI)console.log('SALES_SCREENSHOT '+name+' '+(await sharp(screenshot).resize({width:Math.min(width,1100)}).webp({quality:70}).toBuffer()).toString('base64'));
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+1),false);
-  if(!mobile){catalogueMissing=true;await page.getByRole('button',{name:'Voorraad vernieuwen',exact:true}).click();await page.getByText('Een product in je selectie is niet langer beschikbaar.',{exact:false}).waitFor();assert.equal(await page.getByRole('button',{name:'Indienen bij BIG K',exact:true}).isDisabled(),true);catalogueMissing=false;await page.getByRole('button',{name:'Voorraad vernieuwen',exact:true}).click();await page.getByText('€ 311,54',{exact:true}).waitFor();}if(mobile)await page.getByRole('button',{name:'Bestelling openen of sluiten'}).click();await page.getByRole('button',{name:'Indienen bij BIG K',exact:true}).click();await page.getByText('Ingediend · wacht op BIG K',{exact:false}).waitFor();assert.equal(saves,1);await page.getByText('30 × ALPINE FLEECE',{exact:false}).waitFor();assert.deepEqual(errors,[]);await page.close();
+  if(!mobile){catalogueMissing=true;await page.getByRole('button',{name:'Voorraad vernieuwen',exact:true}).click();await page.getByText('Een product in je selectie is niet langer beschikbaar.',{exact:false}).waitFor();assert.equal(await page.getByRole('button',{name:'Indienen bij BIGK BV',exact:true}).isDisabled(),true);catalogueMissing=false;await page.getByRole('button',{name:'Voorraad vernieuwen',exact:true}).click();await page.getByText('€ 311,54',{exact:true}).waitFor();}if(mobile)await page.getByRole('button',{name:'Bestelling openen of sluiten'}).click();await page.getByRole('button',{name:'Indienen bij BIGK BV',exact:true}).click();await page.getByText('Ingediend · wacht op BIG K',{exact:false}).waitFor();assert.equal(saves,1);await page.getByText('30 × ALPINE FLEECE',{exact:false}).waitFor();assert.deepEqual(errors,[]);await page.close();
  }
 
 
@@ -144,7 +144,7 @@ try{
  await previewPage.getByRole('button',{name:'Catalogus',exact:true}).click();
  assert.equal(await previewPage.getByRole('button',{name:'Verkopers',exact:true}).count(),0);
  await previewPage.getByLabel('ALPINE FLEECE Black maat M',{exact:true}).first().fill('30');
- assert.equal(await previewPage.getByRole('button',{name:'Indienen bij BIG K',exact:true}).isDisabled(),true);
+ assert.equal(await previewPage.getByRole('button',{name:'Indienen bij BIGK BV',exact:true}).isDisabled(),true);
  assert.equal(await previewPage.getByRole('button',{name:'Bewaar concept',exact:true}).isDisabled(),true);
  await previewPage.getByRole('button',{name:'Winkels',exact:true}).click();assert.equal(await previewPage.getByRole('button',{name:'Winkel opslaan',exact:true}).isDisabled(),true);
  assert.ok(await previewPage.getByRole('link',{name:'Terug naar mijn beheer'}).count()>0);assert.equal(previewWrites,0);await previewPage.close();
