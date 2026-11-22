@@ -22,7 +22,10 @@ ALTER TABLE bigk.ambassadors
   ADD CONSTRAINT ambassadors_not_own_team_leader
   CHECK (team_leader_id IS NULL OR team_leader_id <> id);
 
--- Existing 10% partners keep their agreed rate and are marked legacy; no retroactive rate change.\nUPDATE bigk.ambassadors SET partner_level='legacy' WHERE commission_percent=10 AND partner_level='starter';\n\nCREATE INDEX IF NOT EXISTS ambassadors_team_leader
+-- Existing 10% partners keep their agreed rate and are marked legacy; no retroactive rate change.
+UPDATE bigk.ambassadors SET partner_level='legacy' WHERE commission_percent=10 AND partner_level='starter';
+
+CREATE INDEX IF NOT EXISTS ambassadors_team_leader
   ON bigk.ambassadors(team_leader_id) WHERE team_leader_id IS NOT NULL;
 CREATE INDEX IF NOT EXISTS ambassadors_partner_type_level
   ON bigk.ambassadors(partner_type, partner_level, status);
