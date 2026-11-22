@@ -14,7 +14,7 @@ try {
  await assert.rejects(createOrder(input),/no longer has an available price/);
  const variant=(await products()).find(p=>p.id==='P001')!.variants.find(v=>v.size==='S')!;
  const order=await createOrder({...input,requestKey:crypto.randomUUID(),items:[{variantId:variant.id,quantity:1}]});
- const saved=await getOrder(order.id);assert.equal(saved?.items[0].name,'Alpin Fleece');assert.equal(saved?.items[0].variantId,variant.id);assert.equal(saved?.items[0].unitPrice,14690);
+ const saved=await getOrder(order.id);assert.equal(saved?.items[0].name,'Alpin Fleece Pro');assert.equal(saved?.items[0].variantId,variant.id);assert.equal(saved?.items[0].unitPrice,14690);
  assert((await products()).find(p=>p.id==='P001')!.variants.some(v=>v.id==='historic-xs'));
  assert.deepEqual(await sitemap(),[]);
  process.env.INDEXING_ENABLED='true';process.env.COMMERCE_MODE='live';process.env.LIVE_COMMERCE_APPROVED='true';
