@@ -63,6 +63,7 @@ jobs:
           echo "BIGK_ARTIFACT_DIR=$RUNNER_TEMP/bigk-screenshots" >> "$GITHUB_ENV"
       - run: npm run build
       - run: node tests/site-language-browser.mjs
+      - run: node tests/dialog-scroll-browser.mjs
       - run: node tests/payment-methods-browser.mjs
       - run: node --import tsx tests/operations-browser.mjs
       - run: node --import tsx tests/merchandising-browser.mjs

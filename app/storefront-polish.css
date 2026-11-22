@@ -288,10 +288,10 @@ body {
   border-radius: 12px;
 }
 
-/* Bag modal */
+/* Shared dialogs keep the scroll behavior defined in globals.css. */
 .modal {
   border-radius: 18px;
-  overflow: hidden;
+  overscroll-behavior-y: contain;
 }
 .modal-heading h2 {
   text-transform: none;
