@@ -1,5 +1,5 @@
 -- BIG K® Partner Community compensation foundation
--- Existing partners retain their current rate; newly approved partners start at 12%.
+-- Existing partners retain their current rate; newly approved partners start at 10%.
 -- Team-leadership bonuses are recorded as disabled groundwork only. No bonus is accrued or paid by this migration.
 
 ALTER TABLE bigk.ambassadors
