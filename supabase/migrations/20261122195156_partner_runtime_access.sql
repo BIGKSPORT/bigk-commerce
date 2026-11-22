@@ -3,6 +3,7 @@
 BEGIN;
 DO $migration$
 DECLARE
+  runtime_role TEXT;
   table_name TEXT;
 BEGIN
   IF to_regclass('bigk.ambassador_applications') IS NULL
@@ -14,8 +15,14 @@ BEGIN
     RAISE EXCEPTION 'Partner programme tables must exist before runtime access is granted.';
   END IF;
 
-  IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'bigk_production_web') THEN
-    RAISE EXCEPTION 'Approved BIGK production runtime role bigk_production_web is missing.';
+  runtime_role := CASE
+    WHEN EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'bigk_production_web') THEN 'bigk_production_web'
+    WHEN EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'bigk_server') THEN 'bigk_server'
+    WHEN EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'bigk_staging_server') THEN 'bigk_staging_server'
+    ELSE NULL
+  END;
+  IF runtime_role IS NULL THEN
+    RAISE EXCEPTION 'No approved BIGK production or staging runtime role exists.';
   END IF;
 
   FOREACH table_name IN ARRAY ARRAY[
@@ -28,7 +35,7 @@ BEGIN
   ] LOOP
     EXECUTE format('ALTER TABLE bigk.%I ENABLE ROW LEVEL SECURITY', table_name);
     EXECUTE format('REVOKE ALL ON TABLE bigk.%I FROM PUBLIC, anon, authenticated', table_name);
-    EXECUTE format('GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE bigk.%I TO bigk_production_web', table_name);
+    EXECUTE format('GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE bigk.%I TO %I', table_name, runtime_role);
     IF NOT EXISTS (
       SELECT 1 FROM pg_policies
       WHERE schemaname = 'bigk'
@@ -36,8 +43,8 @@ BEGIN
         AND policyname = 'partner_server_access'
     ) THEN
       EXECUTE format(
-        'CREATE POLICY partner_server_access ON bigk.%I TO bigk_production_web USING (true) WITH CHECK (true)',
-        table_name
+        'CREATE POLICY partner_server_access ON bigk.%I TO %I USING (true) WITH CHECK (true)',
+        table_name, runtime_role
       );
     END IF;
   END LOOP;
