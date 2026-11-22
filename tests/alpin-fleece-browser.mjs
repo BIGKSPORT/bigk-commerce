@@ -25,7 +25,7 @@ try{
   const care=page.locator('#care-instructions');assert.equal(await care.locator('[data-care-symbol]').count(),5);assert.equal(await care.locator('[data-iron-dot]').count(),1);assert.equal(await care.locator('[data-dryer-square]').count(),1);assert.equal(await care.getAttribute('data-care-locale'),locale);assert.equal(await page.locator('[data-care-instructions]').count(),1);await care.locator('xpath=..').locator('summary').click();assert(await care.isVisible());
 
   const text=await page.locator('body').innerText(),html=await page.content();assert(!/[\u3400-\u9fff]|\bXS\b|2025/.test(text));assert(!/[\u3400-\u9fff]/.test(html));
-  assert.equal(await page.locator('link[rel="canonical"]').getAttribute('href'),'https://bigk.be'+routes[locale]);assert.equal(await page.locator('link[hreflang]').count(),4);
+  assert.equal(await page.locator('link[rel="canonical"]').getAttribute('href'),'https://bigk.be'+routes[locale]);assert.equal(await page.locator('link[hreflang]').count(),6);
   assert((await page.locator('meta[name="robots"]').getAttribute('content')).includes('noindex'));
   const data=JSON.parse(await page.locator('script[type="application/ld+json"]').textContent()),group=data['@graph'][0];assert.equal(group.hasVariant.length,12);assert(group.hasVariant.every(v=>v.offers.price==='146.90'&&v.name==='Alpin Fleece Pro'&&v.gtin13.length===13));
   await page.getByRole('link',{name:(locale==='en'?'Colour':locale==='nl'?'Kleur':'Couleur')+': '+labels[locale].colour,exact:true}).click();
