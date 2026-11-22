@@ -351,3 +351,10 @@ body {
     height: clamp(180px, 38dvh, 300px);
   }
 }
+
+/* Shared product forms scroll in their dialog, including translated fields. */
+.modal.shared-product-modal[open] {
+  display: block;
+  overflow: auto;
+  overscroll-behavior-y: contain;
+}
