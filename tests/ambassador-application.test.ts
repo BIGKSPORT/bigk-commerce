@@ -41,11 +41,12 @@ test('approved partner commission is held until delivery, then reviewed and paid
  });
  const approval=await reviewAmbassadorApplication(application.id,'approve','test-admin','Automated lifecycle approval');
  assert.equal(approval.status,'approved');
- if(!('discountCode' in approval)||!('ambassadorId' in approval))throw new Error('Partner approval did not create a partner code');
+ const discountCode='discountCode' in approval?approval.discountCode:undefined,ambassadorId='ambassadorId' in approval?approval.ambassadorId:undefined;
+ if(typeof discountCode!=='string'||typeof ambassadorId!=='string')throw new Error('Partner approval did not create a partner code');
  const orderId=crypto.randomUUID(),now=new Date().toISOString();
  await db().prepare('INSERT INTO orders(id,status,subtotal,shipping,total,currency,email,phone,customer,receipt_hash,request_key,request_hash,created_at,expires_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)')
   .run(orderId,'paid',10000,0,10000,'eur','customer@example.test','+32000000000','Lifecycle Customer','receipt-test','request-'+orderId,'hash-test',now,now);
- assert.equal(await attributeAmbassadorOrder(orderId,approval.discountCode,'customer@example.test',10000,1000),true);
+ assert.equal(await attributeAmbassadorOrder(orderId,discountCode,'customer@example.test',10000,1000),true);
  let commission=await db().prepare('SELECT status,commission_cents FROM ambassador_commissions WHERE order_id=?').get(orderId);
  assert.equal(commission.status,'pending');assert.equal(commission.commission_cents,0);
  await markAmbassadorCommissionEligible(orderId,'test-admin','2026-11-20T10:00:00.000Z','2026-11-21T10:00:00.000Z',9000);
@@ -53,7 +54,7 @@ test('approved partner commission is held until delivery, then reviewed and paid
  assert.equal(commission.status,'eligible');assert.equal(commission.commission_cents,900);
  await approveAmbassadorCommission(orderId,'test-admin');
  const day=new Date().toISOString().slice(0,10);
- const payout=await createAmbassadorPayout(approval.ambassadorId,day,day,'test-admin','TEST-INVOICE-001');
+ const payout=await createAmbassadorPayout(ambassadorId,day,day,'test-admin','TEST-INVOICE-001');
  assert.equal(payout.amountCents,900);
  await updateAmbassadorPayout(payout.id,'approve','test-admin','');
  await updateAmbassadorPayout(payout.id,'paid','test-admin','TEST-BANK-REFERENCE');
