@@ -409,6 +409,7 @@ DO $$ BEGIN
   END IF;
 END $$;
 GRANT USAGE ON SCHEMA bigk_staging TO bigk_staging_server;
+GRANT SELECT,INSERT,UPDATE,DELETE ON bigk_staging.discount_codes,bigk_staging.discount_redemptions TO bigk_staging_server;
 GRANT SELECT,INSERT,UPDATE ON bigk_staging.products,bigk_staging.variants,bigk_staging.orders,bigk_staging.order_lines,bigk_staging.sessions,bigk_staging.rate_limits,bigk_staging.login_tokens,bigk_staging.customer_sessions,bigk_staging.email_outbox,bigk_staging.club_members,bigk_staging.club_orders,bigk_staging.club_events,bigk_staging.club_bookings,bigk_staging.product_content,bigk_staging.withdrawal_requests TO bigk_staging_server;
 GRANT SELECT,INSERT ON bigk_staging.audit,bigk_staging.club_ledger,bigk_staging.admin_returns,bigk_staging.media_assets TO bigk_staging_server;
 GRANT DELETE ON bigk_staging.sessions,bigk_staging.rate_limits,bigk_staging.login_tokens,bigk_staging.customer_sessions TO bigk_staging_server;
@@ -419,7 +420,7 @@ DO $$ DECLARE spec text[]; seq text; BEGIN
  END LOOP;
 END $$;
 DO $$ DECLARE t text; BEGIN
- FOREACH t IN ARRAY ARRAY['products','variants','orders','order_lines','sessions','rate_limits','login_tokens','customer_sessions','email_outbox','club_members','club_orders','club_events','club_bookings','product_content','withdrawal_requests','audit','club_ledger','admin_returns','media_assets'] LOOP
+ FOREACH t IN ARRAY ARRAY['discount_codes','discount_redemptions','products','variants','orders','order_lines','sessions','rate_limits','login_tokens','customer_sessions','email_outbox','club_members','club_orders','club_events','club_bookings','product_content','withdrawal_requests','audit','club_ledger','admin_returns','media_assets'] LOOP
   IF NOT EXISTS(SELECT 1 FROM pg_policies WHERE schemaname='bigk_staging' AND tablename=t AND policyname='server_access') THEN
    EXECUTE format('CREATE POLICY server_access ON bigk_staging.%I TO bigk_staging_server USING (true) WITH CHECK (true)',t);
   END IF;
