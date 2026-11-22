@@ -2,7 +2,7 @@
 
 **Contractpartij:** BIGK BV, Theo Verellenlaan 27, 2990 Wuustwezel, België. Ondernemingsnummer en btw-nummer: **BE 1034.189.749**. Website: https://bigk.be. (hierna: “BIGK”).  
 **Status:** ontwerp voor juridische en fiscale nazicht; geen juridisch gevalideerde eindversie.  
-**Versie:** 0.3 — 22 november 2026.
+**Versie:** 0.4 — 22 november 2026.
 
 ## 1. Toelating en start
 
@@ -18,7 +18,7 @@ BIGK mag de code voor toekomstige bestellingen pauzeren of beëindigen. Reeds co
 
 ## 3. Commissie
 
-Het individuele commissiepercentage wordt door BIGK vóór activatie schriftelijk bevestigd en bedraagt binnen het huidige ontwerp **12% tot maximaal 20% van de netto productomzet exclusief btw**, na aftrek van de ambassadeurskorting en andere productkortingen. De startinstelling is 12%. Hogere niveaus (15%, 18% en 20%) worden uitsluitend toegekend na beoordeling van aantoonbare eigen verkoop, klantkwaliteit, retourratio, merkgedrag en consistente prestaties. Een niveau of percentage is niet automatisch verworven en kan alleen prospectief worden aangepast met duidelijke kennisgeving. Per bestelling wordt het toepasselijke percentage vastgelegd in het commissieregister.
+Het individuele commissiepercentage wordt door BIGK vóór activatie schriftelijk bevestigd en bedraagt binnen het huidige ontwerp **10%, 15%, 18% of 20% van de netto productomzet exclusief btw**, na aftrek van de ambassadeurskorting en andere productkortingen. De startinstelling is 10%. De niveaus zijn Starter (10%), Active (15%), Top (18%) en Elite (20%). Hogere niveaus worden uitsluitend toegekend na beoordeling van aantoonbare eigen verkoop, klantkwaliteit, retourratio, merkgedrag en consistente prestaties. Een niveau of percentage is niet automatisch verworven en kan alleen prospectief worden aangepast met duidelijke kennisgeving. Per bestelling wordt het toepasselijke percentage vastgelegd in het commissieregister.
 
 Voor een clubpartner kan BIGK een afzonderlijke clubvergoeding voor een specifieke clubcampagne schriftelijk vastleggen. Een clubvergoeding en persoonlijke commissie worden niet automatisch gestapeld; de campagnebijlage bepaalt de toewijzing en totale vergoeding.
 
