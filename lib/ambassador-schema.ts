@@ -4,6 +4,8 @@ export const ambassadorSchema=`
 CREATE TABLE IF NOT EXISTS ambassador_applications (
  id TEXT PRIMARY KEY,email TEXT NOT NULL,full_name TEXT NOT NULL,social_url TEXT NOT NULL DEFAULT '',
  audience_note TEXT NOT NULL DEFAULT '',motivation TEXT NOT NULL DEFAULT '',
+ partner_type TEXT NOT NULL DEFAULT 'ambassador' CHECK(partner_type IN ('ambassador','club','coach','creator','team_leader')),
+ organization_name TEXT NOT NULL DEFAULT '',organization_type TEXT NOT NULL DEFAULT '',
  privacy_accepted_at TEXT NOT NULL,privacy_notice_version TEXT NOT NULL DEFAULT '2026-11-21',
  terms_accepted_at TEXT NOT NULL,terms_version TEXT NOT NULL DEFAULT '0.1-2026-11-21',
  status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','approved','rejected','withdrawn')),
