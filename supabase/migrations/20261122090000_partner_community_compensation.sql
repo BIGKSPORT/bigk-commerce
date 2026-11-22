@@ -12,7 +12,7 @@ ALTER TABLE bigk.ambassadors
   ADD COLUMN IF NOT EXISTS partner_type TEXT NOT NULL DEFAULT 'ambassador'
     CHECK (partner_type IN ('ambassador','club','coach','creator','team_leader','regional')),
   ADD COLUMN IF NOT EXISTS partner_level TEXT NOT NULL DEFAULT 'starter'
-    CHECK (partner_level IN ('starter','active','top','elite')),
+    CHECK (partner_level IN ('legacy','starter','active','top','elite')),
   ADD COLUMN IF NOT EXISTS team_leader_id TEXT REFERENCES bigk.ambassadors(id),
   ADD COLUMN IF NOT EXISTS organization_name TEXT NOT NULL DEFAULT '',
   ADD COLUMN IF NOT EXISTS organization_type TEXT NOT NULL DEFAULT '',
@@ -22,7 +22,7 @@ ALTER TABLE bigk.ambassadors
   ADD CONSTRAINT ambassadors_not_own_team_leader
   CHECK (team_leader_id IS NULL OR team_leader_id <> id);
 
-CREATE INDEX IF NOT EXISTS ambassadors_team_leader
+-- Existing 10% partners keep their agreed rate and are marked legacy; no retroactive rate change.\nUPDATE bigk.ambassadors SET partner_level='legacy' WHERE commission_percent=10 AND partner_level='starter';\n\nCREATE INDEX IF NOT EXISTS ambassadors_team_leader
   ON bigk.ambassadors(team_leader_id) WHERE team_leader_id IS NOT NULL;
 CREATE INDEX IF NOT EXISTS ambassadors_partner_type_level
   ON bigk.ambassadors(partner_type, partner_level, status);
