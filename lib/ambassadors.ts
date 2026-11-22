@@ -17,7 +17,7 @@ export const applicationSchema=z.object({
 }).strict();
 export type ApplicationInput=z.infer<typeof applicationSchema>;
 const emailOf=(v:string)=>v.trim().toLowerCase();
-export const PARTNER_LEVELS={starter:12,active:15,top:18,elite:20} as const;
+export const PARTNER_LEVELS={starter:10,active:15,top:18,elite:20} as const;
 export type PartnerLevel=keyof typeof PARTNER_LEVELS;
 export type PartnerType='ambassador'|'club'|'coach'|'creator'|'team_leader'|'regional';
 export function defaultPartnerRate(level:PartnerLevel){return PARTNER_LEVELS[level]}
@@ -111,28 +111,28 @@ export async function updateAmbassadorRefund(orderId:string,refundedProductNetCe
  });
 }
 
+// Caller must execute this helper inside its existing transaction so the refund
+// record, payout adjustment and commission hold commit or roll back together.
 export async function holdAmbassadorCommissionForRefund(orderId:string,reference:string){
- await transaction(async()=>{
-  const c=await db().prepare("SELECT id,status,payout_id,commission_cents FROM ambassador_commissions WHERE order_id=?").get(orderId) as {id:string;status:string;payout_id:string|null;commission_cents:number}|undefined;
-  if(!c||c.status==='reversed')return;
-  const now=new Date().toISOString();
-  // A refund after payment cannot be silently netted from a completed payout.
-  // Keep the paid ledger entry intact and flag it for manual recovery/reconciliation.
-  if(c.status==='paid'){
-   await audit('ambassador.commission.refund_after_payout_review_required',orderId);
-   return;
+ const c=await db().prepare("SELECT id,status,payout_id,commission_cents FROM ambassador_commissions WHERE order_id=?").get(orderId) as {id:string;status:string;payout_id:string|null;commission_cents:number}|undefined;
+ if(!c||c.status==='reversed')return;
+ const now=new Date().toISOString();
+ // A refund after payment cannot be silently netted from a completed payout.
+ // Keep the paid ledger entry intact and flag it for manual recovery/reconciliation.
+ if(c.status==='paid'){
+  await audit('ambassador.commission.refund_after_payout_review_required',orderId);
+  return;
+ }
+ if(c.payout_id){
+  const payout=await db().prepare("SELECT amount_cents,status FROM ambassador_payouts WHERE id=?").get(c.payout_id) as {amount_cents:number;status:string}|undefined;
+  if(payout&&['draft','approved'].includes(payout.status)){
+   const revised=Math.max(0,Number(payout.amount_cents)-Number(c.commission_cents));
+   await db().prepare("UPDATE ambassador_payouts SET amount_cents=?,status=CASE WHEN ?=0 THEN 'cancelled' ELSE status END WHERE id=? AND status IN ('draft','approved')").run(revised,revised,c.payout_id);
+   if(revised===0)await db().prepare("UPDATE ambassador_commissions SET payout_id=NULL WHERE payout_id=? AND status='approved'").run(c.payout_id);
   }
-  if(c.payout_id){
-   const payout=await db().prepare("SELECT amount_cents,status FROM ambassador_payouts WHERE id=?").get(c.payout_id) as {amount_cents:number;status:string}|undefined;
-   if(payout&&['draft','approved'].includes(payout.status)){
-    const revised=Math.max(0,Number(payout.amount_cents)-Number(c.commission_cents));
-    await db().prepare("UPDATE ambassador_payouts SET amount_cents=?,status=CASE WHEN ?=0 THEN 'cancelled' ELSE status END WHERE id=? AND status IN ('draft','approved')").run(revised,revised,c.payout_id);
-    if(revised===0)await db().prepare("UPDATE ambassador_commissions SET payout_id=NULL WHERE payout_id=? AND status='approved'").run(c.payout_id);
-   }
-  }
-  await db().prepare("UPDATE ambassador_commissions SET status='held',hold_reason=?,payout_id=NULL,updated_at=? WHERE order_id=? AND status<>'paid'").run('refund_reconciliation:'+reference,now,orderId);
-  await audit('ambassador.commission.held_for_refund',orderId);
- });
+ }
+ await db().prepare("UPDATE ambassador_commissions SET status='held',hold_reason=?,payout_id=NULL,updated_at=? WHERE order_id=? AND status<>'paid'").run('refund_reconciliation:'+reference,now,orderId);
+ await audit('ambassador.commission.held_for_refund',orderId);
 }
 export async function reconcileAmbassadorRefund(orderId:string,verifiedNetCents:number,admin:string){
  if(!Number.isSafeInteger(verifiedNetCents)||verifiedNetCents<0)throw new HttpError(400,'Ongeldige btw-exclusieve basis.');
