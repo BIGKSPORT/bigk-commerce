@@ -17,7 +17,7 @@ export const applicationSchema=z.object({
 }).strict();
 export type ApplicationInput=z.infer<typeof applicationSchema>;
 const emailOf=(v:string)=>v.trim().toLowerCase();
-export const PARTNER_LEVELS={starter:12,active:15,top:18,elite:20} as const;
+export const PARTNER_LEVELS={starter:10,active:15,top:18,elite:20} as const;
 export type PartnerLevel=keyof typeof PARTNER_LEVELS;
 export type PartnerType='ambassador'|'club'|'coach'|'creator'|'team_leader'|'regional';
 export function defaultPartnerRate(level:PartnerLevel){return PARTNER_LEVELS[level]}
