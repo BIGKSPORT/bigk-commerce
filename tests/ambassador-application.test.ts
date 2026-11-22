@@ -8,7 +8,7 @@ const databasePath=join(tmpdir(),`bigk-partner-application-${process.pid}.sqlite
 process.env.DATABASE_PROVIDER='sqlite';
 process.env.DATABASE_PATH=databasePath;
 const {db,closeDatabase}=await import('../lib/db');
-const {submitAmbassadorApplication,reviewAmbassadorApplication,attributeAmbassadorOrder,markAmbassadorCommissionEligible,approveAmbassadorCommission,createAmbassadorPayout,updateAmbassadorPayout}=await import('../lib/ambassadors');
+const {submitAmbassadorApplication,reviewAmbassadorApplication,attributeAmbassadorOrder,markAmbassadorCommissionEligible,approveAmbassadorCommission,createAmbassadorPayout,updateAmbassadorPayout,holdAmbassadorCommissionForRefund,reconcileAmbassadorRefund}=await import('../lib/ambassadors');
 
 after(async()=>{await closeDatabase();for(const suffix of ['', '-shm', '-wal'])rmSync(databasePath+suffix,{force:true});});
 
@@ -62,4 +62,39 @@ test('approved partner commission is held until delivery, then reviewed and paid
  const payoutRow=await db().prepare('SELECT status,amount_cents FROM ambassador_payouts WHERE id=?').get(payout.id);
  assert.equal(commission.status,'paid');assert.equal(payoutRow.status,'paid');assert.equal(payoutRow.amount_cents,900);
  assert.equal((await db().prepare('SELECT count(*) n FROM ambassador_team_bonus_ledger').get()).n,0);
+});
+
+
+test('refund holds commission and reconciles partial or full refunds without automatic payout',async()=>{
+ const email=`refund-${process.pid}@example.test`;
+ const application=await submitAmbassadorApplication({
+  fullName:'Refund Lifecycle Test',email,socialUrl:'https://example.test/refunds',
+  partnerType:'ambassador',organizationName:'',organizationType:'',
+  audienceNote:'A test community for refund reconciliation.',
+  motivation:'Exercise partner refund holds in an isolated automated test.',
+  privacyAccepted:true,termsAccepted:true
+ });
+ const approval=await reviewAmbassadorApplication(application.id,'approve','test-admin','Refund test approval');
+ const discountCode='discountCode' in approval?approval.discountCode:undefined;
+ if(typeof discountCode!=='string')throw new Error('Partner approval did not create a partner code');
+ const makeOrder=async()=>{
+  const id=crypto.randomUUID(),now=new Date().toISOString();
+  await db().prepare('INSERT INTO orders(id,status,subtotal,shipping,total,currency,email,phone,customer,receipt_hash,request_key,request_hash,created_at,expires_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)')
+   .run(id,'paid',10000,0,10000,'eur','refund-customer@example.test','+32000000000','Refund Customer','receipt-test','request-'+id,'hash-test',now,now);
+  assert.equal(await attributeAmbassadorOrder(id,discountCode,'refund-customer@example.test',10000,1000),true);
+  await holdAmbassadorCommissionForRefund(id,'TEST-REFUND-'+id);
+  assert.equal((await db().prepare('SELECT status FROM ambassador_commissions WHERE order_id=?').get(id)).status,'held');
+  return id;
+ };
+ const partialOrder=await makeOrder();
+ await reconcileAmbassadorRefund(partialOrder,4500,'test-admin');
+ const partial=await db().prepare('SELECT status,commission_cents,eligible_product_net_cents FROM ambassador_commissions WHERE order_id=?').get(partialOrder);
+ assert.equal(partial.status,'pending');
+ assert.equal(partial.eligible_product_net_cents,4500);
+ assert.equal(partial.commission_cents,450);
+ const fullOrder=await makeOrder();
+ await reconcileAmbassadorRefund(fullOrder,0,'test-admin');
+ const full=await db().prepare('SELECT status,commission_cents FROM ambassador_commissions WHERE order_id=?').get(fullOrder);
+ assert.equal(full.status,'reversed');
+ assert.equal(full.commission_cents,0);
 });
