@@ -437,7 +437,7 @@ END $$;
 -- with a generated password and membership in bigk_staging_server. Do not use postgres.
 -- Configure its transaction-pooler URI only in the hosting secret settings.
 
-UPDATE bigk_staging.products SET name='Alpin Fleece Pro',description='Black FZ stand-collar fleece',category='Fleece',price_cents=14690,images='["/products/web/alpin-fleece-pro-25303101-1.webp", "/products/web/alpin-fleece-pro-25303101-2.webp", "/products/web/alpin-fleece-pro-25303101-3.webp", "/products/web/alpin-fleece-pro-25303101-4.webp", "/products/web/alpin-fleece-pro-25303101-5.webp", "/products/web/alpin-fleece-pro-25303101-6.webp"]',tags='[]',active=0,approved=0 WHERE id='P001';
+UPDATE bigk_staging.products SET name='Alpin Fleece',description='Black FZ stand-collar fleece',category='Fleece',price_cents=14690,images='["/products/web/alpin-fleece-pro-25303101-1.webp", "/products/web/alpin-fleece-pro-25303101-2.webp", "/products/web/alpin-fleece-pro-25303101-3.webp", "/products/web/alpin-fleece-pro-25303101-4.webp", "/products/web/alpin-fleece-pro-25303101-5.webp", "/products/web/alpin-fleece-pro-25303101-6.webp"]',tags='[]',active=0,approved=0 WHERE id='P001';
 
 UPDATE bigk_staging.variants SET product_id='P001',stock=20,reserved=0 WHERE id='P001-0';
 
@@ -451,7 +451,7 @@ UPDATE bigk_staging.variants SET product_id='P001',stock=25,reserved=0 WHERE id=
 
 UPDATE bigk_staging.variants SET product_id='P001',stock=9,reserved=0 WHERE id='P001-5';
 
-UPDATE bigk_staging.products SET name='Alpin Fleece Pro',description='Emerald Green FZ stand-collar fleece',category='Fleece',price_cents=14690,images='["/products/web/alpin-fleece-pro-25303102-1.webp", "/products/web/alpin-fleece-pro-25303102-2.webp", "/products/web/alpin-fleece-pro-25303102-3.webp", "/products/web/alpin-fleece-pro-25303102-4.webp", "/products/web/alpin-fleece-pro-25303102-5.webp", "/products/web/alpin-fleece-pro-25303102-6.webp", "/products/web/alpin-fleece-pro-25303102-7.webp", "/products/web/alpin-fleece-pro-25303102-8.webp", "/products/web/alpin-fleece-pro-25303102-9.webp", "/products/web/alpin-fleece-pro-25303102-10.webp"]',tags='[]',active=0,approved=0 WHERE id='P002';
+UPDATE bigk_staging.products SET name='Alpin Fleece',description='Emerald Green FZ stand-collar fleece',category='Fleece',price_cents=14690,images='["/products/web/alpin-fleece-pro-25303102-1.webp", "/products/web/alpin-fleece-pro-25303102-2.webp", "/products/web/alpin-fleece-pro-25303102-3.webp", "/products/web/alpin-fleece-pro-25303102-4.webp", "/products/web/alpin-fleece-pro-25303102-5.webp", "/products/web/alpin-fleece-pro-25303102-6.webp", "/products/web/alpin-fleece-pro-25303102-7.webp", "/products/web/alpin-fleece-pro-25303102-8.webp", "/products/web/alpin-fleece-pro-25303102-9.webp", "/products/web/alpin-fleece-pro-25303102-10.webp"]',tags='[]',active=0,approved=0 WHERE id='P002';
 
 UPDATE bigk_staging.variants SET product_id='P002',stock=20,reserved=0 WHERE id='P002-0';
 
