@@ -8,13 +8,13 @@ const {db,products,closeDatabase}=await import('../lib/db');
 const {createOrder,getOrder}=await import('../lib/commerce');
 const {default:sitemap}=await import('../app/sitemap');
 try {
- await db().prepare("UPDATE products SET name='Alpin Fleece Pro',price_cents=14690,active=1,approved=1,images=? WHERE id IN ('P001','P002')").run(JSON.stringify(['/products/web/alpin-fleece-pro-25303101-1.webp']));
+ await db().prepare("UPDATE products SET name='Alpin Fleece',price_cents=14690,active=1,approved=1,images=? WHERE id IN ('P001','P002')").run(JSON.stringify(['/products/web/alpin-fleece-pro-25303101-1.webp']));
  await db().prepare('INSERT INTO variants(id,product_id,size,stock,reserved) VALUES(?,?,?,?,?)').run('historic-xs','P001','XS',10,0);
  const input={items:[{variantId:'historic-xs',quantity:1}],email:'fixture@example.test',phone:'+32470123456',firstName:'Test',lastName:'Buyer',country:'BE' as const,address:'Test Street 1',postal:'1000',city:'Brussels',consent:true as const,requestKey:crypto.randomUUID()};
  await assert.rejects(createOrder(input),/no longer has an available price/);
  const variant=(await products()).find(p=>p.id==='P001')!.variants.find(v=>v.size==='S')!;
  const order=await createOrder({...input,requestKey:crypto.randomUUID(),items:[{variantId:variant.id,quantity:1}]});
- const saved=await getOrder(order.id);assert.equal(saved?.items[0].name,'Alpin Fleece Pro');assert.equal(saved?.items[0].variantId,variant.id);assert.equal(saved?.items[0].unitPrice,14690);
+ const saved=await getOrder(order.id);assert.equal(saved?.items[0].name,'Alpin Fleece');assert.equal(saved?.items[0].variantId,variant.id);assert.equal(saved?.items[0].unitPrice,14690);
  assert((await products()).find(p=>p.id==='P001')!.variants.some(v=>v.id==='historic-xs'));
  assert.deepEqual(await sitemap(),[]);
  process.env.INDEXING_ENABLED='true';process.env.COMMERCE_MODE='live';process.env.LIVE_COMMERCE_APPROVED='true';
