@@ -3,7 +3,7 @@ import {readFile} from 'node:fs/promises';
 import assert from 'node:assert/strict';
 const db=await PGlite.create();
 try{
- await db.exec('CREATE ROLE anon;CREATE ROLE authenticated;CREATE SCHEMA bigk;CREATE TABLE bigk.owner_sentinel(id integer);INSERT INTO bigk.owner_sentinel VALUES(7);');
+ await db.exec('CREATE ROLE anon;CREATE ROLE authenticated;CREATE ROLE bigk_production_web;CREATE ROLE bigk_staging_server;CREATE SCHEMA bigk;CREATE TABLE bigk.owner_sentinel(id integer);INSERT INTO bigk.owner_sentinel VALUES(7);');
  const sql=await readFile('supabase/staging/bigk-staging-bundle.sql','utf8');
  await db.exec(sql);
  assert.equal((await db.query('SELECT id FROM bigk.owner_sentinel')).rows[0].id,7);
