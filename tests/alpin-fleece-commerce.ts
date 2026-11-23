@@ -8,7 +8,7 @@ const {db,products,closeDatabase}=await import('../lib/db');
 const {createOrder,getOrder}=await import('../lib/commerce');
 const {default:sitemap}=await import('../app/sitemap');
 try {
- await db().prepare("UPDATE products SET name='Alpin Fleece Pro',price_cents=14690,active=1,approved=1,images=? WHERE id IN ('P001','P002')").run(JSON.stringify(['/products/web/alpin-fleece-pro-25303101-1.webp']));
+ await db().prepare("UPDATE products SET name='Alpin Fleece',price_cents=14690,active=1,approved=1,images=? WHERE id IN ('P001','P002')").run(JSON.stringify(['/products/web/alpin-fleece-pro-25303101-1.webp']));
  await db().prepare('INSERT INTO variants(id,product_id,size,stock,reserved) VALUES(?,?,?,?,?)').run('historic-xs','P001','XS',10,0);
  const input={items:[{variantId:'historic-xs',quantity:1}],email:'fixture@example.test',phone:'+32470123456',firstName:'Test',lastName:'Buyer',country:'BE' as const,address:'Test Street 1',postal:'1000',city:'Brussels',consent:true as const,requestKey:crypto.randomUUID()};
  await assert.rejects(createOrder(input),/no longer has an available price/);
@@ -21,7 +21,7 @@ try {
  assert.deepEqual(await sitemap(),[],'Staging remains excluded even when production flags are copied');
  // SQLite fixture only: simulate production launch flags without touching a hosted database.
  process.env.DATABASE_SCHEMA='bigk';process.env.VERCEL_ENV='production';
- const entries=await sitemap();assert.equal(entries.filter(entry=>entry.url.includes('/products/')).length,3);assert(!entries.some(entry=>/apline-fleece-p001|alpine-fz-p002/.test(entry.url)));for(const locale of ['en','nl','fr'])assert(entries.some(entry=>entry.url.startsWith('https://bigk.be/'+locale+'/products/')));
+ const entries=await sitemap();assert.equal(entries.filter(entry=>entry.url.includes('/products/')).length,5);assert(!entries.some(entry=>/apline-fleece-p001|alpine-fz-p002/.test(entry.url)));for(const locale of ['en','nl','fr','es','it'])assert(entries.some(entry=>entry.url.startsWith('https://bigk.be/'+locale+'/products/')));
  console.log('PASS server rejects historical XS, keeps order ID/price with invariant product name, preserves history, and gates canonical multilingual sitemap.');
 } finally {await closeDatabase();await rm(dir,{recursive:true,force:true})}
 

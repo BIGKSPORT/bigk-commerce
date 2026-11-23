@@ -112,6 +112,10 @@ export const storefrontCopy:Record<string,{nl:string;fr:string}>={
     "nl": "Zoekopdracht wissen",
     "fr": "Effacer la recherche"
   },
+  "Close bag": {
+    "nl": "Winkelmand sluiten",
+    "fr": "Fermer le panier"
+  },
   "Close dialog": {
     "nl": "Venster sluiten",
     "fr": "Fermer la fenêtre"

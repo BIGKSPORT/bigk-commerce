@@ -6,7 +6,10 @@ import assert from 'node:assert/strict';
 const db = await PGlite.create();
 let server;
 try {
-  await db.exec('CREATE ROLE anon; CREATE ROLE authenticated;');
+  await db.exec('CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE bigk_production_web; CREATE ROLE bigk_staging_server;');
+  // The staging-only ledger migration is tested against an isolated schema fixture,
+  // never against a hosted database or by weakening its production/staging guards.
+  await db.exec('CREATE SCHEMA bigk_staging; CREATE TABLE bigk_staging.ambassador_team_bonus_ledger (id TEXT PRIMARY KEY);');
   const directory = new URL('../supabase/migrations/', import.meta.url);
   const files = (await readdir(directory)).filter(name=>name.endsWith('.sql')).sort();
   for(let run=0;run<2;run++) for(const file of files) await db.exec(await readFile(new URL(file,directory),'utf8'));
@@ -18,8 +21,8 @@ try {
   await assert.rejects(() => db.query('SELECT * FROM bigk.orders'), /permission denied/);
   await db.exec('RESET ROLE;');
   const tables = (await db.query("SELECT relname,relrowsecurity FROM pg_class JOIN pg_namespace n ON n.oid=relnamespace WHERE n.nspname='bigk' AND relkind='r'")).rows;
-  assert.equal(tables.length,34); assert(tables.some(t=>t.relname==='storefront_merchandising')); assert(tables.every(t=>t.relrowsecurity), 'Tables without RLS: '+tables.filter(t=>!t.relrowsecurity).map(t=>t.relname).join(', ')); for(const name of ['seller_b2b_assignments','seller_prospects','seller_followups','discount_codes','discount_redemptions']) assert(tables.some(t=>t.relname===name&&t.relrowsecurity),name+' must have RLS enabled');
-  console.log('PASS: migration runs twice; 27 records; all private tables use RLS; anonymous/customer roles cannot read orders.');
+  assert.equal(tables.length,40); assert(tables.some(t=>t.relname==='storefront_merchandising')); assert(tables.every(t=>t.relrowsecurity), 'Tables without RLS: '+tables.filter(t=>!t.relrowsecurity).map(t=>t.relname).join(', ')); for(const name of ['seller_b2b_assignments','seller_prospects','seller_followups','discount_codes','discount_redemptions','ambassador_applications','ambassadors','ambassador_attributions','ambassador_commissions','ambassador_payouts','ambassador_team_bonus_ledger']) assert(tables.some(t=>t.relname===name&&t.relrowsecurity),name+' must have RLS enabled');
+  console.log('PASS: migration runs twice; 27 records; all 40 private tables use RLS; anonymous/customer roles cannot read orders.');
   await db.exec(await readFile(new URL('../supabase/templates/server-role.sql',import.meta.url),'utf8'));
   await db.exec('SET ROLE bigk_server;');
   assert.equal((await db.query('SELECT count(*)::int AS n FROM bigk.products')).rows[0].n,27);

@@ -13,6 +13,7 @@ import {mediaSchema} from './media-schema';
 import {discountSchema} from './discount-schema';
 import {backofficeSchema,productHistorySchema,adminCredentialSchema,adminMfaSchema} from './backoffice-schema';
 import {clubSchema} from './club-schema';
+import {ambassadorSchema} from './ambassador-schema';
 import type { Product } from './types';
 let instance: DatabaseSync | undefined;
 export function db(){
@@ -29,11 +30,12 @@ export function db(){
  CREATE TABLE IF NOT EXISTS audit(id INTEGER PRIMARY KEY,action TEXT NOT NULL,entity TEXT NOT NULL,created_at TEXT NOT NULL);
  CREATE TABLE IF NOT EXISTS login_tokens(hash TEXT PRIMARY KEY,email TEXT NOT NULL,expires_at TEXT NOT NULL);
  CREATE TABLE IF NOT EXISTS customer_sessions(hash TEXT PRIMARY KEY,email TEXT NOT NULL,expires_at TEXT NOT NULL);
- CREATE TABLE IF NOT EXISTS email_outbox(id INTEGER PRIMARY KEY,order_id TEXT NOT NULL REFERENCES orders(id),kind TEXT NOT NULL,email TEXT NOT NULL,attempts INTEGER NOT NULL DEFAULT 0,next_attempt INTEGER NOT NULL DEFAULT 0,lease_until INTEGER NOT NULL DEFAULT 0,sent_at TEXT,UNIQUE(order_id,kind));
+ CREATE TABLE IF NOT EXISTS email_outbox(id INTEGER PRIMARY KEY,order_id TEXT NOT NULL REFERENCES orders(id),kind TEXT NOT NULL,email TEXT NOT NULL,attempts INTEGER NOT NULL DEFAULT 0,next_attempt INTEGER NOT NULL DEFAULT 0,lease_until INTEGER NOT NULL DEFAULT 0,sent_at INTEGER,UNIQUE(order_id,kind));
  PRAGMA user_version=1;`);
  sql.exec(cartSessionSchema);sql.exec(shippingTestSchema);
  sql.exec(clubSchema);
  sql.exec(discountSchema);
+ sql.exec(ambassadorSchema);
  sql.exec(backofficeSchema);sql.exec(crmSchema);sql.exec(growthSchema);sql.exec(productHistorySchema);sql.exec(adminCredentialSchema);sql.exec(adminMfaSchema);
  sql.exec(mediaSchema);
  sql.exec(withdrawalSchema);

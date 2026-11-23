@@ -29,7 +29,7 @@ not through the fixture transport. The merchant explicitly selected the existing
 BIGK test mode (`acct_1TAFB8IxNZ1o82uS`, livemode false). Live mode was not used.
 
 - Staging order: `de17bec9-7db8-4f3c-a66f-16a130fe4a05` (backoffice short reference `DE17BEC9`).
-- Product: Alpin Fleece Pro, size S, one unit, EUR 146.90.
+- Product: Alpin Fleece, size S, one unit, EUR 146.90.
 - French test shipping address: 20% inclusive VAT, EUR 24.48. Test calculation reason `standard_rated`.
 - The previously confirmed Belgian Union OSS configuration was mirrored only in test mode. No live tax registration was changed by this test.
 - Stripe returned Checkout status `complete`, payment status `paid`, currency `eur`, livemode false.

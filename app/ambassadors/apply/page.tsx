@@ -1,11 +1,20 @@
-'use client';
-import {useState,type FormEvent} from 'react';
-export default function AmbassadorApplyPage(){
- const [form,setForm]=useState({fullName:'',email:'',socialUrl:'',audienceNote:'',motivation:'',privacyAccepted:false,termsAccepted:false});
- const [busy,setBusy]=useState(false),[message,setMessage]=useState('');
- function update(key:keyof typeof form,value:string|boolean){setForm(old=>({...old,[key]:value}))}
- async function submit(e:FormEvent){e.preventDefault();setBusy(true);setMessage('');try{const r=await fetch('/api/ambassadors/apply',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(form)});const d=await r.json();if(!r.ok)throw new Error(d.error||'Aanvraag versturen is niet gelukt.');setMessage('Bedankt! Je aanvraag is ontvangen. BIGK BV beoordeelt deze eerst; je ontvangt bericht zodra er een beslissing is.');setForm({fullName:'',email:'',socialUrl:'',audienceNote:'',motivation:'',privacyAccepted:false,termsAccepted:false})}catch(e){setMessage(e instanceof Error?e.message:'Er ging iets mis.')}finally{setBusy(false)}}
- const field:React.CSSProperties={display:'grid',gap:6,marginBottom:16};
- const input:React.CSSProperties={width:'100%',padding:12,border:'1px solid #bbb',borderRadius:8,font:'inherit'};
- return <main style={{maxWidth:680,margin:'48px auto',padding:'0 20px',fontFamily:'Arial,sans-serif',color:'#171717'}}><p style={{letterSpacing:3,fontWeight:700}}>BIG K®</p><h1>Word BIG K®-ambassadeur</h1><p>Deel BIG K® met jouw community. Iedereen kan zich aanmelden; BIGK BV beoordeelt elke aanvraag voordat een persoonlijk programma wordt geactiveerd.</p><p><strong>Jouw community:</strong> 10% korting via jouw persoonlijke code. <strong>Jij:</strong> 10% commissie op in aanmerking komende netto productverkopen, na betaling, levering en afgesloten retourcontrole.</p><form onSubmit={submit}><label style={field}>Volledige naam<input required minLength={2} maxLength={120} style={input} value={form.fullName} onChange={e=>update('fullName',e.target.value)}/></label><label style={field}>E-mailadres<input required type="email" maxLength={254} style={input} value={form.email} onChange={e=>update('email',e.target.value)}/></label><label style={field}>Publiek profiel / social URL<input required type="url" maxLength={500} style={input} placeholder="https://" value={form.socialUrl} onChange={e=>update('socialUrl',e.target.value)}/></label><label style={field}>Vertel over je community<textarea required minLength={10} maxLength={1200} rows={4} style={input} value={form.audienceNote} onChange={e=>update('audienceNote',e.target.value)}/></label><label style={field}>Waarom wil je BIG K® vertegenwoordigen?<textarea required minLength={20} maxLength={2000} rows={5} style={input} value={form.motivation} onChange={e=>update('motivation',e.target.value)}/></label><label style={{display:'flex',gap:10,alignItems:'start',margin:'20px 0'}}><input type="checkbox" required checked={form.privacyAccepted} onChange={e=>update('privacyAccepted',e.target.checked)}/><span>Ik heb de <a href="/legal/ambassador-privacy" target="_blank" rel="noreferrer">privacy-informatie</a> gelezen. BIGK BV verwerkt mijn gegevens voor de beoordeling en het beheer van mijn aanvraag zoals daarin beschreven.</span></label><label style={{display:'flex',gap:10,alignItems:'start',margin:'20px 0'}}><input type="checkbox" required checked={form.termsAccepted} onChange={e=>update('termsAccepted',e.target.checked)}/><span>Ik heb de <a href="/legal/ambassador-terms" target="_blank" rel="noreferrer">ontwerpvoorwaarden van het BIG K® Ambassadorprogramma</a> gelezen en aanvaard als basis voor mijn aanvraag. Ik begrijp dat deelname pas start na schriftelijke goedkeuring door BIGK BV.</span></label><button disabled={busy} style={{padding:'13px 22px',border:0,borderRadius:8,background:'#171717',color:'#fff',fontWeight:700,cursor:'pointer'}}>{busy?'Versturen…':'Aanvraag indienen'}</button>{message&&<p role="status" style={{marginTop:18}}>{message}</p>}</form><p style={{fontSize:13,color:'#555',marginTop:28}}>Aanmelding geeft geen automatisch recht op deelname, korting of commissie. Commissie wordt pas na controle door BIGK BV goedgekeurd. Raadpleeg de volledige programmavoorwaarden en privacyverklaring vóór deelname.</p></main>
+import AmbassadorApplicationForm from './application-form';
+
+export const dynamic = 'force-dynamic';
+
+export default function AmbassadorApplyPage() {
+  if (process.env.PARTNER_APPLICATIONS_ENABLED !== 'true') {
+    return (
+      <main style={{minHeight:'70vh',display:'grid',placeItems:'center',padding:'48px 24px',background:'#f4f4f0',color:'#111',fontFamily:'Arial,Helvetica,sans-serif',textAlign:'center'}}>
+        <section style={{maxWidth:620}}>
+          <p style={{fontSize:12,fontWeight:800,letterSpacing:2,textTransform:'uppercase'}}>BIG K® PARTNERPROGRAMMA</p>
+          <h1 style={{fontSize:'clamp(38px,6vw,64px)',lineHeight:1,letterSpacing:-2,margin:'18px 0'}}>Binnenkort beschikbaar</h1>
+          <p style={{fontSize:17,lineHeight:1.6,color:'#555'}}>Partneraanvragen zijn momenteel nog niet geopend. Kom binnenkort terug voor meer informatie.</p>
+          <a href="/" style={{display:'inline-block',marginTop:18,color:'#111',fontWeight:800}}>Terug naar BIG K®</a>
+        </section>
+      </main>
+    );
+  }
+
+  return <AmbassadorApplicationForm />;
 }
