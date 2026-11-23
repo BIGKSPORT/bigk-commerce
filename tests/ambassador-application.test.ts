@@ -1,5 +1,6 @@
 import {test,after} from 'node:test';
 import assert from 'node:assert/strict';
+import {renderToStaticMarkup} from 'react-dom/server';
 import {rmSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
@@ -11,6 +12,20 @@ const {db,closeDatabase}=await import('../lib/db');
 const {submitAmbassadorApplication,reviewAmbassadorApplication,attributeAmbassadorOrder,markAmbassadorCommissionEligible,approveAmbassadorCommission,createAmbassadorPayout,updateAmbassadorPayout,holdAmbassadorCommissionForRefund,reconcileAmbassadorRefund}=await import('../lib/ambassadors');
 
 after(async()=>{await closeDatabase();for(const suffix of ['', '-shm', '-wal'])rmSync(databasePath+suffix,{force:true});});
+
+test('partner application page shows coming soon and no form by default',async()=>{
+ const previous=process.env.PARTNER_APPLICATIONS_ENABLED;
+ delete process.env.PARTNER_APPLICATIONS_ENABLED;
+ try{
+  const {default:page}=await import('../app/ambassadors/apply/page');
+  const html=renderToStaticMarkup(page());
+  assert.match(html,/Binnenkort beschikbaar/);
+  assert.doesNotMatch(html,/<form\\b|type="email"|name="fullName"/i);
+ }finally{
+  if(previous===undefined)delete process.env.PARTNER_APPLICATIONS_ENABLED;
+  else process.env.PARTNER_APPLICATIONS_ENABLED=previous;
+ }
+});
 
 test('partner application API is closed by default and stores nothing',async()=>{
  const previous=process.env.PARTNER_APPLICATIONS_ENABLED;
