@@ -33,6 +33,7 @@ jobs:
       - run: node tests/launch-domain.test.mjs
       - run: npm test
       - run: npm run test:club
+      - run: npm run test:ambassador
       - run: npm run test:backoffice
       - run: npm run test:media
       - run: npm run test:withdrawals
