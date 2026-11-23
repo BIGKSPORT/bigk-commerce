@@ -1,4 +1,4 @@
-# Alpin Fleece Pro — implemented gallery review
+# Alpin Fleece — implemented gallery review
 
 | Colour | Supplier code | Retail price | Selected photos |
 |---|---|---|---|
@@ -9,11 +9,11 @@ Actual catalogue galleries and image assets are implemented on this QA branch. B
 
 ### Black — primary photo
 
-![Alpin Fleece Pro Black](../public/products/web/alpin-fleece-pro-25303101-1.webp)
+![Alpin Fleece Black](../public/products/web/alpin-fleece-pro-25303101-1.webp)
 
 ### Emerald Green — primary photo
 
-![Alpin Fleece Pro Emerald Green](../public/products/web/alpin-fleece-pro-25303102-1.webp)
+![Alpin Fleece Emerald Green](../public/products/web/alpin-fleece-pro-25303102-1.webp)
 
 Stock.xlsx column E totals **260 Black / 250 Emerald Green**, whereas the received-stock master totals **224 / 232**. Quantities are documented for review, with no live inventory change. [Size-by-size comparison](catalog-review/alpin-fleece-pro-stock.csv).
 
@@ -23,12 +23,12 @@ TypeScript passed. The actual product gallery was exercised at 1440×1000 and 39
 
 ---
 
-# Alpin Fleece Pro — staged catalogue/image mapping
+# Alpin Fleece — staged catalogue/image mapping
 
 Status: **internal staging only**. Do not publish, deploy, merge, update live stock, or contact customers without owner approval.
 
 ## Confirmed product
-- Family: **Alpin Fleece Pro** (13th approved BIG K product family).
+- Family: **Alpin Fleece** (13th approved BIG K product family).
 - Black: supplier code **25303101**, retail price **EUR 146.90**.
 - Emerald Green: supplier code **25303102**, retail price **EUR 146.90**.
 - Each size has its own barcode. Barcode identifies the exact colour/size variant; supplier code identifies colour.
