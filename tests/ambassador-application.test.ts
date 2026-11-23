@@ -20,7 +20,7 @@ test('partner application page shows coming soon and no form by default',async()
   const {default:page}=await import('../app/ambassadors/apply/page');
   const html=renderToStaticMarkup(page());
   assert.match(html,/Binnenkort beschikbaar/);
-  assert.doesNotMatch(html,/<form\\b|type="email"|name="fullName"/i);
+  assert.doesNotMatch(html,/<form\b|type="email"|name="fullName"/i);
  }finally{
   if(previous===undefined)delete process.env.PARTNER_APPLICATIONS_ENABLED;
   else process.env.PARTNER_APPLICATIONS_ENABLED=previous;
