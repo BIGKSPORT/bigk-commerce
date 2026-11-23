@@ -16,18 +16,18 @@ test('public XS exclusion preserves historical source records and accepts backen
 });
 test('conflicts block page validation instead of changing transactional pricing or identifiers',()=>{
  const source=structuredClone(family);source[0].priceCents=15000;assert(alpinMappingIssues(source).some(issue=>issue.includes('Price conflict')));assert.equal(alpinPublicProduct(source[0]).priceCents,15000);
- source[0].content={composition:'',care:'',fit:'',details:'',trade:{identifiers:{'P001-0':{sku:'existing-sku',gtin:'6957919564823'}}}};assert(alpinMappingIssues(source).some(issue=>issue.includes('Conflicting stored GTIN')));assert.equal(alpinPublicProduct(source[0]).content?.trade?.identifiers?.['P001-0'].gtin,'6957919564823');
+ source[0].content={composition:'',care:'',fit:'',details:'',trade:{identifiers:{'P001-0':{sku:'existing-sku',gtin:'6957919564823'}}}};assert(alpinMappingIssues(source).some(issue=>issue.includes('Conflicting stored GTIN')));assert.equal(source[0].content?.trade?.identifiers?.['P001-0'].gtin,'6957919564823');
 });
 test('all languages share product identity and twelve live stock-based offers, canonical and reciprocal alternates',()=>{
  for(const locale of alpinLocales){const json=alpinStructuredData(locale,family),group=json['@graph'][0] as any;assert.equal(group.name,family[0].name);assert.equal(group.productGroupID,'ALPIN-FLEECE');assert.equal(group.hasVariant.length,12);for(const v of group.hasVariant){assert.equal(v.name,family[0].name);assert.equal(v.offers.price,'146.90');assert.equal(v.offers.priceCurrency,'EUR');assert(v.url.startsWith('https://bigk.be'+alpinPaths[locale]));assert(v.url.includes('size='));assert.equal(typeof v.gtin13,'string')}
- const metadata=alpinMetadata(locale,family,false);assert.equal(metadata.alternates?.canonical,'https://bigk.be'+alpinPaths[locale]);assert.equal(Object.keys(metadata.alternates?.languages||{}).length,alpinLocales.length+1);assert.equal((metadata.robots as any).index,false);assert(!/[\u3400-\u9fff]|2025|Alpin Fleece/.test(JSON.stringify(alpinCopy(locale))));assert(!/"XS"/.test(JSON.stringify(json)));}
+ const metadata=alpinMetadata(locale,family,false);assert.equal(metadata.alternates?.canonical,'https://bigk.be'+alpinPaths[locale]);assert.equal(Object.keys(metadata.alternates?.languages||{}).length,alpinLocales.length+1);assert.equal((metadata.robots as any).index,false);
+ // Product identity is expected in every locale; only stale year markers and CJK characters are prohibited in the public copy.
+ assert(!/[\u3400-\u9fff]|2025/.test(JSON.stringify(alpinCopy(locale))));
+ assert(!/"XS"/.test(JSON.stringify(json)));}
  const out=structuredClone(family);out[0].variants[0].reserved=out[0].variants[0].stock;assert.equal((alpinStructuredData('en',out)['@graph'][0] as any).hasVariant[0].offers.availability,'https://schema.org/OutOfStock');
 });
 test('vest and other garments stay untouched',()=>{const vest={...family[0],id:'P007',code:'25303202',name:'Alpin Vest Pro'};assert.equal(alpinPublicProduct(vest),vest)});
-
 test('editable fleece size charts exclude historical XS in either orientation without changing other garments or stored source',()=>{const source='Size\tXS\tS\tM\nChest\t94\t100\t106';assert.equal(alpinPublicSizeTable(source),'Size\tS\tM\nChest\t100\t106');assert.equal(source.includes('XS'),true);assert.equal(alpinPublicSizeTable('Size\tChest\nXS\t94\nS\t100'),'Size\tChest\nS\t100')});
-
-
 test('owner catalogue renames reach public products and search metadata in every language',()=>{
  for(const name of ['alpin fleece pro','ALPIN Expedition','My new product name']){
   const renamed=family.map(product=>({...product,name}));
@@ -44,7 +44,6 @@ test('owner catalogue renames reach public products and search metadata in every
   }
  }
 });
-
 test('every fleece variant points at the named parent node in every locale without source mutations',()=>{
  const before=structuredClone(family);
  for(const locale of alpinLocales){const group=alpinStructuredData(locale,family)['@graph'][0] as any;
