@@ -10,7 +10,7 @@ composition={'100% polyester':'100% polyester','92% polyamide, 8% elastaan':'92%
 catalog=json.load(open(root/'lib/catalog.json'));review=[]
 for p in catalog['products']:
  code=re.search(r'\d{8}$',p['code']).group();rows=groups[code];r=rows[0];name=p['name'];material=composition.get(r['Samenstelling'],'');care='Wash at 30°C on a gentle cycle.' if r['Wasvoorschrift'] else '';fit='';detail=''
- if name in ['Alpin','Alpin Vest','Alpin Fleece Pro','Alpin Vest Pro']:
+ if name in ['Alpin','Alpin Vest','Alpin Fleece','Alpin Vest Pro']:
   detail='Teddy fleece combined with grid fleece, made from 100% polyester.'
  if name=='Alpin Vest Pro':
   detail='A sleeveless men’s fleece vest with a full-length zip, stand-up collar, two zipped side pockets and a zipped chest pocket. Made from 100% polyester, for everyday use and walking.'
