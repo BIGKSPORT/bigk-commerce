@@ -7,6 +7,9 @@ const db = await PGlite.create();
 let server;
 try {
   await db.exec('CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE bigk_production_web; CREATE ROLE bigk_staging_server;');
+  // The staging-only ledger migration is tested against an isolated schema fixture,
+  // never against a hosted database or by weakening its production/staging guards.
+  await db.exec('CREATE SCHEMA bigk_staging; CREATE TABLE bigk_staging.ambassador_team_bonus_ledger (id TEXT PRIMARY KEY);');
   const directory = new URL('../supabase/migrations/', import.meta.url);
   const files = (await readdir(directory)).filter(name=>name.endsWith('.sql')).sort();
   for(let run=0;run<2;run++) for(const file of files) await db.exec(await readFile(new URL(file,directory),'utf8'));
