@@ -12,6 +12,36 @@ const {submitAmbassadorApplication,reviewAmbassadorApplication,attributeAmbassad
 
 after(async()=>{await closeDatabase();for(const suffix of ['', '-shm', '-wal'])rmSync(databasePath+suffix,{force:true});});
 
+test('partner application API is closed by default and stores nothing',async()=>{
+ const previous=process.env.PARTNER_APPLICATIONS_ENABLED;
+ delete process.env.PARTNER_APPLICATIONS_ENABLED;
+ try{
+  const {POST}=await import('../app/api/ambassadors/apply/route');
+  const before=Number((await db().prepare('SELECT count(*) AS n FROM ambassador_applications').get()).n);
+  const request=new Request('https://bigk.be/api/ambassadors/apply',{
+   method:'POST',
+   headers:{'content-type':'application/json'},
+   body:JSON.stringify({
+    fullName:'Must Not Be Stored',email:'disabled-gate@example.test',socialUrl:'https://example.test/profile',
+    partnerType:'ambassador',organizationName:'',organizationType:'',
+    audienceNote:'This request must be rejected while the server-side switch is off.',
+    motivation:'Verify that disabled partner applications never reach persistence.',
+    privacyAccepted:true,termsAccepted:true
+   })
+  });
+  const response=await POST(request);
+  assert.equal(response.status,503);
+  assert.deepEqual(await response.json(),{error:'Partneraanvragen zijn momenteel gesloten. Binnenkort beschikbaar.'});
+  const after=Number((await db().prepare('SELECT count(*) AS n FROM ambassador_applications').get()).n);
+  assert.equal(after,before,'a disabled application must not be inserted');
+  const rateLimit=await db().prepare("SELECT count(*) AS n FROM rate_limits WHERE key LIKE 'ambassador-application%'").get();
+  assert.equal(Number(rateLimit.n),0,'a disabled application must be rejected before rate-limit or body processing');
+ }finally{
+  if(previous===undefined)delete process.env.PARTNER_APPLICATIONS_ENABLED;
+  else process.env.PARTNER_APPLICATIONS_ENABLED=previous;
+ }
+});
+
 test('partner application persists partner type and organisation fields with consent timestamps',async()=>{
  const result=await submitAmbassadorApplication({
   fullName:'Preview Partner Test',email:`preview-${process.pid}@example.test`,socialUrl:'https://example.test/community',
