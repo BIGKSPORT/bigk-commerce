@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 const db = await PGlite.create();
 let server;
 try {
-  await db.exec('CREATE ROLE anon; CREATE ROLE authenticated;');
+  await db.exec('CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE bigk_production_web; CREATE ROLE bigk_staging_server;');
   const directory = new URL('../supabase/migrations/', import.meta.url);
   const files = (await readdir(directory)).filter(name=>name.endsWith('.sql')).sort();
   for(let run=0;run<2;run++) for(const file of files) await db.exec(await readFile(new URL(file,directory),'utf8'));
