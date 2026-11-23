@@ -368,6 +368,39 @@ UPDATE bigk_staging.products SET active=0,approved=0,tags=(tags::jsonb || '["ali
 UPDATE bigk_staging.variants SET product_id='P019' WHERE product_id='P020';
 UPDATE bigk_staging.products SET active=0,approved=0,tags=(tags::jsonb || '["alias:P019"]'::jsonb)::text,version=version+1 WHERE id='P020' AND NOT(tags::jsonb @> '["alias:P019"]'::jsonb);
 
+
+-- Source: 20261113140000_discount_codes.sql
+-- Required by checkout/webhook tests even when an order has no promo code.
+CREATE TABLE IF NOT EXISTS bigk_staging.discount_codes(
+  code TEXT PRIMARY KEY,
+  type TEXT NOT NULL CHECK(type IN ('percent','fixed')),
+  value INTEGER NOT NULL CHECK(value>0),
+  min_subtotal_cents INTEGER NOT NULL DEFAULT 0 CHECK(min_subtotal_cents>=0),
+  max_redemptions INTEGER,
+  per_customer_limit INTEGER,
+  starts_at TEXT,
+  ends_at TEXT,
+  active INTEGER NOT NULL DEFAULT 1,
+  redemption_count INTEGER NOT NULL DEFAULT 0 CHECK(redemption_count>=0),
+  note TEXT NOT NULL DEFAULT '',
+  created_at TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS bigk_staging.discount_redemptions(
+  id TEXT PRIMARY KEY,
+  code TEXT NOT NULL REFERENCES bigk_staging.discount_codes(code),
+  order_id TEXT NOT NULL UNIQUE,
+  email TEXT NOT NULL,
+  discount_cents INTEGER NOT NULL CHECK(discount_cents>=0),
+  status TEXT NOT NULL CHECK(status IN ('reserved','applied','released')),
+  created_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS discount_redemptions_email
+  ON bigk_staging.discount_redemptions(email,code);
+ALTER TABLE bigk_staging.discount_codes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE bigk_staging.discount_redemptions ENABLE ROW LEVEL SECURITY;
+REVOKE ALL ON bigk_staging.discount_codes FROM PUBLIC,anon,authenticated;
+REVOKE ALL ON bigk_staging.discount_redemptions FROM PUBLIC,anon,authenticated;
+
 -- Run as the migration owner on staging, after all migrations.
 -- This creates a NOLOGIN permission group, not an administrative DB login.
 DO $$ BEGIN
@@ -376,6 +409,7 @@ DO $$ BEGIN
   END IF;
 END $$;
 GRANT USAGE ON SCHEMA bigk_staging TO bigk_staging_server;
+GRANT SELECT,INSERT,UPDATE,DELETE ON bigk_staging.discount_codes,bigk_staging.discount_redemptions TO bigk_staging_server;
 GRANT SELECT,INSERT,UPDATE ON bigk_staging.products,bigk_staging.variants,bigk_staging.orders,bigk_staging.order_lines,bigk_staging.sessions,bigk_staging.rate_limits,bigk_staging.login_tokens,bigk_staging.customer_sessions,bigk_staging.email_outbox,bigk_staging.club_members,bigk_staging.club_orders,bigk_staging.club_events,bigk_staging.club_bookings,bigk_staging.product_content,bigk_staging.withdrawal_requests TO bigk_staging_server;
 GRANT SELECT,INSERT ON bigk_staging.audit,bigk_staging.club_ledger,bigk_staging.admin_returns,bigk_staging.media_assets TO bigk_staging_server;
 GRANT DELETE ON bigk_staging.sessions,bigk_staging.rate_limits,bigk_staging.login_tokens,bigk_staging.customer_sessions TO bigk_staging_server;
@@ -386,7 +420,7 @@ DO $$ DECLARE spec text[]; seq text; BEGIN
  END LOOP;
 END $$;
 DO $$ DECLARE t text; BEGIN
- FOREACH t IN ARRAY ARRAY['products','variants','orders','order_lines','sessions','rate_limits','login_tokens','customer_sessions','email_outbox','club_members','club_orders','club_events','club_bookings','product_content','withdrawal_requests','audit','club_ledger','admin_returns','media_assets'] LOOP
+ FOREACH t IN ARRAY ARRAY['discount_codes','discount_redemptions','products','variants','orders','order_lines','sessions','rate_limits','login_tokens','customer_sessions','email_outbox','club_members','club_orders','club_events','club_bookings','product_content','withdrawal_requests','audit','club_ledger','admin_returns','media_assets'] LOOP
   IF NOT EXISTS(SELECT 1 FROM pg_policies WHERE schemaname='bigk_staging' AND tablename=t AND policyname='server_access') THEN
    EXECUTE format('CREATE POLICY server_access ON bigk_staging.%I TO bigk_staging_server USING (true) WITH CHECK (true)',t);
   END IF;
@@ -403,7 +437,7 @@ END $$;
 -- with a generated password and membership in bigk_staging_server. Do not use postgres.
 -- Configure its transaction-pooler URI only in the hosting secret settings.
 
-UPDATE bigk_staging.products SET name='Alpin Fleece Pro',description='Black FZ stand-collar fleece',category='Fleece',price_cents=14690,images='["/products/web/alpin-fleece-pro-25303101-1.webp", "/products/web/alpin-fleece-pro-25303101-2.webp", "/products/web/alpin-fleece-pro-25303101-3.webp", "/products/web/alpin-fleece-pro-25303101-4.webp", "/products/web/alpin-fleece-pro-25303101-5.webp", "/products/web/alpin-fleece-pro-25303101-6.webp"]',tags='[]',active=0,approved=0 WHERE id='P001';
+UPDATE bigk_staging.products SET name='Alpin Fleece',description='Black FZ stand-collar fleece',category='Fleece',price_cents=14690,images='["/products/web/alpin-fleece-pro-25303101-1.webp", "/products/web/alpin-fleece-pro-25303101-2.webp", "/products/web/alpin-fleece-pro-25303101-3.webp", "/products/web/alpin-fleece-pro-25303101-4.webp", "/products/web/alpin-fleece-pro-25303101-5.webp", "/products/web/alpin-fleece-pro-25303101-6.webp"]',tags='[]',active=0,approved=0 WHERE id='P001';
 
 UPDATE bigk_staging.variants SET product_id='P001',stock=20,reserved=0 WHERE id='P001-0';
 
@@ -417,7 +451,7 @@ UPDATE bigk_staging.variants SET product_id='P001',stock=25,reserved=0 WHERE id=
 
 UPDATE bigk_staging.variants SET product_id='P001',stock=9,reserved=0 WHERE id='P001-5';
 
-UPDATE bigk_staging.products SET name='Alpin Fleece Pro',description='Emerald Green FZ stand-collar fleece',category='Fleece',price_cents=14690,images='["/products/web/alpin-fleece-pro-25303102-1.webp", "/products/web/alpin-fleece-pro-25303102-2.webp", "/products/web/alpin-fleece-pro-25303102-3.webp", "/products/web/alpin-fleece-pro-25303102-4.webp", "/products/web/alpin-fleece-pro-25303102-5.webp", "/products/web/alpin-fleece-pro-25303102-6.webp", "/products/web/alpin-fleece-pro-25303102-7.webp", "/products/web/alpin-fleece-pro-25303102-8.webp", "/products/web/alpin-fleece-pro-25303102-9.webp", "/products/web/alpin-fleece-pro-25303102-10.webp"]',tags='[]',active=0,approved=0 WHERE id='P002';
+UPDATE bigk_staging.products SET name='Alpin Fleece',description='Emerald Green FZ stand-collar fleece',category='Fleece',price_cents=14690,images='["/products/web/alpin-fleece-pro-25303102-1.webp", "/products/web/alpin-fleece-pro-25303102-2.webp", "/products/web/alpin-fleece-pro-25303102-3.webp", "/products/web/alpin-fleece-pro-25303102-4.webp", "/products/web/alpin-fleece-pro-25303102-5.webp", "/products/web/alpin-fleece-pro-25303102-6.webp", "/products/web/alpin-fleece-pro-25303102-7.webp", "/products/web/alpin-fleece-pro-25303102-8.webp", "/products/web/alpin-fleece-pro-25303102-9.webp", "/products/web/alpin-fleece-pro-25303102-10.webp"]',tags='[]',active=0,approved=0 WHERE id='P002';
 
 UPDATE bigk_staging.variants SET product_id='P002',stock=20,reserved=0 WHERE id='P002-0';
 
@@ -718,3 +752,170 @@ UPDATE bigk_staging.variants SET product_id='P027',stock=80,reserved=0 WHERE id=
 UPDATE bigk_staging.variants SET product_id='P027',stock=50,reserved=0 WHERE id='P027-3';
 
 UPDATE bigk_staging.variants SET product_id='P027',stock=16,reserved=0 WHERE id='P027-4';
+
+
+-- BIG K partner programme: isolated staging schema objects and server-only policies.
+BEGIN;
+CREATE TABLE IF NOT EXISTS bigk_staging.ambassador_applications (
+  id TEXT PRIMARY KEY,
+  email TEXT NOT NULL,
+  full_name TEXT NOT NULL,
+  social_url TEXT NOT NULL DEFAULT '',
+  audience_note TEXT NOT NULL DEFAULT '',
+  motivation TEXT NOT NULL DEFAULT '',
+  partner_type TEXT NOT NULL DEFAULT 'ambassador' CHECK (partner_type IN ('ambassador','club','coach','creator','team_leader')),
+  organization_name TEXT NOT NULL DEFAULT '',
+  organization_type TEXT NOT NULL DEFAULT '',
+  privacy_accepted_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  privacy_notice_version TEXT NOT NULL DEFAULT '2026-11-22',
+  terms_accepted_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  terms_version TEXT NOT NULL DEFAULT '0.4-2026-11-22',
+  status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','approved','rejected','withdrawn')),
+  reviewed_by TEXT,
+  reviewed_at TIMESTAMPTZ,
+  review_note TEXT NOT NULL DEFAULT '',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS ambassador_applications_status_created
+  ON bigk_staging.ambassador_applications(status,created_at DESC);
+CREATE UNIQUE INDEX IF NOT EXISTS ambassador_applications_one_pending_email
+  ON bigk_staging.ambassador_applications(lower(email)) WHERE status='pending';
+
+CREATE TABLE IF NOT EXISTS bigk_staging.ambassadors (
+  id TEXT PRIMARY KEY,
+  application_id TEXT UNIQUE REFERENCES bigk_staging.ambassador_applications(id),
+  email TEXT NOT NULL UNIQUE,
+  display_name TEXT NOT NULL,
+  referral_code TEXT NOT NULL UNIQUE,
+  discount_code TEXT NOT NULL UNIQUE REFERENCES bigk_staging.discount_codes(code),
+  customer_discount_percent SMALLINT NOT NULL DEFAULT 10 CHECK (customer_discount_percent=10),
+  commission_percent NUMERIC(5,2) NOT NULL DEFAULT 10.00 CHECK (commission_percent>=0 AND commission_percent<=20),
+  status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active','paused','terminated')),
+  approved_by TEXT NOT NULL,
+  approved_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  terminated_at TIMESTAMPTZ,
+  termination_reason TEXT NOT NULL DEFAULT '',
+  partner_type TEXT NOT NULL DEFAULT 'ambassador' CHECK (partner_type IN ('ambassador','club','coach','creator','team_leader','regional')),
+  partner_level TEXT NOT NULL DEFAULT 'starter' CHECK (partner_level IN ('legacy','starter','active','top','elite')),
+  team_leader_id TEXT REFERENCES bigk_staging.ambassadors(id),
+  organization_name TEXT NOT NULL DEFAULT '',
+  organization_type TEXT NOT NULL DEFAULT '',
+  team_bonus_enabled BOOLEAN NOT NULL DEFAULT FALSE,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  CHECK (team_leader_id IS NULL OR team_leader_id<>id)
+);
+CREATE INDEX IF NOT EXISTS ambassadors_status ON bigk_staging.ambassadors(status);
+CREATE INDEX IF NOT EXISTS ambassadors_team_leader
+  ON bigk_staging.ambassadors(team_leader_id) WHERE team_leader_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS ambassadors_partner_type_level
+  ON bigk_staging.ambassadors(partner_type,partner_level,status);
+
+CREATE TABLE IF NOT EXISTS bigk_staging.ambassador_attributions (
+  id TEXT PRIMARY KEY,
+  ambassador_id TEXT NOT NULL REFERENCES bigk_staging.ambassadors(id),
+  order_id TEXT NOT NULL UNIQUE REFERENCES bigk_staging.orders(id),
+  customer_email_hash TEXT NOT NULL,
+  discount_code TEXT NOT NULL,
+  product_subtotal_cents BIGINT NOT NULL CHECK (product_subtotal_cents>=0),
+  discount_cents BIGINT NOT NULL CHECK (discount_cents>=0),
+  attributed_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  source TEXT NOT NULL DEFAULT 'discount_code' CHECK (source='discount_code')
+);
+CREATE INDEX IF NOT EXISTS ambassador_attributions_ambassador_date
+  ON bigk_staging.ambassador_attributions(ambassador_id,attributed_at DESC);
+
+CREATE TABLE IF NOT EXISTS bigk_staging.ambassador_commissions (
+  id TEXT PRIMARY KEY,
+  attribution_id TEXT NOT NULL UNIQUE REFERENCES bigk_staging.ambassador_attributions(id),
+  ambassador_id TEXT NOT NULL REFERENCES bigk_staging.ambassadors(id),
+  order_id TEXT NOT NULL UNIQUE REFERENCES bigk_staging.orders(id),
+  eligible_product_net_cents BIGINT NOT NULL DEFAULT 0 CHECK (eligible_product_net_cents>=0),
+  commission_percent NUMERIC(5,2) NOT NULL DEFAULT 10.00 CHECK (commission_percent>=0 AND commission_percent<=20),
+  commission_cents BIGINT NOT NULL DEFAULT 0 CHECK (commission_cents>=0),
+  status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','eligible','approved','paid','reversed','held')),
+  hold_reason TEXT NOT NULL DEFAULT 'delivery_and_returns_pending',
+  eligible_at TIMESTAMPTZ,
+  approved_by TEXT,
+  approved_at TIMESTAMPTZ,
+  payout_id TEXT,
+  paid_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS ambassador_commissions_ambassador_status
+  ON bigk_staging.ambassador_commissions(ambassador_id,status,created_at DESC);
+
+CREATE TABLE IF NOT EXISTS bigk_staging.ambassador_payouts (
+  id TEXT PRIMARY KEY,
+  ambassador_id TEXT NOT NULL REFERENCES bigk_staging.ambassadors(id),
+  period_start DATE NOT NULL,
+  period_end DATE NOT NULL,
+  currency CHAR(3) NOT NULL DEFAULT 'EUR' CHECK (currency='EUR'),
+  amount_cents BIGINT NOT NULL CHECK (amount_cents>0),
+  status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft','approved','paid','cancelled')),
+  reference TEXT NOT NULL DEFAULT '',
+  invoice_reference TEXT NOT NULL DEFAULT '',
+  created_by TEXT NOT NULL,
+  approved_by TEXT,
+  approved_at TIMESTAMPTZ,
+  paid_by TEXT,
+  paid_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  CHECK (period_end>=period_start)
+);
+CREATE INDEX IF NOT EXISTS ambassador_payouts_ambassador_period
+  ON bigk_staging.ambassador_payouts(ambassador_id,period_end DESC);
+
+CREATE TABLE IF NOT EXISTS bigk_staging.ambassador_team_bonus_ledger (
+  id TEXT PRIMARY KEY,
+  team_leader_id TEXT NOT NULL REFERENCES bigk_staging.ambassadors(id),
+  source_ambassador_id TEXT NOT NULL REFERENCES bigk_staging.ambassadors(id),
+  order_id TEXT NOT NULL REFERENCES bigk_staging.orders(id),
+  eligible_net_cents BIGINT NOT NULL CHECK (eligible_net_cents>=0),
+  bonus_percent NUMERIC(5,2) NOT NULL DEFAULT 0 CHECK (bonus_percent>=0 AND bonus_percent<=2),
+  bonus_cents BIGINT NOT NULL DEFAULT 0 CHECK (bonus_cents>=0),
+  status TEXT NOT NULL DEFAULT 'held' CHECK (status IN ('held','approved','paid','reversed')),
+  legal_review_reference TEXT NOT NULL DEFAULT '',
+  approved_by TEXT,
+  approved_at TIMESTAMPTZ,
+  paid_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE(team_leader_id,order_id)
+);
+CREATE INDEX IF NOT EXISTS ambassador_team_bonus_leader_status
+  ON bigk_staging.ambassador_team_bonus_ledger(team_leader_id,status,created_at DESC);
+
+ALTER TABLE bigk_staging.discount_codes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE bigk_staging.discount_redemptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE bigk_staging.ambassador_applications ENABLE ROW LEVEL SECURITY;
+ALTER TABLE bigk_staging.ambassadors ENABLE ROW LEVEL SECURITY;
+ALTER TABLE bigk_staging.ambassador_attributions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE bigk_staging.ambassador_commissions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE bigk_staging.ambassador_payouts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE bigk_staging.ambassador_team_bonus_ledger ENABLE ROW LEVEL SECURITY;
+
+REVOKE ALL ON bigk_staging.discount_codes,bigk_staging.discount_redemptions,
+  bigk_staging.ambassador_applications,bigk_staging.ambassadors,
+  bigk_staging.ambassador_attributions,bigk_staging.ambassador_commissions,
+  bigk_staging.ambassador_payouts,bigk_staging.ambassador_team_bonus_ledger
+  FROM PUBLIC,anon,authenticated;
+
+GRANT SELECT,INSERT,UPDATE,DELETE ON bigk_staging.discount_codes,bigk_staging.discount_redemptions TO bigk_staging_server;
+GRANT SELECT,INSERT,UPDATE ON bigk_staging.ambassador_applications,bigk_staging.ambassadors,
+  bigk_staging.ambassador_attributions,bigk_staging.ambassador_commissions,
+  bigk_staging.ambassador_payouts,bigk_staging.ambassador_team_bonus_ledger TO bigk_staging_server;
+
+DO $policies$
+DECLARE t TEXT;
+BEGIN
+  FOREACH t IN ARRAY ARRAY['discount_codes','discount_redemptions','ambassador_applications','ambassadors','ambassador_attributions','ambassador_commissions','ambassador_payouts','ambassador_team_bonus_ledger'] LOOP
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='bigk_staging' AND tablename=t AND policyname='staging_server_access') THEN
+      EXECUTE format('CREATE POLICY staging_server_access ON bigk_staging.%I TO bigk_staging_server USING (true) WITH CHECK (true)',t);
+    END IF;
+  END LOOP;
+END
+$policies$;
+
+
+COMMIT;

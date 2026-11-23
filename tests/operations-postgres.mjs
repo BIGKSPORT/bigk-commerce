@@ -5,7 +5,7 @@ import {spawn} from 'node:child_process';
 import assert from 'node:assert/strict';
 const database=await PGlite.create();let server;
 try{
- await database.exec('CREATE ROLE anon; CREATE ROLE authenticated;');
+ await database.exec('CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE bigk_production_web; CREATE ROLE bigk_staging_server;');
  const directory=new URL('../supabase/migrations/',import.meta.url),files=(await readdir(directory)).filter(f=>f.endsWith('.sql')).sort();
  for(const file of files){const sql=await readFile(new URL(file,directory),'utf8');await database.exec(sql);if(!file.includes('backoffice_foundation'))await database.exec(sql.replace(/\bbigk\b/g,'bigk_staging'));}
  const {productHistorySchema}=await import('../lib/backoffice-schema.ts');for(const schema of ['bigk','bigk_staging'])await database.exec(productHistorySchema.replace(/\b(product_revisions|products)\b/g,schema+'.$1'));

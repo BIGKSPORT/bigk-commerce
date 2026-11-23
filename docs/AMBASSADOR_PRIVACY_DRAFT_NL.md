@@ -1,7 +1,7 @@
 # Privacy-informatie — BIG K® Ambassador-aanvraag
 
 **Verwerkingsverantwoordelijke:** BIGK BV, Theo Verellenlaan 27, 2990 Wuustwezel, België. Ondernemingsnummer en btw-nummer: **BE 1034.189.749**. Website: https://bigk.be.  
-**Versie:** 0.2 — 21 november 2026.
+**Versie:** 0.3 — 22 november 2026.
 
 ## 1. Welke gegevens verwerken we?
 

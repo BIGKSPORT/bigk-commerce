@@ -29,7 +29,7 @@ export async function submitAmbassadorApplication(input:ApplicationInput){
   const existing=await db().prepare("SELECT id,status FROM ambassador_applications WHERE lower(email)=? ORDER BY created_at DESC LIMIT 1").get(email) as {id:string;status:string}|undefined;
   if(existing?.status==='pending')throw new HttpError(409,'Er is al een open aanvraag met dit e-mailadres.');
   const id=crypto.randomUUID();
-  await db().prepare("INSERT INTO ambassador_applications(id,email,full_name,social_url,audience_note,motivation,privacy_accepted_at,privacy_notice_version,terms_accepted_at,terms_version,status,created_at,updated_at) VALUES(?,?,?,?,?,?,?,'2026-11-21',?,'0.3-2026-11-22','pending',?,?)").run(id,email,v.fullName,v.socialUrl,v.audienceNote,v.motivation,v.partnerType,v.organizationName,v.organizationType,now,now,now,now);
+  await db().prepare("INSERT INTO ambassador_applications(id,email,full_name,social_url,audience_note,motivation,partner_type,organization_name,organization_type,privacy_accepted_at,privacy_notice_version,terms_accepted_at,terms_version,status,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?, '2026-11-22',?,'0.4-2026-11-22','pending',?,?)").run(id,email,v.fullName,v.socialUrl,v.audienceNote,v.motivation,v.partnerType,v.organizationName,v.organizationType,now,now,now,now);
   return {id,status:'pending' as const};
  });
 }
@@ -92,11 +92,11 @@ export async function attributeAmbassadorOrder(orderId:string,code:string,email:
  const customerHash=hash(emailOf(email));
  const own=await db().prepare("SELECT id FROM ambassadors WHERE id=? AND lower(email)=?").get(a.id,emailOf(email));
  if(own)throw new HttpError(400,'Een ambassadeur kan de eigen code niet gebruiken.');
- const id=crypto.randomUUID();
- await db().prepare("INSERT INTO ambassador_attributions(id,ambassador_id,order_id,customer_email_hash,discount_code,product_subtotal_cents,discount_cents) VALUES(?,?,?,?,?,?,?)").run(id,a.id,orderId,customerHash,a.discount_code,subtotalCents,discountCents);
+ const id=crypto.randomUUID(),attributedAt=new Date().toISOString();
+ await db().prepare("INSERT INTO ambassador_attributions(id,ambassador_id,order_id,customer_email_hash,discount_code,product_subtotal_cents,discount_cents,attributed_at) VALUES(?,?,?,?,?,?,?,?)").run(id,a.id,orderId,customerHash,a.discount_code,subtotalCents,discountCents,attributedAt);
  const net=0;
  const commission=0,commissionPercent=assertPartnerRate(Number(a.commission_percent));
- await db().prepare("INSERT INTO ambassador_commissions(id,attribution_id,ambassador_id,order_id,eligible_product_net_cents,commission_percent,commission_cents,status,hold_reason) VALUES(?,?,?,?,?,?,?,'pending','delivery_and_returns_pending')").run(crypto.randomUUID(),id,a.id,orderId,net,commissionPercent,commission);
+ await db().prepare("INSERT INTO ambassador_commissions(id,attribution_id,ambassador_id,order_id,eligible_product_net_cents,commission_percent,commission_cents,status,hold_reason,created_at,updated_at) VALUES(?,?,?,?,?,?,?,'pending','delivery_and_returns_pending',?,?)").run(crypto.randomUUID(),id,a.id,orderId,net,commissionPercent,commission,attributedAt,attributedAt);
  return true;
 }
 export async function updateAmbassadorRefund(orderId:string,refundedProductNetCents:number,reference:string){
