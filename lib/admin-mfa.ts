@@ -3,6 +3,7 @@ import QRCode from 'qrcode';
 import {normalizeAuthCode} from './auth-code';
 import {emailDeliveryAllowed} from './email-policy';
 import {db,transaction,audit} from './db';
+import {adminPasswordHash} from './admin-access';
 import {hash,HttpError,token,sessionCookie} from './security';
 export const mfaRequired=()=>process.env.ADMIN_MFA_REQUIRED==='true';
 export const adminSessionHash=(value:string)=>hash(mfaRequired()?'mfa:'+value:value);
@@ -22,3 +23,63 @@ export async function beginSetup(value:string){if(!mfaRequired())throw new HttpE
 export async function finishSetup(input:{token:string;setup:string;password:string;code:string}){if(!mfaRequired())throw new HttpError(404,'Not available.');const pending=unseal<{digest:string;secret:string;expires:number}>(input.setup);if(pending.expires<Date.now()||pending.digest!==hash('admin-setup:'+input.token))throw new HttpError(410,'This setup session expired.');if(input.password.length<16||input.password.length>256)throw new HttpError(400,'Use a password of at least 16 characters.');const counter=counterFor(pending.secret,input.code);if(counter===null)throw new HttpError(400,'The authenticator code is incorrect. Use the newest BIG K Admin entry, set your phone’s date and time to automatic, and try a fresh code.');const salt=randomBytes(16).toString('hex'),passwordHash=salt+':'+scryptSync(input.password,salt,64).toString('hex'),backups=Array.from({length:10},()=>randomBytes(8).toString('hex')),session=token();return transaction(async()=>{await validSetup(input.token);await db().prepare('INSERT INTO admin_credentials(id,password_hash,recovery_hash,updated_at) VALUES(?,?,?,?) ON CONFLICT(id) DO UPDATE SET password_hash=excluded.password_hash,recovery_hash=excluded.recovery_hash,updated_at=excluded.updated_at').run('admin',passwordHash,hash(token()),new Date().toISOString());await db().prepare('INSERT INTO admin_mfa(id,secret_encrypted,last_counter,backup_hashes,updated_at) VALUES(?,?,?,?,?)').run('admin',seal(pending.secret),counter,JSON.stringify(backups.map(c=>hash('admin-backup:'+c))),new Date().toISOString());await db().prepare('DELETE FROM login_tokens WHERE hash=?').run(pending.digest);await db().prepare('DELETE FROM sessions').run();await db().prepare('INSERT INTO sessions(hash,expires_at) VALUES(?,?)').run(adminSessionHash(session),new Date(Date.now()+8*3600000).toISOString());await audit('admin.mfa_enabled','admin');return {backups,cookie:sessionCookie('bigk_admin',session,8*3600)}})}
 /** Called inside the same transaction as session creation. Codes cannot be replayed. */
 export async function checkSecondFactor(code:string){code=normalizeAuthCode(code);const row=await db().prepare("SELECT * FROM admin_mfa WHERE id='admin'").get();if(!row)throw new HttpError(409,'Set up your admin authenticator first.');const secret=unseal<string>(String(row.secret_encrypted)),counter=counterFor(secret,code,Number(row.last_counter));if(counter!==null){await db().prepare('UPDATE admin_mfa SET last_counter=?,updated_at=? WHERE id=?').run(counter,new Date().toISOString(),'admin');return}if(counterFor(secret,code)!==null)throw new HttpError(409,'This authenticator code was already used. Wait for the next code in your app.');const backup=hash('admin-backup:'+code.toLowerCase().replace(/[\s-]/g,'')),list=JSON.parse(String(row.backup_hashes)) as string[],index=list.indexOf(backup);if(index<0)throw new HttpError(401,'Incorrect password or authenticator code.');list.splice(index,1);await db().prepare('UPDATE admin_mfa SET backup_hashes=?,updated_at=? WHERE id=?').run(JSON.stringify(list),new Date().toISOString(),'admin');await audit('admin.backup_code_used','admin')}
+
+function resetDigest(value: string, passwordHash: string) {
+  return hash('admin-password-reset:' + passwordHash + ':' + value);
+}
+
+export async function requestPasswordReset() {
+  if (!mfaRequired() || !await enrolled()) throw new HttpError(404, 'Password reset is unavailable.');
+  const email = owner();
+  const current = await adminPasswordHash();
+  if (!current || process.env.EMAIL_DELIVERY_ENABLED !== 'true' || !process.env.RESEND_API_KEY || !process.env.EMAIL_FROM || !emailDeliveryAllowed(email)) {
+    throw new HttpError(503, 'Password reset email is unavailable.');
+  }
+  const value = token();
+  const digest = resetDigest(value, current);
+  const url = new URL('/admin/reset-password', process.env.APP_URL);
+  url.hash = value;
+  await db().prepare('INSERT INTO login_tokens VALUES(?,?,?)').run(digest, email, new Date(Date.now() + 15 * 60000).toISOString());
+  let sent = false;
+  try {
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {Authorization: 'Bearer ' + process.env.RESEND_API_KEY, 'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        from: process.env.EMAIL_FROM,
+        to: email,
+        subject: 'Reset je BIG K-backofficewachtwoord',
+        text: 'Kies binnen 15 minuten een nieuw wachtwoord met je huidige BIG K-authenticator.\n\n' + url + '\n\nHeb je dit niet aangevraagd? Dan kun je deze mail negeren.',
+      }),
+      signal: AbortSignal.timeout(10000),
+    });
+    sent = response.ok;
+  } catch {}
+  if (!sent) {
+    await db().prepare('DELETE FROM login_tokens WHERE hash=?').run(digest);
+    throw new HttpError(502, 'De herstelmail kon niet worden verstuurd. Probeer opnieuw.');
+  }
+  await audit('admin.password_reset_requested', 'admin');
+}
+
+export async function resetAdminPassword(input: {token: string; password: string; code: string}) {
+  if (!mfaRequired()) throw new HttpError(404, 'Password reset is unavailable.');
+  if (!/^[A-Za-z0-9_-]{32,128}$/.test(input.token) || input.password.length < 16 || input.password.length > 256) {
+    throw new HttpError(400, 'Controleer de herstelgegevens.');
+  }
+  await transaction(async () => {
+    const current = await adminPasswordHash();
+    const digest = resetDigest(input.token, current);
+    const valid = await db().prepare('SELECT hash FROM login_tokens WHERE hash=? AND email=? AND expires_at>?')
+      .get(digest, owner(), new Date().toISOString());
+    if (!valid) throw new HttpError(410, 'Deze herstellink is verlopen of al gebruikt.');
+    await checkSecondFactor(input.code);
+    const salt = randomBytes(16).toString('hex');
+    const passwordHash = salt + ':' + scryptSync(input.password, salt, 64).toString('hex');
+    await db().prepare('INSERT INTO admin_credentials(id,password_hash,recovery_hash,updated_at) VALUES(?,?,?,?) ON CONFLICT(id) DO UPDATE SET password_hash=excluded.password_hash,updated_at=excluded.updated_at')
+      .run('admin', passwordHash, hash(token()), new Date().toISOString());
+    await db().prepare('DELETE FROM login_tokens WHERE hash=?').run(digest);
+    await db().prepare('DELETE FROM sessions').run();
+    await audit('admin.password_reset_completed', 'admin');
+  });
+}
