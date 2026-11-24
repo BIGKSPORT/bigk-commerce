@@ -16,8 +16,11 @@ export function isCheckoutCountry(country:string):country is CheckoutCountry {
 export function isFlatRateInternationalCountry(country:string):boolean {
  return (flatRateInternationalCountries as readonly string[]).includes(country);
 }
+const freeShippingPromotionEndsAt = Date.parse('2026-12-01T00:00:00+01:00');
+
 export function freeShippingThreshold(country:string):number|null {
  if(!isCheckoutCountry(country))throw new RangeError('Shipping is not configured for this destination.');
+ if(Date.now()<freeShippingPromotionEndsAt)return 0;
  if(isFlatRateInternationalCountry(country))return null;
  return country==='BE'||country==='NL'?6000:10000;
 }
