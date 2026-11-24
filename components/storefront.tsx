@@ -13,7 +13,7 @@ import priorityStyles from './storefront-priority.module.css';
 import overviewStyles from './homepage-catalog.module.css';
 import {orderedCategories} from '@/lib/catalog-organization';
 import {isB10White} from '@/lib/product-public-urls';
-import {b10WhiteProductCopy} from '@/lib/b10-white-copy';
+import {b10ColourProductCopy} from '@/lib/b10-colour-copy';
 import {applyProductCopy} from '@/lib/i18n/apply-product-copy';
 import { useEffect, useRef, useState, useId, useMemo, useCallback, type ReactNode } from 'react';
 import {alpinPublicProduct,alpinArticle,alpinVariantUrl} from '@/lib/alpin-fleece';
@@ -68,7 +68,7 @@ export default function Storefront({products:sourceProducts,mode,ready,initialCa
  function selectSeries(next:SeriesKey|''){setSeries(next);setCategory('All');setQuery('');setSize('');setColourFilter('');setPhotos(false);setSavedOnly(false);const url=new URL(location.href);if(next)url.searchParams.set('series',next);else url.searchParams.delete('series');url.searchParams.delete('category');url.searchParams.delete('saved');url.hash='catalog';history.pushState(null,'',url)}
  const [category,setCategory]=useState(categories.includes(initialCategory||'')?initialCategory!:'All'),[query,setQuery]=useState(''),[sort,setSort]=useState('featured'),[size,setSize]=useState(''),[photos,setPhotos]=useState(false),[saved,setSaved]=useState<string[]>([]),[bag,setBag]=useState<CartLine[]>([]),[compare,setCompare]=useState<string[]>([]),[savedOnly,setSavedOnly]=useState(initialSavedOnly),[modal,setModal]=useState<'bag'|'compare'|'finder'|'help'|null>(null),[selected,setSelected]=useState<string|null>(null),[chosenSize,setChosenSize]=useState(''),[message,setMessage]=useState(''),[hydrated,setHydrated]=useState(false),[mobileNav,setMobileNav]=useState(false),[goal,setGoal]=useState('Everyday');
  const pageProduct=products.find(p=>p.id===initialProduct);
- const fullPageProduct=pageProduct&&b10WhiteProductCopy(pageProduct,chosenColour,locale);
+ const fullPageProduct=pageProduct&&b10ColourProductCopy(pageProduct,chosenColour,locale);
  const heroProduct=products.find(p=>p.id===editorial.hero.productId);
  useEffect(()=>{setChosenColour(initialColour);const p=products.find(p=>p.id===initialProduct);const variants=p?.variants.filter(v=>!initialColour||(p.content?.trade?.identifiers?.[v.id]?.colour||colourLabel(p))===initialColour)||[];setChosenSize(variants.find(v=>normalizedSize(v.size)===normalizedSize(initialSize))?.id||'');setSelected(null)},[initialProduct,initialColour,initialSize,products]);
  useEffect(()=>{function sync(){const params=new URLSearchParams(location.search);const requested=params.get('category')||'All';setCategory(requested==='All'||sourceProducts.some(p=>p.category===requested)?requested:'All');setSavedOnly(params.get('saved')==='1');const colour=params.get('colour')||initialColour;setChosenColour(colour);const p=products.find(p=>p.id===initialProduct);setChosenSize(p?.variants.find(v=>normalizedSize(v.size)===normalizedSize(params.get('size')||'')&&(!colour||(p.content?.trade?.identifiers?.[v.id]?.colour||colourLabel(p))===colour))?.id||'')}window.addEventListener('popstate',sync);return()=>window.removeEventListener('popstate',sync)},[products,sourceProducts,initialProduct,initialColour]);
