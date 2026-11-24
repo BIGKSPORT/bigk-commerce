@@ -7,6 +7,7 @@ import {randomBytes,scryptSync} from 'node:crypto';
 import {base32,totp,counterFor,seal,unseal,requestSetup,beginSetup,finishSetup,adminSessionHash} from '../lib/admin-mfa';
 import {db,closeDatabase} from '../lib/db';
 import {hash,requireAdmin} from '../lib/security';
+import {POST as passwordReset} from '../app/api/admin/password-reset/route';
 import {POST as login} from '../app/api/admin/login/route';
 const dir=await mkdtemp(join(tmpdir(),'bigk-mfa-'));process.env.DATABASE_PROVIDER='sqlite';process.env.DATABASE_PATH=join(dir,'store.sqlite');process.env.ADMIN_MFA_KEY=randomBytes(32).toString('hex');process.env.ADMIN_MFA_REQUIRED='true';process.env.ADMIN_OWNER_EMAIL='owner@example.test';process.env.APP_URL='https://bigk.test';process.env.EMAIL_DELIVERY_ENABLED='true';process.env.RESEND_API_KEY='fixture-only';process.env.EMAIL_FROM='BIG K <sender@example.test>';delete process.env.VERCEL_ENV;delete process.env.VERCEL;
 const originalFetch=globalThis.fetch;let setupToken='';globalThis.fetch=(async(_url,init)=>{const mail=JSON.parse(String(init?.body));assert.equal(mail.to,'owner@example.test');setupToken=mail.text.match(/https:\/\/bigk.test\/admin\/setup#([A-Za-z0-9_-]+)/)[1];return Response.json({id:'fixture'})}) as typeof fetch;
@@ -17,5 +18,30 @@ try{
   const oldPassword=randomBytes(24).toString('base64url'),salt=randomBytes(16).toString('hex');process.env.ADMIN_PASSWORD_HASH=salt+':'+scryptSync(oldPassword,salt,64).toString('hex');const legacy=randomBytes(32).toString('hex');await db().prepare('INSERT INTO sessions VALUES(?,?)').run(hash(legacy),new Date(Date.now()+60000).toISOString());await assert.rejects(()=>requireAdmin(new Request('https://bigk.test',{headers:{cookie:'bigk_admin='+legacy}})));
   await requestSetup();assert(setupToken);const start=await beginSetup(setupToken);assert.match(start.qr,/^data:image\/png;base64,/);const restarted=await beginSetup(setupToken);assert.equal(restarted.secret,start.secret,'Reopening the same setup link must not invalidate the scanned QR');assert.equal(restarted.qr,start.qr);assert.equal((await db().prepare('SELECT * FROM admin_mfa').all()).length,0);assert.equal((await login(req(oldPassword))).status,401);
   const password=randomBytes(24).toString('base64url'),counter=Math.floor(Date.now()/30000),code=totp(start.secret,counter);await assert.rejects(()=>finishSetup({token:setupToken,setup:start.setup,password,code:'not-a-code'}));const done=await finishSetup({token:setupToken,setup:start.setup,password,code});assert.equal(done.backups.length,10);const row=await db().prepare('SELECT * FROM admin_mfa').get();assert(!String(row?.secret_encrypted).includes(start.secret));assert(!String(row?.backup_hashes).includes(done.backups[0]));const cookie=done.cookie.split(';')[0];await requireAdmin(new Request('https://bigk.test',{headers:{cookie}}));assert.equal((await db().prepare('SELECT hash FROM sessions').all()).length,1);assert.equal((await login(req(oldPassword,done.backups[1]))).status,401);assert.equal((await login(req(password,code))).status,409,'enrolment TOTP cannot be replayed');assert.equal((await login(req(password,done.backups[0]))).status,200);assert.equal((await login(req(password,done.backups[0]))).status,401,'recovery code is one use');await assert.rejects(()=>beginSetup(setupToken));await assert.rejects(()=>requestSetup());assert.equal((await db().prepare('SELECT backup_hashes FROM admin_mfa').get())?.backup_hashes?.toString().includes(hash('admin-backup:'+done.backups[0])),false);assert.equal((await db().prepare('SELECT hash FROM sessions').all()).some(r=>r.hash===hash(legacy)),false);
+  const resetRequest=(input:unknown)=>new Request('https://bigk.test/api/admin/password-reset',{
+   method:'POST',headers:{Origin:'https://bigk.test','Content-Type':'application/json'},body:JSON.stringify(input),
+  });
+  const recoveryTokens:string[]=[];
+  globalThis.fetch=async(_url,init)=>{
+   const mail=JSON.parse(String(init?.body));
+   assert.equal(mail.to,'owner@example.test');
+   const match=mail.text.match(/https:\/\/bigk.test\/admin\/reset-password#([A-Za-z0-9_-]+)/);
+   assert(match);
+   recoveryTokens.push(match[1]);
+   return Response.json({id:'reset-fixture'});
+  };
+  for(let i=0;i<2;i++)assert.equal((await passwordReset(resetRequest({action:'request'}))).status,200);
+  const newPassword=randomBytes(24).toString('base64url');
+  const reset={action:'finish',token:recoveryTokens[0],password:newPassword,code:done.backups[1]};
+  assert.equal((await passwordReset(resetRequest({...reset,code:'invalid-factor'}))).status,401);
+  assert.equal((await passwordReset(resetRequest(reset))).status,200);
+  assert.equal((await passwordReset(resetRequest(reset))).status,410);
+  assert.equal((await passwordReset(resetRequest({...reset,token:recoveryTokens[1]}))).status,410);
+  await assert.rejects(()=>requireAdmin(new Request('https://bigk.test',{headers:{cookie}})));
+  assert.equal((await db().prepare('SELECT secret_encrypted FROM admin_mfa').get())?.secret_encrypted,row?.secret_encrypted);
+  await db().prepare("DELETE FROM rate_limits").run();
+  assert.equal((await login(req(password,done.backups[2]))).status,401);
+  assert.equal((await login(req(newPassword,done.backups[2]))).status,200);
+
  });
 }finally{globalThis.fetch=originalFetch;await closeDatabase();await rm(dir,{recursive:true,force:true})}

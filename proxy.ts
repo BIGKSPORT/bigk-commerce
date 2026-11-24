@@ -2,6 +2,11 @@ import {NextRequest,NextResponse} from 'next/server';
 import {chooseSiteLocale,isSiteLocale,localizePath,siteLanguageCookie} from './lib/i18n/site-routing';
 export function proxy(request:NextRequest){
  const pathname=request.nextUrl.pathname,first=pathname.split('/')[1];
+ if(pathname==='/admin'||pathname.startsWith('/admin/')){
+  const headers=new Headers(request.headers);
+  headers.set('x-bigk-page-path',pathname);
+  return NextResponse.next({request:{headers}});
+ }
  const locale=isSiteLocale(first)?first:'en';
  if(pathname==='/'||(!isSiteLocale(first)&&/^\/(products|checkout|account|order|blog|info|newsletter)(\/|$)/.test(pathname))){
   const target=chooseSiteLocale(request.headers.get('accept-language'),request.cookies.get(siteLanguageCookie)?.value),url=request.nextUrl.clone();url.pathname=localizePath(pathname,target);
@@ -13,5 +18,5 @@ export function proxy(request:NextRequest){
  if(isSiteLocale(first)&&request.headers.get('sec-fetch-dest')==='document')response.cookies.set(siteLanguageCookie,locale,{path:'/',maxAge:31536000,sameSite:'lax',secure:request.nextUrl.protocol==='https:'});
  return response;
 }
-export const config={matcher:['/((?!api|admin|warehouse|_next|.*\\..*).*)']};
+export const config={matcher:['/admin/:path*','/((?!api|admin|warehouse|_next|.*\\..*).*)']};
 
