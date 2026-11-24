@@ -20,15 +20,17 @@ test('TikTok order review is admin-only and omits customer information', async (
   const originalFetch = globalThis.fetch;
   try {
     await db().prepare('CREATE TABLE IF NOT EXISTS tiktok_shop_connection(id TEXT PRIMARY KEY, credentials TEXT)').run();
-    await db().prepare('INSERT INTO tiktok_shop_connection VALUES(?,?)').run('belgium', seal({access_token: 'access-fixture'}));
+    await db().prepare('INSERT INTO tiktok_shop_connection VALUES(?,?)').run('belgium', seal({access_token: 'access-fixture', granted_scopes: ['seller.authorization.info']}));
     await db().prepare('INSERT INTO sessions VALUES(?,?)').run(adminSessionHash(session), new Date(Date.now()+60000).toISOString());
     let calls = 0;
+    let denied: 'orders' | 'shop' | null = null;
     globalThis.fetch = async (input, init) => {
       calls++;
       const url = new URL(String(input));
       assert.equal(url.hostname, 'open-api.tiktokglobalshop.com');
       assert.match(url.searchParams.get('sign') || '', /^[a-f0-9]{64}$/);
       if (url.pathname === '/authorization/202309/shops') {
+        if (denied === 'shop') return Response.json({code: 105005, request_id: 'request-shop'}, {status: 401});
         return Response.json({code: 0, data: {shops: [{name: 'BIG K', region: 'BE', cipher: 'shop-fixture'}]}});
       }
       assert.equal(url.pathname, '/order/202309/orders/search');
@@ -36,6 +38,7 @@ test('TikTok order review is admin-only and omits customer information', async (
       assert.deepEqual(JSON.parse(String(init?.body)), {order_status: 'AWAITING_SHIPMENT'});
       assert.equal(url.searchParams.get('shop_cipher'), 'shop-fixture');
       assert.equal(url.searchParams.get('page_token'), 'cursor-fixture');
+      if (denied === 'orders') return Response.json({code: 105005, request_id: 'request-orders'}, {status: 401});
       return Response.json({code: 0, data: {orders: [{
         id: 'order-fixture', status: 'AWAITING_SHIPMENT', shipping_type: 'SELLER',
         rts_sla_time: 1795519234, is_buyer_request_cancel: true,
@@ -57,6 +60,15 @@ test('TikTok order review is admin-only and omits customer information', async (
       }],
     });
     assert.equal(calls, 2);
+    const authenticated = () => new Request(endpoint, {headers: {cookie: 'bigk_admin='+session}});
+    denied = 'orders';
+    const rejectedOrders = await GET(authenticated());
+    assert.equal(rejectedOrders.status, 502);
+    assert.match((await rejectedOrders.json()).error, /Bestellingen ophalen.*105005.*vereiste recht niet.*request-orders/);
+    denied = 'shop';
+    const rejectedShop = await GET(authenticated());
+    assert.equal(rejectedShop.status, 502);
+    assert.match((await rejectedShop.json()).error, /Belgische shop opzoeken.*105005.*geschikt recht.*request-shop/);
   } finally {
     globalThis.fetch = originalFetch;
     await closeDatabase();
