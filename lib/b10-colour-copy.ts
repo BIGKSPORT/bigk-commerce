@@ -171,15 +171,75 @@ const greenCopy: Record<SiteLocale,Pick<WhiteCopy,'description'|'details'|'capti
   },
 };
 
+const blackCopy: Record<SiteLocale,Pick<WhiteCopy,'description'|'details'|'caption'|'features'>> = {
+  en: {
+    description: 'Black layers, a bright red heel and a contrasting white midsole give the B10 Black its retro running silhouette. The soft Memory Foam insole and lightweight sole are designed for everyday wear.',
+    details: 'Low-top lace-up sneaker with black layered panels, a red heel band, a contrasting white midsole and a ridged black outsole.',
+    caption: 'A closer look at the black upper, the signature red heel and the details underfoot.',
+    features: [
+      ['Memory Foam','Soft cushioning underfoot','The Memory Foam insole adds soft cushioning for everyday wear.','B10 insole with the Memory Foam marking'],
+      ['Layered upper','Black on black','Layered black panels and textured textile give the low-top shape depth.','Front three-quarter view of the black panels and laces'],
+      ['BIG K signature','A flash of red at the heel','The red heel band carries the BIG K emblem. A red accent continues along the white midsole.','Red heel band with the BIG K emblem on the B10 Black'],
+      ['Puffsole','A closer look at the tread','The black outsole has raised tread blocks with fine ridges.','Black B10 outsole with ridged tread blocks'],
+    ],
+  },
+  nl: {
+    description: 'Zwarte lagen, een felrode hiel en een witte tussenzool geven de B10 Black zijn retro hardlooplook. De zachte Memory Foam-binnenzool en lichte zool zijn gemaakt voor dagelijks gebruik.',
+    details: 'Lage vetersneaker met gelaagde zwarte panelen, een rode hielband, een contrasterende witte tussenzool en een zwarte buitenzool met profiel.',
+    caption: 'Bekijk het zwarte bovenwerk, de kenmerkende rode hiel en het zoolprofiel van dichtbij.',
+    features: [
+      ['Memory Foam','Zachte demping onder je voet','De Memory Foam-binnenzool zorgt voor zachte demping bij dagelijks gebruik.','B10-binnenzool met het opschrift Memory Foam'],
+      ['Gelaagd bovenwerk','Zwart in lagen','Zwarte panelen over textiel met structuur geven de lage sneaker diepte.','Schuin vooraanzicht van de zwarte panelen en veters'],
+      ['BIG K-signatuur','Een rood accent rond de hiel','Op de rode hielband staat het BIG K-embleem. Het rode accent loopt door op de witte tussenzool.','Rode hielband met BIG K-embleem op de B10 Black'],
+      ['Puffsole','Het zoolprofiel van dichtbij','De zwarte buitenzool heeft verhoogde profielblokken met fijne ribbels.','Zwarte B10-buitenzool met geribbelde profielblokken'],
+    ],
+  },
+  fr: {
+    description: 'Des empiècements noirs, un talon rouge vif et une semelle intermédiaire blanche donnent à la B10 Black une silhouette de running rétro. La semelle intérieure souple en mousse à mémoire de forme et la semelle légère sont pensées pour le quotidien.',
+    details: 'Basket basse à lacets avec des empiècements noirs superposés, une bande rouge au talon, une semelle intermédiaire blanche et une semelle d’usure noire striée.',
+    caption: 'Découvrez en gros plan la tige noire, le talon rouge emblématique et les détails de la semelle.',
+    features: [
+      ['Memory Foam','Un amorti souple sous le pied','La semelle intérieure en mousse à mémoire de forme apporte un amorti souple au quotidien.','Semelle intérieure B10, marquée Memory Foam'],
+      ['Tige à empiècements','Le noir en relief','Des empiècements noirs superposés au textile texturé donnent du relief à la silhouette basse.','Vue de trois quarts avant des empiècements noirs et des lacets'],
+      ['Signature BIG K','Une touche de rouge au talon','La bande rouge porte l’emblème BIG K. Le rouge se prolonge sur la semelle intermédiaire blanche.','Bande rouge et emblème BIG K au talon de la B10 Black'],
+      ['Puffsole','Le relief de la semelle en détail','La semelle d’usure noire présente des blocs en relief finement striés.','Semelle d’usure noire de la B10 avec blocs striés'],
+    ],
+  },
+  es: {
+    description: 'Las piezas negras, el talón rojo intenso y la entresuela blanca dan a las B10 Black una silueta de running retro. La plantilla suave de espuma viscoelástica y la suela ligera están pensadas para el día a día.',
+    details: 'Zapatilla baja de cordones con piezas negras superpuestas, banda roja en el talón, entresuela blanca y suela exterior negra estriada.',
+    caption: 'Descubre de cerca el exterior negro, el característico talón rojo y el dibujo de la suela.',
+    features: [
+      ['Memory Foam','Amortiguación suave bajo el pie','La plantilla de espuma viscoelástica ofrece una amortiguación suave para el uso diario.','Plantilla B10 con la inscripción Memory Foam'],
+      ['Exterior por capas','Negro con relieve','Las piezas negras superpuestas y el tejido con relieve dan profundidad a la silueta baja.','Vista delantera de las piezas negras y los cordones'],
+      ['Firma BIG K','Un toque de rojo en el talón','La banda roja lleva el emblema BIG K. El detalle rojo continúa sobre la entresuela blanca.','Banda roja y emblema BIG K en el talón de las B10 Black'],
+      ['Puffsole','El dibujo de la suela de cerca','La suela exterior negra tiene bloques en relieve con estrías finas.','Suela exterior negra de las B10 con bloques estriados'],
+    ],
+  },
+  it: {
+    description: 'Pannelli neri, un tallone rosso acceso e l’intersuola bianca danno alle B10 Black una silhouette da running rétro. Il morbido sottopiede in Memory Foam e la suola leggera sono pensati per tutti i giorni.',
+    details: 'Sneaker bassa con lacci, pannelli neri sovrapposti, fascia rossa al tallone, intersuola bianca e battistrada nero scanalato.',
+    caption: 'Scopri da vicino la tomaia nera, l’inconfondibile tallone rosso e il battistrada.',
+    features: [
+      ['Memory Foam','Una morbida ammortizzazione','Il sottopiede in Memory Foam offre una morbida ammortizzazione per tutti i giorni.','Sottopiede B10 con la scritta Memory Foam'],
+      ['Tomaia a strati','Nero su nero','I pannelli neri sovrapposti e il tessuto strutturato danno profondità alla silhouette bassa.','Vista anteriore dei pannelli neri e dei lacci'],
+      ['Firma BIG K','Un tocco di rosso al tallone','La fascia rossa porta lo stemma BIG K. Il rosso prosegue sull’intersuola bianca.','Fascia rossa e stemma BIG K sul tallone delle B10 Black'],
+      ['Puffsole','Il battistrada da vicino','Il battistrada nero presenta tasselli in rilievo con sottili scanalature.','Battistrada nero delle B10 con tasselli scanalati'],
+    ],
+  },
+};
+
+const blackPhotos = ['memory-foam-detail','black-front','black-heel','outsole'].map(name=>'/products/b10/'+name+'.webp');
+
 export function b10ColourProductCopy(product: Product, colour: string | undefined, locale: SiteLocale): Product {
-  if (product.id !== 'B10' || (colour !== 'White' && colour !== 'Green')) return product;
-  const green = colour === 'Green';
+  if (product.id !== 'B10' || (colour !== 'White' && colour !== 'Green' && colour !== 'Black')) return product;
   const white = whiteCopy[locale];
-  const copy = green ? {...white, ...greenCopy[locale], seoTitle: white.seoTitle.replace('B10 White','B10 Green')} : white;
-  const photos = green ? greenPhotos : whitePhotos;
+  const variant = colour === 'Green' ? greenCopy[locale] : colour === 'Black' ? blackCopy[locale] : white;
+  const copy = {...white,...variant,seoTitle:white.seoTitle.replace('B10 White','B10 '+colour)};
+  const photos = colour === 'Green' ? greenPhotos : colour === 'Black' ? blackPhotos : whitePhotos;
   const {features, caption, sizeGuide, sizeLabel, ...text} = copy;
   const source = product.content?.presentation;
-  const hasDetailPhotos = photos.every(image => product.images.includes(image));
+  const hasDetailPhotos = colour === 'Black' || photos.every(image => product.images.includes(image));
   const presentation = source?.enabled && hasDetailPhotos ? {
     ...source,
     introduction: text.description,

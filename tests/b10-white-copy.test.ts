@@ -25,7 +25,9 @@ test('B10 White uses the live colour detail images and complete localized specif
     assert.equal(presentation.features.length, 4);
     assert.ok(presentation.features.every(feature => base.images.includes(feature.image) && feature.alt));
     assert.deepEqual(parseSizeTable(presentation.sizeTable).slice(1), parseSizeTable(base.content!.presentation!.sizeTable).slice(1));
-    assert.equal(b10ColourProductCopy(base, 'Black', locale), base);
+    const black=b10ColourProductCopy(base,'Black',locale);
+    assert.match(black.description,/B10 Black/);
+    assert.ok(black.content!.presentation!.features.every(feature=>feature.id.startsWith('b10-black-')));
 
     assert.equal(translated.variants, base.variants);
   }

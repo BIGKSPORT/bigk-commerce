@@ -12,7 +12,6 @@ const AlpinTechnology=dynamic(()=>import('./product-technology'));
 import priorityStyles from './storefront-priority.module.css';
 import overviewStyles from './homepage-catalog.module.css';
 import {orderedCategories} from '@/lib/catalog-organization';
-import {isB10White} from '@/lib/product-public-urls';
 import {b10ColourProductCopy} from '@/lib/b10-colour-copy';
 import {applyProductCopy} from '@/lib/i18n/apply-product-copy';
 import { useEffect, useRef, useState, useId, useMemo, useCallback, type ReactNode } from 'react';
@@ -106,7 +105,7 @@ export default function Storefront({products:sourceProducts,mode,ready,initialCa
    const className='b10-colour-tile'+(selectedColour?' b10-colour-tile--selected':'');
    const content=<>{option?.images[0]&&<Image src={option.images[0]} alt="" width={96} height={72}/>}<span>{colour}</span></>;
    const label=t('Choose colour')+' '+colour;
-   if(option&&fullPage&&!selectedColour&&(isB10White(product.id,colour)||isB10White(product.id,activeColour||''))){
+   if(option&&fullPage&&!selectedColour){
     const size=product.variants.find(v=>v.id===chosenSize)?.size;
     const validSize=size&&option.variants.some(v=>normalizedSize(v.size)===normalizedSize(size));
     return <Link prefetch={false} key={colour} href={groupUrl(products,option,validSize?size:undefined)} className={className} aria-label={label}>{content}</Link>;
