@@ -1,1 +1,11 @@
 .feature.feature{background:#eeece8;padding:40px;gap:40px;border:0}.feature .image{padding:0;background:transparent}.feature .image>img{display:block;width:100%;max-width:none;height:auto;object-fit:contain;margin:0;mix-blend-mode:multiply}.feature .image div{gap:12px}.feature .image div img{display:block;width:100%;max-width:none;height:auto;object-fit:contain;margin:0;mix-blend-mode:multiply}@media(max-width:700px){.feature.feature{padding:24px;gap:20px}}
+
+/* Center the landscape cover in the same row as the square profiles. */
+.feature .image :global(.b10-mini-colours) {
+  align-items: center;
+}
+
+/* Neutralize the catalog photo's off-white backdrop before blending. */
+.feature .image img[alt="B10 green colourway"] {
+  filter: brightness(1.02);
+}
