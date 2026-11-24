@@ -20,9 +20,9 @@ const freeShippingPromotionEndsAt = Date.parse('2026-12-01T00:00:00+01:00');
 
 export function freeShippingThreshold(country:string):number|null {
  if(!isCheckoutCountry(country))throw new RangeError('Shipping is not configured for this destination.');
+ if(Date.now()<freeShippingPromotionEndsAt)return 0;
  if(isFlatRateInternationalCountry(country))return null;
- if(country==='BE'||country==='NL')return Date.now()<freeShippingPromotionEndsAt?0:6000;
- return 10000;
+ return country==='BE'||country==='NL'?6000:10000;
 }
 export function shippingCharge(subtotal:number,country:string='BE'):number {
  if(!Number.isSafeInteger(subtotal)||subtotal<0)throw new RangeError('Invalid shipping subtotal.');
