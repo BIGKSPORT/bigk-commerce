@@ -15,7 +15,7 @@ export const maxDuration = 45;
 export async function GET(request: Request) {
   try {
     await requireAdmin(request);
-    const read = await tiktokShopReader();
+    const {read} = await tiktokShopReader();
 
     const [{ shops }, master] = await Promise.all([
       read<{ shops: { name: string; region: string; cipher: string }[] }>('/authorization/202309/shops'),

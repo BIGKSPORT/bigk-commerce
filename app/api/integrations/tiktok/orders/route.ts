@@ -1,5 +1,5 @@
 import {HttpError, requireAdmin} from '@/lib/security';
-import {tiktokShopReader} from '@/lib/tiktok-shop';
+import {TikTokApiError, tiktokShopReader} from '@/lib/tiktok-shop';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -17,16 +17,20 @@ type TikTokOrder = {
 };
 
 export async function GET(request: Request) {
+  let stage: 'shop' | 'orders' = 'shop';
+  let scopes: string[] | null = null;
   try {
     await requireAdmin(request);
     const cursor = new URL(request.url).searchParams.get('page');
     if (cursor && cursor.length > 2048) throw new HttpError(400, 'Ongeldige TikTok-pagina.');
 
-    const read = await tiktokShopReader();
+    const {read, grantedScopes} = await tiktokShopReader();
+    scopes = grantedScopes;
     const {shops} = await read<{shops: {name: string; region: string; cipher: string}[]}>('/authorization/202309/shops');
     const belgian = shops.filter(shop => shop.region === 'BE' && shop.cipher);
     if (belgian.length !== 1) throw new HttpError(409, 'Verbind precies één Belgische TikTok Shop.');
     const shop = belgian[0];
+    stage = 'orders';
     const {orders, next_page_token} = await read<{orders?: TikTokOrder[]; next_page_token?: string}>(
       '/order/202309/orders/search',
       {shop_cipher: shop.cipher, page_size: '20', ...(cursor ? {page_token: cursor} : {})},
@@ -51,6 +55,19 @@ export async function GET(request: Request) {
       })),
     });
   } catch (error) {
+    if (error instanceof TikTokApiError) {
+      const label = stage === 'orders' ? 'Bestellingen ophalen' : 'Belgische shop opzoeken';
+      const required = stage === 'orders' ? 'seller.order.info' : 'seller.authorization.info';
+      const hasScope = scopes?.some(scope => scope === required || scope === 'seller.fs.order&fufillment.management');
+      const permission = scopes === null ? 'TikTok gaf geen rechtenlijst mee bij de opgeslagen toestemming.'
+        : hasScope ? 'Het opgeslagen token vermeldt een geschikt recht.'
+        : 'Het opgeslagen token vermeldt het vereiste recht niet.';
+      return reply({error: [
+        label + ' mislukt. ' + error.message,
+        error.code === 105005 ? permission : '',
+        error.requestId ? 'TikTok-request-ID: ' + error.requestId : '',
+      ].filter(Boolean).join(' ')}, error.status);
+    }
     return error instanceof HttpError ? reply({error: error.message}, error.status)
       : reply({error: 'TikTok-bestellingen konden niet worden opgehaald.'}, 502);
   }
