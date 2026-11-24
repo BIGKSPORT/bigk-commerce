@@ -21,7 +21,12 @@ export async function GET(request: Request) {
   let scopes: string[] | null = null;
   try {
     await requireAdmin(request);
-    const cursor = new URL(request.url).searchParams.get('page');
+    const params = new URL(request.url).searchParams;
+    const status = params.get('status') ?? 'AWAITING_SHIPMENT';
+    if (status !== 'AWAITING_SHIPMENT' && status !== 'AWAITING_COLLECTION') {
+      throw new HttpError(400, 'Ongeldige TikTok-orderstatus.');
+    }
+    const cursor = params.get('page');
     if (cursor && cursor.length > 2048) throw new HttpError(400, 'Ongeldige TikTok-pagina.');
 
     const {read, grantedScopes} = await tiktokShopReader();
@@ -34,7 +39,7 @@ export async function GET(request: Request) {
     const {orders, next_page_token} = await read<{orders?: TikTokOrder[]; next_page_token?: string}>(
       '/order/202309/orders/search',
       {shop_cipher: shop.cipher, page_size: '20', ...(cursor ? {page_token: cursor} : {})},
-      JSON.stringify({order_status: 'AWAITING_SHIPMENT'}),
+      JSON.stringify({order_status: status}),
     );
 
     return reply({
