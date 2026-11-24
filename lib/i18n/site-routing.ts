@@ -1,6 +1,7 @@
 export const siteLocales=['en','nl','fr','es','it'] as const;
 export type SiteLocale=typeof siteLocales[number];
 export const siteLanguageCookie='bigk_language';
+export const siteLanguagePreferenceCookie='bigk_language_preference';
 export function isSiteLocale(value:unknown):value is SiteLocale{return typeof value==='string'&&(siteLocales as readonly string[]).includes(value)}
 export function chooseSiteLocale(accept:string|null,choice?:string){if(isSiteLocale(choice))return choice;const values=(accept||'').split(',').map((s,i)=>{const [tag,...p]=s.trim().toLowerCase().split(';'),q=p.find(x=>x.trim().startsWith('q='));return {locale:tag.split('-')[0],q:q?Number(q.trim().slice(2)):1,i}}).filter(x=>isSiteLocale(x.locale)&&Number.isFinite(x.q)&&x.q>0&&x.q<=1).sort((a,b)=>b.q-a.q||a.i-b.i);return (values[0]?.locale||'en') as SiteLocale}
 export function localizePath(href:string,locale:SiteLocale){
