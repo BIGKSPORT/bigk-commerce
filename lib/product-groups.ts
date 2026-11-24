@@ -1,4 +1,4 @@
-import {b10WhiteSlug,isB10White,publicProductSlug,publicUrlReserved} from './product-public-urls';
+import {b10ColourSlug,publicProductSlug} from './product-public-urls';
 import type {Product,Variant} from './types';
 /** Explicit source-reviewed identities; never infer interchangeability from a name or prefix. */
 export const reviewedGroups=[
@@ -61,7 +61,8 @@ export function colourOptions(catalog:Product[],p:Product,includeArchived=false)
 export function productGroups(catalog:Product[],includeArchived=false):ProductGroup[]{const canonical=catalog.filter(p=>!alias(p)),ids=[...new Set(canonical.map(p=>parentId(p,canonical)))];return ids.map(id=>{const parent=canonical.find(p=>p.id===id)||canonical.find(p=>parentId(p,canonical)===id)!;return {id,parent,records:family(canonical,parent),colours:colourOptions(canonical,parent,includeArchived)}})}
 export function groupUrl(catalog:Product[],option:ColourOption,size?:string){
  const rootId=parentId(option.product,catalog),root=catalog.find(p=>p.id===rootId)||option.product;
- if(isB10White(rootId,option.colour)&&!publicUrlReserved(b10WhiteSlug,catalog,rootId))return '/products/'+b10WhiteSlug+(size?'?'+new URLSearchParams({size}):'');
+ const colourSlug=b10ColourSlug(rootId,option.colour,catalog);
+ if(colourSlug)return '/products/'+colourSlug+(size?'?'+new URLSearchParams({size}):'');
  if(rootId==='P001'){const params=new URLSearchParams({colour:option.colour});if(size)params.set('size',size);return '/en/products/alpin-fleece-jacket?'+params;}
  const options=colourOptions(catalog,root),params=new URLSearchParams();if(options.length>1||option.product.id!==rootId)params.set('colour',option.colour);if(options.filter(o=>o.colour.toLowerCase()===option.colour.toLowerCase()).length>1)params.set('colourId',option.product.id);if(size)params.set('size',size);
  return '/products/'+publicProductSlug(root,catalog)+(params.size?'?'+params:'');

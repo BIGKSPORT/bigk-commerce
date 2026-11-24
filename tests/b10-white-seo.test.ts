@@ -20,8 +20,12 @@ test('B10 White has a standalone canonical while existing colour links preserve 
 
   for (const colour of ['Black','Green']) {
     const other = resolveGroupSelection(catalog,catalog,product.slug,{colour});
-    assert.equal(other?.canonical,'/products/b10-sneakers');
-    assert.equal(other?.redirect,undefined);
+    const slug='b10-'+colour.toLowerCase();
+    assert.equal(other?.canonical,'/products/'+slug);
+    assert.equal(other?.redirect,'/products/'+slug);
+    const direct=resolveGroupSelection(catalog,catalog,slug,{size:'42'});
+    assert.equal(direct?.selected.colour,colour);
+    assert.equal(direct?.redirect,undefined);
   }
   assert.equal(publicUrlReserved('b10-white',catalog,'another-product'),true);
   const collision = {...product,id:'different',slug:'b10-white'};
