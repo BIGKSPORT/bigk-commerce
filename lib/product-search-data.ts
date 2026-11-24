@@ -9,7 +9,7 @@ export function searchDescription(product:Product){return product.content?.local
 
 const transitDays: Partial<Record<CheckoutCountry, readonly [number, number]>> = {
  BE: [1, 1],
- NL: [1, 2],
+ NL: [2, 2],
  FR: [2, 3],
  DE: [2, 3],
  LU: [1, 1],
