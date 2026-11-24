@@ -25,13 +25,13 @@ export const searchReturnPolicy = {
 };
 
 /** Use the checkout rate for a single item and the published carrier estimates. */
-export function searchShippingDetails(priceCents: number, productId?: string) {
+export function searchShippingDetails(priceCents: number) {
  return checkoutCountries.map(country => {
   const transit = transitDays[country];
   return {
    '@type': 'OfferShippingDetails',
    shippingDestination: {'@type': 'DefinedRegion', addressCountry: country},
-   shippingRate: {'@type': 'MonetaryAmount', value: shippingCharge(priceCents, country, productId ? [productId] : []) / 100, currency: 'EUR'},
+   shippingRate: {'@type': 'MonetaryAmount', value: shippingCharge(priceCents, country) / 100, currency: 'EUR'},
    ...(transit ? {deliveryTime: {
     '@type': 'ShippingDeliveryTime',
     transitTime: {'@type': 'QuantitativeValue', minValue: transit[0], maxValue: transit[1], unitCode: 'DAY'},

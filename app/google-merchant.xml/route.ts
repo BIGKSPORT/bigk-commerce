@@ -40,7 +40,7 @@ function item(offer:Offer) {
   ...(offer.colour?[tag('color',offer.colour)]:[]),
   ...(offer.size?[tag('size',offer.size)]:[]),
   ...(offer.gtin&&validGtin(offer.gtin)?[tag('gtin',offer.gtin)]:[]),
-  ...checkoutCountries.map(country=>'<g:shipping>'+tag('country',country)+tag('price',eur(shippingCharge(price,country,[offer.group])))+'</g:shipping>'),
+  ...checkoutCountries.map(country=>'<g:shipping>'+tag('country',country)+tag('price',eur(shippingCharge(price,country)))+'</g:shipping>'),
  ].join('')+'</item>';
 }
 

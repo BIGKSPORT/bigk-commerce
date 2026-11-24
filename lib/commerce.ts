@@ -81,7 +81,7 @@ export async function createOrder(input: CheckoutInput, verifiedEmail?:string) {
           promoDiscount = quote.discountCents;
           promoCode = quote.code;
         }
-        const id = crypto.randomUUID(), receiptToken = receipt(id), ship = shipping(Math.max(0, subtotal - promoDiscount),input.country,lines.map(line=>line.p.id)), now = new Date(), expires = new Date(now.getTime() + 35 * 60000);
+        const id = crypto.randomUUID(), receiptToken = receipt(id), ship = shipping(Math.max(0, subtotal - promoDiscount),input.country), now = new Date(), expires = new Date(now.getTime() + 35 * 60000);
         const total = Math.max(0, subtotal - promoDiscount) + ship;
         (await sql.prepare('INSERT INTO orders(id,status,subtotal,shipping,total,email,phone,customer,receipt_hash,request_key,request_hash,created_at,expires_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)').run(id, isLive() ? 'pending' : 'demo', subtotal, ship, total, input.email.toLowerCase(), input.phone, JSON.stringify({ language:input.locale||'en', firstName: input.firstName, lastName: input.lastName, country: input.country, address: input.address, postal: input.postal, city: input.city, promoCode: promoCode||null, promoDiscountCents: promoDiscount||0 }), hash(receiptToken), input.requestKey, requestHash, now.toISOString(), expires.toISOString()));
         for (const line of lines) {
