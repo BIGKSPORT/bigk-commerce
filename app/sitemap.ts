@@ -1,4 +1,4 @@
-import {publicProductSlug} from '@/lib/product-public-urls';
+import {b10WhiteSlug,isB10White,publicProductSlug,publicUrlReserved} from '@/lib/product-public-urls';
 import {publicIndexingEnabled} from '@/lib/search-visibility';
 import {siteLocales,localizePath} from '@/lib/i18n/site-routing';
 import {blogPosts} from '@/lib/blog';
@@ -26,6 +26,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     if(hasAlpinTechnology(p)||!group.colours.some(option=>option.images.length)||seen.has(publicProductSlug(p,source)))continue;
     const slug=publicProductSlug(p,source);seen.add(slug);
     for(const locale of siteLocales)entries.push({url:seller.origin+localizePath('/products/'+encodeURIComponent(slug),locale),changeFrequency:'weekly',priority:0.8});
+    if(group.colours.some(option=>isB10White(option.product.id,option.colour)&&option.images.length)&&
+      !publicUrlReserved(b10WhiteSlug,source,p.id)){
+      const route='/products/'+b10WhiteSlug;
+      const languages=Object.fromEntries(siteLocales.map(locale=>[locale,seller.origin+localizePath(route,locale)]));
+      for(const locale of siteLocales)entries.push({url:languages[locale],changeFrequency:'weekly',priority:0.8,alternates:{languages}});
+    }
   }
   const posts=await blogPosts();for(const locale of siteLocales){entries.push({url:seller.origin+'/'+locale+'/blog',changeFrequency:'weekly',priority:0.6});for(const p of posts)entries.push({url:seller.origin+'/'+locale+'/blog/'+p.slug,lastModified:new Date(p.updatedAt),priority:0.6});}
   return entries;

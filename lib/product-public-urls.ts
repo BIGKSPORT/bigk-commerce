@@ -1,5 +1,7 @@
 /** Public URL projection only; source slugs, IDs and historical orders remain intact. */
 export type UrlProduct={id:string;slug:string;tags?:string[];group?:{id:string;slug:string};content?:{trade?:{parentProductId?:string;previousSlugs?:string[]}}};
+export const b10WhiteSlug = 'b10-white';
+export const isB10White = (productId: string, colour: string) => productId === 'B10' && colour === 'White';
 export const urlGroupId=(p:UrlProduct)=>p.group?.id||p.content?.trade?.parentProductId||p.id;
 const reviewedPublicSlugs:Record<string,{from:string;to:string}>={
  P015:{from:'corelosse-2-thermal-long-sleeve-jersey',to:'corelosse-2'},
@@ -34,5 +36,5 @@ export function preserveProductQuery(target:string,query:Record<string,unknown>)
 
 /** Call with sharedProducts(catalog) so reviewed colour families claim one public URL. */
 export function publicUrlReserved(slug:string,catalog:readonly UrlProduct[],ownerGroup?:string){
- return catalog.some(p=>urlGroupId(p)!==ownerGroup&&(publicProductSlug(p,catalog)===slug||p.content?.trade?.previousSlugs?.some(previous=>publicProductSlug({...p,slug:previous,group:undefined},catalog)===slug)));
+ return (slug===b10WhiteSlug&&ownerGroup!=='B10'&&catalog.some(p=>urlGroupId(p)==='B10'))||catalog.some(p=>urlGroupId(p)!==ownerGroup&&(publicProductSlug(p,catalog)===slug||p.content?.trade?.previousSlugs?.some(previous=>publicProductSlug({...p,slug:previous,group:undefined},catalog)===slug)));
 }
