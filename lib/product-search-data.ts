@@ -9,10 +9,9 @@ export function searchDescription(product:Product){return product.content?.local
 
 const transitDays: Partial<Record<CheckoutCountry, readonly [number, number]>> = {
  BE: [1, 1],
- NL: [1, 2],
- FR: [2, 3],
- DE: [2, 3],
- LU: [1, 1],
+ NL: [2, 2],
+ FR: [3, 3],
+ DE: [3, 3],
 };
 
 export const searchReturnPolicy = {
@@ -27,15 +26,15 @@ export const searchReturnPolicy = {
 /** Use the checkout rate for a single item and the published carrier estimates. */
 export function searchShippingDetails(priceCents: number) {
  return checkoutCountries.map(country => {
-  const transit = transitDays[country];
+  const transit = transitDays[country] ?? [3, 5];
   return {
    '@type': 'OfferShippingDetails',
    shippingDestination: {'@type': 'DefinedRegion', addressCountry: country},
    shippingRate: {'@type': 'MonetaryAmount', value: shippingCharge(priceCents, country) / 100, currency: 'EUR'},
-   ...(transit ? {deliveryTime: {
+   deliveryTime: {
     '@type': 'ShippingDeliveryTime',
     transitTime: {'@type': 'QuantitativeValue', minValue: transit[0], maxValue: transit[1], unitCode: 'DAY'},
-   }} : {}),
+   },
   };
  });
 }
