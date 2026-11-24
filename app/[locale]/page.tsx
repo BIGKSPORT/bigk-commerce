@@ -1,4 +1,4 @@
-import Home from '../page';
+import Home, {metadata as homepageShareMetadata} from '../page';
 import {getSiteLanguage} from '@/lib/i18n/site-server';
 import {seller} from '@/lib/seller';
 const descriptions={
@@ -9,6 +9,6 @@ const descriptions={
   "it": "Abbigliamento sportivo tecnico, sneakers e accessori che uniscono prestazioni e stile. Scopri la collezione BIG K per lo sport e ogni giorno."
 };
 export const dynamic='force-dynamic';
-export async function generateMetadata(){const {locale}=await getSiteLanguage();return {title:{absolute:'BIG K® — Looking good. Moving fast.'},description:descriptions[locale],alternates:{canonical:seller.origin+'/'+locale,languages:{en:seller.origin+'/en',nl:seller.origin+'/nl',fr:seller.origin+'/fr',es:seller.origin+'/es',it:seller.origin+'/it','x-default':seller.origin+'/en'}}}}
+export async function generateMetadata(){const {locale}=await getSiteLanguage();return {openGraph:homepageShareMetadata.openGraph,twitter:homepageShareMetadata.twitter,title:{absolute:'BIG K® — Looking good. Moving fast.'},description:descriptions[locale],alternates:{canonical:seller.origin+'/'+locale,languages:{en:seller.origin+'/en',nl:seller.origin+'/nl',fr:seller.origin+'/fr',es:seller.origin+'/es',it:seller.origin+'/it','x-default':seller.origin+'/en'}}}}
 export default Home;
 
