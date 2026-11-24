@@ -1,3 +1,15 @@
+import type { Metadata } from 'next';
+
+const shareImage = '/bigk-share-preview.png';
+export const metadata: Metadata = {
+  openGraph: {
+    type: 'website',
+    siteName: 'BIG K',
+    images: [{ url: shareImage, width: 1200, height: 630, alt: 'BIG K logo and B10 campaign with a red shoebox' }],
+  },
+  twitter: { card: 'summary_large_image', images: [shareImage] },
+};
+
 import {localizedPublicCatalog} from '@/lib/localized-public-catalog';
 import {storefrontMerchandising} from '@/lib/merchandising';
 import {publicCategoryOptions} from '@/lib/catalog-categories';
