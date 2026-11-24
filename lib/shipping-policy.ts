@@ -21,9 +21,11 @@ export function freeShippingThreshold(country:string):number|null {
  if(isFlatRateInternationalCountry(country))return null;
  return country==='BE'||country==='NL'?6000:10000;
 }
-export function shippingCharge(subtotal:number,country:string='BE'):number {
+const ribsLongProductIds = new Set(['RIBS-LONG-WHITE', 'RIBS-LONG-BLACK', 'RIBS-LONG-RED']);
+export function shippingCharge(subtotal:number,country:string='BE',productIds:readonly string[]=[]):number {
  if(!Number.isSafeInteger(subtotal)||subtotal<0)throw new RangeError('Invalid shipping subtotal.');
  const threshold=freeShippingThreshold(country);
+ if((country==='BE'||country==='NL')&&productIds.length&&productIds.every(id=>ribsLongProductIds.has(id)))return 0;
  if(threshold===null)return 1250;
  if(subtotal>=threshold)return 0;
  const rate=newMarketRates[country as CheckoutCountry];

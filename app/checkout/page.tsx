@@ -58,7 +58,7 @@ export default function Checkout(){
 
   const lines=bag.map(x=>({...x,p:products.find(p=>p.variants.some(v=>v.id===x.variantId))!})).filter(x=>x.p);
   const sub=lines.reduce((n,x)=>n+(x.p.priceCents||0)*x.quantity,0);
-  const ship=shippingCharge(sub,country),shippingThreshold=freeShippingThreshold(country);
+  const ship=shippingCharge(sub,country,lines.length===bag.length?lines.map(line=>line.p.id):[]),shippingThreshold=freeShippingThreshold(country);
   const clubDiscount=clubPoints>0?clubPoints*3:0;
   const estimatedTotal=Math.max(0,sub+ship-clubDiscount);
 
@@ -171,7 +171,7 @@ export default function Checkout(){
             <section className="panel">
               <div className="checkout-summary-heading"><h2>{t("Your selection")}</h2><Link href="/">{t("Continue shopping")} <ArrowRight size={14}/></Link></div>
               {lines.map(x=><div className="order-line" key={x.variantId}><div className="checkout-product">{bagMedia(x.p,x.variantId).image&&<img src={bagMedia(x.p,x.variantId).image} alt={x.p.name} width="64" height="84"/>}<span>{x.p.name}<small>{x.p.content?.trade?.colour&&<>{x.p.content.trade.colour} · </>}{x.p.variants.find(v=>v.id===x.variantId)?.size} · {t('Qty')} {x.quantity}</small></span></div><strong>{x.p.priceCents===null?t('Price pending'):money(x.p.priceCents*x.quantity)}</strong></div>)}
-              <div className="checkout-delivery-note"><Truck size={18}/><span>{shippingThreshold===null?t('Flat-rate standard delivery'):sub>=shippingThreshold?t('Your order qualifies for free delivery.'):t('Free delivery from {amount}.').replace('{amount}',money(shippingThreshold))}</span></div>
+              <div className="checkout-delivery-note"><Truck size={18}/><span>{shippingThreshold===null?t('Flat-rate standard delivery'):ship===0?t('Your order qualifies for free delivery.'):t('Free delivery from {amount}.').replace('{amount}',money(shippingThreshold))}</span></div>
               <ClubEstimate lines={lines.map(x=>({id:x.variantId,grossCents:(x.p.priceCents||0)*x.quantity,kind:productKind(x.p.tags)}))} onRedeem={mode==='live'&&!promoCode.trim()?onRedeemPoints:undefined}/>
               {promoCode.trim()&&<p className="subtle-note">{t('Promo code entered — Club points are not applied on this order.')}</p>}
               <div className="bag-totals">
