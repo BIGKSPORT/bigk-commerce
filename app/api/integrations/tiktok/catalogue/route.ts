@@ -1,8 +1,7 @@
-import { createHmac } from 'node:crypto';
-import { unseal } from '@/lib/admin-mfa';
+import {tiktokShopReader} from '@/lib/tiktok-shop';
 import { canonicalGtin, validGtin } from '@/lib/product-identifiers';
 import { channelInventory } from '@/lib/channel-inventory';
-import { db, products } from '@/lib/db';
+import { products } from '@/lib/db';
 import { HttpError, requireAdmin } from '@/lib/security';
 
 export const dynamic = 'force-dynamic';
@@ -16,31 +15,7 @@ export const maxDuration = 45;
 export async function GET(request: Request) {
   try {
     await requireAdmin(request);
-    const appKey = process.env.TIKTOK_SHOP_APP_KEY?.trim();
-    const secret = process.env.TIKTOK_SHOP_APP_SECRET?.trim();
-    if (!appKey || !secret) return reply({ error: 'TikTok Shop is not configured.' }, 503);
-    const row = await db().prepare('SELECT credentials FROM tiktok_shop_connection WHERE id=?').get('belgium');
-    if (typeof row?.credentials !== 'string') return reply({ error: 'Connect the Belgian TikTok Shop first.' }, 404);
-    const { access_token: accessToken } = unseal<{ access_token?: string }>(row.credentials);
-    if (!accessToken) return reply({ error: 'TikTok Shop authorization is incomplete.' }, 503);
-
-    async function read<T>(path: string, query: Record<string,string> = {}, body?: string): Promise<T> {
-      const url = new URL(path, 'https://open-api.tiktokglobalshop.com');
-      const params: Record<string,string> = { ...query, app_key: appKey!, timestamp: String(Math.floor(Date.now() / 1000)) };
-      const sorted = Object.keys(params).sort().map(key => key + params[key]).join('');
-      params.sign = createHmac('sha256', secret!).update(secret + path + sorted + (body ?? '') + secret).digest('hex');
-      url.search = new URLSearchParams(params).toString();
-      const response = await fetch(url, {
-        method: body === undefined ? 'GET' : 'POST', body,
-        headers: { 'content-type': 'application/json', 'x-tts-access-token': accessToken! },
-        cache: 'no-store', redirect: 'error', signal: AbortSignal.timeout(8000),
-      });
-      const result = await response.json().catch(() => null);
-      if (!response.ok || result?.code !== 0 || !result.data) {
-        throw new HttpError(502, 'TikTok returned HTTP '+response.status+(Number.isInteger(result?.code) ? ' / code '+result.code : '')+'.');
-      }
-      return result.data as T;
-    }
+    const read = await tiktokShopReader();
 
     const [{ shops }, master] = await Promise.all([
       read<{ shops: { name: string; region: string; cipher: string }[] }>('/authorization/202309/shops'),

@@ -35,6 +35,7 @@ export default function TikTokCatalogueReview() {
   return <main className="page-container">
     <a href="/admin">Back to BIG K back office</a>
     <h1>TikTok Shop catalogue review</h1>
+    <p><a href="/admin/tiktok-orders">Bekijk TikTok-bestellingen</a></p>
     <p>Compare TikTok listings and variants with verified BIG K EANs.</p>
     <button type="button" className="button dark" onClick={() => void load()} disabled={busy}>{busy ? 'Reading TikTok…' : 'Pull TikTok listings'}</button>
     {error && <p role="alert">{error}</p>}
