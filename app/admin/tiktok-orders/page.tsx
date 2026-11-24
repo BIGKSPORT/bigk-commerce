@@ -11,12 +11,19 @@ type Order = {
   items: {id: string; name: string | null; sku: string | null; variant: string | null}[];
 };
 
+type Status = 'AWAITING_SHIPMENT' | 'AWAITING_COLLECTION';
+const statusLabels: Record<Status,string> = {
+  AWAITING_SHIPMENT: 'Awaiting shipment · Klaar voor verzending',
+  AWAITING_COLLECTION: 'Awaiting collection · Wacht op ophaling',
+};
+
 type OrderPage = {shop: string; nextPage: string; orders: Order[]};
 const time = new Intl.DateTimeFormat('nl-BE', {
   dateStyle: 'medium', timeStyle: 'short', timeZone: 'Europe/Brussels',
 });
 
 export default function TikTokOrders() {
+  const [status, setStatus] = useState<Status>('AWAITING_SHIPMENT');
   const [page, setPage] = useState<OrderPage | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -25,8 +32,9 @@ export default function TikTokOrders() {
     setBusy(true);
     setError('');
     try {
-      const query = cursor ? '?' + new URLSearchParams({page: cursor}) : '';
-      const response = await fetch('/api/integrations/tiktok/orders' + query, {cache: 'no-store'});
+      const query = new URLSearchParams({status});
+      if (cursor) query.set('page', cursor);
+      const response = await fetch('/api/integrations/tiktok/orders?' + query, {cache: 'no-store'});
       const data = await response.json();
       if (!response.ok) throw Error(data.error || 'Bestellingen ophalen is mislukt.');
       setPage(data);
@@ -40,13 +48,22 @@ export default function TikTokOrders() {
   return <main className="page-container" lang="nl">
     <a href="/admin">Terug naar de backoffice</a>
     <h1>TikTok-bestellingen</h1>
-    <p>Bekijk orders die TikTok als verzendklaar markeert.</p>
+    <label className="field">TikTok-status
+      <select value={status} disabled={busy} onChange={event => {
+        setStatus(event.currentTarget.value as Status);
+        setPage(null);
+        setError('');
+      }}>
+        {Object.entries(statusLabels).map(([value,label]) => <option key={value} value={value}>{label}</option>)}
+      </select>
+    </label>
     <button type="button" className="button dark" onClick={() => void load()} disabled={busy}>
       {busy ? 'Bestellingen ophalen…' : 'Haal bestellingen op'}
     </button>
     {error && <p role="alert">{error}</p>}
-    {page && <section aria-label="Verzendklare orders">
+    {page && <section aria-label={statusLabels[status]}>
       <p role="status">{page.shop} · {page.orders.length} op deze pagina</p>
+      {page.orders.length === 0 && <p>TikTok geeft geen bestellingen terug voor deze status.</p>}
       {page.orders.map(order => <details key={order.id}>
         <summary>{order.id} · {order.shippingType === 'SELLER' ? 'Verzonden door verkoper'
           : order.shippingType === 'TIKTOK' ? 'Verzonden via TikTok' : 'Verzendmethode onbekend'}</summary>

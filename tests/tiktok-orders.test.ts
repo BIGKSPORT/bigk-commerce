@@ -23,6 +23,7 @@ test('TikTok order review is admin-only and omits customer information', async (
     await db().prepare('INSERT INTO tiktok_shop_connection VALUES(?,?)').run('belgium', seal({access_token: 'access-fixture', granted_scopes: ['seller.authorization.info']}));
     await db().prepare('INSERT INTO sessions VALUES(?,?)').run(adminSessionHash(session), new Date(Date.now()+60000).toISOString());
     let calls = 0;
+    let expectedStatus = 'AWAITING_SHIPMENT';
     let denied: 'orders' | 'shop' | null = null;
     globalThis.fetch = async (input, init) => {
       calls++;
@@ -35,12 +36,12 @@ test('TikTok order review is admin-only and omits customer information', async (
       }
       assert.equal(url.pathname, '/order/202309/orders/search');
       assert.equal(init?.method, 'POST');
-      assert.deepEqual(JSON.parse(String(init?.body)), {order_status: 'AWAITING_SHIPMENT'});
+      assert.deepEqual(JSON.parse(String(init?.body)), {order_status: expectedStatus});
       assert.equal(url.searchParams.get('shop_cipher'), 'shop-fixture');
       assert.equal(url.searchParams.get('page_token'), 'cursor-fixture');
       if (denied === 'orders') return Response.json({code: 105005, request_id: 'request-orders'}, {status: 401});
       return Response.json({code: 0, data: {orders: [{
-        id: 'order-fixture', status: 'AWAITING_SHIPMENT', shipping_type: 'SELLER',
+        id: 'order-fixture', status: expectedStatus, shipping_type: 'SELLER',
         rts_sla_time: 1795519234, is_buyer_request_cancel: true,
         recipient_address: {name: 'private-fixture'},
         line_items: [{id: 'item-fixture', seller_sku: 'SKU-1'}],
@@ -60,6 +61,15 @@ test('TikTok order review is admin-only and omits customer information', async (
       }],
     });
     assert.equal(calls, 2);
+    expectedStatus = 'AWAITING_COLLECTION';
+    const collection = await GET(new Request(endpoint+'&status=AWAITING_COLLECTION', {headers: {cookie: 'bigk_admin='+session}}));
+    assert.equal(collection.status, 200);
+    assert.equal((await collection.json()).orders[0].status, 'AWAITING_COLLECTION');
+    assert.equal(calls, 4);
+    const invalid = await GET(new Request(endpoint+'&status=COMPLETED', {headers: {cookie: 'bigk_admin='+session}}));
+    assert.equal(invalid.status, 400);
+    assert.equal(calls, 4);
+    expectedStatus = 'AWAITING_SHIPMENT';
     const authenticated = () => new Request(endpoint, {headers: {cookie: 'bigk_admin='+session}});
     denied = 'orders';
     const rejectedOrders = await GET(authenticated());
