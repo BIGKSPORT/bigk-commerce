@@ -20,6 +20,6 @@ export default async function Home({ searchParams }: {
  const publicCatalog=publicProducts(raw);
  const b10=publicCatalog.find(product=>product.id==='B10');
  const options=b10?colourOptions(publicCatalog,b10).filter(option=>option.images.length):[];
- const launchBanner=process.env.B10_HOMEPAGE_BANNER!=='off'&&!preview&&!category&&!series&&saved!=='1'&&options.length ? <B10HomeBanner catalog={publicCatalog} options={options} locale={locale} path={path}/> : undefined;
+ const launchBanner=!preview&&!category&&!series&&saved!=='1'&&options.length ? <B10HomeBanner catalog={publicCatalog} options={options} locale={locale} path={path}/> : undefined;
  return <>{preview&&<div className="info-message" role="status">PRIVATE STORE PREVIEW · Draft products visible · Purchasing disabled · <a href="/admin">Back to backoffice</a></div>}<Storefront launchBanner={launchBanner} merchandising={await storefrontMerchandising(raw)} categoryOptions={await publicCategoryOptions()} products={(preview?visibleProducts(raw):await localizedPublicCatalog(raw)).map(p => ({ ...p, variants: p.variants.filter(v=>!p.content?.trade?.identifiers?.[v.id]?.archived).map(v => ({ ...v, stock: Math.max(0, v.stock - v.reserved), reserved: 0, reported: null })) }))} mode={preview?'live':isLive() ? 'live' : 'demo'} ready={preview?false:liveReady()} initialCategory={category} initialSavedOnly={saved==='1'} initialSeries={series}/></>; }
 
