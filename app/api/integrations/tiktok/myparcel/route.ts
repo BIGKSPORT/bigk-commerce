@@ -1,8 +1,9 @@
 import {z} from 'zod';
 import {db} from '@/lib/db';
 import {checkOrigin, body, failure, HttpError, requireAdmin} from '@/lib/security';
-import {orderLabelEnabled, readJson, recipientHash, request as myParcelRequest, shipments, splitShippingAddress} from '@/lib/myparcel-orders';
+import {orderLabelEnabled, readJson, recipientHash, request as myParcelRequest, shipments} from '@/lib/myparcel-orders';
 import {tiktokShopReader} from '@/lib/tiktok-shop';
+import {tiktokShippingAddress} from '@/lib/tiktok-shipping-address';
 
 export const runtime = 'nodejs';
 const numericId = z.string().regex(/^\d{1,24}$/);
@@ -23,7 +24,7 @@ const detailSchema = z.object({
   address_line2: z.string().trim().optional(),
   address_line3: z.string().trim().optional(),
   address_line4: z.string().trim().optional(),
-  district_info: z.array(z.object({address_level: z.string(), address_name: z.string().trim().min(1).max(100)})),
+  district_info: z.array(z.object({address_level: z.string(), address_level_name: z.string().trim().optional(), address_name: z.string().trim().min(1).max(100)})),
  }),
 });
 
@@ -50,13 +51,7 @@ export async function POST(req: Request) {
   if (order.is_buyer_request_cancel || order.tracking_number || order.line_items.some(item => item.tracking_number)) {
    throw new HttpError(409, 'TikTok meldt bestaande tracking of een annuleringsaanvraag.');
   }
-  const address = order.recipient_address;
-  const {street, number} = splitShippingAddress(address.address_line1);
-  const cities = address.district_info.filter(part => part.address_level.toUpperCase() === 'CITY');
-  if (!number || cities.length !== 1 || address.address_line2 || address.address_line3 || address.address_line4 || [street, address.name, cities[0].address_name].some(value => value.includes('*'))) {
-   throw new HttpError(409, 'Het TikTok-adres kon niet eenduidig worden verwerkt. Er is geen zending aangemaakt.');
-  }
-  const recipient = {cc: address.region_code, person: address.name, postal_code: address.postal_code, city: cities[0].address_name, street, number};
+  const recipient = tiktokShippingAddress(order.recipient_address);
   const reference = 'BIGK-TIKTOK-' + order.packages[0].id;
   const prior = await myParcelRequest('/shipments?reference_identifier=' + encodeURIComponent(reference) + '&size=100');
   const existing = shipments(await readJson(prior));
