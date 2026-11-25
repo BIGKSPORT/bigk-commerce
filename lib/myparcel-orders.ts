@@ -10,7 +10,7 @@ import {isCheckoutCountry,isFlatRateInternationalCountry} from './shipping-polic
 function orderCarrier(country:string){return ['AT','ES','IT'].includes(country)?1:4;}
 const object=(v:unknown):Record<string,unknown>=>v&&typeof v==='object'&&!Array.isArray(v)?v as Record<string,unknown>:{};
 const validId=(v:unknown)=>/^[1-9][0-9]{0,15}$/.test(String(v))?String(v):null;
-function recipientHash(value:Record<string,unknown>){return hash(JSON.stringify(['cc','postal_code','city','street','number','box_number','person'].map(key=>String(value[key]||'').trim().replace(/\s+/g,' ').toLowerCase())));}
+export function recipientHash(value:Record<string,unknown>){return hash(JSON.stringify(['cc','postal_code','city','street','number','box_number','person'].map(key=>String(value[key]||'').trim().replace(/\s+/g,' ').toLowerCase())));}
 export const orderLabelSchema=z.object({
  orderId:z.uuid(),street:z.string().trim().min(1).max(100),number:z.string().trim().min(1).max(20),
  boxNumber:z.string().trim().max(20).default(''),weightGrams:z.number().int().min(1).max(20000),
@@ -30,7 +30,7 @@ function guard(){
  // A preview may never send real orders to a carrier.
  if(process.env.VERCEL_ENV==='preview')throw new HttpError(403,'Preview uses simulated carrier responses only.');
 }
-async function request(path:string,init:RequestInit={}){
+export async function request(path:string,init:RequestInit={}){
  const key=process.env.MYPARCEL_BE_API_KEY;
  if(!key)throw new HttpError(503,'MyParcel Belgium API access is not configured.');
  return fetch(BASE+path,{...init,cache:'no-store',redirect:'error',signal:AbortSignal.timeout(12000),headers:{
@@ -38,13 +38,13 @@ async function request(path:string,init:RequestInit={}){
   Accept:'application/json;charset=utf-8',...init.headers,
  }});
 }
-async function readJson(response:Response):Promise<unknown>{
+export async function readJson(response:Response):Promise<unknown>{
  const reader=response.body?.getReader();if(!reader)throw Error('Empty provider response');
  let bytes=0;const chunks:Uint8Array[]=[];
  try{while(true){const r=await reader.read();if(r.done)break;bytes+=r.value.byteLength;if(bytes>262144)throw Error('Provider response too large');chunks.push(r.value);}return JSON.parse(Buffer.concat(chunks).toString('utf8'));}
  finally{await reader.cancel().catch(()=>{});}
 }
-function shipments(raw:unknown){const data=object(object(raw).data),search=object(data.search_results);return Array.isArray(data.shipments)?data.shipments:Array.isArray(search.shipments)?search.shipments:null;}
+export function shipments(raw:unknown){const data=object(object(raw).data),search=object(data.search_results);return Array.isArray(data.shipments)?data.shipments:Array.isArray(search.shipments)?search.shipments:null;}
 export async function checkMyParcelConnection(){
  if(!configured())return {configured:false,connected:false,enabled:orderLabelEnabled(),message:'MyParcel Belgium API access is not configured.'};
  try{
