@@ -2,6 +2,7 @@ import {z} from 'zod';
 import {db} from '@/lib/db';
 import {checkOrigin, body, failure, HttpError, requireAdmin} from '@/lib/security';
 import {orderLabelEnabled, readJson, recipientHash, request as myParcelRequest, shipments} from '@/lib/myparcel-orders';
+import {providerDiagnostic} from '@/lib/myparcel-test';
 import {tiktokShopReader} from '@/lib/tiktok-shop';
 import {tiktokShippingAddress} from '@/lib/tiktok-shipping-address';
 
@@ -78,12 +79,21 @@ export async function POST(req: Request) {
      physical_properties: {weight: 220, length: 22, width: 20, height: 5},
     }]}}),
    });
-   const result = z.object({data: z.object({ids: z.array(z.object({id: z.union([numericId, z.number().int().positive()])})).length(1)})}).safeParse(await readJson(response));
-   if (!response.ok || !result.success) throw Error('MyParcel did not confirm shipment creation');
+   const raw = await readJson(response).catch(() => null);
+   if (!response.ok) {
+    const diagnostic = providerDiagnostic(response.status, raw);
+    const state = [400, 401, 403, 415, 422].includes(response.status) ? 'rejected' : 'uncertain';
+    await db().prepare("UPDATE shipping_test_attempts SET state=?,diagnostic=?,updated_at=? WHERE reference=? AND state='submitting'").run(state, JSON.stringify(diagnostic), new Date().toISOString(), reference);
+    const details = [...diagnostic.providerCodes, ...diagnostic.providerFields, ...diagnostic.providerMessages].join(' · ');
+    throw new HttpError(502, 'MyParcel bevestigde de zending niet (HTTP ' + response.status + '). ' + details);
+   }
+   const result = z.object({data: z.object({ids: z.array(z.object({id: z.union([numericId, z.number().int().positive()])})).length(1)})}).safeParse(raw);
+   if (!result.success) throw Error('MyParcel did not confirm shipment creation');
    const shipmentId = String(result.data.data.ids[0].id);
    await db().prepare("UPDATE shipping_test_attempts SET state='created',shipment_id=?,updated_at=? WHERE reference=?").run(shipmentId, new Date().toISOString(), reference);
    return Response.json({shipmentId, reference, reused: false});
-  } catch {
+  } catch (error) {
+   if (error instanceof HttpError) throw error;
    await db().prepare("UPDATE shipping_test_attempts SET state='uncertain',updated_at=? WHERE reference=? AND state='submitting'").run(new Date().toISOString(), reference).catch(() => {});
    throw new HttpError(502, 'MyParcel heeft de zending niet bevestigd. Zoek eerst naar ' + reference + ' in MyParcel.');
   }
