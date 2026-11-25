@@ -19,7 +19,14 @@ export function tiktokShippingAddress(address: TikTokAddress) {
  if (cities.length !== 1) throw new HttpError(409, 'TikTok geeft geen eenduidige gemeente door. Er is geen zending aangemaakt.');
 
  let {street, number} = splitShippingAddress(address.address_line1);
- const second = address.address_line2 || '';
+ let second = address.address_line2 || '';
+ const inlineUnit = address.address_line1.match(/^(.+?\s+\d+[a-z]?)\s+((?:bus|bte|bo[iî]te|box|apt\.?|app\.?|unit)\s*[:.]?\s*[a-z0-9-]{1,20})$/i);
+ if (inlineUnit && !second) {
+  ({street, number} = splitShippingAddress(inlineUnit[1]));
+  second = inlineUnit[2];
+ }
+ const leadingNumber = street.match(/^(\d+[a-z]?)\s+([\p{L}].*)$/iu);
+ if (!number && leadingNumber) [,number,street] = leadingNumber;
  let boxNumber = '';
  if (!number && /^\d+[a-z]?(?:[-/]\d+[a-z]?)?$/i.test(second)) {
   number = second;

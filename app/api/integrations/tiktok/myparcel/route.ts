@@ -5,7 +5,7 @@ import {tiktokShippingAddress} from '@/lib/tiktok-shipping-address';
 
 export const runtime = 'nodejs';
 const numericId = z.string().regex(/^\d{1,24}$/);
-const inputSchema = z.object({orderIds: z.array(numericId).min(1).max(20), weightGrams: z.number().int().min(1).max(20000)}).strict();
+const inputSchema = z.object({orderIds: z.array(numericId).min(1).max(20), weightGrams: z.number().int().min(1).max(20000).optional()}).strict();
 const detailSchema = z.object({
  id: numericId,
  status: z.literal('AWAITING_SHIPMENT'),
@@ -48,23 +48,40 @@ export async function POST(req: Request) {
   const belgian = shops.filter(shop => shop.region === 'BE' && shop.cipher);
   if (belgian.length !== 1) throw new HttpError(409, 'Verbind precies één Belgische TikTok Shop.');
   const {orders} = await read<{orders: unknown[]}>('/order/202309/orders', {ids: orderIds.join(','), shop_cipher: belgian[0].cipher});
-  const parsed = z.array(detailSchema).safeParse(orders);
-  if (!parsed.success || parsed.data.length !== unique.size || new Set(parsed.data.map(order => order.id)).size !== unique.size || parsed.data.some(order => !unique.has(order.id))) {
-   throw new HttpError(409, 'TikTok moet per bestelling één Seller Shipping-pakket met een volledig Belgisch of Nederlands adres teruggeven.');
+  if (!Array.isArray(orders)) throw new HttpError(502, 'TikTok gaf geen herkenbaar besteloverzicht terug.');
+  const rows: string[] = [];
+  const skipped: string[] = [];
+  const candidates = z.object({id: numericId}).passthrough();
+  const byId = new Map<string, unknown>();
+  for (const candidate of orders) {
+   const identified = candidates.safeParse(candidate);
+   if (!identified.success || !unique.has(identified.data.id)) continue;
+   const id = identified.data.id;
+   byId.set(id, byId.has(id) ? null : candidate);
   }
-  const rows = parsed.data.map(order => {
-   if (order.is_buyer_request_cancel || order.tracking_number || order.line_items.some(item => item.tracking_number)) {
-    throw new HttpError(409, 'TikTok meldt bestaande tracking of een annuleringsaanvraag voor ' + order.id + '.');
+  for (const id of orderIds) {
+   const parsed = detailSchema.safeParse(byId.get(id));
+   if (!parsed.success || parsed.data.is_buyer_request_cancel || parsed.data.tracking_number || parsed.data.line_items.some(item => item.tracking_number)) {
+    skipped.push(id);
+    continue;
    }
-   const recipient = tiktokShippingAddress(order.recipient_address);
-   return [
-    recipient.person, '', recipient.postal_code, recipient.number, recipient.box_number || '',
-    recipient.street, '', recipient.city, '', '', 'BIGK-TIKTOK-' + order.packages[0].id, '',
-    recipient.cc, '', '', '', weightGrams + 'g', '',
-   ].map(csvCell).join(';');
-  });
+   const order = parsed.data;
+   try {
+    const recipient = tiktokShippingAddress(order.recipient_address);
+    rows.push([
+     recipient.person, '', recipient.postal_code, recipient.number, recipient.box_number || '',
+     recipient.street, '', recipient.city, '', '', 'BIGK-TIKTOK-' + order.packages[0].id, '',
+     recipient.cc, '', '', '', weightGrams === undefined ? '' : weightGrams + 'g', '',
+    ].map(csvCell).join(';'));
+   } catch (error) {
+    if (!(error instanceof HttpError)) throw error;
+    if (orderIds.length === 1) throw error;
+    skipped.push(id);
+   }
+  }
+  if (!rows.length) throw new HttpError(409, 'Geen exporteerbare orders. Controleer deze TikTok-orders: ' + skipped.join(', '));
   return new Response('\uFEFF' + [header, ...rows].join('\r\n') + '\r\n', {
-   headers: {'Content-Type': 'text/csv; charset=utf-8', 'Content-Disposition': 'attachment; filename="bigk-tiktok-myparcel.csv"', 'Cache-Control': 'private, no-store', 'X-Content-Type-Options': 'nosniff'},
+   headers: {'Content-Type': 'text/csv; charset=utf-8', 'Content-Disposition': 'attachment; filename="bigk-tiktok-myparcel.csv"', 'Cache-Control': 'private, no-store', 'X-Content-Type-Options': 'nosniff', 'X-Bigk-Skipped-Orders': skipped.join(',')},
   });
  } catch (error) {
   return failure(error);
