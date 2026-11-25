@@ -28,25 +28,30 @@ export default function TikTokOrders() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
 
-  const [shipping, setShipping] = useState('');
-  const [shipments, setShipments] = useState<Record<string, string>>({});
+  const [exporting, setExporting] = useState(false);
+  const [weight, setWeight] = useState('220');
+  const eligible = page?.orders.filter(order => order.status === 'AWAITING_SHIPMENT' && order.shippingType === 'SELLER' && !order.cancellationRequested) ?? [];
 
-  async function importOrder(orderId: string) {
-    setShipping(orderId);
+  async function exportCsv(orderIds: string[]) {
+    setExporting(true);
     setError('');
     try {
       const response = await fetch('/api/integrations/tiktok/myparcel', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({orderId}),
+        body: JSON.stringify({orderIds, weightGrams: Number(weight)}),
       });
-      const data = await response.json();
-      if (!response.ok) throw Error(data.error || 'MyParcel-order importeren is mislukt.');
-      setShipments(previous => ({...previous, [orderId]: data.myParcelOrderId + ' · ' + data.reference}));
+      if (!response.ok) throw Error((await response.json()).error || 'MyParcel-export mislukt.');
+      const url = URL.createObjectURL(await response.blob());
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'bigk-tiktok-myparcel.csv';
+      link.click();
+      window.setTimeout(() => URL.revokeObjectURL(url), 1000);
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : 'MyParcel-order importeren is mislukt.');
+      setError(cause instanceof Error ? cause.message : 'MyParcel-export mislukt.');
     } finally {
-      setShipping('');
+      setExporting(false);
     }
   }
 
@@ -86,16 +91,20 @@ export default function TikTokOrders() {
     {page && <section aria-label={statusLabels[status]}>
       <p role="status">{page.shop} · {page.orders.length} op deze pagina</p>
       {page.orders.length === 0 && <p>TikTok geeft geen bestellingen terug voor deze status.</p>}
+      {eligible.length > 0 && <div>
+        <label className="field">Verpakt gewicht per pakket (g)
+          <input type="number" min="1" max="20000" step="1" value={weight} onChange={event => setWeight(event.target.value)}/>
+        </label>
+        <button type="button" className="button dark" disabled={exporting} onClick={() => void exportCsv(eligible.map(order => order.id))}>
+          {exporting ? 'CSV maken…' : 'Download MyParcel-CSV (' + eligible.length + ')'}
+        </button>
+      </div>}
       {page.orders.map(order => <details key={order.id}>
         <summary>{order.id} · {order.shippingType === 'SELLER' ? 'Verzonden door verkoper'
           : order.shippingType === 'TIKTOK' ? 'Verzonden via TikTok' : 'Verzendmethode onbekend'}</summary>
         <p>{order.status}{order.dispatchDeadline ? ' · Verzenddeadline: ' + time.format(order.dispatchDeadline * 1000) : ''}</p>
         {order.cancellationRequested && <p>De klant heeft annulering aangevraagd.</p>}
-        {order.status === 'AWAITING_SHIPMENT' && order.shippingType === 'SELLER' && !order.cancellationRequested &&
-          (shipments[order.id] ? <p role="status">Orderimport ontvangen door MyParcel · {shipments[order.id]}</p> :
-            <button type="button" className="button" disabled={Boolean(shipping)} onClick={() => void importOrder(order.id)}>
-              {shipping === order.id ? 'Ordergegevens doorsturen…' : 'Stuur ordergegevens naar MyParcel'}
-            </button>)}
+        {eligible.includes(order) && <button type="button" className="button" disabled={exporting} onClick={() => void exportCsv([order.id])}>Download deze order als MyParcel-CSV</button>}
         <ul>{order.items.map(item => <li key={item.id}>
           {[item.name, item.variant, item.sku].filter(Boolean).join(' · ') || item.id}
         </li>)}</ul>
