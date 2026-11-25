@@ -28,6 +28,28 @@ export default function TikTokOrders() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
 
+  const [shipping, setShipping] = useState('');
+  const [shipments, setShipments] = useState<Record<string, string>>({});
+
+  async function pushShipment(orderId: string) {
+    setShipping(orderId);
+    setError('');
+    try {
+      const response = await fetch('/api/integrations/tiktok/myparcel', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({orderId}),
+      });
+      const data = await response.json();
+      if (!response.ok) throw Error(data.error || 'MyParcel-zending aanmaken is mislukt.');
+      setShipments(previous => ({...previous, [orderId]: data.shipmentId + ' · ' + data.reference}));
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : 'MyParcel-zending aanmaken is mislukt.');
+    } finally {
+      setShipping('');
+    }
+  }
+
   async function load(cursor = '') {
     setBusy(true);
     setError('');
@@ -69,6 +91,11 @@ export default function TikTokOrders() {
           : order.shippingType === 'TIKTOK' ? 'Verzonden via TikTok' : 'Verzendmethode onbekend'}</summary>
         <p>{order.status}{order.dispatchDeadline ? ' · Verzenddeadline: ' + time.format(order.dispatchDeadline * 1000) : ''}</p>
         {order.cancellationRequested && <p>De klant heeft annulering aangevraagd.</p>}
+        {order.status === 'AWAITING_SHIPMENT' && order.shippingType === 'SELLER' && !order.cancellationRequested &&
+          (shipments[order.id] ? <p role="status">MyParcel-zending {shipments[order.id]}</p> :
+            <button type="button" className="button" disabled={Boolean(shipping)} onClick={() => void pushShipment(order.id)}>
+              {shipping === order.id ? 'MyParcel-zending aanmaken…' : 'Maak DPD-testzending aan · 220 g · 22 × 20 × 5 cm'}
+            </button>)}
         <ul>{order.items.map(item => <li key={item.id}>
           {[item.name, item.variant, item.sku].filter(Boolean).join(' · ') || item.id}
         </li>)}</ul>
