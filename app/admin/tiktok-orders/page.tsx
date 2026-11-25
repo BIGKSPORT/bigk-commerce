@@ -31,7 +31,7 @@ export default function TikTokOrders() {
   const [shipping, setShipping] = useState('');
   const [shipments, setShipments] = useState<Record<string, string>>({});
 
-  async function pushShipment(orderId: string) {
+  async function importOrder(orderId: string) {
     setShipping(orderId);
     setError('');
     try {
@@ -41,10 +41,10 @@ export default function TikTokOrders() {
         body: JSON.stringify({orderId}),
       });
       const data = await response.json();
-      if (!response.ok) throw Error(data.error || 'MyParcel-zending aanmaken is mislukt.');
-      setShipments(previous => ({...previous, [orderId]: data.shipmentId + ' · ' + data.reference}));
+      if (!response.ok) throw Error(data.error || 'MyParcel-order importeren is mislukt.');
+      setShipments(previous => ({...previous, [orderId]: data.myParcelOrderId + ' · ' + data.reference}));
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : 'MyParcel-zending aanmaken is mislukt.');
+      setError(cause instanceof Error ? cause.message : 'MyParcel-order importeren is mislukt.');
     } finally {
       setShipping('');
     }
@@ -92,9 +92,9 @@ export default function TikTokOrders() {
         <p>{order.status}{order.dispatchDeadline ? ' · Verzenddeadline: ' + time.format(order.dispatchDeadline * 1000) : ''}</p>
         {order.cancellationRequested && <p>De klant heeft annulering aangevraagd.</p>}
         {order.status === 'AWAITING_SHIPMENT' && order.shippingType === 'SELLER' && !order.cancellationRequested &&
-          (shipments[order.id] ? <p role="status">MyParcel-zending {shipments[order.id]}</p> :
-            <button type="button" className="button" disabled={Boolean(shipping)} onClick={() => void pushShipment(order.id)}>
-              {shipping === order.id ? 'MyParcel-zending aanmaken…' : 'Maak DPD-testzending aan · 220 g · 22 × 20 × 5 cm'}
+          (shipments[order.id] ? <p role="status">Orderimport ontvangen door MyParcel · {shipments[order.id]}</p> :
+            <button type="button" className="button" disabled={Boolean(shipping)} onClick={() => void importOrder(order.id)}>
+              {shipping === order.id ? 'Ordergegevens doorsturen…' : 'Stuur ordergegevens naar MyParcel'}
             </button>)}
         <ul>{order.items.map(item => <li key={item.id}>
           {[item.name, item.variant, item.sku].filter(Boolean).join(' · ') || item.id}
