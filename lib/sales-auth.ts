@@ -17,12 +17,12 @@ export async function salesActor(req:Request,ownerOnly=false):Promise<SalesActor
  if(!row)throw new HttpError(401,'Je sessie is verlopen. Log opnieuw in.');return {id:String(row.id),name:String(row.name),role:'seller'};
 }
 function htmlEscape(value:string){return value.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'} as Record<string,string>)[c]);}
-async function sendSellerSetupEmail(id:string,name:string,email:string,setupPath:string){
+async function sendSellerSetupEmail(name:string,email:string,setupPath:string){
  const key=process.env.RESEND_API_KEY,from=process.env.EMAIL_FROM,origin=process.env.APP_URL;
  if(!key||!from||!origin?.startsWith('https://')||!emailDeliveryAllowed(email))return false;
  const url=new URL(setupPath,origin).toString(),safeName=htmlEscape(name),safeUrl=htmlEscape(url);
  try{
-  const response=await fetch('https://api.resend.com/emails',{method:'POST',headers:{Authorization:'Bearer '+key,'Content-Type':'application/json','Idempotency-Key':'bigk-seller-invite-'+id},body:JSON.stringify({from,to:email,subject:'Je BIG K Sales-account activeren',text:'Hallo '+name+',\n\nJe bent uitgenodigd voor BIG K Sales. Activeer je persoonlijke account via deze link: '+url+'\n\nDe link is 24 uur geldig en kan één keer worden gebruikt. Stel een sterk wachtwoord in en koppel je authenticator-app tijdens de activatie.\n\nBIG K',html:'<p>Hallo '+safeName+',</p><p>Je bent uitgenodigd voor BIG K Sales. Activeer je persoonlijke account via de beveiligde link hieronder.</p><p><a href="'+safeUrl+'">BIG K Sales-account activeren</a></p><p>De link is 24 uur geldig en kan één keer worden gebruikt. Stel een sterk wachtwoord in en koppel je authenticator-app tijdens de activatie.</p><p>BIG K</p>'}),signal:AbortSignal.timeout(10000)});
+  const response=await fetch('https://api.resend.com/emails',{method:'POST',headers:{Authorization:'Bearer '+key,'Content-Type':'application/json','Idempotency-Key':'bigk-seller-invite-'+hash(setupPath)},body:JSON.stringify({from,to:email,subject:'Je BIG K Sales-account activeren',text:'Hallo '+name+',\n\nJe bent uitgenodigd voor BIG K Sales. Activeer je persoonlijke account via deze link: '+url+'\n\nDe link is 24 uur geldig en kan één keer worden gebruikt. Stel een sterk wachtwoord in en koppel je authenticator-app tijdens de activatie.\n\nBIG K',html:'<p>Hallo '+safeName+',</p><p>Je bent uitgenodigd voor BIG K Sales. Activeer je persoonlijke account via de beveiligde link hieronder.</p><p><a href="'+safeUrl+'">BIG K Sales-account activeren</a></p><p>De link is 24 uur geldig en kan één keer worden gebruikt. Stel een sterk wachtwoord in en koppel je authenticator-app tijdens de activatie.</p><p>BIG K</p>'}),signal:AbortSignal.timeout(10000)});
   return response.ok;
  }catch{return false;}
 }
@@ -33,7 +33,7 @@ export async function inviteSeller(actor:SalesActor,name:string,email:string){
   await db().prepare('INSERT INTO seller_accounts(id,name,email,invite_hash,invite_expires,created_at) VALUES(?,?,?,?,?,?)').run(id,name,normalized,hash('seller-invite:'+value),new Date(Date.now()+24*60*60*1000).toISOString(),new Date().toISOString());
   await salesEvent(actor,'seller.invited',id);return {id,name,email:normalized,setupPath:'/staff/sales/setup#'+value};
  });
- const emailSent=await sendSellerSetupEmail(invite.id,invite.name,invite.email,invite.setupPath);
+ const emailSent=await sendSellerSetupEmail(invite.name,invite.email,invite.setupPath);
  if(emailSent)await salesEvent(actor,'seller.invite_email_sent',invite.id);
  else if(process.env.RESEND_API_KEY&&process.env.EMAIL_FROM&&process.env.APP_URL&&emailDeliveryAllowed(invite.email))await salesEvent(actor,'seller.invite_email_failed',invite.id);
  return {setupPath:invite.setupPath,emailSent};
@@ -47,7 +47,7 @@ export async function changeSeller(actor:SalesActor,id:string,action:'disable'|'
   return value?{id:String(row.id),name:String(row.name),email:String(row.email),setupPath:'/staff/sales/setup#'+value}:null;
  });
  if(!result)return {ok:true};
- const emailSent=await sendSellerSetupEmail(result.id,result.name,result.email,result.setupPath);
+ const emailSent=await sendSellerSetupEmail(result.name,result.email,result.setupPath);
  if(emailSent)await salesEvent(actor,'seller.reset_email_sent',id);
  else if(process.env.RESEND_API_KEY&&process.env.EMAIL_FROM&&process.env.APP_URL&&emailDeliveryAllowed(result.email))await salesEvent(actor,'seller.reset_email_failed',id);
  return {setupPath:result.setupPath,emailSent};
