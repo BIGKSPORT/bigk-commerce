@@ -29,7 +29,7 @@ export default function TikTokOrders() {
   const [error, setError] = useState('');
 
   const [exporting, setExporting] = useState(false);
-  const [weight, setWeight] = useState('220');
+  const [weight, setWeight] = useState('');
   const eligible = page?.orders.filter(order => order.status === 'AWAITING_SHIPMENT' && order.shippingType === 'SELLER' && !order.cancellationRequested) ?? [];
 
   async function exportCsv(orderIds: string[]) {
@@ -39,9 +39,11 @@ export default function TikTokOrders() {
       const response = await fetch('/api/integrations/tiktok/myparcel', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({orderIds, weightGrams: Number(weight)}),
+        body: JSON.stringify({orderIds, weightGrams: weight.trim() ? Number(weight) : undefined}),
       });
       if (!response.ok) throw Error((await response.json()).error || 'MyParcel-export mislukt.');
+      const skipped = response.headers.get('X-Bigk-Skipped-Orders');
+      if (skipped) setError('Deze orders zijn overgeslagen. Controleer het adres of de verzendstatus in TikTok: ' + skipped.split(',').join(', ') + '.');
       const url = URL.createObjectURL(await response.blob());
       const link = document.createElement('a');
       link.href = url;
@@ -92,7 +94,7 @@ export default function TikTokOrders() {
       <p role="status">{page.shop} · {page.orders.length} op deze pagina</p>
       {page.orders.length === 0 && <p>TikTok geeft geen bestellingen terug voor deze status.</p>}
       {eligible.length > 0 && <div>
-        <label className="field">Verpakt gewicht per pakket (g)
+        <label className="field">Verpakt gewicht per pakket (g, optioneel)
           <input type="number" min="1" max="20000" step="1" value={weight} onChange={event => setWeight(event.target.value)}/>
         </label>
         <button type="button" className="button dark" disabled={exporting} onClick={() => void exportCsv(eligible.map(order => order.id))}>
