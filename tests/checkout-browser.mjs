@@ -4,6 +4,7 @@ import {mkdtemp,rm,mkdir} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import assert from 'node:assert/strict';
+import {shippingCharge} from '../lib/shipping-policy.ts';
 const dir=await mkdtemp(join(tmpdir(),'bigk-checkout-browser-')),origin='http://localhost:3188';
 const env={...process.env,NODE_ENV:'production',PORT:'3188',APP_URL:origin,DATABASE_PROVIDER:'sqlite',DATABASE_PATH:join(dir,'store.sqlite'),COMMERCE_MODE:'demo',LIVE_COMMERCE_APPROVED:'false',STRIPE_SECRET_KEY:'',STRIPE_WEBHOOK_SECRET:'',RESEND_API_KEY:'',EMAIL_DELIVERY_ENABLED:'false',BIGK_CLUB_ENABLED:'false'};
 for(const key of ['VERCEL','VERCEL_ENV','VERCEL_URL','VERCEL_BRANCH_URL','ADMIN_CANONICAL_ORIGIN','DATABASE_URL'])delete env[key];
@@ -17,18 +18,32 @@ try{
  for(const width of [390,1440]){
   const context=await browser.newContext({viewport:{width,height:900}}),page=await context.newPage();let firstKey='',calls=0;
   await page.route('**/api/account/profile',route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({email:'saved@example.test',profile:{firstName:'Saved',lastName:'Buyer',phone:'+32470123456',shippingAddress:'Saved Street 2',postal:'1000',city:'Brussels',country:'BE'}})}));
-  await page.goto(origin+'/checkout');await page.evaluate(id=>localStorage.setItem('bigk-bag-v2',JSON.stringify([{variantId:id,quantity:1}])),product.variants[0].id);await page.reload();
+  await page.route('**/api/catalog',route=>route.fulfill({status:503,contentType:'application/json',body:'{}'}),{times:1});
+  await page.goto(origin+'/checkout');
+  await page.getByRole('alert').filter({hasText:'Unable to load the collection.'}).waitFor();
+  await page.getByRole('button',{name:'Retry',exact:true}).click();
+  await page.getByText('Your bag is empty.',{exact:true}).waitFor();
+  await page.evaluate(id=>localStorage.setItem('bigk-bag-v2',JSON.stringify([{variantId:id,quantity:1}])),product.variants[0].id);await page.reload();
   await page.locator('input[name="firstName"]').fill('Already typed');await page.getByRole('button',{name:'Use saved details',exact:true}).click();
   assert.equal(await page.locator('input[name="firstName"]').inputValue(),'Already typed');assert.equal(await page.locator('input[name="address"]').inputValue(),'Saved Street 2');assert.equal(await page.locator('input[name="email"]').inputValue(),'saved@example.test');assert(!(await page.evaluate(()=>localStorage.getItem('bigk-bag-v2'))).includes('saved@example.test'));
   assert.equal(product.priceCents,6690);
+  await page.getByRole('button',{name:/Increase quantity:/}).click();
+  assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('bigk-bag-v2'))[0].quantity),2);
+  assert.equal(await page.locator('input[name="firstName"]').inputValue(),'Already typed');
+  await page.getByRole('button',{name:/Decrease quantity:/}).click();
+  assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('bigk-bag-v2'))[0].quantity),1);
+  assert.equal(await page.locator('input[name="promoCode"]').isVisible(),false);
+  await page.locator('.checkout-promo summary').click();
+  assert.equal(await page.locator('input[name="promoCode"]').isVisible(),true);
   const deliveryLine=page.locator('.bag-totals p').filter({hasText:/^Delivery/}).locator('strong');
   await page.locator('select[name="country"]').selectOption('BE');
   assert.equal(await deliveryLine.innerText(),'Free');
   await page.locator('select[name="country"]').selectOption('FR');
-  assert((await deliveryLine.innerText()).includes('6.95'));
+  const expectedFrenchDelivery=shippingCharge(product.priceCents,'FR')===0?'Free':'6.95';
+  assert((await deliveryLine.innerText()).includes(expectedFrenchDelivery));
   await page.reload();
   assert.equal(await page.locator('select[name="country"]').inputValue(),'FR');
-  assert((await deliveryLine.innerText()).includes('6.95'));
+  assert((await deliveryLine.innerText()).includes(expectedFrenchDelivery));
   await page.locator('select[name="country"]').selectOption('NL');
   assert.equal(await deliveryLine.innerText(),'Free');
   await page.locator('select[name="country"]').selectOption('BE');
@@ -37,11 +52,11 @@ try{
   assert.equal(await page.locator('.newsletter-signup').count(),0);
   const review=process.env.BIGK_ARTIFACT_DIR||'/workspace/bigk-checkout-review';await mkdir(review,{recursive:true});await page.screenshot({path:join(review,'checkout-'+width+'.png'),fullPage:true});
   await page.route('**/api/checkout',async route=>{
-   const data=route.request().postDataJSON();calls++;
+   const data=route.request().postDataJSON();assert.equal(data.phone,'+32470123456');calls++;
    if(calls===1){firstKey=data.requestKey;await route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({error:'Temporary fixture failure.'})});}
    else{assert.equal(data.requestKey,firstKey,'Checkout reload created a new attempt');await route.continue();}
   });
-  async function fill(){for(const [name,value] of Object.entries({firstName:'Fixture',lastName:'Buyer',email:'buyer@example.test',phone:'+32470123456',address:'Fixture Street 1',postal:'1000',city:'Brussels'}))await page.locator('input[name="'+name+'"]').fill(value);await page.locator('select[name="country"]').selectOption('BE');await page.locator('input[name="consent"]').check();}
+  async function fill(){for(const [name,value] of Object.entries({firstName:'Fixture',lastName:'Buyer',email:'buyer@example.test',phone:'+32 470 12 34 56',address:'Fixture Street 1',postal:'1000',city:'Brussels'}))await page.locator('input[name="'+name+'"]').fill(value);await page.locator('select[name="country"]').selectOption('BE');await page.locator('input[name="consent"]').check();}
   await fill();await page.getByRole('button',{name:'Create demo order'}).click();await page.getByRole('alert').filter({hasText:'Temporary fixture failure.'}).waitFor();
   const stored=await page.evaluate(()=>sessionStorage.getItem('bigk-checkout-attempt-v1'));assert(stored&&!stored.includes('buyer@example.test')&&!stored.includes('Fixture Street'));
   await page.reload();await fill();await page.getByRole('button',{name:'Create demo order'}).click();await page.getByRole('heading',{name:'Your demo journey is complete.'}).waitFor({timeout:15000});

@@ -269,6 +269,10 @@ export const checkoutCopy: Record<string, {nl:string;fr:string}> = {
     "nl": "Artikelen worden tijdelijk gereserveerd terwijl je betaalt. Open geen meerdere betaalsessies.",
     "fr": "Les articles sont réservés pour une durée limitée pendant le paiement. Évitez d’ouvrir plusieurs sessions de paiement."
   },
+  "Retry": {
+    "nl": "Opnieuw proberen",
+    "fr": "Réessayer"
+  },
   "Unable to load the collection.": {
     "nl": "De collectie kan niet worden geladen.",
     "fr": "Impossible de charger la collection."
