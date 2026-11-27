@@ -392,3 +392,90 @@ body {
   outline: 2px solid var(--brand-black);
   outline-offset: 2px;
 }
+
+@media (max-width: 580px) {
+  .catalog-section {
+    padding-top: 18px;
+  }
+
+  .catalog-section .section-heading {
+    gap: 8px;
+    margin-bottom: 0;
+  }
+
+  .catalog-section .section-heading .title-lockup h2 {
+    font-size: 23px;
+  }
+
+  .catalog-section .section-heading > p {
+    margin: 0;
+    line-height: 1.45;
+  }
+
+  .catalog-section .collection-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    margin: 10px 0;
+    padding: 3px 2px 5px;
+    gap: 4px;
+  }
+
+  .catalog-section .collection-tabs button,
+  .catalog-section .collection-tabs button.active {
+    flex: 0 0 auto;
+    min-height: 44px;
+    padding: 6px 10px;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  .catalog-section .catalog-tools {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 8px;
+    padding: 8px;
+  }
+
+  .catalog-section .search-field {
+    grid-column: 1 / -1;
+    width: 100%;
+    min-height: 44px;
+    padding: 6px 10px;
+    margin-bottom: 4px;
+  }
+
+  .catalog-section .search-field input {
+    min-width: 0;
+    font-size: 16px;
+  }
+
+  .catalog-section :is(.filter-select, .sort-select) {
+    min-width: 0;
+  }
+
+  .catalog-section :is(.filter-select, .sort-select) select {
+    width: 100%;
+    min-width: 0;
+    min-height: 44px;
+    padding: 4px;
+    text-overflow: ellipsis;
+  }
+
+  .catalog-section .photo-filter {
+    min-height: 44px;
+  }
+
+  .catalog-section .results-note {
+    gap: 8px;
+    margin: 10px 0;
+  }
+
+  .catalog-section .product-grid {
+    row-gap: 14px;
+  }
+
+  .catalog-section .catalog-category-heading {
+    padding-top: 10px;
+    padding-bottom: 8px;
+  }
+}

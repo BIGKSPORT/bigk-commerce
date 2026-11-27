@@ -91,7 +91,7 @@ await test('isolated complete checkout → webhook → inventory → backoffice 
  await t.test('paid order appears in protected backoffice and private receipt',async()=>{
   const data=await (await orders(req('/api/admin/orders',undefined,cookie))).json();assert(data.orders.some((o:any)=>o.id===order.id&&o.status==='paid'));
   assert.equal(data.cartTrackingAvailable,true);
-  assert(data.carts.some((cart:any)=>cart.orderId===order.id&&cart.status==='converted'&&cart.reachedCheckout));
+  assert(data.carts.some((cart:any)=>cart.orderId===order.id&&cart.status==='converted'&&cart.reachedCheckout&&cart.language==='en'&&cart.deliveryCountry==='BE'));
   assert.equal((await receipt(req('/api/orders?id='+order.id))).status,404);
   const r=await receipt(new Request(origin+'/api/orders?id='+order.id,{headers:{authorization:'Bearer '+created.receiptToken}}));assert.equal(r.status,200);assert.equal((await r.json()).status,'paid');
  });
