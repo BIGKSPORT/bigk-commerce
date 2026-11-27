@@ -72,6 +72,7 @@ export function Backoffice({transport=fetchTransport,review=false,v2Enabled=fals
  {tab==='Overview'&&<>
  <AdminOverview
    orders={orders}
+   savedCarts={cartTrackingAvailable?savedCarts:undefined}
    liveProducts={liveProducts.length}
    totalProducts={products.length}
    availableUnits={available}
@@ -92,7 +93,7 @@ export function Backoffice({transport=fetchTransport,review=false,v2Enabled=fals
  </section>
  </div>
  </>}
- {tab==='Analytics'&&<AdminOverview orders={orders} liveProducts={liveProducts.length} totalProducts={products.length} availableUnits={available} onOpenOrders={()=>selectTab('Orders')}/>}
+ {tab==='Analytics'&&<AdminOverview orders={orders} savedCarts={cartTrackingAvailable?savedCarts:undefined} liveProducts={liveProducts.length} totalProducts={products.length} availableUnits={available} onOpenOrders={()=>selectTab('Orders')}/>}
  {['Products','Inventory'].includes(tab)&&<><AdminCatalogTools products={products} filteredProducts={filtered} maxUploadBytes={overview?.maxUploadBytes} selected={selectedIds} transport={transport} onSaved={refresh}/><div className="bo-filters"><label className="bo-search"><Search size={17}/><input type="search" aria-label="Search products" placeholder="Search product name, code or colour" value={query} onChange={e=>setQuery(e.target.value)}/></label><label className="field bo-filter-select">Visibility<select value={status} onChange={e=>setStatus(e.target.value)}>{['All','Active','Draft','Needs photos'].map(s=><option key={s}>{s}</option>)}</select></label><span>{filtered.length} article records</span></div><AdminProductGroups products={filtered} allProducts={products} transport={transport} selectedIds={selectedIds} onSelected={setSelectedIds} onEdit={setEditing} onSaved={refresh}/>{!filtered.length&&<div className="bo-empty"><p>No products match this search.</p></div>}{!!overview?.duplicates.length&&<p className="bo-hint bo-split-note"><AlertCircle size={15}/>Some original catalogue records share a product code and split its sizes. Review code and size together when applying master quantities; do not duplicate the same size stock.</p>}</>}
  {tab==='Voorraad & kanalen'&&<AdminChannelStock transport={transport}/>}
  {tab==='B2B'&&<AdminB2B transport={transport}/>}
