@@ -40,12 +40,14 @@ export function AdminOverview({
   totalProducts,
   availableUnits,
   onOpenOrders,
+  savedCarts,
 }: {
   orders: Order[];
   liveProducts: number;
   totalProducts: number;
   availableUnits: number;
   onOpenOrders: () => void;
+  savedCarts?: {createdAt:string;status:string;reachedCheckout?:boolean}[];
 }) {
   const [range, setRange] = useState<Range>('30d');
 
@@ -59,6 +61,9 @@ export function AdminOverview({
     const shipping = counted.reduce((n, o) => n + o.shipping, 0);
     const total = counted.reduce((n, o) => n + o.total, 0);
     const aov = counted.length ? Math.round(total / counted.length) : 0;
+    const bagRecords = savedCarts?.filter(cart => !from || new Date(cart.createdAt) >= from);
+    const atCheckout = bagRecords?.filter(cart => cart.reachedCheckout||['checkout_started','unpaid_checkout','converted'].includes(cart.status));
+    const paidBags = atCheckout?.filter(cart => cart.status === 'converted').length;
 
     // daily series
     const byDay = new Map<string, number>();
@@ -99,11 +104,15 @@ export function AdminOverview({
       shipping,
       total,
       aov,
+      discounts: Math.max(0, gross + shipping - total),
+      savedBags: bagRecords?.length,
+      reachedCheckout: atCheckout?.length,
+      paidBags,
       series,
       topProducts,
       topMax,
     };
-  }, [orders, range]);
+  }, [orders, range, savedCarts]);
 
   const maxY = Math.max(1, ...stats.series.map(([, v]) => v));
   const chartW = 640;
@@ -205,20 +214,33 @@ export function AdminOverview({
             </div>
             <div>
               <dt>Discounts</dt>
-              <dd>{money(0)}</dd>
+              <dd>{money(stats.discounts)}</dd>
             </div>
             <div>
               <dt>Returns</dt>
-              <dd>{money(0)}</dd>
+              <dd>—</dd>
             </div>
             <div className="bk-breakdown-total">
               <dt>Total sales</dt>
               <dd>{money(stats.total)}</dd>
             </div>
           </dl>
-          <p className="bk-hint">Discounts and returns show here once those flows are recorded in the store.</p>
+          <p className="bk-hint">Returns are excluded from this sales breakdown.</p>
         </section>
       </div>
+
+      <section className="bk-card">
+        <div className="bk-card-head"><h2>Saved bag outcomes</h2></div>
+        {stats.savedBags===undefined?<p className="bk-empty">Saved bag data is currently unavailable.</p>:<>
+          <dl className="bk-breakdown">
+            <div><dt>Saved bags</dt><dd>{stats.savedBags}</dd></div>
+            <div><dt>Reached checkout in current records</dt><dd>{stats.reachedCheckout}</dd></div>
+            <div><dt>Linked to a paid order</dt><dd>{stats.paidBags}</dd></div>
+          </dl>
+          <p className="bk-hint">Up to 200 saved bags created in the selected period and still retained. Bag records expire seven days after their last update. Storewide conversion requires visitor analytics.</p>
+          <button type="button" className="text-button" onClick={onOpenOrders}>View saved bags</button>
+        </>}
+      </section>
 
       <div className="bk-main-grid bk-main-grid-3">
         <section className="bk-card">

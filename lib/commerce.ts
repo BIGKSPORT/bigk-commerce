@@ -143,8 +143,11 @@ export async function settlePayment(eventId: string, orderId: string, sessionId:
         } else if (holdsReservation) await release(orderId);
         (await sql.prepare('UPDATE orders SET status=? WHERE id=?').run(valid ? 'paid' : 'payment_review', orderId));
         (await sql.prepare('INSERT INTO webhook_events VALUES(?,?)').run(eventId, new Date().toISOString()));
-        if (valid && delivery)
-            (await sql.prepare('UPDATE orders SET customer=? WHERE id=?').run(JSON.stringify(delivery), orderId));
+        if (valid && delivery) {
+            const row = await sql.prepare('SELECT customer FROM orders WHERE id=?').get(orderId);
+            const customer = JSON.parse(String(row!.customer));
+            await sql.prepare('UPDATE orders SET customer=? WHERE id=?').run(JSON.stringify({...customer,...delivery}), orderId);
+        }
         await clubPayment(orderId,valid);
         if (valid) await finalizePromoOnPaid(orderId);
         else if (holdsReservation) await releasePromoOnCancel(orderId);

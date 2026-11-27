@@ -12,7 +12,10 @@ try{
  assert.deepEqual((await getSavedCart(req(cookie))).items,[{variantId:'P001-0',quantity:2}]);
  const rows=await savedCartOverview();assert.equal(rows.length,1);assert.equal(rows[0].status,'open');assert.equal(rows[0].total,29380);assert(!('email' in rows[0]));assert(!('cookie' in rows[0]));
  assert.equal((await getSavedCart(req('bigk_cart='+'f'.repeat(64)))).hasCart,false);
- await db().prepare('UPDATE cart_sessions SET updated_at=?').run(new Date(Date.now()-31*60*1000).toISOString());assert.equal((await savedCartOverview())[0].status,'possibly_abandoned');
+ await saveSavedCart(req(cookie),{items:[{variantId:'P001-0',quantity:2}],stage:'checkout'});
+ await saveSavedCart(req(cookie),{items:[{variantId:'P001-0',quantity:2}],stage:'bag'});
+ assert.equal((await savedCartOverview())[0].status,'checkout_started');
+ await db().prepare('UPDATE cart_sessions SET updated_at=?').run(new Date(Date.now()-31*60*1000).toISOString());assert.equal((await savedCartOverview())[0].status,'possibly_abandoned');assert.equal((await savedCartOverview())[0].reachedCheckout,true);
  await saveSavedCart(req(cookie),{items:[],stage:'bag'});assert.equal((await savedCartOverview())[0].status,'cleared');
  await db().prepare('UPDATE cart_sessions SET expires_at=?').run('2000-01-01T00:00:00.000Z');await cleanSavedCarts();assert.equal((await savedCartOverview()).length,0);
  console.log('PASS saved carts: authoritative prices, strict input, private cookie access, inactivity estimate, empty bags, retention, no contact collection.');

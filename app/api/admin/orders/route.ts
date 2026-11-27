@@ -1,5 +1,6 @@
 import {adminOrderBatch} from '@/lib/admin-order-query';
 import {shopFeatures} from '@/lib/shop-features';
+import {checkoutRecoveryReport} from '@/lib/checkout-recovery-report';
 import {savedCartOverview} from '@/lib/cart-sessions';
 import {scheduleEmailDelivery} from '@/lib/email-dispatch';
 import { db, audit, transaction } from '@/lib/db';
@@ -14,7 +15,9 @@ export async function GET(req: Request) { try {
         id: string;
     }[];
     let carts:Awaited<ReturnType<typeof savedCartOverview>>=[];let cartTrackingAvailable=true;try{carts=await savedCartOverview()}catch{cartTrackingAvailable=false;console.error('Saved cart report unavailable')}
-    return Response.json({ carts,cartTrackingAvailable, orders: batching?await adminOrderBatch():await Promise.all(rows.map(async (r) => (await getOrder(r.id)))), audit: (await db().prepare('SELECT * FROM audit ORDER BY id DESC LIMIT 50').all()) }, { headers: { 'Cache-Control': 'no-store' } });
+    let recovery: Awaited<ReturnType<typeof checkoutRecoveryReport>> | null = null;
+    try { recovery=await checkoutRecoveryReport(); } catch { console.error('Checkout recovery report unavailable'); }
+    return Response.json({ carts,cartTrackingAvailable,recovery, orders: batching?await adminOrderBatch():await Promise.all(rows.map(async (r) => (await getOrder(r.id)))), audit: (await db().prepare('SELECT * FROM audit ORDER BY id DESC LIMIT 50').all()) }, { headers: { 'Cache-Control': 'no-store' } });
 }
 catch (e) {
     return failure(e);

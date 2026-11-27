@@ -1,4 +1,5 @@
 'use client';
+import {ecommerceEvent,ecommerceItem} from '@/lib/ecommerce-events';
 import {shippingCharge,freeShippingThreshold,isCheckoutCountry,checkoutCountries,checkoutCountryNames} from '@/lib/shipping-policy';
 import {bagMedia} from '@/lib/bag-presentation';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
@@ -24,6 +25,8 @@ export default function Checkout(){
   const [paymentEnvironment,setPaymentEnvironment]=useState('');
   const [ready,setReady]=useState(false);
   const [loading,setLoading]=useState(true);
+  const [catalogFailed,setCatalogFailed]=useState(false);
+  const [catalogAttempt,setCatalogAttempt]=useState(0);
   const [busy,setBusy]=useState(false);
   const [error,setError]=useState('');
   const [clubPoints,setClubPoints]=useState(0);
@@ -35,15 +38,28 @@ export default function Checkout(){
 
   useEffect(()=>{
     try{const saved=sessionStorage.getItem('bigk-delivery-country');if(saved&&isCheckoutCountry(saved))setCountry(saved)}catch{}
-    fetch('/api/catalog').then(r=>{if(!r.ok)throw Error('Unable to load the collection.');return r.json()}).then(d=>{
-      setProducts(d.products);setMode(d.mode);setPaymentEnvironment(d.paymentEnvironment||'');setReady(d.ready);
+    const controller=new AbortController();
+    fetch('/api/catalog',{signal:controller.signal,cache:'no-store'}).then(response=>{
+      if(!response.ok)throw Error('Unable to load the collection.');
+      return response.json();
+    }).then(data=>{
+      if(controller.signal.aborted)return;
+      setProducts(data.products);
+      setMode(data.mode);
+      setPaymentEnvironment(data.paymentEnvironment||'');
+      setReady(data.ready);
       try{
         const raw=JSON.parse(localStorage.getItem('bigk-bag-v2')||'[]');
-        if(Array.isArray(raw))setBag(raw.filter(x=>x&&Number.isInteger(x.quantity)&&x.quantity>0&&x.quantity<=5&&d.products.some((p:Product)=>p.variants.some(v=>v.id===x.variantId))));
+        if(Array.isArray(raw))setBag(raw.filter(line=>line&&Number.isInteger(line.quantity)&&line.quantity>0&&line.quantity<=5&&data.products.some((product:Product)=>product.variants.some(variant=>variant.id===line.variantId))));
       }catch{}
       setLoading(false);
-    }).catch(e=>{setError(e.message);setLoading(false)});
-  },[]);
+    }).catch(()=>{
+      if(controller.signal.aborted)return;
+      setCatalogFailed(true);
+      setLoading(false);
+    });
+    return ()=>controller.abort();
+  },[catalogAttempt]);
 
   useEffect(()=>{
     const restore=()=>{
@@ -57,10 +73,30 @@ export default function Checkout(){
   },[products]);
 
   const lines=bag.map(x=>({...x,p:products.find(p=>p.variants.some(v=>v.id===x.variantId))!})).filter(x=>x.p);
+  const checkoutMeasured=useRef(false);
+  useEffect(()=>{
+    if(mode!=='live'||paymentEnvironment!=='live'||!ready||!lines.length||checkoutMeasured.current)return;
+    checkoutMeasured.current=true;
+    ecommerceEvent('begin_checkout',lines.map(line=>ecommerceItem(line.p,line.quantity,line.variantId)));
+  },[mode,paymentEnvironment,ready,lines]);
   const sub=lines.reduce((n,x)=>n+(x.p.priceCents||0)*x.quantity,0);
   const ship=shippingCharge(sub,country),shippingThreshold=freeShippingThreshold(country);
   const clubDiscount=clubPoints>0?clubPoints*3:0;
   const estimatedTotal=Math.max(0,sub+ship-clubDiscount);
+
+  function updateQuantity(variantId:string,quantity:number){
+    if(busy)return;
+    const next=bag.flatMap(line=>{
+      if(line.variantId!==variantId)return [line];
+      return quantity>0?[{...line,quantity}]:[];
+    });
+    try{
+      localStorage.setItem('bigk-bag-v2',JSON.stringify(next));
+      window.dispatchEvent(new Event('bigk-cart-change'));
+    }catch{}
+    setBag(next);
+    setError('');
+  }
 
   async function submit(e:FormEvent<HTMLFormElement>){
     e.preventDefault();
@@ -79,7 +115,7 @@ export default function Checkout(){
       ...(clubPoints?{clubPoints}:{}),
       ...(code?{promoCode:code}:{}),
       email:f.get('email'),
-      phone:f.get('phone'),
+      phone:String(f.get('phone')||'').replace(/\s/g,''),
       firstName:f.get('firstName'),
       lastName:f.get('lastName'),
       country:f.get('country'),
@@ -128,7 +164,14 @@ export default function Checkout(){
         <li aria-current="step"><span>2</span> {t("Delivery details")}</li>
         <li><span>3</span> {t("Secure payment")}</li>
       </ol>
-      {loading?<p role="status">{t("Loading your bag…")}</p>:!lines.length?
+      {loading?<p role="status">{t("Loading your bag…")}</p>:catalogFailed?
+        <div className="panel"><p role="alert">{t('Unable to load the collection.')}</p>
+          <button type="button" className="button dark" onClick={()=>{
+            setCatalogFailed(false);
+            setLoading(true);
+            setCatalogAttempt(attempt=>attempt+1);
+          }}>{t('Retry')}</button>
+        </div>:!lines.length?
         <div className="panel"><p>{t("Your bag is empty.")}</p><Link href="/" className="button dark">{t("Explore products")} <ArrowRight size={16}/></Link></div>
       :
         <div className="page-grid checkout-grid">
@@ -141,7 +184,7 @@ export default function Checkout(){
                 <label className="field">{t("Last name")}<input name="lastName" autoComplete="family-name" required maxLength={100}/></label>
               </div>
               <label className="field">{t("Email address")}<input name="email" type="email" autoComplete="email" required maxLength={254}/></label>
-              <label className="field">{t("Mobile phone")}<input name="phone" type="tel" autoComplete="tel" required pattern="[+][1-9][0-9]{7,14}" placeholder="+32470123456" title={t("Use + followed by 8 to 15 digits, without spaces.")}/><span className="subtle-note">{t("International format, including country code.")}</span></label>
+              <label className="field">{t("Mobile phone")}<input name="phone" type="tel" autoComplete="tel" required pattern="[+]\s*[1-9](?:\s*[0-9]){7,14}\s*" maxLength={32} placeholder="+32 470 12 34 56"/><span className="subtle-note">{t("International format, including country code.")}</span></label>
             </section>
             <section className="panel">
               <div className="checkout-section-title"><span>02</span><div><h2>{t("Delivery address")}</h2><p>{t("Where should we send your selection?")}</p></div></div>
@@ -152,10 +195,10 @@ export default function Checkout(){
                 <label className="field">{t("City")}<input name="city" autoComplete="address-level2" required maxLength={100}/></label>
               </div>
             </section>
-            <section className="panel">
-              <div className="checkout-section-title"><span>03</span><div><h2>{t('Promo code')}</h2><p>{t('Optional. Cannot be combined with Club points.')}</p></div></div>
-              <label className="field">{t('Code')}<input name="promoCode" value={promoCode} onChange={e=>onPromoChange(e.target.value)} maxLength={32} autoComplete="off" placeholder="WELCOME10" style={{textTransform:'uppercase'}}/><span className="subtle-note">{t('Leave blank if you are not using a code.')}</span></label>
-            </section>
+            <details className="panel checkout-promo">
+              <summary>{t('Promo code')}</summary>
+              <label className="field">{t('Code')}<input name="promoCode" value={promoCode} onChange={e=>onPromoChange(e.target.value)} maxLength={32} autoComplete="off"/><span className="subtle-note">{t('Optional. Cannot be combined with Club points.')}</span></label>
+            </details>
             <section className="panel checkout-payment">
               <h2>{t("Ready for your next move?")}</h2>
               {mode==='live'&&paymentEnvironment==='live'&&<><PaymentMethods placement="checkout"/><p className="subtle-note">{t("If Stripe asks for a Link code, choose Pay without Link to continue.")}</p></>}
@@ -170,7 +213,31 @@ export default function Checkout(){
           <aside className="checkout-summary">
             <section className="panel">
               <div className="checkout-summary-heading"><h2>{t("Your selection")}</h2><Link href="/">{t("Continue shopping")} <ArrowRight size={14}/></Link></div>
-              {lines.map(x=><div className="order-line" key={x.variantId}><div className="checkout-product">{bagMedia(x.p,x.variantId).image&&<img src={bagMedia(x.p,x.variantId).image} alt={x.p.name} width="64" height="84"/>}<span>{x.p.name}<small>{x.p.content?.trade?.colour&&<>{x.p.content.trade.colour} · </>}{x.p.variants.find(v=>v.id===x.variantId)?.size} · {t('Qty')} {x.quantity}</small></span></div><strong>{x.p.priceCents===null?t('Price pending'):money(x.p.priceCents*x.quantity)}</strong></div>)}
+              {lines.map(line=>{
+                const {p:product,variantId,quantity}=line;
+                const media=bagMedia(product,variantId);
+                const stock=product.variants.find(variant=>variant.id===variantId)?.stock??0;
+                const limit=mode==='live'?Math.min(5,stock):5;
+                const label=[product.name,media.colour,media.size].filter(Boolean).join(' · ');
+                return <div className="order-line" key={variantId}>
+                  <div className="checkout-product">
+                    {media.image&&<img src={media.image} alt={product.name} width="64" height="84"/>}
+                    <span>{product.name}
+                      <small>{[media.colour,media.size].filter(Boolean).join(' · ')}</small>
+                      <span className="quantity checkout-quantity" role="group" aria-label={label}>
+                        <button type="button" aria-label={t('Decrease quantity:')+' '+label}
+                          disabled={busy||quantity<=1} onClick={()=>updateQuantity(variantId,quantity-1)}>−</button>
+                        <span aria-live="polite">{quantity}</span>
+                        <button type="button" aria-label={t('Increase quantity:')+' '+label}
+                          disabled={busy||quantity>=limit} onClick={()=>updateQuantity(variantId,quantity+1)}>+</button>
+                      </span>
+                      <button type="button" className="text-button checkout-remove" disabled={busy}
+                        aria-label={t('Remove')+' '+label} onClick={()=>updateQuantity(variantId,0)}>{t('Remove')}</button>
+                    </span>
+                  </div>
+                  <strong>{product.priceCents===null?t('Price pending'):money(product.priceCents*quantity)}</strong>
+                </div>;
+              })}
               <div className="checkout-delivery-note"><Truck size={18}/><span>{shippingThreshold===null?t('Flat-rate standard delivery'):sub>=shippingThreshold?t('Your order qualifies for free delivery.'):t('Free delivery from {amount}.').replace('{amount}',money(shippingThreshold))}</span></div>
               <ClubEstimate lines={lines.map(x=>({id:x.variantId,grossCents:(x.p.priceCents||0)*x.quantity,kind:productKind(x.p.tags)}))} onRedeem={mode==='live'&&!promoCode.trim()?onRedeemPoints:undefined}/>
               {promoCode.trim()&&<p className="subtle-note">{t('Promo code entered — Club points are not applied on this order.')}</p>}

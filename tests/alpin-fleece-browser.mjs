@@ -32,6 +32,14 @@ try{
   await page.getByRole('button',{name:'XXXL',exact:true}).click();assert(new URL(page.url()).searchParams.get('size')==='XXXL');
   assert.equal(await page.locator('.gallery-track img').first().getAttribute('alt'),locale==='en'?'Big K Alpin Fleece jacket in Dusty Blue, front view':locale==='nl'?'Big K Alpin fleecejas in vergrijsd blauw, vooraanzicht':'Veste polaire Alpin Big K, bleu grisé, vue de face');
   await page.getByRole('button',{name:labels[locale].add,exact:true}).click();await page.getByRole('dialog').waitFor();const bag=await page.evaluate(()=>JSON.parse(localStorage.getItem('bigk-bag-v2')));assert.equal(bag[0].variantId,'P002-5');assert.equal(bag[0].quantity,1);await page.getByRole('button',{name:labels[locale].close,exact:true}).click();
+  await page.evaluate(()=>{
+   localStorage.setItem('bigk-bag-v2',JSON.stringify([{variantId:'P002-5',quantity:2}]));
+   window.dispatchEvent(new Event('bigk-cart-restored'));
+  });
+  await page.getByRole('button',{name:labels[locale].add,exact:true}).click();
+  await page.getByRole('dialog').waitFor();
+  assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('bigk-bag-v2'))[0].quantity),3);
+  await page.getByRole('button',{name:labels[locale].close,exact:true}).click();
   const next=locale==='en'?'nl':'en';if(width<=760)await page.locator('.simple-header .site-language select').selectOption(next);else await page.getByRole('link',{name:language[next],exact:true}).click();await page.getByRole('heading',{name:'Alpin Fleece',exact:true}).waitFor();assert.equal(new URL(page.url()).searchParams.get('colour'),'Dusty Blue');assert.equal(new URL(page.url()).searchParams.get('size'),'XXXL');assert.equal(await page.getByRole('button',{name:'XXXL',exact:true}).getAttribute('aria-pressed'),'true');
   await page.goto(origin+routes[locale]+'?colour=Dusty+Blue&size=XXXL');
   const gallery=page.getByRole('region',{name:labels[locale].photo,exact:true});await gallery.focus();await gallery.press('ArrowRight');assert.equal(await gallery.getAttribute('data-active-photo'),'2');await gallery.press('Home');
