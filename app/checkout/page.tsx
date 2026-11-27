@@ -62,6 +62,20 @@ export default function Checkout(){
   const clubDiscount=clubPoints>0?clubPoints*3:0;
   const estimatedTotal=Math.max(0,sub+ship-clubDiscount);
 
+  function updateQuantity(variantId:string,quantity:number){
+    if(busy)return;
+    const next=bag.flatMap(line=>{
+      if(line.variantId!==variantId)return [line];
+      return quantity>0?[{...line,quantity}]:[];
+    });
+    try{
+      if(next.length)localStorage.setItem('bigk-bag-v2',JSON.stringify(next));
+      else localStorage.removeItem('bigk-bag-v2');
+    }catch{}
+    setBag(next);
+    setError('');
+  }
+
   async function submit(e:FormEvent<HTMLFormElement>){
     e.preventDefault();
     if(busy)return;
@@ -170,7 +184,31 @@ export default function Checkout(){
           <aside className="checkout-summary">
             <section className="panel">
               <div className="checkout-summary-heading"><h2>{t("Your selection")}</h2><Link href="/">{t("Continue shopping")} <ArrowRight size={14}/></Link></div>
-              {lines.map(x=><div className="order-line" key={x.variantId}><div className="checkout-product">{bagMedia(x.p,x.variantId).image&&<img src={bagMedia(x.p,x.variantId).image} alt={x.p.name} width="64" height="84"/>}<span>{x.p.name}<small>{x.p.content?.trade?.colour&&<>{x.p.content.trade.colour} · </>}{x.p.variants.find(v=>v.id===x.variantId)?.size} · {t('Qty')} {x.quantity}</small></span></div><strong>{x.p.priceCents===null?t('Price pending'):money(x.p.priceCents*x.quantity)}</strong></div>)}
+              {lines.map(line=>{
+                const {p:product,variantId,quantity}=line;
+                const media=bagMedia(product,variantId);
+                const stock=product.variants.find(variant=>variant.id===variantId)?.stock??0;
+                const limit=mode==='live'?Math.min(5,stock):5;
+                const label=[product.name,media.colour,media.size].filter(Boolean).join(' · ');
+                return <div className="order-line" key={variantId}>
+                  <div className="checkout-product">
+                    {media.image&&<img src={media.image} alt={product.name} width="64" height="84"/>}
+                    <span>{product.name}
+                      <small>{[media.colour,media.size].filter(Boolean).join(' · ')}</small>
+                      <span className="quantity checkout-quantity" role="group" aria-label={label}>
+                        <button type="button" aria-label={t('Decrease quantity:')+' '+label}
+                          disabled={busy||quantity<=1} onClick={()=>updateQuantity(variantId,quantity-1)}>−</button>
+                        <span aria-live="polite">{quantity}</span>
+                        <button type="button" aria-label={t('Increase quantity:')+' '+label}
+                          disabled={busy||quantity>=limit} onClick={()=>updateQuantity(variantId,quantity+1)}>+</button>
+                      </span>
+                      <button type="button" className="text-button checkout-remove" disabled={busy}
+                        aria-label={t('Remove')+' '+label} onClick={()=>updateQuantity(variantId,0)}>{t('Remove')}</button>
+                    </span>
+                  </div>
+                  <strong>{product.priceCents===null?t('Price pending'):money(product.priceCents*quantity)}</strong>
+                </div>;
+              })}
               <div className="checkout-delivery-note"><Truck size={18}/><span>{shippingThreshold===null?t('Flat-rate standard delivery'):sub>=shippingThreshold?t('Your order qualifies for free delivery.'):t('Free delivery from {amount}.').replace('{amount}',money(shippingThreshold))}</span></div>
               <ClubEstimate lines={lines.map(x=>({id:x.variantId,grossCents:(x.p.priceCents||0)*x.quantity,kind:productKind(x.p.tags)}))} onRedeem={mode==='live'&&!promoCode.trim()?onRedeemPoints:undefined}/>
               {promoCode.trim()&&<p className="subtle-note">{t('Promo code entered — Club points are not applied on this order.')}</p>}

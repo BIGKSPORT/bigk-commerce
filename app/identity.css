@@ -404,6 +404,10 @@
 .checkout-product img{flex:0 0 64px;width:64px;height:84px;object-fit:contain;background:#fff}
 .checkout-product>span{font-size:13px;font-weight:700;overflow-wrap:anywhere}
 .checkout-product small{display:block;font-size:11px;font-weight:400;color:#6d6662;margin-top:7px}
+.checkout-quantity{display:flex;width:max-content;margin-top:8px}
+.checkout-quantity button,.checkout-remove{min-height:36px}
+.checkout-quantity button{min-width:36px}
+.checkout-remove{font-size:13px}
 .checkout-summary .order-line>strong{font-size:13px;white-space:nowrap}
 .checkout-summary .bag-totals{margin-top:22px}
 .checkout-summary .bag-totals p{font-size:13px}
