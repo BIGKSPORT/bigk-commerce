@@ -1,4 +1,5 @@
 'use client';
+import {ecommerceEvent,ecommerceItem} from '@/lib/ecommerce-events';
 import {shippingCharge,freeShippingThreshold,isCheckoutCountry,checkoutCountries,checkoutCountryNames} from '@/lib/shipping-policy';
 import {bagMedia} from '@/lib/bag-presentation';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
@@ -72,6 +73,12 @@ export default function Checkout(){
   },[products]);
 
   const lines=bag.map(x=>({...x,p:products.find(p=>p.variants.some(v=>v.id===x.variantId))!})).filter(x=>x.p);
+  const checkoutMeasured=useRef(false);
+  useEffect(()=>{
+    if(mode!=='live'||paymentEnvironment!=='live'||!ready||!lines.length||checkoutMeasured.current)return;
+    checkoutMeasured.current=true;
+    ecommerceEvent('begin_checkout',lines.map(line=>ecommerceItem(line.p,line.quantity,line.variantId)));
+  },[mode,paymentEnvironment,ready,lines]);
   const sub=lines.reduce((n,x)=>n+(x.p.priceCents||0)*x.quantity,0);
   const ship=shippingCharge(sub,country),shippingThreshold=freeShippingThreshold(country);
   const clubDiscount=clubPoints>0?clubPoints*3:0;

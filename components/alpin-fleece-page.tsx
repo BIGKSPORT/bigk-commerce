@@ -1,4 +1,5 @@
 'use client';
+import {ecommerceEvent,ecommerceItem} from '@/lib/ecommerce-events';
 import {useProductPageEntry} from './use-product-page-entry';
 import {useEffect,useRef,useState} from 'react';
 import EditableProductTechnology from './editable-product-technology';
@@ -27,6 +28,13 @@ export default function AlpinFleecePage({products,locale,initialColour,initialSi
  const bagDialog=useRef<HTMLDialogElement>(null);
  const product=products.find(p=>alpinProductColour(p)===colour)||products[0];
  const article=alpinArticle(product)!;
+ const lastProductView=useRef('');
+ useEffect(()=>{
+  if(preview||mode!=='live'||!ready||lastProductView.current===product.id)return;
+  lastProductView.current=product.id;
+  ecommerceEvent('view_item',[ecommerceItem(product)]);
+ },[mode,preview,product,ready]);
+
  const translated=product.content?.localizedCopy,shortDescription=translated?.description||copy.shortDescription,paragraphs=translated?.details?translated.details.split(/\n\n/):copy.paragraphs;
  const selected=product.variants.find(v=>alpinSize(v.size)===size);
  const buyable=!preview&&(mode==='demo'||ready&&product.active&&product.approved);
@@ -36,7 +44,7 @@ export default function AlpinFleecePage({products,locale,initialColour,initialSi
  useEffect(()=>{if(bagOpen)bagDialog.current?.showModal();else bagDialog.current?.close()},[bagOpen]);
  function updateSelection(nextColour:string,nextSize:string){const targetProduct=products.find(p=>alpinProductColour(p)===nextColour);if(!targetProduct)return;const retained=targetProduct.variants.some(v=>alpinSize(v.size)===nextSize)?nextSize:'';setColour(nextColour);setSize(retained);setNotice(nextSize&&!retained?ui.select:'');const target=products.find(p=>alpinProductColour(p)===nextColour)||product;const url=new URL(location.href);url.searchParams.set('colour',alpinProductColour(target));if(retained)url.searchParams.set('size',retained);else url.searchParams.delete('size');history.pushState(null,'',url);}
  function saveBag(next:CartLine[]){try{localStorage.setItem('bigk-bag-v2',JSON.stringify(next));setBag(next);return true}catch{setNotice(ui.storage);return false}}
- function add(button:HTMLButtonElement){if(!selected){setNotice(ui.select);button.closest('.detail-info')?.querySelector<HTMLButtonElement>('.size-options button:not(:disabled)')?.focus();return}if(!buyable||product.priceCents===null){setNotice(ui.unavailable);return}const existing=bag.find(line=>line.variantId===selected.id),limit=mode==='live'?Math.min(5,selected.stock):5;if((existing?.quantity||0)>=limit){setNotice(ui.limit);return}const next=existing?bag.map(line=>line.variantId===selected.id?{...line,quantity:line.quantity+1}:line):[...bag,{variantId:selected.id,quantity:1}];if(saveBag(next)){setNotice(ui.added);setBagOpen(true)}}
+ function add(button:HTMLButtonElement){if(!selected){setNotice(ui.select);button.closest('.detail-info')?.querySelector<HTMLButtonElement>('.size-options button:not(:disabled)')?.focus();return}if(!buyable||product.priceCents===null){setNotice(ui.unavailable);return}const existing=bag.find(line=>line.variantId===selected.id),limit=mode==='live'?Math.min(5,selected.stock):5;if((existing?.quantity||0)>=limit){setNotice(ui.limit);return}const next=existing?bag.map(line=>line.variantId===selected.id?{...line,quantity:line.quantity+1}:line):[...bag,{variantId:selected.id,quantity:1}];if(saveBag(next)){if(mode==='live')ecommerceEvent('add_to_cart',[ecommerceItem(product,1,selected.id)]);setNotice(ui.added);setBagOpen(true)}}
  const count=bag.reduce((total,line)=>total+line.quantity,0);
  const imageAlt=(index:number)=>locale==='es'?`Big K ${product.name}, ${alpinProductColour(product,locale)}, ${index===0?'vista frontal':'vista '+(index+1)}`:locale==='it'?`Big K ${product.name}, ${alpinProductColour(product,locale)}, ${index===0?'vista frontale':'vista '+(index+1)}`:locale==='en'?`Big K Alpin Fleece jacket in ${alpinProductColour(product,locale)}, ${index===0?'front view':'view '+(index+1)}`:locale==='nl'?`Big K Alpin fleecejas in ${alpinProductColour(product,locale).toLowerCase()}, ${index===0?'vooraanzicht':'weergave '+(index+1)}`:`Veste polaire Alpin Big K, ${alpinProductColour(product,locale).toLowerCase()}, ${index===0?'vue de face':'vue '+(index+1)}`;
  return <div className={pageStyles.page}>

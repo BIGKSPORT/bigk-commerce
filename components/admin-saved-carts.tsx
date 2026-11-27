@@ -1,5 +1,5 @@
 'use client';
-type SavedCart={id:string;items:{name:string;size:string;quantity:number;unitPrice:number}[];total:number;createdAt:string;updatedAt:string;orderId:string|null;status:string};
+type SavedCart={id:string;items:{name:string;size:string;quantity:number;unitPrice:number}[];total:number;createdAt:string;updatedAt:string;orderId:string|null;status:string;reachedCheckout?:boolean};
 const labels:Record<string,string>={open:'Open cart',checkout_started:'Checkout page opened',possibly_abandoned:'Possibly abandoned',unpaid_checkout:'Unpaid checkout',converted:'Paid order',cleared:'Emptied cart'};
 export default function AdminSavedCarts({carts,available=true,onlyAbandoned=false}:{carts:SavedCart[];available?:boolean;onlyAbandoned?:boolean}){
  if(!available)return <section className="bo-panel"><h2>{onlyAbandoned?'Abandoned checkouts':'Saved carts'}</h2><p role="alert">Saved-cart reporting is temporarily unavailable. Existing orders are still shown below.</p></section>;

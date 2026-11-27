@@ -47,7 +47,7 @@ export function AdminOverview({
   totalProducts: number;
   availableUnits: number;
   onOpenOrders: () => void;
-  savedCarts?: {createdAt:string;status:string}[];
+  savedCarts?: {createdAt:string;status:string;reachedCheckout?:boolean}[];
 }) {
   const [range, setRange] = useState<Range>('30d');
 
@@ -62,7 +62,7 @@ export function AdminOverview({
     const total = counted.reduce((n, o) => n + o.total, 0);
     const aov = counted.length ? Math.round(total / counted.length) : 0;
     const bagRecords = savedCarts?.filter(cart => !from || new Date(cart.createdAt) >= from);
-    const atCheckout = bagRecords?.filter(cart => ['checkout_started','unpaid_checkout','converted'].includes(cart.status));
+    const atCheckout = bagRecords?.filter(cart => cart.reachedCheckout||['checkout_started','unpaid_checkout','converted'].includes(cart.status));
     const paidBags = atCheckout?.filter(cart => cart.status === 'converted').length;
 
     // daily series
