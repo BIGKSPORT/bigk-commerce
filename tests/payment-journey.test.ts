@@ -4,6 +4,7 @@ import {randomBytes,scryptSync} from 'node:crypto';
 import Stripe from 'stripe';
 import {db,products,closeDatabase} from '../lib/db';
 import {expireReservations,getOrder} from '../lib/commerce';
+import {saveSavedCart} from '../lib/cart-sessions';
 import {deliverEmails} from '../lib/email';
 import {POST as checkout} from '../app/api/checkout/route';
 import {POST as webhook} from '../app/api/webhooks/stripe/route';
@@ -65,7 +66,9 @@ await test('isolated complete checkout → webhook → inventory → backoffice 
   assert.equal((await checkout(req('/api/checkout',{...payload(),total:1}))).status,400);
  });
  await t.test('server prices reach Stripe; duplicate checkout reuses one session and reservation',async()=>{
-  const input=payload(),r=await checkout(req('/api/checkout',input));assert.equal(r.status,200);created=await r.json();order=await getOrder(created.id);
+  const input=payload();
+  const saved=await saveSavedCart(req('/api/cart'),{items:input.items,stage:'checkout'});
+  const r=await checkout(req('/api/checkout',input,saved.cookie!.split(';')[0]));assert.equal(r.status,200);created=await r.json();order=await getOrder(created.id);
   assert.equal(order.status,'pending');assert.equal(order.items[0].name,expectedProductName);assert.equal(order.items[0].unitPrice,fixtureProduct.priceCents);assert.equal((await inventory())!.reserved,1);
   const params=payloads[0];assert.equal(Number(params.get('line_items[0][price_data][unit_amount]')),fixtureProduct.priceCents);
   assert.equal(params.get('locale'),'en');assert.equal(params.get('cancel_url'),origin+'/en/checkout?cancelled=1');assert.equal(params.get('adaptive_pricing[enabled]'),'false');assert.equal(params.get('automatic_tax[enabled]'),'true');assert.equal(params.get('metadata[orderId]'),order.id);assert.equal(params.get('payment_method_types[0]'),null);
@@ -87,6 +90,8 @@ await test('isolated complete checkout → webhook → inventory → backoffice 
  });
  await t.test('paid order appears in protected backoffice and private receipt',async()=>{
   const data=await (await orders(req('/api/admin/orders',undefined,cookie))).json();assert(data.orders.some((o:any)=>o.id===order.id&&o.status==='paid'));
+  assert.equal(data.cartTrackingAvailable,true);
+  assert(data.carts.some((cart:any)=>cart.orderId===order.id&&cart.status==='converted'&&cart.reachedCheckout));
   assert.equal((await receipt(req('/api/orders?id='+order.id))).status,404);
   const r=await receipt(new Request(origin+'/api/orders?id='+order.id,{headers:{authorization:'Bearer '+created.receiptToken}}));assert.equal(r.status,200);assert.equal((await r.json()).status,'paid');
  });
@@ -110,6 +115,28 @@ await test('isolated complete checkout → webhook → inventory → backoffice 
   const a=await (await checkout(req('/api/checkout',payload()))).json(),bad=(await getOrder(a.id))!;
   assert.equal((await event('evt_bad_amount',bad,'checkout.session.completed',{amount_total:bad.total+1})).status,200);assert.equal((await getOrder(a.id))!.status,'payment_review');assert.equal((await inventory())!.stock,19);assert.equal((await inventory())!.reserved,0);
   assert.equal((await db().prepare('SELECT COUNT(*) AS n FROM email_outbox WHERE order_id=?').get(a.id))!.n,0);
+ });
+ await t.test('recovery report excludes anonymous bags, newer purchases and unsubscribed contacts from opt-ins',async()=>{
+  const now=Date.now(), old=new Date(now-3*3600000).toISOString(), later=new Date(now-3600000).toISOString();
+  const addresses=['opted-in@example.test','unsubscribed@example.test','already-paid@example.test'];
+  for(const [index,email] of addresses.entries()){
+   const result=await checkout(req('/api/checkout',{...payload(),email}));
+   assert.equal(result.status,200);
+   const candidate=(await getOrder((await result.json()).id))!;
+   await db().prepare('UPDATE orders SET created_at=? WHERE id=?').run(old,candidate.id);
+   assert.equal((await event('evt_report_cancel_'+index,candidate,'checkout.session.async_payment_failed')).status,200);
+   await db().prepare('INSERT INTO marketing_consents(id,email,status,source,evidence,occurred_at,created_at) VALUES(?,?,?,?,?,?,?)')
+    .run('fixture-consent-'+index,email,'subscribed','fixture','fixture opt-in',old,old);
+  }
+  await db().prepare('INSERT INTO marketing_consents(id,email,status,source,evidence,occurred_at,created_at) VALUES(?,?,?,?,?,?,?)')
+   .run('fixture-unsubscribe',addresses[1],'unsubscribed','fixture','fixture opt-out',later,later);
+  const purchase=await checkout(req('/api/checkout',{...payload(),email:addresses[2]}));
+  assert.equal(purchase.status,200);
+  const purchased=(await getOrder((await purchase.json()).id))!;
+  assert.equal((await event('evt_report_paid',purchased)).status,200);
+  const response=await orders(req('/api/admin/orders',undefined,cookie));
+  assert.equal(response.status,200);
+  assert.deepEqual((await response.json()).recovery,{unpaid:2,optedIn:1});
  });
  await t.test('checkout language is snapshotted independently of country and passed to Stripe and return links',async()=>{
   for(const locale of ['nl','fr','es','it'] as const){const r=await checkout(req('/api/checkout',{...payload(),email:locale+'.fixture@example.test',country:'BE',locale}));assert.equal(r.status,200);const created=await r.json(),record=(await getOrder(created.id))!,params=payloads.at(-1)!;assert.equal(record.language,locale);assert.equal(record.items[0].name,expectedProductName);assert.equal(params.get('locale'),locale);assert.equal(params.get('success_url'),origin+'/'+locale+'/order#'+created.id+'.'+created.receiptToken);assert.equal(params.get('cancel_url'),origin+'/'+locale+'/checkout?cancelled=1');assert.equal((await event('evt_locale_paid_'+locale,record,'checkout.session.completed',{collected_information:{shipping_details:{name:'Fixture Recipient',address:{line1:'Updated Street 5',postal_code:'2000',city:'Antwerp',country:'BE'}}}})).status,200);
